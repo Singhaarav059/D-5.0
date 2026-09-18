@@ -1,0 +1,13 @@
+{
+  "name": "moviq-framer-clone",
+  "version": "1.0.0",
+  "description": "Complete 1:1 exact clone of MOVIQ Framer website with full layouts, styles, themes, and animations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["moviq", "framer", "clone"],
+  "author": "",
+  "license": "ISC"
+}
