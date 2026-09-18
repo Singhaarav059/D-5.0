@@ -12,6 +12,32 @@ window.DEMAZE_CONTENT = {
     primaryCTA: { text: "Let's Connect", href: "./contact" },
     secondaryCTA: { text: "Explore Services", href: "./services" },
   },
+  process: {
+    // From demazetech.com homepage "HOW WE WORK: Our Process" (4 real steps).
+    heading: "Our Process",
+    steps: [
+      {
+        title: "Discover & Define",
+        description:
+          "We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.",
+      },
+      {
+        title: "Design & Prototype",
+        description:
+          "Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.",
+      },
+      {
+        title: "Build & Integrate",
+        description:
+          "Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.",
+      },
+      {
+        title: "Launch & Scale",
+        description:
+          "Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.",
+      },
+    ],
+  },
   technologyStack: {
     // From demazetech.com/services -> "Platforms & Partners: Tools & Technologies"
     // (AI & ML and Web tabs). A representative subset, not the full list.
