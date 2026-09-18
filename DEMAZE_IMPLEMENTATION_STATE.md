@@ -36,7 +36,7 @@ Files:
 | 1 | `Hero` | Hero | ✅ Approved |
 | 2 | *(new)* — borrows the quote/author card pattern from `reviews.html` | Founder testimonial (Krupal Chaudhary) | Not started. Position: right after Hero. |
 | 3 | `Badge` | Technology Stack | ✅ Approved |
-| 4 | `Videos making Step` | Our Process | Not started. **Decision reversed** — Demaze DOES have a real 4-step process (Discover & Define / Design & Prototype / Build & Integrate / Launch & Scale), confirmed on the current live homepage. Un-hide and adapt MOVIQ's 3-step layout to 4 steps, same card/reveal behavior. |
+| 4 | `Videos making Step` | Our Process | ✅ Done — un-hidden; MOVIQ's 3-card flex row (`flex:1 0 0px` each, confirmed via computed style, no CSS rewrite needed) extended to 4 by cloning the last unhighlighted card. The 2 outer cards' 3-card-tuned `translateX(...) scale(0.9)` offset was cleared on all 4 (would misalign at the new narrower width) — even 4-card row instead, verified at desktop (1600px) and mobile (375px). See `demaze-process-override.js`. |
 | 5 | `Sricpt` | Featured Projects | ✅ Approved — sticky peek-stack, custom-built. Content re-verified against current live homepage and corrected (full descriptions, live feature order, "Drag" typo fixed) — see `demaze-content.js`. |
 | 6 | `Tools` (1st) | Core Capabilities | ✅ Approved — scroll-driven unfold, custom-built. |
 | 7 | `CTA` (1st, "Ready to bring your brand to life on video?") | — | ✅ **Removed** (hidden) — no Demaze equivalent, redundant once the final CTA is real. |
