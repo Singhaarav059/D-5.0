@@ -47,7 +47,7 @@ Files:
 | 12 | `CTA` (2nd, same promo copy as #7) | — | ✅ **Removed** (hidden) — duplicate promo band. |
 | 13 | `Pricing` | — | ✅ **Removed entirely** (hidden) — Demaze publishes no public pricing, nothing invented. |
 | 14 | `CTA` (3rd, already linked `./contact`) | Final CTA | ✅ Done — copy replaced with "Let's connect and build smarter, faster, and stronger - together." / single "Let's Connect" button to `./contact`; second button hidden. See `demaze-cta-pricing-override.js`. |
-| 15 | `Faq` | FAQ | Not started. Plan: reuse the accordion expand/collapse, drop the category-tab layer (Demaze's 5 FAQs aren't categorized), populate the 5 real Q&As from the live homepage. |
+| 15 | `Faq` | FAQ | ✅ Done — category tab bar (`Basic ALl`) hidden, 6th card slot hidden, all 5 real Demaze Q&As populated (question `h6` gradient span + answer `p`), accordion click/expand behavior untouched. See `demaze-faq-override.js`. |
 | — | `<header><nav>` | Branding/nav | Not started. Demaze logo + Projects/Services/About Us/Contact Us/Book A Call. |
 | — | `<footer>` | Footer | Not started. Demaze tagline + Projects/Service/About us/Contact us + `contact@demazetech.com` + copyright; MOVIQ's extra columns and social icons get hidden (no Demaze equivalents confirmed). |
 
