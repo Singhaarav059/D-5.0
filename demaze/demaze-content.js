@@ -142,4 +142,37 @@ window.DEMAZE_CONTENT = {
     heading: "Let's connect and build smarter, faster, and stronger - together.",
     primaryCTA: { text: "Let's Connect", href: "./contact" },
   },
+  faq: {
+    // From demazetech.com homepage "FAQS: Questions? Answers!" (5 items, no
+    // category tabs — unlike MOVIQ's Basic All/Payment/License/Support tabs).
+    heading: "Frequently asked questions",
+    subheading: "Helpful answers for a smoother experience",
+    items: [
+      {
+        question: "What makes Demaze different from other development companies?",
+        answer:
+          "We're an AI-first technology partner, not just a development service provider. Unlike traditional companies that focus on coding, we specialize in intelligent solutions that leverage cutting-edge AI, machine learning, and automation. We work as an extension of your team, focusing on long-term partnerships and measurable business outcomes rather than just project delivery.",
+      },
+      {
+        question: "How long does it typically take to develop a custom solution?",
+        answer:
+          "Project timelines vary based on complexity and requirements, but most custom solutions take 3-6 months from concept to deployment. Simple applications may take 6-12 weeks, while complex AI-powered platforms or enterprise solutions can take 6-12 months. We provide detailed project timelines during our initial consultation and maintain transparent communication throughout the development process.",
+      },
+      {
+        question: "Do you work with startups or only established enterprises?",
+        answer:
+          "We work with both startups and established enterprises across various industries. Our scalable approach allows us to support early-stage companies with MVP development and growth-stage businesses with comprehensive digital transformation. We tailor our solutions and engagement models to match your business size, budget, and growth objectives.",
+      },
+      {
+        question: "What ongoing support do you provide after project completion?",
+        answer:
+          "We offer comprehensive post-launch support including maintenance, updates, performance monitoring, and technical assistance. Our support packages range from basic maintenance to full managed services with dedicated support teams. We also provide training for your team and can scale our support based on your evolving needs as your business grows.",
+      },
+      {
+        question: "How do you ensure the security and confidentiality of our project?",
+        answer:
+          "Security and confidentiality are paramount in everything we do. We implement industry-standard security protocols, sign comprehensive NDAs before any project discussion, follow secure development practices, and ensure data protection compliance (GDPR, CCPA, etc.). All our team members are bound by strict confidentiality agreements, and we use secure development environments and encrypted communication channels.",
+      },
+    ],
+  },
 };
