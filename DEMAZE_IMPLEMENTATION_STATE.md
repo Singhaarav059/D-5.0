@@ -29,25 +29,32 @@ Files:
 4. Gradient headings use `<h2><span data-text-fill>text</span></h2>` — always update the inner `span`'s text, never `h2.textContent` directly (that deletes the span and kills the gradient).
 5. Always test after every change: hard refresh, brand-new tab, ~577px width, mobile (375×812), and for scroll effects, desktop-wide (1400px) with real scrolling in both directions.
 
-## Section status (in the order actually built — some were reordered/merged live)
+## Final approved homepage structure (mapping locked in; implementing one row at a time)
 
 | # | MOVIQ section (`data-framer-name`) | Demaze section | Status |
 |---|---|---|---|
 | 1 | `Hero` | Hero | ✅ Approved |
-| 2 | `Badge` | Technology Stack | ✅ Approved |
-| 3 | `Videos making Step` | Process | ✅ Approved — **hidden entirely**, no Demaze process content exists anywhere on their site (checked homepage/services/about-us) |
-| 4 | `Sricpt` | Featured Projects | ✅ Approved — rebuilt as a two-column sticky "peek-stack": left column (eyebrow+heading) pinned via `position:sticky`, right column is 4 project cards that stack/take-over on scroll. This is **custom-built logic**, not extracted from MOVIQ — confirmed via inspecting MOVIQ's actual appear-animation JSON and the live `moviq.framer.website` that no such scroll-scrubbed mechanism exists anywhere in MOVIQ. Covers the "Projects" homepage section too — don't redo it. |
-| 5 | `Tools` (first one) | Core Capabilities | ✅ Approved — 4 real service categories (AI & ML / Web-Mobile-SaaS / Ecommerce / Cloud) shown as a scroll-driven "unfold" (tall sticky stage, blocks ease into a single horizontal row as you scroll, staggered, reversible). Also custom-built — same investigation applies. |
-| 6 | *(none — merged into #4)* | Projects | ✅ Already covered by Featured Projects (#4). The full `/projects` listing (more projects than the homepage's 4) would be a **separate page-level task**, not part of this homepage plan. |
-| 7 | `Moviq vs Traditional Video` | Why Demaze | ✅ Approved — MOVIQ's 3-column competitor-comparison table replaced with 3 real cards (icon+title+paragraph): AI-First Innovation, End-to-End Partnership, Proven Track Record. **This content lives on the Demaze homepage** (right after Industries), not `/about-us` — got this wrong once, re-verify before reusing. |
-| 8 | *(TBD — likely near `Pricing`/`CTA`, or a new stat-row block)* | Metrics | ⏭️ **Next up.** Real stats already found and verified, sitting right after the Why Demaze content on the homepage: **45+ Projects Delivered, $10M+ Client Value Generated, 35+ Expert Team Members, 6+ Years of Excellence.** Haven't yet located/built the matching MOVIQ slot for this — do that first. |
-| 9 | — | Industries | Not started. Real content exists: demazetech.com homepage/services has a long "Industries We Serve" list (Healthcare, Fintech, Logistics, Retail, Ecommerce, Education, BFSI, Sports & Gaming, Energy & Utility, Real Estate, Media & Entertainment, SaaS, Automotive, Food & Beverage, Legal, HR, Insurance, Social Commerce, Manufacturing — each with ~8-9 sub-items). MOVIQ likely has no matching section — will need the same "does this exist in MOVIQ" investigation before building anything custom. |
-| 10 | — | About / Who We Are | Not started. Real content: "Who We Are" paragraph + "What Drives Us" (4 items: Innovation at Our Core, Client Success Obsession, Technology for Good, Continuous Learning) on `/about-us`. |
-| 11 | `Pricing` | Pricing replacement | Not started. Demaze doesn't appear to publish public pricing — will likely need user direction on how to handle (hide vs. CTA-to-contact vs. other), same as Process was handled. |
-| 12 | — | Testimonials replacement | Not started. Haven't checked if Demaze has any real testimonials/quotes beyond the founder quote already used in Featured Projects context. |
-| 13 | `Faq` | FAQ | Not started. Demaze's `/about-us` has an FAQ section ("Questions? Answers!") — saw at least "What services do you offer?" and a repeated "How long does it take to develop an AI solution?" placeholder-looking entry; re-verify exact real Q&A content before building. |
-| 14 | `CTA` (appears 3x) | CTA | Not started. |
-| 15 | — | Footer | Not started. Haven't located/inspected MOVIQ's footer yet. |
+| 2 | *(new)* — borrows the quote/author card pattern from `reviews.html` | Founder testimonial (Krupal Chaudhary) | Not started. Position: right after Hero. |
+| 3 | `Badge` | Technology Stack | ✅ Approved |
+| 4 | `Videos making Step` | Our Process | Not started. **Decision reversed** — Demaze DOES have a real 4-step process (Discover & Define / Design & Prototype / Build & Integrate / Launch & Scale), confirmed on the current live homepage. Un-hide and adapt MOVIQ's 3-step layout to 4 steps, same card/reveal behavior. |
+| 5 | `Sricpt` | Featured Projects | ✅ Approved — sticky peek-stack, custom-built. Content re-verified against current live homepage and corrected (full descriptions, live feature order, "Drag" typo fixed) — see `demaze-content.js`. |
+| 6 | `Tools` (1st) | Core Capabilities | ✅ Approved — scroll-driven unfold, custom-built. |
+| 7 | `CTA` (1st, "Ready to bring your brand to life on video?") | — | ✅ **Removed** (hidden) — no Demaze equivalent, redundant once the final CTA is real. |
+| 8 | `Products` | Who We Are | Not started. Plan: keep heading+text editorial structure, drop the image gallery (no legitimate Demaze images), reorder to sit right before "What Drives Us" so the two read as one About moment. |
+| 9 | `Ai Powered` | What Drives Us | Not started. Plan: adapt the 5-card, 2-row structure to the 4 real items (Innovation at Our Core / Client Success Obsession / Technology for Good / Continuous Learning), hide the 5th card slot, no invented images. |
+| 10 | `Tools` (2nd, tab bar + checklist panel) | Industries We Serve | Not started. Plan: adapt the existing tab-select → panel-swap interaction from 3 tabs to 18 (one per industry), each panel showing that industry's real sub-item checklist. |
+| 11 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Approved for Why Demaze (3 cards). Metrics (45+ Projects / $10M+ Client Value / 35+ Team Members / 6+ Years) still needs to be added as a stat row within this same custom-built section — not started. |
+| 12 | `CTA` (2nd, same promo copy as #7) | — | ✅ **Removed** (hidden) — duplicate promo band. |
+| 13 | `Pricing` | — | ✅ **Removed entirely** (hidden) — Demaze publishes no public pricing, nothing invented. |
+| 14 | `CTA` (3rd, already linked `./contact`) | Final CTA | ✅ Done — copy replaced with "Let's connect and build smarter, faster, and stronger - together." / single "Let's Connect" button to `./contact`; second button hidden. See `demaze-cta-pricing-override.js`. |
+| 15 | `Faq` | FAQ | Not started. Plan: reuse the accordion expand/collapse, drop the category-tab layer (Demaze's 5 FAQs aren't categorized), populate the 5 real Q&As from the live homepage. |
+| — | `<header><nav>` | Branding/nav | Not started. Demaze logo + Projects/Services/About Us/Contact Us/Book A Call. |
+| — | `<footer>` | Footer | Not started. Demaze tagline + Projects/Service/About us/Contact us + `contact@demazetech.com` + copyright; MOVIQ's extra columns and social icons get hidden (no Demaze equivalents confirmed). |
+
+**Mapping decisions worth remembering:**
+- Tools & Technologies and Industries do NOT compete for the same MOVIQ slot — Tools & Tech already lives in `Badge` (done), which freed up the `Tools`(2nd) tab+checklist structure entirely for Industries.
+- `Products`/`Ai Powered` order is being swapped from MOVIQ's native document order so "Who We Are" leads into "What Drives Us" as one coherent About block — the only case of reordering full sections rather than just their content.
+- Founder testimonial has no native homepage slot in MOVIQ; the *reviews.html* page (not the homepage) has a real author/quote card component being borrowed for this new section, rather than inventing new CSS from scratch.
 
 ## Do not reintroduce
 

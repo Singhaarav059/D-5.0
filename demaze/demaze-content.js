@@ -137,4 +137,9 @@ window.DEMAZE_CONTENT = {
       },
     ],
   },
+  finalCTA: {
+    // From demazetech.com homepage, just before the Contact section.
+    heading: "Let's connect and build smarter, faster, and stronger - together.",
+    primaryCTA: { text: "Let's Connect", href: "./contact" },
+  },
 };
