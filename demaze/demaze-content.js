@@ -117,13 +117,9 @@ window.DEMAZE_CONTENT = {
   },
   process: {
     // From demazetech.com homepage "HOW WE WORK: Our Process" (4 real
-    // steps). MOVIQ's step component only has 3 physical card slots, and
-    // (confirmed live) adding a real 4th DOM card crashes React fatally on
-    // mobile — that section's cards sit in an SSR/CSR reconciliation
-    // wrapper that redraws itself post-hydration, and inserting a new child
-    // into it collides with that redraw. So the 3rd slot holds both of the
-    // last two real steps (full, unedited title + description for each,
-    // just stacked in one card) instead of a 4th card.
+    // steps). Rendered as a fully custom 4-card block (see
+    // demaze-process-override.js) rather than adapted from MOVIQ's native
+    // step component.
     heading: "Our Process",
     steps: [
       {
@@ -140,11 +136,11 @@ window.DEMAZE_CONTENT = {
         title: "Build & Integrate",
         description:
           "Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.",
-        extra: {
-          title: "Launch & Scale",
-          description:
-            "Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.",
-        },
+      },
+      {
+        title: "Launch & Scale",
+        description:
+          "Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.",
       },
     ],
   },
