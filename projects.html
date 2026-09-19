@@ -6,24 +6,24 @@
   <title>Projects - Demaze Technologies | Case Studies & Engineered Solutions</title>
   <meta name="description" content="Explore Demaze Technologies' featured client projects: AI solutions for automotive, case management, luxury eCommerce, and cloud platforms.">
   <link rel="icon" href="https://framerusercontent.com/images/gtUg6e8c5ok6pYFG4fbE5TeXE.png">
-  <link rel="stylesheet" href="./assets/demaze/demaze-subpages.css">
+  <link rel="stylesheet" href="/assets/demaze/demaze-subpages.css">
 </head>
 <body>
 
   <!-- Floating Navigation -->
   <div class="demaze-nav-wrapper">
     <nav class="demaze-nav-bar">
-      <a href="./" class="demaze-nav-logo">
+      <a href="/" class="demaze-nav-logo">
         <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=1024" alt="Demaze Technologies">
       </a>
       <ul class="demaze-nav-menu">
-        <li class="demaze-nav-item"><a href="./projects" class="active">Projects</a></li>
-        <li class="demaze-nav-item"><a href="./services">Services</a></li>
-        <li class="demaze-nav-item"><a href="./about-us">About Us</a></li>
-        <li class="demaze-nav-item"><a href="./contact">Contact Us</a></li>
+        <li class="demaze-nav-item"><a href="/projects" class="active">Projects</a></li>
+        <li class="demaze-nav-item"><a href="/services">Services</a></li>
+        <li class="demaze-nav-item"><a href="/about-us">About Us</a></li>
+        <li class="demaze-nav-item"><a href="/contact">Contact Us</a></li>
       </ul>
       <div class="demaze-nav-action">
-        <a href="./contact" class="demaze-btn-primary">Book A Call</a>
+        <a href="/contact" class="demaze-btn-primary">Book A Call</a>
       </div>
       <button class="demaze-mobile-toggle" id="demaze-mobile-btn" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
@@ -32,11 +32,11 @@
   </div>
 
   <div class="demaze-subpage-drawer" id="demaze-subpage-drawer">
-    <a href="./projects" style="color: #60a5fa; font-weight: 600;">Projects</a>
-    <a href="./services">Services</a>
-    <a href="./about-us">About Us</a>
-    <a href="./contact">Contact Us</a>
-    <a href="./contact" class="demaze-drawer-cta">Book A Call</a>
+    <a href="/projects" style="color: #5B4FE9; font-weight: 600;">Projects</a>
+    <a href="/services">Services</a>
+    <a href="/about-us">About Us</a>
+    <a href="/contact">Contact Us</a>
+    <a href="/contact" class="demaze-drawer-cta">Book A Call</a>
   </div>
 
   <!-- Hero Section -->
@@ -47,18 +47,31 @@
       Explore our verified portfolio of scalable AI software, enterprise platforms, and custom digital products engineered for high-impact results.
     </p>
     <div>
-      <a href="./contact" class="demaze-btn-gradient">Start Your Project →</a>
+      <a href="/contact" class="demaze-btn-primary" style="padding: 12px 28px; font-size: 14px;">Start Your Project →</a>
     </div>
   </header>
 
   <!-- Projects Showcase Grid -->
   <main class="demaze-container">
-    <div class="projects-grid">
+
+    <!-- Category Filter Bar -->
+    <div class="projects-filter-bar" role="toolbar" aria-label="Filter projects by domain">
+      <button type="button" class="filter-btn active" data-filter="all">All Projects (14)</button>
+      <button type="button" class="filter-btn" data-filter="automotive">Automotive & AI</button>
+      <button type="button" class="filter-btn" data-filter="legal">Legal Tech</button>
+      <button type="button" class="filter-btn" data-filter="fintech">Fintech & Banking</button>
+      <button type="button" class="filter-btn" data-filter="ecommerce">E-Commerce & Retail</button>
+      <button type="button" class="filter-btn" data-filter="saas">Enterprise SaaS</button>
+      <button type="button" class="filter-btn" data-filter="edtech">EdTech & Media</button>
+      <button type="button" class="filter-btn" data-filter="healthcare">Healthcare</button>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
 
       <!-- Project 1 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="automotive">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?scale-down-to=1024" alt="AI-Based software for luxury car dealers" loading="lazy">
+          <img src="https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?scale-down-to=1024" alt="AI-Based software for luxury car dealers" loading="eager">
         </div>
         <div class="project-content-body">
           <div class="project-tag">AUTOMOTIVE & AI</div>
@@ -76,9 +89,9 @@
       </article>
 
       <!-- Project 2 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="legal">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?scale-down-to=1024" alt="Investigative Case Management Software" loading="lazy">
+          <img src="https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?scale-down-to=1024" alt="Investigative Case Management Software" loading="eager">
         </div>
         <div class="project-content-body">
           <div class="project-tag">LEGAL TECH & AUTOMATION</div>
@@ -96,9 +109,9 @@
       </article>
 
       <!-- Project 3 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="ecommerce">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/BCoc1XvtfjF8KIgSc4BmvU1WH8U.png?scale-down-to=1024" alt="AI-Powered luxury eCommerce Platform" loading="lazy">
+          <img src="https://framerusercontent.com/images/K9H6ej2APXMnI3TZXYvyYkXZtJQ.png?scale-down-to=1024" alt="AI-Powered luxury eCommerce Platform" loading="lazy">
         </div>
         <div class="project-content-body">
           <div class="project-tag">ECOMMERCE & AI</div>
@@ -116,9 +129,9 @@
       </article>
 
       <!-- Project 4 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="healthcare">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?scale-down-to=1024" alt="Senior Engagement & Support platform" loading="lazy">
+          <img src="https://framerusercontent.com/images/8dANM4w4wJIzmtS0xJgDEOS4rLc.png?scale-down-to=1024" alt="Senior Engagement & Support Platform" loading="lazy">
         </div>
         <div class="project-content-body">
           <div class="project-tag">HEALTHCARE & COMMUNITY</div>
@@ -136,9 +149,9 @@
       </article>
 
       <!-- Project 5 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="ecommerce">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/n2k5j6C5nfmufhjsYnF8HXy5qY.png?scale-down-to=1024" alt="Multi-vendor eCommerce Marketplace" loading="lazy">
+          <img src="https://framerusercontent.com/images/BCoc1XvtfjF8KIgSc4BmvU1WH8U.png?scale-down-to=1024" alt="Multi-vendor eCommerce Marketplace" loading="lazy">
         </div>
         <div class="project-content-body">
           <div class="project-tag">MARKETPLACE & RETAIL</div>
@@ -156,9 +169,9 @@
       </article>
 
       <!-- Project 6 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="ecommerce">
         <div class="project-media-wrapper">
-          <img src="https://framerusercontent.com/images/kl6BbE7vPzKmqIbeDQ2Qi0qBgrw.png?scale-down-to=1024" alt="Multi-shoppers Food & Grocery Delivery App" loading="lazy">
+          <img src="https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?scale-down-to=1024" alt="Multi-shoppers Food & Grocery Delivery App" loading="lazy">
         </div>
         <div class="project-content-body">
           <div class="project-tag">LOGISTICS & ON-DEMAND</div>
@@ -176,7 +189,7 @@
       </article>
 
       <!-- Project 7 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="automotive">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/LkWna9MnJ0LQbLJbzCItYR1WToQ.png?scale-down-to=1024" alt="Car service & customer engagement platform" loading="lazy">
         </div>
@@ -196,7 +209,7 @@
       </article>
 
       <!-- Project 8 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="saas">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/BCoc1XvtfjF8KIgSc4BmvU1WH8U.png?scale-down-to=1024" alt="B2B Gift Marketplace" loading="lazy">
         </div>
@@ -216,7 +229,7 @@
       </article>
 
       <!-- Project 9 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="fintech">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/kyC8zhxd43towb5gNsnL6f6dFv8.png?scale-down-to=1024" alt="Global Payment transfer platform" loading="lazy">
         </div>
@@ -236,7 +249,7 @@
       </article>
 
       <!-- Project 10 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="fintech">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?scale-down-to=1024" alt="CMA Report Generation Software" loading="lazy">
         </div>
@@ -256,7 +269,7 @@
       </article>
 
       <!-- Project 11 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="saas">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/rUzLQ1C7Zx5YbVPxiCc2j76p2nA.png?scale-down-to=1024" alt="Recruitment platform" loading="lazy">
         </div>
@@ -276,7 +289,7 @@
       </article>
 
       <!-- Project 12 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="saas">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/7tURVBvnRlwhQdd3SABZp9NRAQ.png?scale-down-to=1024" alt="Task, Staff & Document management platform" loading="lazy">
         </div>
@@ -296,7 +309,7 @@
       </article>
 
       <!-- Project 13 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="edtech">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/BXHb6zyrRU44ZupahdRjnPEGNY.png?scale-down-to=1024" alt="Educational courses & LMS platform" loading="lazy">
         </div>
@@ -316,7 +329,7 @@
       </article>
 
       <!-- Project 14 -->
-      <article class="project-case-card">
+      <article class="project-case-card" data-category="edtech">
         <div class="project-media-wrapper">
           <img src="https://framerusercontent.com/images/No26KTnaY7sTJQew3bCYMTEA9Y.png?scale-down-to=1024" alt="Storyboard creation for films with AI" loading="lazy">
         </div>
@@ -338,24 +351,24 @@
     </div>
 
     <!-- Final CTA Banner -->
-    <section class="demaze-cta-banner demaze-reveal">
+    <section class="demaze-cta-banner">
       <div class="demaze-cta-banner-content">
         <div class="demaze-cta-eyebrow">HAVE A VISION?</div>
         <h2 class="demaze-cta-heading">Let's build <span class="demaze-gradient-word">scalable products</span> that perform.</h2>
         <p class="demaze-cta-desc">
           Let's discuss how Demaze Technologies can architect and engineer your next breakthrough digital product.
         </p>
-        <a href="./contact" class="demaze-btn-primary" style="padding: 12px 28px; font-size: 14px;">Book A Strategy Session →</a>
+        <a href="/contact" class="demaze-btn-primary" style="padding: 12px 28px; font-size: 14px;">Book A Strategy Session →</a>
       </div>
     </section>
 
     <!-- Reach Us At Anytime -->
-    <div class="demaze-section-header demaze-reveal" style="margin-bottom: 30px;">
+    <div class="demaze-section-header" style="margin-bottom: 30px;">
       <div class="demaze-badge-pill">CONTACT</div>
-      <h2 class="demaze-section-h2">Reach Us At Anytime</h2>
+      <h2 class="demaze-section-h2">Reach Us At <span class="demaze-gradient-text">Anytime</span></h2>
     </div>
 
-    <div class="demaze-contact-grid demaze-reveal">
+    <div class="demaze-contact-grid">
       <a href="mailto:contact@demazetech.com" class="demaze-contact-card">
         <div class="demaze-contact-top">
           <div class="demaze-contact-icon">
@@ -369,7 +382,7 @@
         </div>
         <div class="demaze-contact-action">Send Email &rarr;</div>
       </a>
-      <a href="./contact" class="demaze-contact-card">
+      <a href="/contact" class="demaze-contact-card">
         <div class="demaze-contact-top">
           <div class="demaze-contact-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -412,36 +425,61 @@
       <div class="demaze-footer-col">
         <h4>Navigation</h4>
         <ul class="demaze-footer-nav">
-          <li><a href="./projects">Projects</a></li>
-          <li><a href="./services">Services</a></li>
-          <li><a href="./about-us">About Us</a></li>
-          <li><a href="./contact">Contact Us</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/about-us">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
         </ul>
       </div>
       <div class="demaze-footer-col">
         <h4>Services</h4>
         <ul class="demaze-footer-nav">
-          <li><a href="./services">AI & Machine Learning</a></li>
-          <li><a href="./services">Web, Mobile App & SaaS</a></li>
-          <li><a href="./services">Intelligent E-Commerce</a></li>
-          <li><a href="./services">Cloud Infrastructure</a></li>
+          <li><a href="/services">AI & Machine Learning</a></li>
+          <li><a href="/services">Web, Mobile App & SaaS</a></li>
+          <li><a href="/services">Intelligent E-Commerce</a></li>
+          <li><a href="/services">Cloud Infrastructure</a></li>
         </ul>
       </div>
       <div class="demaze-footer-col">
         <h4>Reach Us</h4>
         <ul class="demaze-footer-nav">
           <li><a href="mailto:contact@demazetech.com">contact@demazetech.com</a></li>
-          <li><a href="./contact">Schedule Strategy Call</a></li>
-          <li><a href="./contact">Ahmedabad, Gujarat, India</a></li>
+          <li><a href="/contact">Schedule Strategy Call</a></li>
+          <li><a href="/contact">Ahmedabad, Gujarat, India</a></li>
         </ul>
       </div>
     </div>
     <div class="demaze-footer-bottom">
-      <span>Demaze Technologies © <span class="demaze-footer-year">2025</span>. All rights reserved.</span>
+      <span>Demaze Technologies © <span class="demaze-footer-year">2026</span>. All rights reserved.</span>
       <span>Empowering AI Innovation Worldwide</span>
     </div>
   </footer>
 
-  <script src="./assets/demaze/demaze-shared.js"></script>
+  <script src="/assets/demaze/demaze-shared.js"></script>
+  <script>
+    // Category Filter Functionality
+    (function () {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.project-case-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          const category = this.getAttribute('data-filter');
+          
+          filterBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          cards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            if (category === 'all' || cardCat === category) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

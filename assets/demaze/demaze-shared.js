@@ -167,12 +167,19 @@
           }
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.01, rootMargin: '150px 0px 150px 0px' }
     );
 
     revealEls.forEach(function (el) {
       observer.observe(el);
     });
+
+    // Safety fallback: ensure all content becomes visible after page loads
+    setTimeout(function () {
+      revealEls.forEach(function (el) {
+        el.classList.add('demaze-revealed');
+      });
+    }, 1200);
   }
 
   // Run on DOM ready
