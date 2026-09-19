@@ -42,26 +42,28 @@
       // .framer-wte4vf") sets height:min-content and display:grid via an
       // ancestor+own-class selector, which beats a plain single-class
       // override on specificity — confirmed by testing (the stage was
-      // collapsing to ~400px instead of the intended tall scroll region).
-      '.demaze-capabilities-stage{position:relative!important;height:280vh!important;display:block!important;}' +
-      '.demaze-capabilities-viewport{position:sticky;top:80px;height:520px;display:flex;align-items:center;}' +
-      '.demaze-capabilities-row{display:flex;gap:16px;width:100%;align-items:stretch;}' +
-      '.demaze-capabilities-block{flex:1 1 0;min-width:0;background:linear-gradient(180deg,#f8f9fa 0%,#fff 100%);' +
-      'border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:24px 18px;text-align:left;display:flex;flex-direction:column;' +
-      'box-shadow:0 12px 32px rgba(0,0,0,0.05);will-change:transform,opacity;}' +
-      '.demaze-capabilities-block-icon{width:52px;height:52px;margin:0 0 14px;border-radius:14px;' +
+      'section[data-framer-name="Tools"]:nth-of-type(2), section.framer-1p5myw3{display:none!important;}' +
+      '.demaze-capabilities-stage{position:relative!important;height:auto!important;min-height:auto!important;padding:20px 0 60px!important;display:block!important;}' +
+      '.demaze-capabilities-viewport{position:relative!important;top:0!important;height:auto!important;display:flex!important;align-items:stretch!important;width:100%!important;}' +
+      '.demaze-capabilities-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:20px!important;width:100%!important;max-width:1320px!important;margin:0 auto!important;align-items:stretch!important;}' +
+      '.demaze-capabilities-block{min-width:0;background:linear-gradient(180deg,#f8f9fa 0%,#fff 100%);' +
+      'border:1px solid rgba(0,0,0,0.07);border-radius:24px;padding:28px 20px;text-align:left;display:flex;flex-direction:column;' +
+      'box-shadow:0 12px 32px rgba(0,0,0,0.04);opacity:1!important;transform:none!important;transition:all 0.25s ease;}' +
+      '.demaze-capabilities-block:hover{transform:translateY(-4px)!important;box-shadow:0 18px 44px rgba(91,95,239,0.12)!important;border-color:rgba(91,95,239,0.3)!important;}' +
+      '.demaze-capabilities-block-icon{width:52px;height:52px;margin:0 0 16px;border-radius:14px;' +
       'display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,0.08);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.04);}' +
       '.demaze-capabilities-block-icon img{width:100%;height:100%;object-fit:cover;display:block;}' +
-      '.demaze-capabilities-block h6{font-size:16px;font-weight:600;color:rgb(33,37,41);margin:0 0 8px;}' +
-      '.demaze-capabilities-block p{font-size:12.5px;line-height:1.5;color:' + MUTED + ';margin:0 0 14px;}' +
-      '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(0,0,0,0.06);padding-top:12px;}' +
-      '.demaze-capabilities-sublist li{font-size:11.5px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:6px;}' +
-      '.demaze-capabilities-sublist li::before{content:"";width:4px;height:4px;border-radius:50%;background:' + BRAND_BLUE + ';flex-shrink:0;}' +
-      '@media (max-width:809px){' +
-      '.demaze-capabilities-stage{height:auto!important;}' +
-      '.demaze-capabilities-viewport{position:static;height:auto;display:block;}' +
-      '.demaze-capabilities-row{flex-direction:column;}' +
-      '.demaze-capabilities-block{opacity:1!important;transform:none!important;margin-bottom:16px;}' +
+      '.demaze-capabilities-block h6{font-size:17px;font-weight:700;color:rgb(33,37,41);margin:0 0 8px;line-height:1.3;}' +
+      '.demaze-capabilities-block p{font-size:13px;line-height:1.55;color:' + MUTED + ';margin:0 0 16px;}' +
+      '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(0,0,0,0.06);padding-top:14px;}' +
+      '.demaze-capabilities-sublist li{font-size:12px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:7px;}' +
+      '.demaze-capabilities-sublist li::before{content:"";width:5px;height:5px;border-radius:50%;background:' + BRAND_BLUE + ';flex-shrink:0;}' +
+      '@media (max-width:1024px){' +
+      '.demaze-capabilities-row{grid-template-columns:repeat(2,1fr)!important;gap:16px!important;}' +
+      '}' +
+      '@media (max-width:640px){' +
+      '.demaze-capabilities-row{grid-template-columns:1fr!important;}' +
+      '.demaze-capabilities-block{margin-bottom:16px;}' +
       '}';
     document.head.appendChild(style);
   }
@@ -211,7 +213,7 @@
     var subtitle = section.querySelector('[data-framer-name="Subtitle"]');
     if (subtitle) subtitle.style.display = 'none';
 
-    // Replace MOVIQ's 6-card grid with the 4-block scroll-unfold stage.
+    // Replace MOVIQ's 6-card grid with the 4-block capabilities stage.
     var grid = section.querySelector('[data-framer-name="Grid"]');
     if (grid && !grid.classList.contains('demaze-capabilities-stage')) {
       grid.classList.add('demaze-capabilities-stage');
@@ -222,7 +224,12 @@
         '</div>' +
         '</div>';
     }
-    initScrollUnfold(grid);
+
+    // Hide second Tools section ("AI Video Creation" - MOVIQ leftover)
+    var allTools = document.querySelectorAll('section[data-framer-name="Tools"]');
+    if (allTools.length > 1) {
+      allTools[1].style.setProperty('display', 'none', 'important');
+    }
   }
 
   function verifyStuck(section) {

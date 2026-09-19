@@ -39,33 +39,35 @@
       // (e.g. ".framer-ScIth .framer-1a3dchp") combine an ancestor class with
       // the element's own class, which beats a plain single-class override
       // on specificity alone — confirmed by testing, not a defensive guess.
-      '.demaze-showcase-grid{display:flex!important;flex-direction:row!important;gap:48px!important;' +
-      'align-items:flex-start!important;background:transparent!important;padding:0!important;border:none!important;}' +
-      '.demaze-showcase-left{flex:0 0 300px!important;}' +
+      '.demaze-showcase-grid{display:flex!important;flex-direction:row!important;gap:40px!important;' +
+      'align-items:flex-start!important;background:transparent!important;padding:0!important;border:none!important;width:100%!important;max-width:1320px!important;margin:0 auto!important;}' +
+      '.demaze-showcase-left{flex:0 0 280px!important;}' +
       '.demaze-showcase-eyebrow{display:inline-flex;align-items:center;gap:8px;background:#f1f2fe;color:' + BRAND_BLUE + ';' +
-      'font-size:13px;font-weight:600;letter-spacing:0.02em;padding:6px 14px;border-radius:100px;margin-bottom:20px;}' +
-      '.demaze-showcase-heading{font-size:clamp(24px,3vw,34px);font-weight:600;color:rgb(0,0,0);margin:0;line-height:1.2;}' +
+      'font-size:13px;font-weight:600;letter-spacing:0.02em;padding:6px 14px;border-radius:100px;margin-bottom:16px;}' +
+      '.demaze-showcase-heading{font-size:clamp(24px,2.8vw,34px);font-weight:700;color:rgb(0,0,0);margin:0;line-height:1.2;letter-spacing:-0.01em;}' +
       '.demaze-project-stack{flex:1 1 auto!important;min-width:0!important;display:block!important;' +
       'background:transparent!important;padding:0!important;border:none!important;width:auto!important;}' +
-      '.demaze-project-card{background:#fff;border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,0.10);' +
-      'display:flex;gap:40px;align-items:center;flex-wrap:wrap;padding:40px;margin-bottom:32px;}' +
-      '.demaze-project-text{flex:1 1 280px;min-width:240px;}' +
-      '.demaze-project-media{flex:1 1 320px;min-width:240px;border-radius:20px;overflow:hidden;background:#f1f2f4;' +
-      'aspect-ratio:1.15;}' +
+      '.demaze-project-card{background:#fff;border-radius:24px;border:1px solid rgba(0,0,0,0.07);box-shadow:0 16px 44px rgba(0,0,0,0.07);' +
+      'display:grid!important;grid-template-columns:1.2fr 1fr!important;gap:28px!important;align-items:center!important;padding:28px 30px!important;margin-bottom:64px!important;box-sizing:border-box;}' +
+      '.demaze-project-text{display:flex;flex-direction:column;justify-content:center;min-width:0;}' +
+      '.demaze-project-media{border-radius:16px;overflow:hidden;background:#f1f2f4;max-height:280px;height:260px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,0.06);}' +
       '.demaze-project-media img{width:100%;height:100%;object-fit:cover;display:block;}' +
-      '.demaze-project-title{font-size:clamp(19px,2.2vw,26px);font-weight:600;color:rgb(0,0,0);margin:0 0 12px;line-height:1.25;}' +
-      '.demaze-project-desc{color:' + MUTED + ';font-size:15px;line-height:1.6;margin:0 0 20px;}' +
-      '.demaze-project-features{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;}' +
-      '.demaze-project-features li{display:flex;align-items:flex-start;gap:10px;color:rgb(33,37,41);font-size:14px;line-height:1.5;}' +
-      '.demaze-project-features svg{flex:none;margin-top:2px;}' +
+      '.demaze-project-title{font-size:clamp(18px,2vw,22px);font-weight:700;color:rgb(0,0,0);margin:0 0 10px;line-height:1.3;}' +
+      '.demaze-project-desc{color:' + MUTED + ';font-size:13.5px;line-height:1.55;margin:0 0 16px;' +
+      'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}' +
+      '.demaze-project-features{list-style:none;padding:0;margin:0;display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px 14px!important;}' +
+      '.demaze-project-features li{display:flex;align-items:flex-start;gap:8px;color:rgb(33,37,41);font-size:12.5px;line-height:1.35;}' +
+      '.demaze-project-features svg{flex:none;margin-top:1px;width:15px;height:15px;}' +
       '@media (min-width:810px){' +
-      '.demaze-showcase-left{position:sticky!important;top:110px!important;}' +
-      '.demaze-project-card{position:sticky;}' +
+      '.demaze-showcase-left{position:sticky!important;top:100px!important;}' +
+      '.demaze-project-card{position:sticky;top:100px;}' +
       '}' +
       '@media (max-width:809px){' +
       '.demaze-showcase-grid{flex-direction:column!important;gap:24px!important;}' +
       '.demaze-showcase-left{flex:none!important;width:100%!important;position:static!important;}' +
-      '.demaze-project-card{padding:24px;gap:24px;position:static!important;}' +
+      '.demaze-project-card{grid-template-columns:1fr!important;padding:22px;gap:20px;position:static!important;margin-bottom:24px!important;}' +
+      '.demaze-project-media{height:200px;max-height:220px;}' +
+      '.demaze-project-features{grid-template-columns:1fr!important;}' +
       '}' +
       '.demaze-showcase-cta-wrap{margin-top:28px;display:inline-block;}' +
       '.demaze-showcase-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:100px;background:#fff;border:1px solid rgba(0,0,0,0.12);color:rgb(0,0,0);font-weight:600;font-size:14px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,0.05);transition:all 0.2s ease;}' +
@@ -75,25 +77,24 @@
 
   function checkIcon() {
     return (
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-      '<circle cx="12" cy="12" r="11" stroke="' + BRAND_BLUE + '" stroke-width="1.5"/>' +
-      '<path d="M7.5 12.5L10.5 15.5L16.5 9" stroke="' + BRAND_BLUE + '" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="12" cy="12" r="11" stroke="' + BRAND_BLUE + '" stroke-width="1.75"/>' +
+      '<path d="M7.5 12.5L10.5 15.5L16.5 9" stroke="' + BRAND_BLUE + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
       '</svg>'
     );
   }
 
   function cardHTML(project, i) {
-    var topOffset = 110 + i * 28;
     var featureItems = project.features
       .map(function (f) {
         return '<li>' + checkIcon() + '<span>' + f + '</span></li>';
       })
       .join('');
     return (
-      '<div class="demaze-project-card" style="top:' + topOffset + 'px;z-index:' + (i + 1) + ';">' +
+      '<div class="demaze-project-card" style="z-index:' + (i + 1) + ';">' +
       '<div class="demaze-project-text">' +
       '<h3 class="demaze-project-title">' + project.title + '</h3>' +
-      '<p class="demaze-project-desc">' + project.description + '</p>' +
+      '<p class="demaze-project-desc" title="' + project.description.replace(/"/g, '&quot;') + '">' + project.description + '</p>' +
       '<ul class="demaze-project-features">' + featureItems + '</ul>' +
       '</div>' +
       '<div class="demaze-project-media"><img src="' + project.image + '" alt="' + project.title + '"></div>' +

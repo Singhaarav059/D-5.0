@@ -34,22 +34,21 @@ Files:
 
 | # | MOVIQ section (`data-framer-name`) | Demaze section | Status |
 |---|---|---|---|
-| 1 | `Hero` | Hero | ✅ Done — Real H1, subcopy, CTAs, and Demaze's 3D AI orbital graphic (`gEkiT3ZXQjzhw917maTHw6Mo51c.png`). |
-| 2 | *(new)* — nested inside Hero's container | Founder testimonial (Krupal Chaudhary) | ✅ Done — Quote, attribution, and verified portrait avatar (`e57nypBBfPrAXfYYyYgNJBgJBo.jpeg`). |
-| 3 | `Badge` | Technology Stack | ✅ Done — Infinite marquee ticker populated with 8 official AI & ML platform partner logos from demazetech.com. |
-| 4 | `Videos making Step` | Our Process | ✅ Done — Custom 4-step card block nested in Hero container (`Discover & Define`, `Design & Prototype`, `Build & Integrate`, `Launch & Scale`). Native section hidden. |
-| 5 | `Sricpt` | Featured Projects | ✅ Done — Sticky peek-stack with 4 verified projects + "View all work" CTA button linking to `./projects`. |
-| 6 | `Tools` (1st) | Core Capabilities | ✅ Done — Scroll-driven unfold with 4 pillars, each with real illustration graphic and 6 specialized sub-services. |
-| 7 | `CTA` (1st) | — | ✅ **Removed** (hidden). |
-| 8 | `Products` | Who We Are | ✅ Done — Heading, narrative text, 9 capability keyword badges, and Demaze illustration card (`8dANM4w4wJIzmtS0xJgDEOS4rLc.png`). |
-| 9 | `Ai Powered` | What Drives Us | ✅ Done — 4 real value cards (`Innovation at Our Core`, `Client Success Obsession`, `Technology for Good`, `Continuous Learning`). |
-| 10 | `Tools` (2nd) | Industries We Serve | ✅ Done — Interactive tab bar extended to all 19 real industries with custom click handler & per-industry sub-item checklist. |
-| 11 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + stat row (45+/$10M+/35+/6+). |
-| 12 | `CTA` (2nd) | — | ✅ **Removed** (hidden). |
-| 13 | `Pricing` | — | ✅ **Removed** (hidden). |
-| 14 | `CTA` (3rd) | Final CTA + Reach Us At Anytime (Contact) | ✅ Done — Closing banner + 3 direct contact cards (Email, Calendly, Ahmedabad office) + interactive inquiry form. |
-| 15 | `Faq` | FAQ | ✅ Done — "FAQS: Questions? Answers!" with all 5 verified Q&As and working accordion. |
-| — | `<header><nav>` | Branding/nav | ✅ Done — Demaze logo, desktop nav links (`Projects`, `Services`, `About Us`, `Contact Us`), and `Book A Call` CTA button. |
+| 1 | `Hero` | Hero | ✅ Done — Real H1, subcopy, CTAs, Krupal Chaudhary Testimonial; floating 3D graphic removed. |
+| 2 | `Badge` | Technology Stack | ✅ Done — Infinite marquee ticker populated with 8 official AI & ML platform partner logos from demazetech.com. |
+| 3 | `Videos making Step` | Our Process | ✅ Done — Mounted in native section: 4-step card grid (`Discover & Define`, `Design & Prototype`, `Build & Integrate`, `Launch & Scale`). Zero overlap. |
+| 4 | `Sricpt` | Featured Projects | ✅ Done — Compact 2-column project cards with 2-column features list, fitted perfectly to single-screen view without cutoff. |
+| 5 | `Tools` (1st) | Core Capabilities (Services) | ✅ Done — 4 service pillars with immediate visibility and zero white space gap. |
+| 6 | `CTA` (1st) | — | ✅ **Removed** (hidden). |
+| 7 | `Tools` (2nd) | AI Video Creation | ✅ **Removed** (hidden MOVIQ leftover). |
+| 8 | `Ai Powered` | What Drives Us | ✅ Done — 4 real value cards with bespoke high-res AI & cloud engineering graphics. |
+| 9 | `Products` | Who We Are | ✅ Done — Heading, narrative text, 9 capability keyword badges, and Demaze illustration card. |
+| 10 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + stat row. |
+| 11 | `CTA` (2nd) | — | ✅ **Removed** (hidden). |
+| 12 | `Pricing` | — | ✅ **Removed** (hidden). |
+| 13 | `CTA` (3rd) | Final CTA + Reach Us At Anytime (Contact) | ✅ Done — Closing banner + sleek 3-card frosted glass contact bar (Email, Calendly, Ahmedabad office). |
+| 14 | `Faq` | FAQ | ✅ Done — "FAQS: Questions? Answers!" with all 5 verified Q&As and working accordion. |
+| — | `<header><nav>` | Branding/nav | ✅ Done — Demaze logo, desktop nav links (`Projects`, `Services`, `About Us`, `Contact Us`), and `Book A Call` CTA button. All MOVIQ options removed. |
 | — | `<footer>` | Footer | ✅ Done — Logo, tagline, description, copyright, and 4 quick links. |
 
 **Mapping decisions worth remembering:**

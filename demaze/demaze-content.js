@@ -11,7 +11,7 @@ window.DEMAZE_CONTENT = {
       "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
     primaryCTA: { text: "Let's Connect", href: "./contact" },
     secondaryCTA: { text: "Explore Services", href: "./services" },
-    heroImage: "https://framerusercontent.com/images/gEkiT3ZXQjzhw917maTHw6Mo51c.png",
+    heroImage: null,
   },
   testimonial: {
     // From demazetech.com homepage, right after the Hero.
@@ -210,21 +210,25 @@ window.DEMAZE_CONTENT = {
       items: [
         {
           title: "Innovation at Our Core",
+          image: "/assets/demaze/ai_execution_graphic_1789813451769.jpg",
           description:
             "We're driven by the challenge of turning ambitious ideas into reality. Every project is an opportunity to push boundaries and create something extraordinary that makes a meaningful impact.",
         },
         {
           title: "Client Success Obsession",
+          image: "/assets/demaze/eng_ownership_graphic_1789813608834.jpg",
           description:
             "Your success is our success. We're motivated by seeing our clients achieve breakthrough results, streamline operations, and unlock new growth opportunities through the solutions we build together.",
         },
         {
           title: "Technology for Good",
+          image: "/assets/demaze/cloud_scale_graphic_1789813631564.jpg",
           description:
             "We believe technology should empower, simplify, and enhance human potential. This drives us to create solutions that not only solve problems but also open new possibilities for businesses and their customers.",
         },
         {
           title: "Continuous Learning",
+          image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
           description:
             "In a rapidly evolving tech landscape, we're driven by curiosity and the pursuit of excellence. We constantly evolve our skills and adopt emerging technologies to deliver the most advanced solutions.",
         },

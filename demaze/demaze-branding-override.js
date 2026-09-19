@@ -70,6 +70,8 @@
       'border-radius:100px;background:#fff;color:#000;font-size:13px;font-weight:600;text-decoration:none;' +
       'transition:all 0.2s ease;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.12);}' +
       '.demaze-nav-btn:hover{background:rgb(240,240,240);transform:translateY(-1px);}' +
+      'nav[data-framer-name="Nav"] [data-framer-name="Menu"],' +
+      'nav[data-framer-name="Nav"] [data-framer-name="Button"]{display:none!important;}' +
       '@media (max-width:809px){.demaze-nav-links-wrap{display:none!important;}}';
     document.head.appendChild(style);
   }
@@ -82,6 +84,12 @@
       logoImg.setAttribute('srcset', '');
       logoImg.setAttribute('alt', LOGO_ALT);
     }
+
+    // Completely hide MOVIQ's native navigation items
+    var moviqMenu = nav.querySelector('[data-framer-name="Menu"]');
+    if (moviqMenu) moviqMenu.style.setProperty('display', 'none', 'important');
+    var moviqBtn = nav.querySelector('[data-framer-name="Button"]');
+    if (moviqBtn) moviqBtn.style.setProperty('display', 'none', 'important');
 
     if (content.navLinks && !nav.querySelector('.demaze-nav-links-wrap')) {
       var linksWrap = document.createElement('div');
@@ -98,12 +106,7 @@
       ctaBtn.textContent = content.ctaButton ? content.ctaButton.text : 'Book A Call';
       linksWrap.appendChild(ctaBtn);
 
-      var menuContainer = nav.querySelector('[data-framer-name="Menu"]');
-      if (menuContainer) {
-        nav.insertBefore(linksWrap, menuContainer);
-      } else {
-        nav.appendChild(linksWrap);
-      }
+      nav.appendChild(linksWrap);
     }
   }
 

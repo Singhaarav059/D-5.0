@@ -56,6 +56,15 @@
       var desc = card.querySelector('[data-framer-name="Feature Description"]');
       if (desc) desc.textContent = item.description;
 
+      var cardImg = card.querySelector('img');
+      if (cardImg && item.image) {
+        cardImg.setAttribute('src', item.image);
+        cardImg.setAttribute('srcset', '');
+        cardImg.style.objectFit = 'cover';
+        cardImg.style.borderRadius = '16px';
+        cardImg.style.maxHeight = '220px';
+      }
+
       // The "AI Voice Studio" card has an extra nested language-option list
       // (Canadian/Chinese/English) beyond title+description+image — no
       // Demaze equivalent, hide it rather than leaving MOVIQ copy showing.
