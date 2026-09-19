@@ -34,7 +34,9 @@
   }
 
   function applyOverride(section) {
-    // Heading + subheading.
+    // Heading + subheading + eyebrow tag.
+    var tag = section.querySelector('[data-framer-name="Tag"] p, [data-framer-name="Badge Text"] p');
+    if (tag && content.eyebrow) tag.textContent = content.eyebrow;
     var heading = section.querySelector('[data-framer-name="Heading"] h2, h2');
     if (heading) setGradientText(heading, content.heading);
     var subheading = section.querySelector('[data-framer-name="Subheading"]');

@@ -34,23 +34,23 @@ Files:
 
 | # | MOVIQ section (`data-framer-name`) | Demaze section | Status |
 |---|---|---|---|
-| 1 | `Hero` | Hero | ✅ Done |
-| 2 | *(new)* — nested inside Hero's own container, not a new top-level sibling (see note below) | Founder testimonial (Krupal Chaudhary) | ✅ Done. See `demaze-testimonial-override.js`. |
-| 3 | `Badge` | Technology Stack | ✅ Done |
-| 4 | `Videos making Step` | Our Process | ✅ Done — MOVIQ's native section is left hidden (its root `display:none`, confirmed safe, never touched further); Demaze's real 4 steps are instead a brand-new custom-built 4-card block nested inside Hero's own container (same pattern as the testimonial). See `demaze-process-override.js` and lesson #6 above re: the console message this can trigger. |
-| 5 | `Sricpt` | Featured Projects | ✅ Done — sticky peek-stack, custom-built. Content re-verified against current live homepage and corrected (full descriptions, live feature order, "Drag" typo fixed). |
-| 6 | `Tools` (1st) | Core Capabilities | ✅ Done — scroll-driven unfold, custom-built. |
-| 7 | `CTA` (1st, "Ready to bring your brand to life on video?") | — | ✅ **Removed** (hidden) — no Demaze equivalent. |
-| 8 | `Products` | Who We Are | ✅ Done — heading + injected paragraph (no body-text slot existed natively), image gallery hidden (no legitimate Demaze images). **Not reordered** — stays in MOVIQ's native position (after What Drives Us), not before it as originally proposed; reordering full sections via `insertBefore` across parents also crashes React fatally (same class of bug as lesson #6). See `demaze-aboutus-override.js`. |
-| 9 | `Ai Powered` | What Drives Us | ✅ Done — 4 real items in the first 4 card slots, 5th slot hidden, MOVIQ's language-option decoration (Canadian/Chinese/English) inside one card hidden. See `demaze-whatdrivesus-override.js`. |
-| 10 | `Tools` (2nd, tab bar + checklist panel) | Industries We Serve | ✅ Done — tab bar extended from 4 to 19 (Demaze's real industry count — not 18, corrected after miscounting earlier), custom click handler (capture-phase, stops MOVIQ's own tab logic) rebuilds the panel per industry with the exact real sub-item count. See `demaze-industries-override.js`. |
-| 11 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 cards plus a stat row (45+/$10M+/35+/6+) appended within the same custom-built section. |
-| 12 | `CTA` (2nd, same promo copy as #7) | — | ✅ **Removed** (hidden). |
-| 13 | `Pricing` | — | ✅ **Removed entirely** (hidden) — no public Demaze pricing, nothing invented. |
-| 14 | `CTA` (3rd, already linked `./contact`) | Final CTA | ✅ Done — real closing line, single "Let's Connect" button. |
-| 15 | `Faq` | FAQ | ✅ Done — category tabs hidden, 6th slot hidden, all 5 real Q&As populated, accordion behavior untouched. |
-| — | `<header><nav>` | Branding/nav | ✅ Done (logo only) — hotlinked the real Demaze logo from demazetech.com. **No real nav link menu found**: confirmed live the hamburger icon mounts no panel in this exported build; what looked like a nav dropdown in an earlier pass was actually the footer's own Quick Links column. `navLinks`/`ctaButton` are still in `demaze-content.js` for whenever a real nav menu slot is found. |
-| — | `<footer>` | Footer | ✅ Done — logo, tagline, description, copyright, and all 4 real links in the first column; the other 3 MOVIQ link columns (Company/Resources/Legal) and the social-icon row are hidden entirely (no Demaze equivalents). See lesson #6 re: the console message this can trigger — page behavior confirmed correct regardless. |
+| 1 | `Hero` | Hero | ✅ Done — Real H1, subcopy, CTAs, and Demaze's 3D AI orbital graphic (`gEkiT3ZXQjzhw917maTHw6Mo51c.png`). |
+| 2 | *(new)* — nested inside Hero's container | Founder testimonial (Krupal Chaudhary) | ✅ Done — Quote, attribution, and verified portrait avatar (`e57nypBBfPrAXfYYyYgNJBgJBo.jpeg`). |
+| 3 | `Badge` | Technology Stack | ✅ Done — Infinite marquee ticker populated with 8 official AI & ML platform partner logos from demazetech.com. |
+| 4 | `Videos making Step` | Our Process | ✅ Done — Custom 4-step card block nested in Hero container (`Discover & Define`, `Design & Prototype`, `Build & Integrate`, `Launch & Scale`). Native section hidden. |
+| 5 | `Sricpt` | Featured Projects | ✅ Done — Sticky peek-stack with 4 verified projects + "View all work" CTA button linking to `./projects`. |
+| 6 | `Tools` (1st) | Core Capabilities | ✅ Done — Scroll-driven unfold with 4 pillars, each with real illustration graphic and 6 specialized sub-services. |
+| 7 | `CTA` (1st) | — | ✅ **Removed** (hidden). |
+| 8 | `Products` | Who We Are | ✅ Done — Heading, narrative text, 9 capability keyword badges, and Demaze illustration card (`8dANM4w4wJIzmtS0xJgDEOS4rLc.png`). |
+| 9 | `Ai Powered` | What Drives Us | ✅ Done — 4 real value cards (`Innovation at Our Core`, `Client Success Obsession`, `Technology for Good`, `Continuous Learning`). |
+| 10 | `Tools` (2nd) | Industries We Serve | ✅ Done — Interactive tab bar extended to all 19 real industries with custom click handler & per-industry sub-item checklist. |
+| 11 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + stat row (45+/$10M+/35+/6+). |
+| 12 | `CTA` (2nd) | — | ✅ **Removed** (hidden). |
+| 13 | `Pricing` | — | ✅ **Removed** (hidden). |
+| 14 | `CTA` (3rd) | Final CTA + Reach Us At Anytime (Contact) | ✅ Done — Closing banner + 3 direct contact cards (Email, Calendly, Ahmedabad office) + interactive inquiry form. |
+| 15 | `Faq` | FAQ | ✅ Done — "FAQS: Questions? Answers!" with all 5 verified Q&As and working accordion. |
+| — | `<header><nav>` | Branding/nav | ✅ Done — Demaze logo, desktop nav links (`Projects`, `Services`, `About Us`, `Contact Us`), and `Book A Call` CTA button. |
+| — | `<footer>` | Footer | ✅ Done — Logo, tagline, description, copyright, and 4 quick links. |
 
 **Mapping decisions worth remembering:**
 - Tools & Technologies and Industries do NOT compete for the same MOVIQ slot — Tools & Tech lives in `Badge`, which freed up the `Tools`(2nd) tab+checklist structure entirely for Industries.

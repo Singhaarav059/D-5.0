@@ -66,7 +66,10 @@
       '.demaze-showcase-grid{flex-direction:column!important;gap:24px!important;}' +
       '.demaze-showcase-left{flex:none!important;width:100%!important;position:static!important;}' +
       '.demaze-project-card{padding:24px;gap:24px;position:static!important;}' +
-      '}';
+      '}' +
+      '.demaze-showcase-cta-wrap{margin-top:28px;display:inline-block;}' +
+      '.demaze-showcase-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:100px;background:#fff;border:1px solid rgba(0,0,0,0.12);color:rgb(0,0,0);font-weight:600;font-size:14px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,0.05);transition:all 0.2s ease;}' +
+      '.demaze-showcase-cta:hover{background:#f8f9fa;border-color:rgba(0,0,0,0.2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}';
     document.head.appendChild(style);
   }
 
@@ -134,6 +137,14 @@
     var headingTarget = gradientSpan || h2;
     headingTarget.style.setProperty('--framer-text-alignment', 'left');
     headingTarget.textContent = content.heading;
+
+    // View all work CTA
+    if (content.viewAllCTA && !headlineContainer.querySelector('.demaze-showcase-cta-wrap')) {
+      var ctaWrap = document.createElement('div');
+      ctaWrap.className = 'demaze-showcase-cta-wrap';
+      ctaWrap.innerHTML = '<a href="' + content.viewAllCTA.href + '" class="demaze-showcase-cta">' + content.viewAllCTA.text + ' &rarr;</a>';
+      headlineContainer.appendChild(ctaWrap);
+    }
 
     // Subtitle has no Demaze equivalent copy — hide, don't remove, so React
     // still owns the node.

@@ -37,7 +37,25 @@
     return !!(heading && heading.textContent.trim().length > 0);
   }
 
+  var STYLE_ID = 'demaze-aboutus-style';
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent =
+      '.demaze-about-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:860px;margin:28px auto 36px;}' +
+      '.demaze-about-badge{background:#fff;border:1px solid rgba(44,83,199,0.18);color:#2C53C7;font-size:12.5px;font-weight:600;' +
+      'padding:6px 16px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s ease;}' +
+      '.demaze-about-badge:hover{transform:translateY(-1px);border-color:#2C53C7;box-shadow:0 4px 12px rgba(44,83,199,0.12);}' +
+      '.demaze-about-img-card{max-width:960px;margin:0 auto;border-radius:24px;overflow:hidden;' +
+      'box-shadow:0 20px 60px rgba(0,0,0,0.08);background:#fff;border:1px solid rgba(0,0,0,0.06);}' +
+      '.demaze-about-img-card img{width:100%;height:auto;display:block;max-height:480px;object-fit:cover;}';
+    document.head.appendChild(style);
+  }
+
   function applyOverride(section) {
+    ensureStyle();
     var heading = section.querySelector('[data-framer-name="Header Text"] h2');
     if (heading) {
       var span = heading.querySelector('span');
@@ -52,6 +70,26 @@
         'max-width:760px;margin:20px auto 0;text-align:center;font-size:16px;line-height:1.7;color:rgb(108, 119, 131);';
       p.textContent = content.paragraphs.join(' ');
       headerText.insertAdjacentElement('afterend', p);
+
+      // Capability badges
+      if (content.badges && content.badges.length > 0 && !section.querySelector('.demaze-about-badges')) {
+        var badgesWrap = document.createElement('div');
+        badgesWrap.className = 'demaze-about-badges';
+        badgesWrap.innerHTML = content.badges
+          .map(function (b) {
+            return '<span class="demaze-about-badge">' + b + '</span>';
+          })
+          .join('');
+        p.insertAdjacentElement('afterend', badgesWrap);
+
+        // Illustration image card
+        if (content.image && !section.querySelector('.demaze-about-img-card')) {
+          var imgCard = document.createElement('div');
+          imgCard.className = 'demaze-about-img-card';
+          imgCard.innerHTML = '<img src="' + content.image + '" alt="Demaze Digital Transformation">';
+          badgesWrap.insertAdjacentElement('afterend', imgCard);
+        }
+      }
     }
 
     var gallery = section.querySelector('[data-framer-name="Gallary"]');

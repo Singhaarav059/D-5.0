@@ -73,13 +73,27 @@
       headlineWrapper.insertAdjacentElement('afterend', desc);
     }
 
-    // Foreground product screenshot — MOVIQ-specific, no Demaze equivalent.
-    // Hidden, not removed. Match on the appear-id directly (its wrapper shape
-    // varies by breakpoint the same way the badge's does).
+    // Foreground product screenshot — replaced with Demaze's real 3D AI graphic
     var screenshotEl = hero.querySelector('[data-framer-appear-id="1ib2jhf"]');
     if (screenshotEl) {
       var screenshotOuter = screenshotEl.closest('.ssr-variant') || screenshotEl;
-      screenshotOuter.style.display = 'none';
+      if (content.heroImage) {
+        var img = screenshotEl.querySelector('img');
+        if (img) {
+          img.setAttribute('src', content.heroImage);
+          img.setAttribute('srcset', '');
+          img.style.objectFit = 'contain';
+          img.style.mixBlendMode = 'normal';
+          img.style.maxHeight = '400px';
+          img.style.filter = 'drop-shadow(0 20px 40px rgba(0,0,0,0.35))';
+        }
+        // Remove dark overlay if present
+        var overlay = screenshotEl.querySelector('.framer-1bdrozj');
+        if (overlay) overlay.style.display = 'none';
+        screenshotOuter.style.display = '';
+      } else {
+        screenshotOuter.style.display = 'none';
+      }
     }
 
     // Primary CTA

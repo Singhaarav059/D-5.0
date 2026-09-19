@@ -35,6 +35,9 @@
         img.setAttribute('src', item.icon);
         img.setAttribute('srcset', '');
         img.setAttribute('alt', item.name + ' logo');
+        img.style.objectFit = 'contain';
+        img.style.maxHeight = '36px';
+        img.style.width = 'auto';
       });
 
       // MOVIQ's ticker only shows bare logos with no name. Demaze's own

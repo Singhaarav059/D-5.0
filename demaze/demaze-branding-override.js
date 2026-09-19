@@ -55,12 +55,55 @@
     return !!(nav && nav.querySelector('img') && footer && footer.querySelector('[data-framer-name="Menu"]'));
   }
 
+  var NAV_STYLE_ID = 'demaze-nav-style';
+
+  function ensureNavStyle() {
+    if (document.getElementById(NAV_STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = NAV_STYLE_ID;
+    style.textContent =
+      '.demaze-nav-links-wrap{display:flex;align-items:center;gap:24px;margin:0 20px;z-index:2;}' +
+      '.demaze-nav-link{color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;text-decoration:none;' +
+      'transition:color 0.2s ease;white-space:nowrap;}' +
+      '.demaze-nav-link:hover{color:#fff;}' +
+      '.demaze-nav-btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 20px;' +
+      'border-radius:100px;background:#fff;color:#000;font-size:13px;font-weight:600;text-decoration:none;' +
+      'transition:all 0.2s ease;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.12);}' +
+      '.demaze-nav-btn:hover{background:rgb(240,240,240);transform:translateY(-1px);}' +
+      '@media (max-width:809px){.demaze-nav-links-wrap{display:none!important;}}';
+    document.head.appendChild(style);
+  }
+
   function applyNav(nav) {
+    ensureNavStyle();
     var logoImg = nav.querySelector('img');
     if (logoImg) {
       logoImg.setAttribute('src', LOGO_SRC);
       logoImg.setAttribute('srcset', '');
       logoImg.setAttribute('alt', LOGO_ALT);
+    }
+
+    if (content.navLinks && !nav.querySelector('.demaze-nav-links-wrap')) {
+      var linksWrap = document.createElement('div');
+      linksWrap.className = 'demaze-nav-links-wrap';
+      linksWrap.innerHTML = content.navLinks
+        .map(function (l) {
+          return '<a href="' + l.href + '" class="demaze-nav-link">' + l.text + '</a>';
+        })
+        .join('');
+
+      var ctaBtn = document.createElement('a');
+      ctaBtn.className = 'demaze-nav-btn';
+      ctaBtn.href = content.ctaButton ? content.ctaButton.href : './contact';
+      ctaBtn.textContent = content.ctaButton ? content.ctaButton.text : 'Book A Call';
+      linksWrap.appendChild(ctaBtn);
+
+      var menuContainer = nav.querySelector('[data-framer-name="Menu"]');
+      if (menuContainer) {
+        nav.insertBefore(linksWrap, menuContainer);
+      } else {
+        nav.appendChild(linksWrap);
+      }
     }
   }
 

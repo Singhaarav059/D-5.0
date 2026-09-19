@@ -42,8 +42,11 @@
       '.demaze-testimonial{padding:96px 24px;text-align:center;max-width:860px;margin:0 auto;}' +
       '.demaze-testimonial-mark{font-size:64px;line-height:1;color:' + BRAND_BLUE + ';font-family:Georgia,serif;margin-bottom:8px;}' +
       '.demaze-testimonial-quote{font-size:clamp(20px,2.6vw,30px);line-height:1.5;font-weight:500;color:rgb(0,0,0);margin:0 0 28px;}' +
-      '.demaze-testimonial-name{font-size:16px;font-weight:600;color:rgb(0,0,0);}' +
-      '.demaze-testimonial-title{font-size:14px;color:' + MUTED + ';margin-top:2px;}';
+      '.demaze-testimonial-byline{display:inline-flex;align-items:center;gap:14px;background:#fff;padding:6px 20px 6px 8px;border-radius:100px;box-shadow:0 6px 20px rgba(0,0,0,0.06), inset 0 2px 2px #fff;border:1px solid rgba(0,0,0,0.06);}' +
+      '.demaze-testimonial-avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.12);flex-shrink:0;}' +
+      '.demaze-testimonial-info{text-align:left;}' +
+      '.demaze-testimonial-name{font-size:15px;font-weight:600;color:rgb(0,0,0);line-height:1.2;}' +
+      '.demaze-testimonial-title{font-size:13px;color:' + MUTED + ';margin-top:3px;line-height:1.2;}';
     document.head.appendChild(style);
   }
 
@@ -59,12 +62,20 @@
     var wrap = document.createElement('div');
     wrap.id = SECTION_ID;
     wrap.className = 'demaze-testimonial-wrap';
+    var avatarHTML = content.avatar
+      ? '<img src="' + content.avatar + '" class="demaze-testimonial-avatar" alt="' + content.name + '">'
+      : '';
     wrap.innerHTML =
       '<div class="demaze-testimonial">' +
       '<div class="demaze-testimonial-mark">&ldquo;</div>' +
       '<p class="demaze-testimonial-quote">' + content.quote + '</p>' +
+      '<div class="demaze-testimonial-byline">' +
+      avatarHTML +
+      '<div class="demaze-testimonial-info">' +
       '<div class="demaze-testimonial-name">' + content.name + '</div>' +
       '<div class="demaze-testimonial-title">' + content.title + '</div>' +
+      '</div>' +
+      '</div>' +
       '</div>';
     return wrap;
   }

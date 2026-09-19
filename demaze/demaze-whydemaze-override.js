@@ -40,9 +40,10 @@
       '.demaze-whydemaze-row{display:flex!important;flex-direction:row!important;gap:24px!important;' +
       'width:100%!important;flex-wrap:wrap;background:transparent!important;padding:0!important;border:none!important;}' +
       '.demaze-whydemaze-card{flex:1 1 260px;min-width:240px;background:#fff;border:1px solid rgba(0,0,0,0.06);' +
-      'border-radius:24px;padding:32px;}' +
+      'border-radius:24px;padding:32px;display:flex;flex-direction:column;}' +
       '.demaze-whydemaze-icon{width:48px;height:48px;border-radius:100px;background:#f1f2fe;' +
       'display:flex;align-items:center;justify-content:center;margin-bottom:20px;}' +
+      '.demaze-whydemaze-art{width:100%;height:150px;object-fit:contain;margin-bottom:20px;display:block;}' +
       '.demaze-whydemaze-card h6{font-size:18px;font-weight:600;color:rgb(0,0,0);margin:0 0 12px;}' +
       '.demaze-whydemaze-card p{font-size:14px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
       '@media (max-width:809px){.demaze-whydemaze-row{flex-direction:column!important;}}' +
@@ -64,9 +65,12 @@
   }
 
   function cardHTML(item, i) {
+    var iconHTML = item.image
+      ? '<img class="demaze-whydemaze-art" src="' + item.image + '" alt="' + item.title + '">'
+      : '<div class="demaze-whydemaze-icon"><img src="' + ICONS[i % ICONS.length] + '" width="22" height="22" alt=""></div>';
     return (
       '<div class="demaze-whydemaze-card">' +
-      '<div class="demaze-whydemaze-icon"><img src="' + ICONS[i % ICONS.length] + '" width="22" height="22" alt=""></div>' +
+      iconHTML +
       '<h6>' + item.title + '</h6>' +
       '<p>' + item.description + '</p>' +
       '</div>'

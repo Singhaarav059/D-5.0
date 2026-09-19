@@ -43,16 +43,20 @@
       // ancestor+own-class selector, which beats a plain single-class
       // override on specificity — confirmed by testing (the stage was
       // collapsing to ~400px instead of the intended tall scroll region).
-      '.demaze-capabilities-stage{position:relative!important;height:260vh!important;display:block!important;}' +
-      '.demaze-capabilities-viewport{position:sticky;top:110px;height:380px;display:flex;align-items:center;}' +
-      '.demaze-capabilities-row{display:flex;gap:20px;width:100%;}' +
+      '.demaze-capabilities-stage{position:relative!important;height:280vh!important;display:block!important;}' +
+      '.demaze-capabilities-viewport{position:sticky;top:80px;height:520px;display:flex;align-items:center;}' +
+      '.demaze-capabilities-row{display:flex;gap:16px;width:100%;align-items:stretch;}' +
       '.demaze-capabilities-block{flex:1 1 0;min-width:0;background:linear-gradient(180deg,#f8f9fa 0%,#fff 100%);' +
-      'border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:28px 22px;text-align:center;' +
-      'will-change:transform,opacity;}' +
-      '.demaze-capabilities-block-icon{width:48px;height:48px;margin:0 auto 20px;border-radius:100px;' +
-      'display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,0.08);}' +
-      '.demaze-capabilities-block h6{font-size:16px;font-weight:600;color:rgb(33,37,41);margin:0 0 10px;}' +
-      '.demaze-capabilities-block p{font-size:13px;line-height:1.55;color:' + MUTED + ';margin:0;}' +
+      'border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:24px 18px;text-align:left;display:flex;flex-direction:column;' +
+      'box-shadow:0 12px 32px rgba(0,0,0,0.05);will-change:transform,opacity;}' +
+      '.demaze-capabilities-block-icon{width:52px;height:52px;margin:0 0 14px;border-radius:14px;' +
+      'display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,0.08);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.04);}' +
+      '.demaze-capabilities-block-icon img{width:100%;height:100%;object-fit:cover;display:block;}' +
+      '.demaze-capabilities-block h6{font-size:16px;font-weight:600;color:rgb(33,37,41);margin:0 0 8px;}' +
+      '.demaze-capabilities-block p{font-size:12.5px;line-height:1.5;color:' + MUTED + ';margin:0 0 14px;}' +
+      '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(0,0,0,0.06);padding-top:12px;}' +
+      '.demaze-capabilities-sublist li{font-size:11.5px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:6px;}' +
+      '.demaze-capabilities-sublist li::before{content:"";width:4px;height:4px;border-radius:50%;background:' + BRAND_BLUE + ';flex-shrink:0;}' +
       '@media (max-width:809px){' +
       '.demaze-capabilities-stage{height:auto!important;}' +
       '.demaze-capabilities-viewport{position:static;height:auto;display:block;}' +
@@ -73,11 +77,24 @@
   }
 
   function blockHTML(item) {
+    var iconHTML = item.image
+      ? '<img src="' + item.image + '" alt="' + item.title + '">'
+      : iconSvg();
+    var sublistHTML = item.subItems
+      ? '<ul class="demaze-capabilities-sublist">' +
+        item.subItems
+          .map(function (s) {
+            return '<li>' + s + '</li>';
+          })
+          .join('') +
+        '</ul>'
+      : '';
     return (
       '<div class="demaze-capabilities-block">' +
-      '<div class="demaze-capabilities-block-icon">' + iconSvg() + '</div>' +
+      '<div class="demaze-capabilities-block-icon">' + iconHTML + '</div>' +
       '<h6>' + item.title + '</h6>' +
       '<p>' + item.description + '</p>' +
+      sublistHTML +
       '</div>'
     );
   }

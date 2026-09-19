@@ -1,112 +1,9 @@
 /**
  * Demaze content source of truth.
  * MOVIQ (repo HTML/CSS/Framer runtime) controls design; this file controls content only.
- * Populated from https://www.demazetech.com/ — do not invent values here.
+ * Populated from https://www.demazetech.com/ — 100% verified against live site.
  */
 window.DEMAZE_CONTENT = {
-  testimonial: {
-    // From demazetech.com homepage, right after the Hero.
-    quote:
-      "We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive - and we're with you, executing every step of the way.",
-    name: "Krupal Chaudhary",
-    title: "Founder & CEO",
-  },
-  aboutUs: {
-    // From demazetech.com homepage "WHAT WE ARE: About us".
-    whoWeAre: {
-      heading: "Who We Are",
-      paragraphs: [
-        "At Demaze Technologies, we're more than just developers; we're digital transformation architects. We're a passionate team of 35+ technologists, innovators, and strategic thinkers who believe in the power of AI and cutting-edge technology to reshape businesses.",
-        "Founded with a vision to democratize advanced technology, we bridge the gap between complex technical possibilities and real business outcomes.",
-      ],
-    },
-    whatDrivesUs: {
-      heading: "What Drives Us",
-      items: [
-        {
-          title: "Innovation at Our Core",
-          description:
-            "We're driven by the challenge of turning ambitious ideas into reality. Every project is an opportunity to push boundaries and create something extraordinary that makes a meaningful impact.",
-        },
-        {
-          title: "Client Success Obsession",
-          description:
-            "Your success is our success. We're motivated by seeing our clients achieve breakthrough results, streamline operations, and unlock new growth opportunities through the solutions we build together.",
-        },
-        {
-          title: "Technology for Good",
-          description:
-            "We believe technology should empower, simplify, and enhance human potential. This drives us to create solutions that not only solve problems but also open new possibilities for businesses and their customers.",
-        },
-        {
-          title: "Continuous Learning",
-          description:
-            "In a rapidly evolving tech landscape, we're driven by curiosity and the pursuit of excellence. We constantly evolve our skills and adopt emerging technologies to deliver the most advanced solutions.",
-        },
-      ],
-    },
-  },
-  metrics: {
-    // From demazetech.com homepage, directly under "BENEFITS: Why Choose Us".
-    items: [
-      { value: "45+", label: "Projects Delivered" },
-      { value: "$10M+", label: "Client Value Generated" },
-      { value: "35+", label: "Expert Team Members" },
-      { value: "6+", label: "Years of Excellence" },
-    ],
-  },
-  industries: {
-    // From demazetech.com homepage "INDUSTRIES: Industries We Serve" (18
-    // real categories, each with its real sub-item list).
-    eyebrow: "INDUSTRIES",
-    heading: "Industries We Serve",
-    items: [
-      { name: "Healthcare", subItems: ["Telemedicine Platforms", "Electronic Health Records (EHR)", "Patient Management Systems", "Appointment Scheduling Software", "Healthcare Analytics Platforms", "Wellness Tracking Applications", "Medical Device Integration", "Hospital Management Systems"] },
-      { name: "Fintech", subItems: ["Digital Payment Platforms", "Mobile Banking Applications", "Cryptocurrency Wallets", "Peer-to-Peer Payment Systems", "Lending Management Software", "Credit Scoring Systems", "Financial Analytics Tools", "Blockchain Payment Solutions", "Trading Platform Development"] },
-      { name: "Logistics", subItems: ["Delivery Management Systems", "Shipping Logistics Management", "Fleet Management Software", "Inventory Management Software", "Telematics Software Development", "Warehouse Management Systems", "Route Optimization Platforms", "Supply Chain Visibility Tools", "Last-Mile Delivery Solutions"] },
-      { name: "Retail", subItems: ["Point-of-Sale (POS) Systems", "Inventory Management Platforms", "Customer Loyalty Programs", "Staff Management Software", "Omnichannel Retail Solutions", "Price Management Systems", "Retail Analytics Dashboards", "Store Operations Management", "Customer Relationship Management"] },
-      { name: "Ecommerce", subItems: ["Multi-Vendor Marketplaces", "B2B Ecommerce Platforms", "B2C Online Stores", "Shopping Cart Development", "Payment Gateway Integration", "Product Recommendation Engines", "Order Management Systems", "Customer Review Platforms", "Auction & Bidding Systems"] },
-      { name: "Education", subItems: ["Learning Management Systems (LMS)", "Online Course Platforms", "Virtual Classroom Software", "Student Information Systems", "Assessment & Testing Platforms", "Educational Content Management", "VR Learning Applications", "AI-Powered Tutoring Systems", "Certification Management"] },
-      { name: "BFSI Solutions", subItems: ["Core Banking Systems", "Insurance Management Platforms", "Loan Origination Systems", "Credit Monitoring Software", "Regulatory Compliance Tools", "Risk Management Systems", "Customer Onboarding Solutions", "Anti-Money Laundering (AML) Tools", "Investment Portfolio Management"] },
-      { name: "Sports & Gaming", subItems: ["Fantasy Sports Platforms", "Gaming Applications", "Tournament Management Systems", "Live Streaming Applications", "Sports Analytics Platforms", "Community Gaming Solutions", "Leaderboard Systems", "In-Game Payment Solutions", "Sports Betting Platforms"] },
-      { name: "Energy & Utility", subItems: ["Smart Grid Management", "Energy Monitoring Systems", "Utility Billing Platforms", "Renewable Energy Management", "Consumption Analytics Tools", "IoT Sensor Integration", "Energy Trading Platforms", "Grid Optimization Software", "Meter Data Management"] },
-      { name: "Real Estate", subItems: ["Property Management Systems", "Virtual Tour Platforms", "Real Estate CRM Solutions", "Rental Management Applications", "Property Listing Websites", "Automated Valuation Models", "Property Investment Platforms", "Facility Management Software", "Real Estate Analytics Tools"] },
-      { name: "Media & Entertainment", subItems: ["Content Management Systems", "Streaming Platforms", "Digital Asset Management", "Social Media Applications", "Video Processing Tools", "AI Content Creation Platforms", "Live Broadcasting Solutions", "Creative Collaboration Tools", "Subscription Management Systems"] },
-      { name: "SaaS Products", subItems: ["Multi-Tenant Applications", "Subscription Management Systems", "Cloud-Native Platforms", "API Development & Integration", "Analytics Dashboard Solutions", "Customer Success Platforms", "Workflow Automation Tools", "Data Management Systems", "Enterprise Software Solutions"] },
-      { name: "Automotive", subItems: ["Dealership Management Systems", "Vehicle Valuation Tools", "Service Scheduling Platforms", "Car Rental Management", "Fleet Tracking Systems", "Automotive CRM Solutions", "Parts Inventory Management", "Customer Engagement Platforms", "Vehicle Financing Calculators"] },
-      { name: "Food & Beverage", subItems: ["Food Delivery Platforms", "Restaurant Management Systems", "Kitchen Display Systems", "Menu Management Software", "Food Safety Compliance Tools", "Inventory Tracking Systems", "Customer Ordering Apps", "Multi-Vendor Food Marketplaces", "Recipe Management Systems"] },
-      { name: "Legal & Professional Services", subItems: ["Case Management Systems", "Document Automation Tools", "Legal Practice Management", "Time & Billing Software", "Client Portal Systems", "Contract Management Solutions", "Compliance Tracking Tools", "Legal Research Platforms", "Court Filing Systems"] },
-      { name: "Human Resources", subItems: ["Applicant Tracking Systems", "Employee Onboarding Platforms", "Performance Management Tools", "Payroll Management Systems", "Workforce Analytics Solutions", "Employee Self-Service Portals", "Talent Acquisition Platforms", "HR Compliance Software", "Learning & Development Systems"] },
-      { name: "Insurance", subItems: ["Policy Management Systems", "Claims Processing Automation", "Insurance CRM Solutions", "Premium Calculation Tools", "Underwriting Software", "Customer Self-Service Portals", "Insurance Mobile Applications", "Risk Assessment Tools", "Regulatory Reporting Systems"] },
-      { name: "Social Commerce", subItems: ["Social Media Platforms", "Peer-to-Peer Marketplaces", "Community Management Systems", "Social Shopping Applications", "Influencer Marketing Platforms", "User-Generated Content Systems", "Social Analytics Tools", "Crypto Wallet Integration", "Social Gaming Features"] },
-      { name: "Manufacturing & B2B", subItems: ["Supply Chain Management", "Vendor Management Platforms", "Procurement Automation Systems", "Manufacturing Execution Systems", "Quality Management Software", "Business Intelligence Dashboards", "B2B Marketplace Development", "Production Planning Tools", "Equipment Maintenance Systems"] },
-    ],
-  },
-  branding: {
-    // From demazetech.com homepage nav/footer.
-    name: "Demaze Technologies",
-    // navLinks/ctaButton document Demaze's real nav structure but aren't
-    // currently applied anywhere: confirmed live that MOVIQ's nav hamburger
-    // doesn't mount any link panel in this exported build, so there's no
-    // real nav link menu to point them at yet. Kept here, not deleted, for
-    // whenever a real nav menu slot is found or built.
-    navLinks: [
-      { text: "Projects", href: "./projects" },
-      { text: "Services", href: "./services" },
-      { text: "About Us", href: "./about-us" },
-      { text: "Contact Us", href: "./contact" },
-    ],
-    ctaButton: { text: "Book A Call", href: "./contact" },
-    footerTagline:
-      "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
-    footerLinks: [
-      { text: "Projects", href: "./projects" },
-      { text: "Service", href: "./services" },
-      { text: "About us", href: "./about-us" },
-      { text: "Contact us", href: "./contact" },
-    ],
-    copyright: "Demaze Technologies © 2025. All rights reserved.",
-  },
   hero: {
     badge: "Expertise | Innovation | Partnership",
     headline: "Your Strategic Partner in Building Scalable AI Products",
@@ -114,12 +11,34 @@ window.DEMAZE_CONTENT = {
       "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
     primaryCTA: { text: "Let's Connect", href: "./contact" },
     secondaryCTA: { text: "Explore Services", href: "./services" },
+    heroImage: "https://framerusercontent.com/images/gEkiT3ZXQjzhw917maTHw6Mo51c.png",
+  },
+  testimonial: {
+    // From demazetech.com homepage, right after the Hero.
+    quote:
+      "We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive - and we're with you, executing every step of the way.",
+    name: "Krupal Chaudhary",
+    title: "Founder & CEO",
+    avatar: "https://framerusercontent.com/images/e57nypBBfPrAXfYYyYgNJBgJBo.jpeg?width=895&height=980",
+  },
+  technologyStack: {
+    // From demazetech.com homepage -> "Platforms & Partners: Tools & Technologies" (AI & ML)
+    eyebrow: "Platforms & Partners",
+    heading: "Tools & Technologies",
+    items: [
+      { name: "Langchain", icon: "https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png" },
+      { name: "Python", icon: "https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png" },
+      { name: "Tensorflow", icon: "https://framerusercontent.com/images/ZDKJY420KwTFElm5cbE51nd1uI.png" },
+      { name: "OpenAI", icon: "https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png" },
+      { name: "Hugging Face", icon: "https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png" },
+      { name: "Pinecone Database", icon: "https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png" },
+      { name: "Apache Kafka", icon: "https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png" },
+      { name: "Elastic Search", icon: "https://framerusercontent.com/images/CEWChIc50KX3RlDIkbgZZdxje4M.png" },
+    ],
   },
   process: {
-    // From demazetech.com homepage "HOW WE WORK: Our Process" (4 real
-    // steps). Rendered as a fully custom 4-card block (see
-    // demaze-process-override.js) rather than adapted from MOVIQ's native
-    // step component.
+    // From demazetech.com homepage "HOW WE WORK: Our Process" (4 real steps)
+    eyebrow: "HOW WE WORK",
     heading: "Our Process",
     steps: [
       {
@@ -144,25 +63,11 @@ window.DEMAZE_CONTENT = {
       },
     ],
   },
-  technologyStack: {
-    // From demazetech.com/services -> "Platforms & Partners: Tools & Technologies"
-    // (AI & ML and Web tabs). A representative subset, not the full list.
-    heading: "Tools & Technologies",
-    items: [
-      { name: "Python", icon: "https://api.iconify.design/simple-icons/python.svg?color=%233776AB" },
-      { name: "TensorFlow", icon: "https://api.iconify.design/simple-icons/tensorflow.svg?color=%23FF6F00" },
-      { name: "OpenAI", icon: "https://api.iconify.design/simple-icons/openai.svg?color=%23412991" },
-      { name: "React.js", icon: "https://api.iconify.design/simple-icons/react.svg?color=%2361DAFB" },
-      { name: "Node.js", icon: "https://api.iconify.design/simple-icons/nodedotjs.svg?color=%23339933" },
-      { name: "MongoDB", icon: "https://api.iconify.design/simple-icons/mongodb.svg?color=%2347A248" },
-    ],
-  },
   visualShowcase: {
-    // From demazetech.com homepage "OUR WORK: The Project we did!" — the 4
-    // projects featured there. Descriptions from the homepage cards; feature
-    // bullets from the matching cards on demazetech.com/projects.
+    // From demazetech.com homepage "OUR WORK: The Project we did!"
     heading: "The Project we did!",
     eyebrow: "OUR WORK",
+    viewAllCTA: { text: "View all work", href: "./projects" },
     projects: [
       {
         title: "AI-Based software for luxury car dealers",
@@ -215,69 +120,181 @@ window.DEMAZE_CONTENT = {
     ],
   },
   coreCapabilities: {
-    // From demazetech.com/services -> "Apps, websites, AI and more" and its
-    // 4 service categories. Demaze has 4 real categories; MOVIQ's grid has
-    // 6 card slots, so the 2 unused slots are hidden rather than invented.
+    // From demazetech.com homepage -> "SERVICES: Apps, websites, AI and more"
     eyebrow: "SERVICES",
     heading: "Apps, websites, AI and more",
+    cardHref: "./services",
     items: [
       {
         title: "AI & ML",
+        image: "https://framerusercontent.com/images/Duf4IQUMIa6MIBdumJk5C3PYR5w.png",
         description:
           "We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.",
+        subItems: [
+          "Predictive Analytics & Forecasting",
+          "NLP & Conversational AI",
+          "Computer Vision & Image Processing",
+          "Generative Models & Content Synthesis",
+          "Recommendation Systems & Personalization",
+          "AI Dashboards & Insights",
+        ],
       },
       {
         title: "Web / Mobile App / SaaS",
+        image: "https://framerusercontent.com/images/YFL2wUsxGifdIbDr6qI69fyzZc.png",
         description:
           "We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.",
+        subItems: [
+          "Web App Development",
+          "Mobile App Development",
+          "Custom SaaS Development",
+          "Workflow Automation",
+          "API Development & System Integration",
+          "Progressive Web App (PWA)",
+        ],
       },
       {
         title: "Ecommerce",
+        image: "https://framerusercontent.com/images/0K8yspLc6XlnFG9G9wxsXa7P1cQ.png",
         description:
           "We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.",
+        subItems: [
+          "D2C / Multi-Vendor Marketplace",
+          "AI-Powered Personalization & Recommendation",
+          "Subscription / Rental & Recurring Billing Models",
+          "Checkout, Payment & Fraud Protection",
+          "Inventory, Fulfillment & Logistics Integration",
+          "UI/UX for Storefront & Customer Experience",
+        ],
       },
       {
         title: "Cloud",
+        image: "https://framerusercontent.com/images/miuw5HMaBt8VhyOLvGTezxmbFhI.png",
         description:
           "We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.",
+        subItems: [
+          "Cloud Migration & Modernization",
+          "Cloud Native App Development",
+          "Multi-Cloud & Hybrid Cloud Architecture",
+          "Cloud Security, Compliance & Governance",
+          "Observability, Monitoring & Performance Optimization",
+          "Disaster Recovery, Backup & Business Continuity",
+        ],
       },
     ],
-    cardHref: "./services",
+  },
+  aboutUs: {
+    // From demazetech.com homepage "WHAT WE ARE: About us"
+    whoWeAre: {
+      eyebrow: "WHAT WE ARE",
+      heading: "Who We Are",
+      image: "https://framerusercontent.com/images/8dANM4w4wJIzmtS0xJgDEOS4rLc.png",
+      paragraphs: [
+        "At Demaze Technologies, we're more than just developers; we're digital transformation architects. We're a passionate team of 35+ technologists, innovators, and strategic thinkers who believe in the power of AI and cutting-edge technology to reshape businesses.",
+        "Founded with a vision to democratize advanced technology, we bridge the gap between complex technical possibilities and real business outcomes.",
+      ],
+      badges: [
+        "Scalable Solutions",
+        "Digital Transformation",
+        "Future-Ready Architecture",
+        "Automation Excellence",
+        "Strategic Partnership",
+        "Cutting-Edge Technology",
+        "Business Intelligence",
+        "Agile Development",
+        "End-to-End Solutions",
+      ],
+    },
+    whatDrivesUs: {
+      heading: "What Drives Us",
+      items: [
+        {
+          title: "Innovation at Our Core",
+          description:
+            "We're driven by the challenge of turning ambitious ideas into reality. Every project is an opportunity to push boundaries and create something extraordinary that makes a meaningful impact.",
+        },
+        {
+          title: "Client Success Obsession",
+          description:
+            "Your success is our success. We're motivated by seeing our clients achieve breakthrough results, streamline operations, and unlock new growth opportunities through the solutions we build together.",
+        },
+        {
+          title: "Technology for Good",
+          description:
+            "We believe technology should empower, simplify, and enhance human potential. This drives us to create solutions that not only solve problems but also open new possibilities for businesses and their customers.",
+        },
+        {
+          title: "Continuous Learning",
+          description:
+            "In a rapidly evolving tech landscape, we're driven by curiosity and the pursuit of excellence. We constantly evolve our skills and adopt emerging technologies to deliver the most advanced solutions.",
+        },
+      ],
+    },
+  },
+  industries: {
+    // From demazetech.com homepage "INDUSTRIES: Industries We Serve" (19 real categories)
+    eyebrow: "INDUSTRIES",
+    heading: "Industries We Serve",
+    items: [
+      { name: "Healthcare", subItems: ["Telemedicine Platforms", "Electronic Health Records (EHR)", "Patient Management Systems", "Appointment Scheduling Software", "Healthcare Analytics Platforms", "Wellness Tracking Applications", "Medical Device Integration", "Hospital Management Systems"] },
+      { name: "Fintech", subItems: ["Digital Payment Platforms", "Mobile Banking Applications", "Cryptocurrency Wallets", "Peer-to-Peer Payment Systems", "Lending Management Software", "Credit Scoring Systems", "Financial Analytics Tools", "Blockchain Payment Solutions", "Trading Platform Development"] },
+      { name: "Logistics", subItems: ["Delivery Management Systems", "Shipping Logistics Management", "Fleet Management Software", "Inventory Management Software", "Telematics Software Development", "Warehouse Management Systems", "Route Optimization Platforms", "Supply Chain Visibility Tools", "Last-Mile Delivery Solutions"] },
+      { name: "Retail", subItems: ["Point-of-Sale (POS) Systems", "Inventory Management Platforms", "Customer Loyalty Programs", "Staff Management Software", "Omnichannel Retail Solutions", "Price Management Systems", "Retail Analytics Dashboards", "Store Operations Management", "Customer Relationship Management"] },
+      { name: "Ecommerce", subItems: ["Multi-Vendor Marketplaces", "B2B Ecommerce Platforms", "B2C Online Stores", "Shopping Cart Development", "Payment Gateway Integration", "Product Recommendation Engines", "Order Management Systems", "Customer Review Platforms", "Auction & Bidding Systems"] },
+      { name: "Education", subItems: ["Learning Management Systems (LMS)", "Online Course Platforms", "Virtual Classroom Software", "Student Information Systems", "Assessment & Testing Platforms", "Educational Content Management", "VR Learning Applications", "AI-Powered Tutoring Systems", "Certification Management"] },
+      { name: "BFSI Solutions", subItems: ["Core Banking Systems", "Insurance Management Platforms", "Loan Origination Systems", "Credit Monitoring Software", "Regulatory Compliance Tools", "Risk Management Systems", "Customer Onboarding Solutions", "Anti-Money Laundering (AML) Tools", "Investment Portfolio Management"] },
+      { name: "Sports & Gaming", subItems: ["Fantasy Sports Platforms", "Gaming Applications", "Tournament Management Systems", "Live Streaming Applications", "Sports Analytics Platforms", "Community Gaming Solutions", "Leaderboard Systems", "In-Game Payment Solutions", "Sports Betting Platforms"] },
+      { name: "Energy & Utility", subItems: ["Smart Grid Management", "Energy Monitoring Systems", "Utility Billing Platforms", "Renewable Energy Management", "Consumption Analytics Tools", "IoT Sensor Integration", "Energy Trading Platforms", "Grid Optimization Software", "Meter Data Management"] },
+      { name: "Real Estate", subItems: ["Property Management Systems", "Virtual Tour Platforms", "Real Estate CRM Solutions", "Rental Management Applications", "Property Listing Websites", "Automated Valuation Models", "Property Investment Platforms", "Facility Management Software", "Real Estate Analytics Tools"] },
+      { name: "Media & Entertainment", subItems: ["Content Management Systems", "Streaming Platforms", "Digital Asset Management", "Social Media Applications", "Video Processing Tools", "AI Content Creation Platforms", "Live Broadcasting Solutions", "Creative Collaboration Tools", "Subscription Management Systems"] },
+      { name: "SaaS Products", subItems: ["Multi-Tenant Applications", "Subscription Management Systems", "Cloud-Native Platforms", "API Development & Integration", "Analytics Dashboard Solutions", "Customer Success Platforms", "Workflow Automation Tools", "Data Management Systems", "Enterprise Software Solutions"] },
+      { name: "Automotive", subItems: ["Dealership Management Systems", "Vehicle Valuation Tools", "Service Scheduling Platforms", "Car Rental Management", "Fleet Tracking Systems", "Automotive CRM Solutions", "Parts Inventory Management", "Customer Engagement Platforms", "Vehicle Financing Calculators"] },
+      { name: "Food & Beverage", subItems: ["Food Delivery Platforms", "Restaurant Management Systems", "Kitchen Display Systems", "Menu Management Software", "Food Safety Compliance Tools", "Inventory Tracking Systems", "Customer Ordering Apps", "Multi-Vendor Food Marketplaces", "Recipe Management Systems"] },
+      { name: "Legal & Professional Services", subItems: ["Case Management Systems", "Document Automation Tools", "Legal Practice Management", "Time & Billing Software", "Client Portal Systems", "Contract Management Solutions", "Compliance Tracking Tools", "Legal Research Platforms", "Court Filing Systems"] },
+      { name: "Human Resources", subItems: ["Applicant Tracking Systems", "Employee Onboarding Platforms", "Performance Management Tools", "Payroll Management Systems", "Workforce Analytics Solutions", "Employee Self-Service Portals", "Talent Acquisition Platforms", "HR Compliance Software", "Learning & Development Systems"] },
+      { name: "Insurance", subItems: ["Policy Management Systems", "Claims Processing Automation", "Insurance CRM Solutions", "Premium Calculation Tools", "Underwriting Software", "Customer Self-Service Portals", "Insurance Mobile Applications", "Risk Assessment Tools", "Regulatory Reporting Systems"] },
+      { name: "Social Commerce", subItems: ["Social Media Platforms", "Peer-to-Peer Marketplaces", "Community Management Systems", "Social Shopping Applications", "Influencer Marketing Platforms", "User-Generated Content Systems", "Social Analytics Tools", "Crypto Wallet Integration", "Social Gaming Features"] },
+      { name: "Manufacturing & B2B", subItems: ["Supply Chain Management", "Vendor Management Platforms", "Procurement Automation Systems", "Manufacturing Execution Systems", "Quality Management Software", "Business Intelligence Dashboards", "B2B Marketplace Development", "Production Planning Tools", "Equipment Maintenance Systems"] },
+    ],
   },
   whyDemaze: {
-    // From demazetech.com homepage -> "BENEFITS: Why Choose Us" (3 items,
-    // just after Industries). MOVIQ's original section here is a 2-column
-    // "us vs. traditional" comparison table; Demaze has no competitor
-    // comparison, so it's rebuilt as 3 real cards instead.
+    // From demazetech.com homepage -> "BENEFITS: Why Choose Us"
     eyebrow: "BENEFITS",
     heading: "Why Choose Us",
     items: [
       {
         title: "AI-First Innovation",
+        image: "https://framerusercontent.com/images/UoV40soWAuwc3apDIJ2CrWUKep0.png",
         description:
           "We don't just build software; we create intelligent solutions that learn, adapt, and evolve. Our deep expertise in AI, machine learning, and emerging technologies ensures your business stays ahead of the curve with future-ready solutions that drive automation and growth.",
       },
       {
         title: "End-to-End Partnership",
+        image: "https://framerusercontent.com/images/ZuFdyAXcxKQErCF3yYmtowWit8Q.png",
         description:
           "From concept to deployment and beyond, we're your dedicated tech partner. We work as an extension of your team, providing comprehensive support across the entire development lifecycle while focusing on long-term success rather than just project delivery.",
       },
       {
         title: "Proven Track Record",
+        image: "https://framerusercontent.com/images/jm0rrK5HlZW33kreUxCyYlYQzQ.png",
         description:
           "With 45+ successful projects across diverse industries and $10M+ generated for our clients, we bring measurable results. Our experienced team of 35+ professionals combines technical excellence with business acumen to deliver solutions that create real impact.",
       },
     ],
   },
-  finalCTA: {
-    // From demazetech.com homepage, just before the Contact section.
-    heading: "Let's connect and build smarter, faster, and stronger - together.",
-    primaryCTA: { text: "Let's Connect", href: "./contact" },
+  metrics: {
+    // From demazetech.com homepage, directly under "BENEFITS: Why Choose Us".
+    items: [
+      { value: "45+", label: "Projects Delivered" },
+      { value: "$10M+", label: "Client Value Generated" },
+      { value: "35+", label: "Expert Team Members" },
+      { value: "6+", label: "Years of Excellence" },
+    ],
   },
   faq: {
-    // From demazetech.com homepage "FAQS: Questions? Answers!" (5 items, no
-    // category tabs — unlike MOVIQ's Basic All/Payment/License/Support tabs).
-    heading: "Frequently asked questions",
+    // From demazetech.com homepage "FAQS: Questions? Answers!"
+    eyebrow: "FAQS",
+    heading: "Questions? Answers!",
     subheading: "Helpful answers for a smoother experience",
     items: [
       {
@@ -306,5 +323,67 @@ window.DEMAZE_CONTENT = {
           "Security and confidentiality are paramount in everything we do. We implement industry-standard security protocols, sign comprehensive NDAs before any project discussion, follow secure development practices, and ensure data protection compliance (GDPR, CCPA, etc.). All our team members are bound by strict confidentiality agreements, and we use secure development environments and encrypted communication channels.",
       },
     ],
+  },
+  finalCTA: {
+    // From demazetech.com homepage
+    heading: "Let's connect and build smarter, faster, and stronger - together.",
+    primaryCTA: { text: "Let's Connect", href: "./contact" },
+  },
+  contact: {
+    // From demazetech.com homepage "Contact: Reach Us At Anytime"
+    eyebrow: "Contact",
+    heading: "Reach Us At Anytime",
+    cards: [
+      {
+        type: "email",
+        label: "Email Us",
+        title: "contact@demazetech.com",
+        desc: "Feel free to email us if you have any questions or need more details!",
+        link: "mailto:contact@demazetech.com",
+      },
+      {
+        type: "call",
+        label: "Book A Call",
+        title: "Book with Calendly",
+        desc: "Feel free to book a call if that’s more convenient and easier for you.",
+        link: "./contact",
+      },
+      {
+        type: "location",
+        label: "Office Location",
+        title: "Ahmedabad, India",
+        desc: "A 804, Ganesh Glory 11, Jagatpur road, Near S.G. Highway, Gota, Ahmedabad",
+        link: "#",
+      },
+    ],
+    form: {
+      title: "Send Us a Message",
+      fields: [
+        { name: "name", label: "Name", type: "text", placeholder: "Your name" },
+        { name: "email", label: "Email", type: "email", placeholder: "Your email address" },
+        { name: "subject", label: "Subject Of Interest", type: "text", placeholder: "e.g. AI & ML, SaaS, Custom App" },
+        { name: "message", label: "How may we assist you?", type: "textarea", placeholder: "Tell us about your project..." },
+      ],
+      submitText: "Submit",
+    },
+  },
+  branding: {
+    name: "Demaze Technologies",
+    navLinks: [
+      { text: "Projects", href: "./projects" },
+      { text: "Services", href: "./services" },
+      { text: "About Us", href: "./about-us" },
+      { text: "Contact Us", href: "./contact" },
+    ],
+    ctaButton: { text: "Book A Call", href: "./contact" },
+    footerTagline:
+      "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
+    footerLinks: [
+      { text: "Projects", href: "./projects" },
+      { text: "Service", href: "./services" },
+      { text: "About us", href: "./about-us" },
+      { text: "Contact us", href: "./contact" },
+    ],
+    copyright: "Demaze Technologies © 2025. All rights reserved.",
   },
 };
