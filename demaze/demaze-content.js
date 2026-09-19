@@ -328,6 +328,11 @@ window.DEMAZE_CONTENT = {
       },
     ],
   },
+  ctaBannerA: {
+    heading: "Have a bold product vision in mind?",
+    sub: "Let's discuss how Demaze Technologies can architect and engineer your next breakthrough digital product.",
+    primaryCTA: { text: "Book A Strategy Session", href: "./contact" },
+  },
   finalCTA: {
     // From demazetech.com homepage
     heading: "Let's connect and build smarter, faster, and stronger - together.",

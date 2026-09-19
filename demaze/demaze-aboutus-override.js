@@ -103,12 +103,18 @@
         if (testimonial && !section.querySelector('.demaze-founder-statement-block')) {
           var fBlock = document.createElement('div');
           fBlock.className = 'demaze-founder-statement-block';
+          var avatarHTML = testimonial.avatar
+            ? '<img src="' + testimonial.avatar + '" class="demaze-testimonial-avatar" alt="' + testimonial.name + '">'
+            : '';
           fBlock.innerHTML =
             '<div class="demaze-founder-mark">&ldquo;</div>' +
             '<p class="demaze-founder-quote">' + testimonial.quote + '</p>' +
             '<div class="demaze-founder-byline">' +
+            avatarHTML +
+            '<div class="demaze-founder-info">' +
             '<div class="demaze-founder-name">' + testimonial.name + '</div>' +
             '<div class="demaze-founder-title">' + testimonial.title + '</div>' +
+            '</div>' +
             '</div>';
           lastEl.insertAdjacentElement('afterend', fBlock);
         }

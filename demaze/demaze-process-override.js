@@ -33,39 +33,34 @@
 
   var STYLE_ID = 'demaze-process-style';
   var BLOCK_ID = 'demaze-process-block';
-  var BRAND_BLUE = '#5B5FEF';
-  var MUTED = 'rgb(108, 119, 131)';
+  var BRAND_BLUE = '#5B4FE9';
+  var MUTED = '#6B7080';
+  var LINE_COLOR = '#E7E7F3';
 
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Videos making Step"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:80px 24px 100px!important;background:#fff!important;position:relative!important;z-index:1!important;overflow:visible!important;}' +
+      'section[data-framer-name="Videos making Step"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:100px 24px 120px!important;background:#fff!important;position:relative!important;z-index:1!important;overflow:visible!important;}' +
       '.demaze-process-wrap{background:#fff;position:relative;z-index:1;padding:0;text-align:center;width:100%;max-width:1240px;margin:0 auto;}' +
-      '.demaze-process-heading{font-size:clamp(28px,3.2vw,40px);font-weight:700;color:rgb(0,0,0);margin:0 0 48px;letter-spacing:-0.01em;}' +
-      '.demaze-process-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;width:100%;margin:0 auto;}' +
-      '.demaze-process-card{background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:32px 24px;text-align:left;box-shadow:0 12px 32px rgba(0,0,0,0.04);transition:all 0.25s ease;display:flex;flex-direction:column;animation:demazeCardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;}' +
-      '@keyframes demazeCardReveal{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}' +
-      '.demaze-process-card:nth-child(1){animation-delay:0.1s;}' +
-      '.demaze-process-card:nth-child(2){animation-delay:0.2s;}' +
-      '.demaze-process-card:nth-child(3){animation-delay:0.3s;}' +
-      '.demaze-process-card:nth-child(4){animation-delay:0.4s;}' +
-      '.demaze-process-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,0.08);border-color:rgba(91,95,239,0.3);}' +
-      '.demaze-process-step{display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:100px;background:#f1f2fe;color:' + BRAND_BLUE + ';font-size:13px;font-weight:700;margin-bottom:18px;width:fit-content;letter-spacing:0.04em;transition:all 0.2s ease;}' +
-      '.demaze-process-card:hover .demaze-process-step{background:' + BRAND_BLUE + ';color:#fff;box-shadow:0 4px 14px rgba(91,95,239,0.35);}' +
-      '.demaze-process-card h3{font-size:18px;font-weight:600;color:rgb(0,0,0);margin:0 0 10px;line-height:1.3;}' +
-      '.demaze-process-card p{font-size:13.5px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
-      '@media (max-width:1024px){.demaze-process-row{grid-template-columns:repeat(2,1fr);gap:20px;}}' +
+      '.demaze-process-heading{font-size:clamp(30px,3.8vw,44px);font-weight:700;color:#0B0E17;margin:0 0 56px;letter-spacing:-0.025em;}' +
+      '.demaze-process-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;width:100%;margin:0 auto;position:relative;align-items:stretch;}' +
+      '.demaze-process-row::before{content:"";position:absolute;top:50px;left:10%;right:10%;height:1px;border-top:1px dashed ' + LINE_COLOR + ';z-index:0;pointer-events:none;}' +
+      '.demaze-process-card{background:#fff;border:1px solid ' + LINE_COLOR + ';border-radius:24px;padding:32px 26px;text-align:left;box-shadow:0 1px 2px rgba(11,14,23,0.04), 0 12px 32px -8px rgba(60,50,140,0.08);transition:all 0.3s ease;display:flex;flex-direction:column;position:relative;z-index:1;}' +
+      '.demaze-process-card:hover{transform:translateY(-4px);box-shadow:0 24px 48px -12px rgba(60,50,140,0.18);border-color:rgba(91,79,233,0.3);}' +
+      '.demaze-process-step{width:36px;height:36px;border-radius:50%;background:' + BRAND_BLUE + ';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-bottom:20px;box-shadow:0 4px 12px rgba(91,79,233,0.25);flex-shrink:0;}' +
+      '.demaze-process-card h3{font-size:20px;font-weight:600;color:#0B0E17;margin:0 0 12px;line-height:1.3;letter-spacing:-0.01em;}' +
+      '.demaze-process-card p{font-size:15px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
+      '@media (max-width:1024px){.demaze-process-row{grid-template-columns:repeat(2,1fr);gap:20px;}.demaze-process-row::before{display:none;}}' +
       '@media (max-width:640px){.demaze-process-row{grid-template-columns:1fr;gap:16px;}.demaze-process-card{padding:24px;}}';
     document.head.appendChild(style);
   }
 
   function cardHTML(step, i) {
-    var stepNum = (i + 1 < 10 ? '0' : '') + (i + 1);
     return (
       '<div class="demaze-process-card">' +
-      '<div class="demaze-process-step">' + stepNum + '</div>' +
+      '<div class="demaze-process-step">' + (i + 1) + '</div>' +
       '<h3>' + step.title + '</h3>' +
       '<p>' + step.description + '</p>' +
       '</div>'

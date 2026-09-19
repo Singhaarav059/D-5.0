@@ -56,7 +56,8 @@
       '.demaze-capabilities-block p{font-size:13px;line-height:1.55;color:' + MUTED + ';margin:0 0 16px;}' +
       '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(0,0,0,0.06);padding-top:14px;}' +
       '.demaze-capabilities-sublist li{font-size:12px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:7px;}' +
-      '.demaze-capabilities-sublist li::before{content:"";width:5px;height:5px;border-radius:50%;background:' + BRAND_BLUE + ';flex-shrink:0;}' +
+      '.demaze-capabilities-explore{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:' + BRAND_BLUE + ';text-decoration:none;margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06);transition:transform 0.2s ease;}' +
+      '.demaze-capabilities-explore:hover{transform:translateX(3px);}' +
       '@media (max-width:1024px){' +
       '.demaze-capabilities-stage{height:auto!important;}' +
       '.demaze-capabilities-viewport{position:static!important;height:auto!important;}' +
@@ -80,6 +81,14 @@
     );
   }
 
+  function checkSmallSvg() {
+    return (
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="' + BRAND_BLUE + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+      '<polyline points="20 6 9 17 4 12"></polyline>' +
+      '</svg>'
+    );
+  }
+
   function blockHTML(item) {
     var iconHTML = item.image
       ? '<img src="' + item.image + '" alt="' + item.title + '">'
@@ -87,8 +96,9 @@
     var sublistHTML = item.subItems
       ? '<ul class="demaze-capabilities-sublist">' +
         item.subItems
+          .slice(0, 4)
           .map(function (s) {
-            return '<li>' + s + '</li>';
+            return '<li>' + checkSmallSvg() + '<span>' + s + '</span></li>';
           })
           .join('') +
         '</ul>'
@@ -99,6 +109,7 @@
       '<h6>' + item.title + '</h6>' +
       '<p>' + item.description + '</p>' +
       sublistHTML +
+      '<a href="./services" class="demaze-capabilities-explore">Explore &rarr;</a>' +
       '</div>'
     );
   }

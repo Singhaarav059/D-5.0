@@ -87,6 +87,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Framer Badge Removal */
+#__framer-badge-container,
+[data-framer-name="Made in Framer"],
+a[href*="framer.com/?utm_campaign"],
+.framer-badge {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
 body:not(:has(#main)) {
   display: flex;
   flex-direction: column;

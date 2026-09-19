@@ -42,7 +42,7 @@
   }
 
   function applyHide(section) {
-    section.style.display = 'none';
+    section.style.setProperty('display', 'none', 'important');
   }
 
   function verifyHidden(section) {
@@ -89,7 +89,7 @@
     }
 
     var subtitle = section.querySelector('[data-framer-name="Subtitle"]');
-    if (subtitle) subtitle.style.display = 'none';
+    if (subtitle) subtitle.style.setProperty('display', 'none', 'important');
 
     var buttons = Array.prototype.slice.call(
       section.querySelectorAll('[data-framer-name="CTA Buttons"] > *')
@@ -101,7 +101,7 @@
         var link = btn.tagName === 'A' ? btn : btn.querySelector('a');
         if (link) link.setAttribute('href', content.primaryCTA.href);
       } else {
-        btn.style.display = 'none';
+        btn.style.setProperty('display', 'none', 'important');
       }
     });
   }

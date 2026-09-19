@@ -98,18 +98,30 @@
       hStyle.id = 'demaze-hero-style';
       hStyle.textContent =
         '@keyframes demazeHeroFadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;}' +
-        'section[data-framer-name="Hero"] h1{animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;}' +
-        'section[data-framer-name="Hero"] .demaze-hero-desc{animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"]{animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;}' +
+        'section[data-framer-name="Hero"]{position:relative!important;overflow:visible!important;}' +
+        'section[data-framer-name="Hero"] [data-framer-background-image-wrapper="true"]::after{' +
+        'content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,20,60,0.35) 0%,rgba(6,20,60,0.10) 40%,rgba(6,20,60,0.55) 100%);pointer-events:none;border-radius:inherit;z-index:1;}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Container"]{position:relative;z-index:2;}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;position:relative;z-index:2;}' +
+        'section[data-framer-name="Hero"] h1{animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;position:relative;z-index:2;text-wrap:balance;}' +
+        'section[data-framer-name="Hero"] .demaze-hero-desc{animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:2;max-width:640px!important;margin:24px auto 0!important;text-align:center!important;}' +
+        'section[data-framer-name="Hero"] .demaze-hero-desc p{text-align:center!important;font-size:clamp(16px,1.4vw,19px)!important;line-height:1.6!important;color:rgba(255,255,255,0.95)!important;text-shadow:0 1px 12px rgba(0,0,0,0.35)!important;}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"]{animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;position:relative;z-index:2;gap:16px!important;}' +
+        'section[data-framer-name="Hero"] a[href="./contact"], section[data-framer-name="Hero"] [data-framer-name="Get In Touch"]{' +
+        'width:auto!important;min-width:160px!important;max-width:none!important;overflow:visible!important;}' +
+        'section[data-framer-name="Hero"] a[href="./contact"] *{white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;}' +
         'section[data-framer-name="Hero"] a[href="./services"], section[data-framer-name="Hero"] a[href="./integration"]{' +
         'background:rgba(255,255,255,0.18)!important;border:1px solid rgba(255,255,255,0.38)!important;' +
         'backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,0.15)!important;border-radius:100px!important;transition:all 0.25s ease!important;color:#ffffff!important;text-decoration:none!important;}' +
+        'box-shadow:0 4px 16px rgba(0,0,0,0.15)!important;border-radius:100px!important;transition:all 0.25s ease!important;color:#ffffff!important;text-decoration:none!important;width:auto!important;min-width:160px!important;padding:0 24px!important;}' +
         'section[data-framer-name="Hero"] a[href="./services"]:hover, section[data-framer-name="Hero"] a[href="./integration"]:hover{' +
         'background:rgba(255,255,255,0.28)!important;border-color:rgba(255,255,255,0.6)!important;transform:translateY(-1px)!important;}' +
         'section[data-framer-name="Hero"] a[href="./services"] *, section[data-framer-name="Hero"] a[href="./integration"] *{' +
-        'color:#ffffff!important;font-weight:600!important;text-shadow:0 1px 3px rgba(0,0,0,0.4)!important;text-decoration:none!important;}';
+        'color:#ffffff!important;font-weight:600!important;text-shadow:0 1px 3px rgba(0,0,0,0.4)!important;text-decoration:none!important;white-space:nowrap!important;}' +
+        '.demaze-hero-product-peek{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:90%;max-width:840px;z-index:3;pointer-events:none;animation:demazeProductFloat 6s ease-in-out infinite;}' +
+        '@keyframes demazeProductFloat{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,-8px);}}' +
+        '.demaze-hero-product-peek img{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.25));border-radius:20px;}' +
+        '@media (max-width:768px){.demaze-hero-product-peek{display:none!important;}}';
       document.head.appendChild(hStyle);
     }
 

@@ -60,25 +60,45 @@
     if (textNode) textNode.textContent = text;
   }
 
+  var INDUSTRY_IMAGES = {
+    'Healthcare': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+    'Automotive': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+    'Legal & Professional Services': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+    'Retail': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+    'Ecommerce': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+  };
+
   function paintActiveTab(section) {
     var tabWrap = getTabWrap(section);
     Array.prototype.forEach.call(tabWrap.children, function (tabEl, i) {
       var isActive = i === activeIndex;
       var p = tabEl.querySelector('p');
       if (p) {
-        p.style.color = isActive ? '#0b0f19' : 'rgb(108, 119, 131)';
-        p.style.fontWeight = isActive ? '700' : '500';
-        p.style.transition = 'color 0.2s ease, font-weight 0.2s ease';
+        p.style.color = isActive ? '#5B4FE9' : '#3F4454';
+        p.style.fontWeight = isActive ? '600' : '500';
+        p.style.fontSize = '14.5px';
+        p.style.margin = '0';
+        p.style.transition = 'color 0.2s ease';
       }
       var line = tabEl.children[1] || tabEl.querySelector('[style*="linear-gradient"]');
       if (line) {
-        line.style.opacity = isActive ? '1' : '0';
-        line.style.transition = 'opacity 0.25s ease';
+        line.style.display = 'none'; // purge inconsistent gradient underlines
       }
       tabEl.style.cursor = 'pointer';
-      tabEl.style.padding = '8px 14px';
-      tabEl.style.margin = '2px 4px';
-      tabEl.style.borderRadius = '8px';
+      tabEl.style.height = '40px';
+      tabEl.style.display = 'inline-flex';
+      tabEl.style.alignItems = 'center';
+      tabEl.style.justifyContent = 'center';
+      tabEl.style.padding = '0 18px';
+      tabEl.style.margin = '4px 6px';
+      tabEl.style.borderRadius = '999px';
+      tabEl.style.border = isActive ? '1px solid #5B4FE9' : '1px solid #E7E7F3';
+      tabEl.style.background = isActive ? '#F0EEFF' : '#FFFFFF';
+      tabEl.style.boxShadow = isActive ? '0 4px 12px rgba(91,79,233,0.15)' : 'none';
+      tabEl.style.transition = 'all 0.2s ease';
+      tabEl.setAttribute('role', 'tab');
+      tabEl.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      tabEl.setAttribute('tabindex', isActive ? '0' : '-1');
     });
   }
 
@@ -91,8 +111,6 @@
       (span || titleEl).textContent = industry.name;
     }
 
-    // No per-industry description or "Style Guide Provided:" label exists
-    // for Demaze — hide both rather than inventing filler text.
     var guideLabel = section.querySelector('[data-framer-name="Guide"] > [data-framer-name="Style Guide Provided:"]');
     if (guideLabel) guideLabel.style.display = 'none';
     var panelSubtitle = section.querySelector('[data-framer-name="Headings Title"] p');
@@ -112,12 +130,20 @@
       var textEl = item.querySelector('[data-framer-name="Videos per Month Detail"] p') || item.querySelector('p');
       if (textEl) textEl.textContent = text;
     });
-    // Hide any leftover slots beyond this industry's real sub-item count.
     for (var j = industry.subItems.length; j < existing.length; j++) {
       existing[j].style.display = 'none';
     }
 
-    // Gentle micro-fade on panel content
+    // Update panel visual
+    var panelImgs = section.querySelectorAll('img');
+    var mainPanelImg = panelImgs[panelImgs.length - 1];
+    if (mainPanelImg) {
+      var targetImg = INDUSTRY_IMAGES[industry.name] || 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024';
+      mainPanelImg.src = targetImg;
+      mainPanelImg.style.borderRadius = '20px';
+      mainPanelImg.style.objectFit = 'cover';
+    }
+
     var panel = section.querySelector('[data-framer-name="Text Content"]');
     if (panel) {
       panel.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
@@ -130,26 +156,64 @@
     }
   }
 
+  var hoverTimer = null;
   function wireTabClicks(section) {
     var tabWrap = getTabWrap(section);
     if (tabWrap.__demazeWired) return;
     tabWrap.__demazeWired = true;
-    tabWrap.addEventListener(
-      'click',
-      function (event) {
-        var tabEl = event.target;
-        while (tabEl && tabEl.parentElement !== tabWrap) {
-          tabEl = tabEl.parentElement;
-        }
-        if (!tabEl) return;
-        event.stopPropagation();
+    tabWrap.setAttribute('role', 'tablist');
+
+    function selectTab(tabEl) {
+      if (!tabEl) return;
+      activeIndex = Array.prototype.indexOf.call(tabWrap.children, tabEl);
+      paintActiveTab(section);
+      renderPanel(section);
+    }
+
+    tabWrap.addEventListener('click', function (event) {
+      var tabEl = event.target;
+      while (tabEl && tabEl.parentElement !== tabWrap) {
+        tabEl = tabEl.parentElement;
+      }
+      if (!tabEl) return;
+      event.stopPropagation();
+      event.preventDefault();
+      selectTab(tabEl);
+    }, true);
+
+    // Desktop hover intent delay (120ms)
+    tabWrap.addEventListener('mouseover', function (event) {
+      var tabEl = event.target;
+      while (tabEl && tabEl.parentElement !== tabWrap) {
+        tabEl = tabEl.parentElement;
+      }
+      if (!tabEl) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function () {
+        selectTab(tabEl);
+      }, 120);
+    });
+
+    tabWrap.addEventListener('mouseout', function () {
+      clearTimeout(hoverTimer);
+    });
+
+    // Keyboard arrow navigation
+    tabWrap.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
         event.preventDefault();
-        activeIndex = Array.prototype.indexOf.call(tabWrap.children, tabEl);
+        activeIndex = (activeIndex + 1) % content.items.length;
         paintActiveTab(section);
         renderPanel(section);
-      },
-      true
-    );
+        tabWrap.children[activeIndex].focus();
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        activeIndex = (activeIndex - 1 + content.items.length) % content.items.length;
+        paintActiveTab(section);
+        renderPanel(section);
+        tabWrap.children[activeIndex].focus();
+      }
+    });
   }
 
   var STYLE_ID = 'demaze-industries-style';

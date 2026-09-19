@@ -22,10 +22,25 @@
       var tStyle = document.createElement('style');
       tStyle.id = 'demaze-techstack-style';
       tStyle.textContent =
+        'section[data-framer-name="Badge"]{border-radius:32px 32px 0 0!important;background:#ffffff!important;position:relative!important;z-index:2!important;margin-top:-32px!important;padding:48px 0!important;}' +
+        'section[data-framer-name="Badge"] h3{' +
+        'font-size:19px!important;font-weight:500!important;color:#6B7080!important;letter-spacing:-0.01em!important;text-align:center!important;margin:0 0 28px!important;}' +
+        'section[data-framer-name="Badge"] [data-framer-name="Logo Ticker"],' +
+        'section[data-framer-name="Badge"] .framer-ticker,' +
+        'section[data-framer-name="Badge"] [class*="ticker"]{' +
+        'mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)!important;' +
+        '-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)!important;}' +
+        'section[data-framer-name="Badge"] li.ticker-item{' +
+        'display:inline-flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;margin:0 32px!important;cursor:default;}' +
         'section[data-framer-name="Badge"] li.ticker-item img{' +
-        'opacity:0.75;transition:opacity 0.25s ease, transform 0.25s ease;}' +
+        'height:28px!important;max-height:28px!important;width:auto!important;object-fit:contain!important;' +
+        'filter:grayscale(100%)!important;opacity:0.6!important;transition:filter 0.25s ease, opacity 0.25s ease, transform 0.25s ease!important;}' +
         'section[data-framer-name="Badge"] li.ticker-item:hover img{' +
-        'opacity:1;transform:scale(1.08);}' +
+        'filter:grayscale(0%)!important;opacity:1!important;transform:scale(1.08)!important;}' +
+        'section[data-framer-name="Badge"] .demaze-tech-label{' +
+        'font-size:15px!important;font-weight:500!important;color:#3F4454!important;white-space:nowrap!important;margin:0!important;transition:color 0.25s ease!important;}' +
+        'section[data-framer-name="Badge"] li.ticker-item:hover .demaze-tech-label{' +
+        'color:#0B0E17!important;}' +
         'section[data-framer-name="Badge"] [data-framer-name="Logo Ticker"]:hover,' +
         'section[data-framer-name="Badge"] .framer-ticker:hover,' +
         'section[data-framer-name="Badge"] ul:hover{' +
@@ -51,22 +66,18 @@
         img.setAttribute('srcset', '');
         img.setAttribute('alt', item.name + ' logo');
         img.style.objectFit = 'contain';
-        img.style.maxHeight = '36px';
+        img.style.maxHeight = '28px';
+        img.style.height = '28px';
         img.style.width = 'auto';
       });
 
       // MOVIQ's ticker only shows bare logos with no name. Demaze's own
       // "Tools & Technologies" panel pairs each icon with its name, so add
-      // one label per slot (li has no fixed height, so it grows to fit).
+      // one label per slot on the shared baseline.
       var label = li.querySelector('.demaze-tech-label');
       if (!label) {
-        label = document.createElement('div');
-        label.className = 'demaze-tech-label framer-text framer-styles-preset-17kfgzm';
-        label.style.marginTop = '8px';
-        label.style.textAlign = 'center';
-        label.style.color = 'rgb(108, 119, 131)';
-        label.style.fontSize = '13px';
-        label.style.whiteSpace = 'nowrap';
+        label = document.createElement('span');
+        label.className = 'demaze-tech-label';
         li.appendChild(label);
       }
       label.textContent = item.name;
