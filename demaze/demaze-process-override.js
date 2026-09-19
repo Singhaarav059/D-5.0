@@ -1,93 +1,53 @@
 /**
- * Post-hydration content override for the Process section (MOVIQ's "Videos
- * making Step" section: heading + subtitle + 3 step cards in a flex row,
- * the middle one highlighted with an accent border).
+ * The Process section (MOVIQ's "Videos making Step" 3-step block) is
+ * hidden. Demaze DOES have real process content (demazetech.com homepage
+ * "HOW WE WORK: Our Process", 4 steps: Discover & Define / Design &
+ * Prototype / Build & Integrate / Launch & Scale) — this isn't a "no
+ * content" call like the original hide decision was.
  *
- * Demaze DOES have a real 4-step process (demazetech.com homepage "HOW WE
- * WORK: Our Process") — an earlier pass on this project hid this section
- * entirely on the belief that no Demaze process content existed anywhere on
- * their site; that was wrong (or the content was added since), so this
- * un-hides it and adapts MOVIQ's 3-card row to 4 cards instead.
+ * It's hidden because un-hiding this specific section is confirmed unsafe
+ * on mobile: its cards render inside Framer's own `.ssr-variant` wrapper
+ * (an SSR/CSR breakpoint reconciliation marker unique to this section on
+ * this page) that redraws itself post-hydration, and at mobile widths that
+ * redraw crashes React's reconciler fatally (killing the whole page) some
+ * seconds after load. This was tested exhaustively before landing on hide:
+ *   - cloning a 4th physical card into the wrapper → crashed on mobile
+ *   - nesting a 2nd step's content inside an existing card's leaf (zero new
+ *     wrapper children, zero new siblings) → still crashed on mobile
+ *   - plain text-only mutation on the 3 existing cards, no insertion
+ *     anywhere at all → still crashed on mobile
+ *   - this section simply hidden (`display:none`, its very first state) →
+ *     zero errors, confirmed with the rest of this project's scripts
+ *     enabled and disabled
+ * So the crash isn't about *what* gets mutated inside this section — it's
+ * un-hiding it at all that conflicts with its own delayed SSR/CSR redraw on
+ * mobile. Confirmed absent when every script in this project is disabled,
+ * so it's this section's un-hide specifically, not a pre-existing MOVIQ bug.
  *
- * MOVIQ's 3 cards sit in a plain `display:flex` row (`flex:1 0 0px` each,
- * `nowrap`) — confirmed via computed style, not assumed — so a 4th card
- * added the same way just takes an equal flex share automatically, no CSS
- * rewrite needed. The two outer cards each carry a small inline
- * `translateX(...) scale(0.9)` offset tuned for the 3-card width; with a 4th
- * card narrowing every column, that offset would misalign, so it's cleared
- * on all cards rather than re-tuned by guesswork — a plain, evenly-spaced
- * 4-card row, no invented geometry.
+ * Real Demaze process content (`window.DEMAZE_CONTENT.process`) is still in
+ * demaze-content.js for whenever this gets revisited — e.g. if a rebuilt
+ * (not un-hidden) process component turns out to be safe, or if Framer ships
+ * a build without this reconciliation quirk.
  *
  * See demaze-override-core.js for why this waits/mutates/rechecks the way it does.
  */
 (function () {
-  var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.process;
-  if (!content || !window.DemazeOverride) return;
+  if (!window.DemazeOverride) return;
 
   function getSection() {
     return document.querySelector('section[data-framer-name="Videos making Step"]');
   }
 
-  function getCardContainers(section) {
-    var wrapper = section.querySelector('[data-framer-name="Step wrapper"]');
-    return wrapper ? wrapper.querySelectorAll(':scope > .ssr-variant > div') : [];
-  }
-
   function isHydrated(section) {
-    var cards = getCardContainers(section);
-    return cards.length >= 3 && !!cards[0].querySelector('h6');
-  }
-
-  function ensureFourthCard(section) {
-    var wrapper = section.querySelector('[data-framer-name="Step wrapper"]');
-    var cards = getCardContainers(section);
-    if (cards.length >= 4 || !wrapper) return;
-
-    // Clone the last unhighlighted card ("Variant 1") as the base for the
-    // new 4th slot, rather than inventing new markup/classes.
-    var template = cards[cards.length - 1].closest('.ssr-variant');
-    var clone = template.cloneNode(true);
-    wrapper.appendChild(clone);
+    return !!section.querySelector('h2');
   }
 
   function applyOverride(section) {
-    section.style.display = '';
-
-    var heading = section.querySelector('[data-framer-name="Heading"] h2, h2');
-    if (heading) heading.textContent = content.heading;
-
-    // Subtitle ("Transform scripts into videos...") has no Demaze
-    // equivalent one-liner — hide, don't remove.
-    var subtitle = section.querySelector('[data-framer-name="Heading"] p');
-    if (subtitle) subtitle.style.display = 'none';
-
-    ensureFourthCard(section);
-
-    var cards = getCardContainers(section);
-    cards.forEach(function (card, i) {
-      var step = content.steps[i];
-      if (!step) return;
-
-      // Clear the 3-card fan offset — see file header for why.
-      card.style.transform = 'none';
-
-      var title = card.querySelector('[data-framer-name="content"] h6');
-      if (title) title.textContent = step.title;
-
-      var description = card.querySelector('[data-framer-name="content"] p');
-      if (description) description.textContent = step.description;
-
-      var badge = card.querySelector('[data-framer-name="Badge Text"] p');
-      if (badge) badge.textContent = 'Step ' + (i + 1);
-    });
+    section.style.display = 'none';
   }
 
   function verifyStuck(section) {
-    if (section.style.display === 'none') return false;
-    var cards = getCardContainers(section);
-    if (cards.length !== content.steps.length) return false;
-    var firstTitle = cards[0].querySelector('[data-framer-name="content"] h6');
-    return !!(firstTitle && firstTitle.textContent.trim() === content.steps[0].title);
+    return section.style.display === 'none';
   }
 
   window.DemazeOverride.run({
