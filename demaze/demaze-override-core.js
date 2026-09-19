@@ -23,9 +23,17 @@ window.DemazeOverride = {
     function scheduleRechecks() {
       recheckDelaysMs.forEach(function (delay) {
         setTimeout(function () {
-          var root = getRoot();
-          if (root && !verify(root)) {
-            apply(root);
+          // A stale root from a mid-swap DOM (e.g. a section whose subtree
+          // Framer is actively replacing) shouldn't take down other
+          // sections' independent recheck timers.
+          try {
+            var root = getRoot();
+            if (root && !verify(root)) {
+              apply(root);
+            }
+          } catch (e) {
+            /* swallow — next scheduled recheck (or this section's own
+               longer-term fix, if it has one) will retry */
           }
         }, delay);
       });

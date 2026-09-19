@@ -16,7 +16,10 @@
  */
 (function () {
   var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.whyDemaze;
+  var metrics = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.metrics;
   if (!content || !window.DemazeOverride) return;
+
+  var METRICS_CLASS = 'demaze-metrics-row';
 
   var EYEBROW_CLASS = 'demaze-whydemaze-eyebrow';
   var STYLE_ID = 'demaze-whydemaze-style';
@@ -42,8 +45,22 @@
       'display:flex;align-items:center;justify-content:center;margin-bottom:20px;}' +
       '.demaze-whydemaze-card h6{font-size:18px;font-weight:600;color:rgb(0,0,0);margin:0 0 12px;}' +
       '.demaze-whydemaze-card p{font-size:14px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
-      '@media (max-width:809px){.demaze-whydemaze-row{flex-direction:column!important;}}';
+      '@media (max-width:809px){.demaze-whydemaze-row{flex-direction:column!important;}}' +
+      '.demaze-metrics-row{display:flex!important;flex-direction:row!important;gap:24px;flex-wrap:wrap;' +
+      'width:100%;justify-content:space-between;margin-top:40px;padding-top:40px;border-top:1px solid rgba(0,0,0,0.08);}' +
+      '.demaze-metric{flex:1 1 140px;text-align:center;}' +
+      '.demaze-metric-value{font-size:clamp(28px,3.4vw,40px);font-weight:700;color:' + BRAND_BLUE + ';line-height:1.1;}' +
+      '.demaze-metric-label{font-size:13px;color:' + MUTED + ';margin-top:6px;}';
     document.head.appendChild(style);
+  }
+
+  function metricHTML(item) {
+    return (
+      '<div class="demaze-metric">' +
+      '<div class="demaze-metric-value">' + item.value + '</div>' +
+      '<div class="demaze-metric-label">' + item.label + '</div>' +
+      '</div>'
+    );
   }
 
   function cardHTML(item, i) {
@@ -117,13 +134,24 @@
       table.classList.add('demaze-whydemaze-row');
       table.innerHTML = content.items.map(cardHTML).join('');
     }
+
+    // Metrics: extends this same custom-built section with a stat row
+    // rather than a separate MOVIQ slot, per the approved "Why Demaze +
+    // Metrics" combined composition.
+    if (metrics && table && !section.querySelector('.' + METRICS_CLASS)) {
+      var row = document.createElement('div');
+      row.className = METRICS_CLASS;
+      row.innerHTML = metrics.items.map(metricHTML).join('');
+      table.insertAdjacentElement('afterend', row);
+    }
   }
 
   function verifyStuck(section) {
     var h2 = section.querySelector('h2');
     var headingOk = !!(h2 && h2.textContent.trim() === content.heading);
     var cards = section.querySelectorAll('.demaze-whydemaze-card');
-    return headingOk && cards.length === content.items.length;
+    var metricsOk = !metrics || !!section.querySelector('.' + METRICS_CLASS);
+    return headingOk && cards.length === content.items.length && metricsOk;
   }
 
   window.DemazeOverride.run({
