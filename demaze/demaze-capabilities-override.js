@@ -43,12 +43,12 @@
       // ancestor+own-class selector, which beats a plain single-class
       // override on specificity — confirmed by testing (the stage was
       'section[data-framer-name="Tools"]:nth-of-type(2), section.framer-1p5myw3{display:none!important;}' +
-      '.demaze-capabilities-stage{position:relative!important;height:auto!important;min-height:auto!important;padding:20px 0 60px!important;display:block!important;}' +
-      '.demaze-capabilities-viewport{position:relative!important;top:0!important;height:auto!important;display:flex!important;align-items:stretch!important;width:100%!important;}' +
+      '.demaze-capabilities-stage{position:relative!important;height:180vh!important;display:block!important;margin:0 auto!important;}' +
+      '.demaze-capabilities-viewport{position:sticky!important;top:90px!important;height:520px!important;display:flex!important;align-items:center!important;width:100%!important;}' +
       '.demaze-capabilities-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:20px!important;width:100%!important;max-width:1320px!important;margin:0 auto!important;align-items:stretch!important;}' +
       '.demaze-capabilities-block{min-width:0;background:linear-gradient(180deg,#f8f9fa 0%,#fff 100%);' +
       'border:1px solid rgba(0,0,0,0.07);border-radius:24px;padding:28px 20px;text-align:left;display:flex;flex-direction:column;' +
-      'box-shadow:0 12px 32px rgba(0,0,0,0.04);opacity:1!important;transform:none!important;transition:all 0.25s ease;}' +
+      'box-shadow:0 12px 32px rgba(0,0,0,0.04);will-change:transform,opacity;transition:border-color 0.2s, box-shadow 0.2s;}' +
       '.demaze-capabilities-block:hover{transform:translateY(-4px)!important;box-shadow:0 18px 44px rgba(91,95,239,0.12)!important;border-color:rgba(91,95,239,0.3)!important;}' +
       '.demaze-capabilities-block-icon{width:52px;height:52px;margin:0 0 16px;border-radius:14px;' +
       'display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,0.08);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.04);}' +
@@ -59,7 +59,10 @@
       '.demaze-capabilities-sublist li{font-size:12px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:7px;}' +
       '.demaze-capabilities-sublist li::before{content:"";width:5px;height:5px;border-radius:50%;background:' + BRAND_BLUE + ';flex-shrink:0;}' +
       '@media (max-width:1024px){' +
+      '.demaze-capabilities-stage{height:auto!important;}' +
+      '.demaze-capabilities-viewport{position:static!important;height:auto!important;}' +
       '.demaze-capabilities-row{grid-template-columns:repeat(2,1fr)!important;gap:16px!important;}' +
+      '.demaze-capabilities-block{opacity:1!important;transform:none!important;margin-bottom:16px;}' +
       '}' +
       '@media (max-width:640px){' +
       '.demaze-capabilities-row{grid-template-columns:1fr!important;}' +
@@ -106,8 +109,8 @@
   // all at once, with room at the end for the completed row to just sit
   // still before the section releases.
   function revealWindows(count) {
-    var span = 0.55; // how much of the 0..1 range covers the full stagger
-    var duration = 0.4; // each block's own reveal takes 40% of that span
+    var span = 0.70; // 70% of the stage scroll range covers the full stagger
+    var duration = 0.35; // each block's own unfold takes 35% of that span
     var windows = [];
     for (var i = 0; i < count; i++) {
       var start = (span * i) / Math.max(count - 1, 1);
@@ -125,6 +128,7 @@
   }
 
   function initScrollUnfold(stage) {
+    if (!stage) return;
     if (stage.dataset.demazeUnfoldInit) return;
     stage.dataset.demazeUnfoldInit = '1';
 
@@ -134,20 +138,27 @@
 
     function update() {
       ticking = false;
-      // Below the desktop breakpoint the CSS fallback takes over (static,
-      // fully visible) — skip the scroll math entirely there.
-      if (window.innerWidth < 810) return;
+      // Below the desktop breakpoint the CSS fallback takes over (static, fully visible)
+      if (window.innerWidth < 810) {
+        blocks.forEach(function (b) {
+          b.style.opacity = '1';
+          b.style.transform = 'none';
+        });
+        return;
+      }
 
       var rect = stage.getBoundingClientRect();
       var scrollable = rect.height - window.innerHeight;
-      var progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 1;
+      var stickyTop = 90;
+      var progress = scrollable > 0 ? clamp((stickyTop - rect.top) / scrollable, 0, 1) : 1;
 
       blocks.forEach(function (block, i) {
         var w = windows[i];
         var t = clamp((progress - w[0]) / (w[1] - w[0]), 0, 1);
         var eased = easeOutCubic(t);
-        block.style.opacity = String(eased);
-        block.style.transform = 'translateY(' + (1 - eased) * 70 + 'px)';
+        // Base opacity 0.1 ensures subtle card outline is visible, preventing a blank white void
+        block.style.opacity = String(0.1 + eased * 0.9);
+        block.style.transform = 'translateY(' + (1 - eased) * 60 + 'px)';
       });
     }
 
@@ -223,6 +234,9 @@
         content.items.map(blockHTML).join('') +
         '</div>' +
         '</div>';
+    }
+    if (grid) {
+      initScrollUnfold(grid);
     }
 
     // Hide second Tools section ("AI Video Creation" - MOVIQ leftover)
