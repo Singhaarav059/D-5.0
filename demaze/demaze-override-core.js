@@ -59,3 +59,47 @@ window.DemazeOverride = {
     }
   },
 };
+
+// Enforce Section Order across Framer's Main flex container
+(function () {
+  var STYLE_ID = 'demaze-global-layout-order';
+  if (document.getElementById(STYLE_ID)) return;
+  var style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent =
+    '[data-framer-name="Main"] {' +
+    '  display: flex !important;' +
+    '  flex-direction: column !important;' +
+    '}' +
+    '/* 1. Hero */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Hero"] { order: 1 !important; }' +
+    '/* 2. Technology Stack / Trust */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Badge"] { order: 2 !important; }' +
+    '/* 3. Our Process */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Videos making Step"] { order: 3 !important; }' +
+    '/* 4. Featured Projects */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Sricpt"] { order: 4 !important; }' +
+    '/* 5. Core Capabilities */' +
+    '[data-framer-name="Main"] > section.framer-1e6ypd3,' +
+    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Grid"]) { order: 5 !important; }' +
+    '/* 6. Who We Are + Founder */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Products"] { order: 6 !important; }' +
+    '/* 7. Industries We Serve */' +
+    '[data-framer-name="Main"] > section.framer-1p5myw3,' +
+    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) { order: 7 !important; }' +
+    '/* 8. What Drives Us */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Ai Powered"] { order: 8 !important; }' +
+    '/* 9. Why Demaze + Metrics */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Moviq vs Traditional Video"] { order: 9 !important; }' +
+    '/* 10. Final CTA */' +
+    '[data-framer-name="Main"] > section[data-framer-name="CTA"] { order: 10 !important; }' +
+    '/* 11. FAQ */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Faq"] { order: 11 !important; }';
+  if (document.head) {
+    document.head.appendChild(style);
+  } else {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.head.appendChild(style);
+    });
+  }
+})();

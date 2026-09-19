@@ -42,7 +42,6 @@
       // .framer-wte4vf") sets height:min-content and display:grid via an
       // ancestor+own-class selector, which beats a plain single-class
       // override on specificity — confirmed by testing (the stage was
-      'section[data-framer-name="Tools"]:nth-of-type(2), section.framer-1p5myw3{display:none!important;}' +
       '.demaze-capabilities-stage{position:relative!important;height:180vh!important;display:block!important;margin:0 auto!important;}' +
       '.demaze-capabilities-viewport{position:sticky!important;top:90px!important;height:520px!important;display:flex!important;align-items:center!important;width:100%!important;}' +
       '.demaze-capabilities-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:20px!important;width:100%!important;max-width:1320px!important;margin:0 auto!important;align-items:stretch!important;}' +
@@ -239,12 +238,7 @@
       initScrollUnfold(grid);
     }
 
-    // Hide second Tools section ("AI Video Creation" - MOVIQ leftover)
-    var allTools = document.querySelectorAll('section[data-framer-name="Tools"]');
-    if (allTools.length > 1) {
-      allTools[1].style.setProperty('display', 'none', 'important');
     }
-  }
 
   function verifyStuck(section) {
     var h2 = section.querySelector('h2');

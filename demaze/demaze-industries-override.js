@@ -48,7 +48,10 @@
     if (tabWrap.children.length >= content.items.length) return;
     var template = tabWrap.children[0];
     while (tabWrap.children.length < content.items.length) {
-      tabWrap.appendChild(template.cloneNode(true));
+      var clone = template.cloneNode(true);
+      var cloneLine = clone.children[1] || clone.querySelector('[style*="linear-gradient"]');
+      if (cloneLine) cloneLine.style.opacity = '0';
+      tabWrap.appendChild(clone);
     }
   }
 
@@ -60,8 +63,22 @@
   function paintActiveTab(section) {
     var tabWrap = getTabWrap(section);
     Array.prototype.forEach.call(tabWrap.children, function (tabEl, i) {
+      var isActive = i === activeIndex;
       var p = tabEl.querySelector('p');
-      if (p) p.style.color = i === activeIndex ? ACTIVE_COLOR : INACTIVE_COLOR;
+      if (p) {
+        p.style.color = isActive ? '#0b0f19' : 'rgb(108, 119, 131)';
+        p.style.fontWeight = isActive ? '700' : '500';
+        p.style.transition = 'color 0.2s ease, font-weight 0.2s ease';
+      }
+      var line = tabEl.children[1] || tabEl.querySelector('[style*="linear-gradient"]');
+      if (line) {
+        line.style.opacity = isActive ? '1' : '0';
+        line.style.transition = 'opacity 0.25s ease';
+      }
+      tabEl.style.cursor = 'pointer';
+      tabEl.style.padding = '8px 14px';
+      tabEl.style.margin = '2px 4px';
+      tabEl.style.borderRadius = '8px';
     });
   }
 
@@ -99,14 +116,22 @@
     for (var j = industry.subItems.length; j < existing.length; j++) {
       existing[j].style.display = 'none';
     }
+
+    // Gentle micro-fade on panel content
+    var panel = section.querySelector('[data-framer-name="Text Content"]');
+    if (panel) {
+      panel.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      panel.style.opacity = '0.6';
+      panel.style.transform = 'translateY(3px)';
+      setTimeout(function () {
+        panel.style.opacity = '1';
+        panel.style.transform = 'translateY(0)';
+      }, 50);
+    }
   }
 
   function wireTabClicks(section) {
     var tabWrap = getTabWrap(section);
-    // Guard on the node itself, not a module-level flag — if Framer ever
-    // swaps in a fresh Tab wrapper element (confirmed happening for the
-    // similar case in the Process section), a flag alone would leave the
-    // new live node with no listener at all.
     if (tabWrap.__demazeWired) return;
     tabWrap.__demazeWired = true;
     tabWrap.addEventListener(
@@ -127,7 +152,34 @@
     );
   }
 
+  var STYLE_ID = 'demaze-industries-style';
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent =
+      'section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) [data-framer-name="Tab"],' +
+      'section.framer-1p5myw3 [data-framer-name="Tab"]{' +
+      'display:flex!important;flex-wrap:wrap!important;gap:8px 10px!important;justify-content:center!important;' +
+      'padding:16px 0 24px!important;width:100%!important;max-width:1100px!important;margin:0 auto!important;}' +
+      'section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) [data-framer-name="Tab"] > div,' +
+      'section.framer-1p5myw3 [data-framer-name="Tab"] > div{' +
+      'flex:none!important;cursor:pointer!important;user-select:none!important;transition:all 0.2s ease!important;}' +
+      'section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) [data-framer-name="Tab"] > div:hover p,' +
+      'section.framer-1p5myw3 [data-framer-name="Tab"] > div:hover p{color:#2C53C7!important;}' +
+      '@media (max-width:809px){' +
+      'section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) [data-framer-name="Tab"],' +
+      'section.framer-1p5myw3 [data-framer-name="Tab"]{' +
+      'flex-wrap:nowrap!important;overflow-x:auto!important;justify-content:flex-start!important;padding:12px 16px!important;-webkit-overflow-scrolling:touch!important;}' +
+      'section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) [data-framer-name="Tab"]::-webkit-scrollbar,' +
+      'section.framer-1p5myw3 [data-framer-name="Tab"]::-webkit-scrollbar{display:none!important;}' +
+      '}';
+    document.head.appendChild(style);
+  }
+
   function applyOverride(section) {
+    ensureStyle();
     var titleEl = section.querySelector('[data-framer-name="Title"] h2');
     if (titleEl) {
       var span = titleEl.querySelector('span');

@@ -81,14 +81,15 @@
   }
 
   function applyOverride(hero) {
-    ensureStyle();
-    if (document.getElementById(SECTION_ID)) return;
-    var container = hero.querySelector('[data-framer-name="Container"]') || hero;
-    container.appendChild(buildBlock());
+    // The founder statement is now properly unified into Who We Are + Founder
+    var old = document.getElementById(SECTION_ID);
+    if (old && hero.contains(old)) {
+      old.remove();
+    }
   }
 
-  function verifyStuck() {
-    return !!document.getElementById(SECTION_ID);
+  function verifyStuck(hero) {
+    return !hero.querySelector('#' + SECTION_ID);
   }
 
   window.DemazeOverride.run({

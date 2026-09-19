@@ -373,6 +373,7 @@ window.DEMAZE_CONTENT = {
   },
   branding: {
     name: "Demaze Technologies",
+    tagline: "Empowering AI Innovation Worldwide",
     navLinks: [
       { text: "Projects", href: "./projects" },
       { text: "Services", href: "./services" },
@@ -384,10 +385,28 @@ window.DEMAZE_CONTENT = {
       "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
     footerLinks: [
       { text: "Projects", href: "./projects" },
-      { text: "Service", href: "./services" },
-      { text: "About us", href: "./about-us" },
-      { text: "Contact us", href: "./contact" },
+      { text: "Services", href: "./services" },
+      { text: "About Us", href: "./about-us" },
+      { text: "Contact Us", href: "./contact" },
     ],
-    copyright: "Demaze Technologies © 2025. All rights reserved.",
+    footerNavLinks: [
+      { text: "Projects", href: "./projects" },
+      { text: "Services", href: "./services" },
+      { text: "About Us", href: "./about-us" },
+      { text: "Contact Us", href: "./contact" },
+    ],
+    footerServiceLinks: [
+      { text: "AI & Machine Learning", href: "./services" },
+      { text: "Web, Mobile App & SaaS", href: "./services" },
+      { text: "Intelligent E-Commerce", href: "./services" },
+      { text: "Cloud Infrastructure", href: "./services" },
+    ],
+    footerReachLinks: [
+      { text: "contact@demazetech.com", href: "mailto:contact@demazetech.com" },
+      { text: "Schedule Strategy Call", href: "./contact" },
+      { text: "Ahmedabad, Gujarat, India", href: "./contact" },
+    ],
+    copyright: "Demaze Technologies © " + new Date().getFullYear() + ". All rights reserved.",
   },
 };
+

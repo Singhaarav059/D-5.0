@@ -40,16 +40,24 @@ Files:
 | 4 | `Sricpt` | Featured Projects | ✅ Done — Compact 2-column project cards with 2-column features list, fitted perfectly to single-screen view without cutoff. |
 | 5 | `Tools` (1st) | Core Capabilities (Services) | ✅ Done — 4 service pillars with immediate visibility and zero white space gap. |
 | 6 | `CTA` (1st) | — | ✅ **Removed** (hidden). |
-| 7 | `Tools` (2nd) | AI Video Creation | ✅ **Removed** (hidden MOVIQ leftover). |
+| 7 | `Tools` (2nd) | Industries We Serve | ✅ Done — 19 interactive domain tabs with sub-item checklists and zero section collisions. |
 | 8 | `Ai Powered` | What Drives Us | ✅ Done — 4 real value cards with bespoke high-res AI & cloud engineering graphics. |
 | 9 | `Products` | Who We Are | ✅ Done — Heading, narrative text, 9 capability keyword badges, and Demaze illustration card. |
 | 10 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + stat row. |
 | 11 | `CTA` (2nd) | — | ✅ **Removed** (hidden). |
 | 12 | `Pricing` | — | ✅ **Removed** (hidden). |
 | 13 | `CTA` (3rd) | Final CTA + Reach Us At Anytime (Contact) | ✅ Done — Closing banner + sleek 3-card frosted glass contact bar (Email, Calendly, Ahmedabad office). |
-| 14 | `Faq` | FAQ | ✅ Done — "FAQS: Questions? Answers!" with all 5 verified Q&As and working accordion. |
-| — | `<header><nav>` | Branding/nav | ✅ Done — Demaze logo, desktop nav links (`Projects`, `Services`, `About Us`, `Contact Us`), and `Book A Call` CTA button. All MOVIQ options removed. |
+| 14 | `Faq` | FAQ | ✅ Done — "FAQS: Questions? Answers!" with all 5 verified Q&As and working interactive accordion. |
+| — | `<header><nav>` | Branding/nav | ✅ Done — Demaze logo, desktop nav links (`Projects`, `Services`, `About Us`, `Contact Us`), and `Book A Call` CTA button. Clean mobile dropdown drawer. |
 | — | `<footer>` | Footer | ✅ Done — Logo, tagline, description, copyright, and 4 quick links. |
+
+## Subpages Deployed & Cross-Linked
+
+All 4 Demaze subpages have been created and styled in `assets/demaze/demaze-subpages.css`, matching MOVIQ's signature luxury dark glass theme, floating pill navbar, smooth gradients, and interactive mobile drawer navigation:
+1. `/services` (`services.html`): 4 Core Service Pillars (AI & ML, Web/Mobile/SaaS, Ecommerce, Cloud), 8 Partner Logos, 19 Industries Explorer, Reach Us At Anytime contact grid.
+2. `/projects` (`projects.html`): 14 verified Demaze client case studies with high-res assets (`scale-down-to=1024`), tags, and feature pills. 0 broken images.
+3. `/about-us` (`about-us.html`): Digital Transformation Architects narrative, 4 Core Values, 4 Stats Counters ($10M+ value, 45+ projects, 6+ years), and interactive Demaze FAQ accordion.
+4. `/contact` (`contact.html` & `contact/index.html`): Direct contact cards (Email, Calendly 30-min strategy call, Ahmedabad office), interactive inquiry form with validation, and responsive mobile layout.
 
 **Mapping decisions worth remembering:**
 - Tools & Technologies and Industries do NOT compete for the same MOVIQ slot — Tools & Tech lives in `Badge`, which freed up the `Tools`(2nd) tab+checklist structure entirely for Industries.

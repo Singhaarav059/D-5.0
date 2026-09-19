@@ -18,6 +18,21 @@
   }
 
   function applyOverride(section) {
+    if (!document.getElementById('demaze-techstack-style')) {
+      var tStyle = document.createElement('style');
+      tStyle.id = 'demaze-techstack-style';
+      tStyle.textContent =
+        'section[data-framer-name="Badge"] li.ticker-item img{' +
+        'opacity:0.75;transition:opacity 0.25s ease, transform 0.25s ease;}' +
+        'section[data-framer-name="Badge"] li.ticker-item:hover img{' +
+        'opacity:1;transform:scale(1.08);}' +
+        'section[data-framer-name="Badge"] [data-framer-name="Logo Ticker"]:hover,' +
+        'section[data-framer-name="Badge"] .framer-ticker:hover,' +
+        'section[data-framer-name="Badge"] ul:hover{' +
+        'animation-play-state:paused!important;}';
+      document.head.appendChild(tStyle);
+    }
+
     // Heading. MOVIQ splits it into two differently-colored text runs; Demaze's
     // real heading ("Tools & Technologies") has no such split, so this
     // collapses it to one plain text node in the heading's own color.

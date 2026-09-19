@@ -92,8 +92,29 @@
         });
     }
 
+    // Ensure style
+    if (!document.getElementById('demaze-hero-style')) {
+      var hStyle = document.createElement('style');
+      hStyle.id = 'demaze-hero-style';
+      hStyle.textContent =
+        '@keyframes demazeHeroFadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;}' +
+        'section[data-framer-name="Hero"] h1{animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;}' +
+        'section[data-framer-name="Hero"] .demaze-hero-desc{animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"]{animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;}' +
+        'section[data-framer-name="Hero"] a[href="./services"], section[data-framer-name="Hero"] a[href="./integration"]{' +
+        'background:rgba(255,255,255,0.18)!important;border:1px solid rgba(255,255,255,0.38)!important;' +
+        'backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,0.15)!important;border-radius:100px!important;transition:all 0.25s ease!important;color:#ffffff!important;text-decoration:none!important;}' +
+        'section[data-framer-name="Hero"] a[href="./services"]:hover, section[data-framer-name="Hero"] a[href="./integration"]:hover{' +
+        'background:rgba(255,255,255,0.28)!important;border-color:rgba(255,255,255,0.6)!important;transform:translateY(-1px)!important;}' +
+        'section[data-framer-name="Hero"] a[href="./services"] *, section[data-framer-name="Hero"] a[href="./integration"] *{' +
+        'color:#ffffff!important;font-weight:600!important;text-shadow:0 1px 3px rgba(0,0,0,0.4)!important;text-decoration:none!important;}';
+      document.head.appendChild(hStyle);
+    }
+
     // Secondary CTA
-    var secondaryLink = hero.querySelector('a[href="./integration"]');
+    var secondaryLink = hero.querySelector('a[href="./integration"], a[href="./services"]');
     if (secondaryLink) {
       secondaryLink.setAttribute('href', content.secondaryCTA.href);
       secondaryLink

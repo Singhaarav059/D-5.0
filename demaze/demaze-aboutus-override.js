@@ -50,7 +50,13 @@
       '.demaze-about-badge:hover{transform:translateY(-1px);border-color:#2C53C7;box-shadow:0 4px 12px rgba(44,83,199,0.12);}' +
       '.demaze-about-img-card{max-width:960px;margin:0 auto;border-radius:24px;overflow:hidden;' +
       'box-shadow:0 20px 60px rgba(0,0,0,0.08);background:#fff;border:1px solid rgba(0,0,0,0.06);}' +
-      '.demaze-about-img-card img{width:100%;height:auto;display:block;max-height:480px;object-fit:cover;}';
+      '.demaze-about-img-card img{width:100%;height:auto;display:block;max-height:480px;object-fit:cover;}' +
+      '.demaze-founder-statement-block{max-width:820px;margin:56px auto 0;text-align:center;padding:40px 24px 20px;border-top:1px solid rgba(0,0,0,0.07);}' +
+      '.demaze-founder-mark{font-size:56px;line-height:1;color:#2C53C7;font-family:Georgia,serif;margin-bottom:6px;}' +
+      '.demaze-founder-quote{font-size:clamp(19px,2.4vw,26px);line-height:1.5;font-weight:500;color:#0b0f19;margin:0 0 24px;}' +
+      '.demaze-founder-byline{display:inline-flex;flex-direction:column;align-items:center;gap:4px;}' +
+      '.demaze-founder-name{font-size:15px;font-weight:700;color:#0b0f19;letter-spacing:-0.01em;}' +
+      '.demaze-founder-title{font-size:13px;color:rgb(108, 119, 131);}';
     document.head.appendChild(style);
   }
 
@@ -83,11 +89,28 @@
         p.insertAdjacentElement('afterend', badgesWrap);
 
         // Illustration image card
+        var lastEl = badgesWrap;
         if (content.image && !section.querySelector('.demaze-about-img-card')) {
           var imgCard = document.createElement('div');
           imgCard.className = 'demaze-about-img-card';
           imgCard.innerHTML = '<img src="' + content.image + '" alt="Demaze Digital Transformation">';
           badgesWrap.insertAdjacentElement('afterend', imgCard);
+          lastEl = imgCard;
+        }
+
+        // Founder Statement Block
+        var testimonial = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.testimonial;
+        if (testimonial && !section.querySelector('.demaze-founder-statement-block')) {
+          var fBlock = document.createElement('div');
+          fBlock.className = 'demaze-founder-statement-block';
+          fBlock.innerHTML =
+            '<div class="demaze-founder-mark">&ldquo;</div>' +
+            '<p class="demaze-founder-quote">' + testimonial.quote + '</p>' +
+            '<div class="demaze-founder-byline">' +
+            '<div class="demaze-founder-name">' + testimonial.name + '</div>' +
+            '<div class="demaze-founder-title">' + testimonial.title + '</div>' +
+            '</div>';
+          lastEl.insertAdjacentElement('afterend', fBlock);
         }
       }
     }

@@ -62,17 +62,36 @@
     var style = document.createElement('style');
     style.id = NAV_STYLE_ID;
     style.textContent =
-      '.demaze-nav-links-wrap{display:flex;align-items:center;gap:24px;margin:0 20px;z-index:2;}' +
-      '.demaze-nav-link{color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;text-decoration:none;' +
+      'nav[data-framer-name="Nav"]{' +
+      'max-width:1160px!important;height:64px!important;border-radius:999px!important;' +
+      'background:rgba(255,255,255,0.14)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;' +
+      'border:1px solid rgba(255,255,255,0.22)!important;box-shadow:0 10px 30px rgba(0,0,0,0.1)!important;' +
+      'transition:all 0.3s cubic-bezier(.22,1,.36,1)!important;}' +
+      'nav[data-framer-name="Nav"] img{filter:brightness(0) invert(1);transition:filter 0.3s ease;}' +
+      'nav[data-framer-name="Nav"].demaze-nav-scrolled{' +
+      'background:rgba(255,255,255,0.92)!important;box-shadow:0 12px 36px rgba(0,0,0,0.08)!important;border-color:rgba(0,0,0,0.08)!important;}' +
+      'nav[data-framer-name="Nav"].demaze-nav-scrolled img{filter:none;}' +
+      '.demaze-nav-links-wrap{display:flex;align-items:center;gap:28px;margin:0 24px;z-index:2;}' +
+      '.demaze-nav-link{color:#ffffff!important;font-size:14px;font-weight:500;text-decoration:none;' +
       'transition:color 0.2s ease;white-space:nowrap;}' +
-      '.demaze-nav-link:hover{color:#fff;}' +
-      '.demaze-nav-btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 20px;' +
-      'border-radius:100px;background:#fff;color:#000;font-size:13px;font-weight:600;text-decoration:none;' +
-      'transition:all 0.2s ease;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.12);}' +
-      '.demaze-nav-btn:hover{background:rgb(240,240,240);transform:translateY(-1px);}' +
+      '.demaze-nav-link:hover{color:#A89EEF!important;}' +
+      'nav[data-framer-name="Nav"].demaze-nav-scrolled .demaze-nav-link{color:#0B0E17!important;}' +
+      'nav[data-framer-name="Nav"].demaze-nav-scrolled .demaze-nav-link:hover{color:#5B4FE9!important;}' +
+      '.demaze-nav-btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 22px;' +
+      'border-radius:999px;background:#000!important;color:#fff!important;font-size:13.5px;font-weight:600;text-decoration:none;' +
+      'transition:all 0.2s ease;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,0.2);}' +
+      '.demaze-nav-btn:hover{background:#1e293b!important;transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.25);}' +
       'nav[data-framer-name="Nav"] [data-framer-name="Menu"],' +
       'nav[data-framer-name="Nav"] [data-framer-name="Button"]{display:none!important;}' +
-      '@media (max-width:809px){.demaze-nav-links-wrap{display:none!important;}}';
+      '@media (max-width:809px){.demaze-nav-links-wrap{display:none!important;}}' +
+      '.demaze-mobile-drawer{display:none;position:fixed;top:76px;left:16px;right:16px;background:rgba(255,255,255,0.98)!important;' +
+      'backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,0,0,0.08);' +
+      'border-radius:24px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.15);z-index:99999;flex-direction:column;gap:12px;animation:demazeFadeDown 0.25s cubic-bezier(.22,1,.36,1);}' +
+      '.demaze-mobile-drawer.active{display:flex!important;}' +
+      '.demaze-mobile-drawer a{color:#0B0E17!important;font-size:16px;font-weight:500;text-decoration:none;padding:12px 16px;border-radius:12px;transition:background 0.2s, color 0.2s;}' +
+      '.demaze-mobile-drawer a:hover{background:#F8F6FE;color:#5B4FE9!important;}' +
+      '.demaze-mobile-drawer .demaze-mobile-btn{background:#000!important;color:#fff!important;text-align:center;font-weight:600;margin-top:8px;border-radius:999px;padding:12px 20px;box-shadow:0 8px 24px rgba(0,0,0,0.15);}' +
+      '@keyframes demazeFadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}';
     document.head.appendChild(style);
   }
 
@@ -108,6 +127,57 @@
 
       nav.appendChild(linksWrap);
     }
+
+    // Scroll strengthening
+    if (!nav.__demazeScrollAttached) {
+      nav.__demazeScrollAttached = true;
+      function updateNavScroll() {
+        var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
+        if (y > 40) {
+          nav.classList.add('demaze-nav-scrolled');
+        } else {
+          nav.classList.remove('demaze-nav-scrolled');
+        }
+      }
+      window.addEventListener('scroll', updateNavScroll, { passive: true });
+      if (window.lenis && typeof window.lenis.on === 'function') {
+        window.lenis.on('scroll', updateNavScroll);
+      }
+      updateNavScroll();
+    }
+
+    // Mobile drawer setup
+    if (!document.getElementById('demaze-mobile-nav-drawer')) {
+      var drawer = document.createElement('div');
+      drawer.id = 'demaze-mobile-nav-drawer';
+      drawer.className = 'demaze-mobile-drawer';
+      drawer.innerHTML = content.navLinks
+        .map(function (l) {
+          return '<a href="' + l.href + '">' + l.text + '</a>';
+        })
+        .join('') +
+        '<a href="./contact" class="demaze-mobile-btn">Book A Call</a>';
+      document.body.appendChild(drawer);
+
+      document.addEventListener(
+        'click',
+        function (e) {
+          var d = document.getElementById('demaze-mobile-nav-drawer');
+          if (!d) return;
+          var btn = e.target.closest('.framer-1p6a152-container') || e.target.closest('[data-framer-name="Variant 1"]');
+          if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            d.classList.toggle('active');
+            return;
+          }
+          if (!d.contains(e.target)) {
+            d.classList.remove('active');
+          }
+        },
+        true
+      );
+    }
   }
 
   function applyFooter() {
@@ -127,19 +197,37 @@
     var desc = footer.querySelector('[data-framer-name="Desc"]');
     if (desc) desc.textContent = content.footerTagline;
 
+    // 4-Column Footer Setup
     var menus = footer.querySelectorAll('[data-framer-name="Menu"]');
+    var columnsData = [
+      { title: "Navigation", links: content.footerNavLinks || content.footerLinks },
+      { title: "Services", links: content.footerServiceLinks },
+      { title: "Reach Us", links: content.footerReachLinks }
+    ];
+
     menus.forEach(function (menu, i) {
-      if (i === 0) {
-        var title = menu.querySelector('[data-framer-name="Menu Title"]');
-        if (title) title.style.display = 'none';
+      var col = columnsData[i];
+      if (col && col.links) {
+        menu.style.display = '';
+        var titleNode = menu.querySelector('[data-framer-name="Menu Title"]');
+        if (titleNode) {
+          var titleH = titleNode.querySelector('h6') || titleNode.querySelector('p') || titleNode;
+          titleH.textContent = col.title;
+          titleNode.style.display = '';
+        }
         var links = menu.querySelectorAll('a');
         links.forEach(function (a, j) {
-          var item = content.footerLinks[j];
+          var item = col.links[j];
+          var container = a.closest('[class*="-container"]') || a;
           if (!item) {
             a.style.display = 'none';
+            if (container !== a) container.style.display = 'none';
+            var emptyNode = a.querySelector('p') || a;
+            if (emptyNode) emptyNode.textContent = '';
             return;
           }
           a.style.display = '';
+          if (container !== a) container.style.display = '';
           a.setAttribute('href', item.href);
           var textNode = a.querySelector('p') || a;
           textNode.textContent = item.text;
@@ -158,6 +246,7 @@
   }
 
   function applyOverride() {
+    document.title = "Demaze Technologies - Your Strategic Partner in Building Scalable AI Products";
     var nav = getNav();
     if (nav) applyNav(nav);
     applyFooter();

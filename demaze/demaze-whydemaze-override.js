@@ -47,12 +47,38 @@
       '.demaze-whydemaze-card h6{font-size:18px;font-weight:600;color:rgb(0,0,0);margin:0 0 12px;}' +
       '.demaze-whydemaze-card p{font-size:14px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
       '@media (max-width:809px){.demaze-whydemaze-row{flex-direction:column!important;}}' +
-      '.demaze-metrics-row{display:flex!important;flex-direction:row!important;gap:24px;flex-wrap:wrap;' +
-      'width:100%;justify-content:space-between;margin-top:40px;padding-top:40px;border-top:1px solid rgba(0,0,0,0.08);}' +
-      '.demaze-metric{flex:1 1 140px;text-align:center;}' +
-      '.demaze-metric-value{font-size:clamp(28px,3.4vw,40px);font-weight:700;color:' + BRAND_BLUE + ';line-height:1.1;}' +
-      '.demaze-metric-label{font-size:13px;color:' + MUTED + ';margin-top:6px;}';
+      '.demaze-metrics-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:24px!important;' +
+      'width:100%!important;max-width:1200px!important;margin:54px auto 0!important;padding:48px 0 0!important;border-top:1px solid rgba(0,0,0,0.08)!important;}' +
+      '@media (max-width:809px){.demaze-metrics-row{grid-template-columns:repeat(2,1fr)!important;gap:28px 16px!important;}}' +
+      '.demaze-metric{text-align:center;}' +
+      '.demaze-metric-value{font-size:clamp(32px,3.6vw,44px);font-weight:700;color:' + BRAND_BLUE + ';line-height:1.1;letter-spacing:-0.02em;}' +
+      '.demaze-metric-label{font-size:13.5px;color:' + MUTED + ';margin-top:8px;font-weight:500;animation:demazeFadeIn 0.8s ease-out 0.2s both;}' +
+      '@keyframes demazeFadeIn{from{opacity:0;}to{opacity:1;}}';
     document.head.appendChild(style);
+  }
+
+  function animateCount(el, targetStr) {
+    var match = targetStr.match(/(\D*)(\d+)(\D*)/);
+    if (!match) return;
+    var prefix = match[1] || '';
+    var targetNum = parseInt(match[2], 10);
+    var suffix = match[3] || '';
+    var startTime = null;
+    var duration = 1200;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var currentVal = Math.floor(eased * targetNum);
+      el.textContent = prefix + currentVal + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = targetStr;
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   function metricHTML(item) {
@@ -147,6 +173,21 @@
       row.className = METRICS_CLASS;
       row.innerHTML = metrics.items.map(metricHTML).join('');
       table.insertAdjacentElement('afterend', row);
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              row.querySelectorAll('.demaze-metric-value').forEach(function (valEl, i) {
+                var target = metrics.items[i].value;
+                animateCount(valEl, target);
+              });
+              obs.disconnect();
+            }
+          });
+        }, { threshold: 0.2 });
+        obs.observe(row);
+      }
     }
   }
 
