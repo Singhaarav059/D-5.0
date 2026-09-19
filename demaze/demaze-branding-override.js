@@ -238,7 +238,7 @@
     });
 
     var bottomText = footer.querySelector('[data-framer-name="Footer Bottom"] p');
-    if (bottomText) bottomText.textContent = content.copyright;
+    if (bottomText) bottomText.textContent = content.copyright + " • " + (content.tagline || "Empowering AI Innovation Worldwide");
 
     // No confirmed Demaze social links — hide rather than invent.
     var social = footer.querySelector('[data-framer-name="Social"]');
@@ -250,6 +250,9 @@
     var nav = getNav();
     if (nav) applyNav(nav);
     applyFooter();
+    document.querySelectorAll('img:not([alt])').forEach(function (img) {
+      img.setAttribute('alt', '');
+    });
   }
 
   function verifyStuck() {
@@ -257,7 +260,7 @@
     var navLogoOk = !!(nav && nav.querySelector('img') && nav.querySelector('img').getAttribute('src') === LOGO_SRC);
     var footer = document.querySelector('footer');
     var bottomText = footer && footer.querySelector('[data-framer-name="Footer Bottom"] p');
-    return !!(navLogoOk && bottomText && bottomText.textContent.trim() === content.copyright);
+    return !!(navLogoOk && bottomText && bottomText.textContent.includes(content.copyright));
   }
 
   window.DemazeOverride.run({

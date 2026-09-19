@@ -2187,3 +2187,80 @@ h4, .demaze-h4 {
   gap: 12px;
 }
 
+/* ==========================================================================
+   ACCESSIBILITY & FOCUS VISIBLE (SECTION 7)
+   ========================================================================== */
+.demaze-skip-link {
+  position: absolute;
+  top: -120px;
+  left: 20px;
+  z-index: 999999;
+  background: var(--ink, #0B0E17);
+  color: #ffffff !important;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  transition: top 0.2s cubic-bezier(.22, 1, .36, 1);
+}
+
+.demaze-skip-link:focus,
+.demaze-skip-link:focus-visible {
+  top: 20px;
+  outline: 2px solid var(--brand, #5B4FE9) !important;
+  outline-offset: 3px !important;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--brand, #5B4FE9) !important;
+  outline-offset: 2px !important;
+}
+
+/* ==========================================================================
+   REDUCED MOTION FALLBACKS (SECTION 3.7)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .demaze-subpage-marquee-track,
+  .marquee-track,
+  .demaze-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .demaze-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .demaze-card,
+  .demaze-contact-card,
+  .project-card,
+  .why-benefit-card,
+  .about-bento-card,
+  .service-feature-visual-card,
+  .demaze-btn-primary,
+  .demaze-btn-secondary {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
