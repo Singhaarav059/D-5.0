@@ -63,13 +63,31 @@ const server = http.createServer((req, res) => {
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
       res.writeHead(200, { 'Content-Type': contentType });
-      fs.createReadStream(filePath).pipe(res);
+      if (req.method === 'HEAD') {
+        res.end();
+        return;
+      }
+      const stream = fs.createReadStream(filePath);
+      stream.on('error', (err) => {
+        if (!res.headersSent) res.writeHead(500);
+        res.end();
+      });
+      stream.pipe(res);
     } else {
       // Fallback to index.html for SPA routing if needed
       const indexPath = path.join(__dirname, 'index.html');
       if (fs.existsSync(indexPath)) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        fs.createReadStream(indexPath).pipe(res);
+        if (req.method === 'HEAD') {
+          res.end();
+          return;
+        }
+        const stream = fs.createReadStream(indexPath);
+        stream.on('error', (err) => {
+          if (!res.headersSent) res.writeHead(500);
+          res.end();
+        });
+        stream.pipe(res);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('404 Not Found');
@@ -82,5 +100,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`MOVIQ Clone server is running at http://localhost:${PORT}`);
+  console.log(`Demaze Technologies server is running at http://localhost:${PORT}`);
 });

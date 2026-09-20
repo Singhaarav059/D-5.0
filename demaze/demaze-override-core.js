@@ -147,6 +147,7 @@ window.DemazeOverride = {
     '/* 8. What Drives Us */' +
     '[data-framer-name="Main"] > section[data-framer-name="Ai Powered"] { order: 8 !important; }' +
     '/* 9. Why Demaze + Metrics */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Why Demaze vs Traditional"],' +
     '[data-framer-name="Main"] > section[data-framer-name="Moviq vs Traditional Video"] { order: 9 !important; }' +
     '/* 10. Final CTA */' +
     '[data-framer-name="Main"] > section[data-framer-name="CTA"] { order: 10 !important; }' +

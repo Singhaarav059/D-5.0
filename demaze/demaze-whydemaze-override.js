@@ -26,28 +26,38 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Moviq vs Traditional Video"] h2{' +
+      'section[data-framer-name="Why Demaze vs Traditional"], section[data-framer-name="Moviq vs Traditional Video"]{' +
+      '  height:auto!important;min-height:auto!important;padding:70px 24px 80px!important;overflow:visible!important;' +
+      '}' +
+      'section[data-framer-name="Why Demaze vs Traditional"] [data-framer-name="Container"], section[data-framer-name="Moviq vs Traditional Video"] [data-framer-name="Container"]{' +
+      '  height:auto!important;min-height:auto!important;overflow:visible!important;' +
+      '}' +
+      'section[data-framer-name="Why Demaze vs Traditional"] h2, section[data-framer-name="Moviq vs Traditional Video"] h2{' +
       '  font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;margin:0 0 32px!important;' +
       '}' +
+      'section[data-framer-name="Moviq vs Traditional Video"] [data-framer-name="Table"],' +
       '.demaze-whydemaze-row{' +
       '  display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:28px!important;' +
-      '  width:100%!important;max-width:1240px!important;margin:0 auto!important;padding:0 24px!important;' +
+      '  width:100%!important;max-width:1240px!important;margin:0 auto!important;padding:0!important;' +
+      '  background:transparent!important;border:none!important;border-radius:0!important;' +
+      '  box-shadow:none!important;overflow:visible!important;height:auto!important;min-height:auto!important;' +
       '  box-sizing:border-box!important;align-items:stretch!important;' +
       '}' +
       '.demaze-whydemaze-card{' +
-      '  background:#fff;border:1px solid ' + LINE_COLOR + ';' +
-      '  border-radius:24px;padding:36px 30px;display:flex;flex-direction:column;' +
-      '  box-shadow:0 1px 2px rgba(11,14,23,0.04), 0 12px 32px -8px rgba(60,50,140,0.08);' +
-      '  box-sizing:border-box!important;align-self:stretch!important;transition:all 0.3s ease;' +
+      '  background:#ffffff!important;border:1px solid ' + LINE_COLOR + '!important;' +
+      '  border-radius:24px!important;padding:36px 30px!important;display:flex!important;flex-direction:column!important;' +
+      '  box-shadow:0 1px 3px rgba(11,14,23,0.03), 0 12px 32px -8px rgba(60,50,140,0.08)!important;' +
+      '  box-sizing:border-box!important;align-self:stretch!important;transition:all 0.3s cubic-bezier(0.16,1,0.3,1)!important;' +
+      '  overflow:visible!important;' +
       '}' +
-      '.demaze-whydemaze-card:hover{transform:translateY(-4px);box-shadow:0 24px 48px -12px rgba(60,50,140,0.18);border-color:rgba(91,79,233,0.3);}' +
+      '.demaze-whydemaze-card:hover{transform:translateY(-4px)!important;box-shadow:0 24px 48px -12px rgba(60,50,140,0.18)!important;border-color:rgba(91,79,233,0.35)!important;}' +
       '.demaze-whydemaze-icon{width:52px;height:52px;border-radius:14px;background:#F0EEFF;border:1px solid rgba(91,79,233,0.15);' +
       '  display:flex;align-items:center;justify-content:center;margin-bottom:22px;flex-shrink:0;}' +
       '.demaze-whydemaze-card h6{font-size:22px;font-weight:600;color:' + INK_TEXT + ';margin:0 0 12px;line-height:1.3;letter-spacing:-0.01em;}' +
       '.demaze-whydemaze-card p{font-size:15px;line-height:1.65;color:#3F4454;margin:0;}' +
       '@media (max-width:809px){.demaze-whydemaze-row{grid-template-columns:1fr!important;}}' +
       '.demaze-metrics-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:0!important;' +
-      '  width:100%!important;max-width:1200px!important;margin:64px auto 0!important;padding:56px 0 0!important;border-top:1px solid ' + LINE_COLOR + '!important;}' +
+      '  width:100%!important;max-width:1200px!important;margin:52px auto 0!important;padding:44px 0 0!important;border-top:1px solid ' + LINE_COLOR + '!important;}' +
       '.demaze-metric{text-align:center;padding:0 24px;}' +
       '.demaze-metric:not(:last-child){border-right:1px solid ' + LINE_COLOR + ';}' +
       '.demaze-metric-value{font-size:clamp(38px,4.5vw,56px);font-weight:700;color:' + BRAND_BLUE + ';line-height:1.1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;}' +
@@ -77,7 +87,8 @@
   }
 
   function getSection() {
-    return document.querySelector('section[data-framer-name="Moviq vs Traditional Video"]');
+    return document.querySelector('section[data-framer-name="Why Demaze vs Traditional"]') ||
+           document.querySelector('section[data-framer-name="Moviq vs Traditional Video"]');
   }
 
   function getTable(section) {

@@ -84,7 +84,7 @@
     // The founder statement is now properly unified into Who We Are + Founder
     var old = document.getElementById(SECTION_ID);
     if (old && hero.contains(old)) {
-      old.remove();
+      old.style.display = 'none';
     }
   }
 

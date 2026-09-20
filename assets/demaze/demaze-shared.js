@@ -1,17 +1,44 @@
 /**
- * Demaze Technologies - Shared Interactive Behaviors (Phase 1: Foundation)
+ * Demaze Technologies - Shared Interactive Behaviors (MOVIQ Aligned Backend)
  * Handles:
- * - Dynamic copyright year
- * - Nav scroll states (transparent/glass over hero -> solid frosted on scroll)
+ * - Lenis smooth inertia scrolling
+ * - Moviq-style floating frosted glass navbar pill with smooth hover indicator
+ * - Dynamic scroll-linked section unfolding & staggered entrance reveals
  * - Accessible mobile navigation drawer
  * - Interactive single-open accordions
- * - IntersectionObserver reveal wrapper with prefers-reduced-motion fallback
+ * - Dynamic copyright year
  */
 
 (function () {
   'use strict';
 
-  // 1. Dynamic Footer Year
+  // 1. Initialize Lenis Smooth Scrolling
+  function initLenis() {
+    if (typeof window.Lenis === 'function' && !window.lenis) {
+      try {
+        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
+        document.body.style.setProperty('scroll-behavior', 'auto', 'important');
+
+        window.lenis = new window.Lenis({
+          duration: 1.15,
+          easing: function (t) {
+            return Math.min(1, 1.001 - Math.pow(2, -10 * t));
+          },
+          orientation: 'vertical',
+          gestureOrientation: 'vertical',
+          smoothWheel: true,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.5,
+          infinite: false,
+          autoRaf: true
+        });
+      } catch (e) {
+        console.warn('Lenis init error:', e);
+      }
+    }
+  }
+
+  // 2. Dynamic Footer Year
   function initFooterYear() {
     var yearEls = document.querySelectorAll('.demaze-footer-year, #footerYear');
     var currentYear = new Date().getFullYear();
@@ -20,13 +47,14 @@
     });
   }
 
-  // 2. Navigation Scroll State
-  function initNavScroll() {
+  // 3. Navigation Scroll State & Hover Pill
+  function initNav() {
     var navBar = document.querySelector('.demaze-nav-bar');
     if (!navBar) return;
 
     function onScroll() {
-      if (window.scrollY > 40) {
+      var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
+      if (y > 40) {
         navBar.classList.add('demaze-nav-scrolled');
       } else {
         navBar.classList.remove('demaze-nav-scrolled');
@@ -34,10 +62,28 @@
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    if (window.lenis && typeof window.lenis.on === 'function') {
+      window.lenis.on('scroll', onScroll);
+    }
     onScroll();
+
+    // Moviq-style hover highlight indicator
+    var navMenu = document.querySelector('.demaze-nav-menu');
+    if (navMenu && !navMenu.__hoverPillBound) {
+      navMenu.__hoverPillBound = true;
+      var links = navMenu.querySelectorAll('.demaze-nav-item a');
+      links.forEach(function (link) {
+        link.addEventListener('mouseenter', function () {
+          link.style.transform = 'translateY(-1px)';
+        });
+        link.addEventListener('mouseleave', function () {
+          link.style.transform = '';
+        });
+      });
+    }
   }
 
-  // 3. Mobile Navigation Drawer
+  // 4. Mobile Navigation Drawer
   function initMobileNav() {
     var toggleBtn = document.getElementById('demaze-mobile-btn') || document.querySelector('.demaze-mobile-toggle');
     var drawer = document.getElementById('demaze-subpage-drawer') || document.querySelector('.demaze-subpage-drawer');
@@ -91,7 +137,7 @@
     });
   }
 
-  // 4. Accessible Single-Open Accordions
+  // 5. Accessible Single-Open Accordions
   function initAccordions() {
     var accordions = document.querySelectorAll('.demaze-accordion, .faq-accordion-container');
     accordions.forEach(function (acc) {
@@ -139,63 +185,72 @@
     });
   }
 
-  // 5. Reveal Animation Observer with prefers-reduced-motion check
-  function initReveals() {
+  // 6. Moviq-Style Section Unfolding & Entrance Animation Observer
+  function initUnfolding() {
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var revealEls = document.querySelectorAll('.demaze-reveal');
+    var targets = document.querySelectorAll(
+      '.project-case-card, .service-feature-row, .why-benefit-card, .stat-metric-card, .about-who-grid, .contact-info-card, .contact-form-container, .demaze-reveal, .demaze-unfold'
+    );
 
     if (prefersReduced) {
-      revealEls.forEach(function (el) {
-        el.classList.add('demaze-revealed');
+      targets.forEach(function (el) {
+        el.classList.add('is-unfolded');
       });
       return;
     }
 
     if (!('IntersectionObserver' in window)) {
-      revealEls.forEach(function (el) {
-        el.classList.add('demaze-revealed');
+      targets.forEach(function (el) {
+        el.classList.add('is-unfolded');
       });
       return;
     }
+
+    // Set initial unfold class
+    targets.forEach(function (el, idx) {
+      el.classList.add('demaze-unfold');
+      // Stagger slight transition delay within clusters
+      var stagger = (idx % 3) * 0.08;
+      el.style.transitionDelay = stagger + 's';
+    });
 
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
-            entry.target.classList.add('demaze-revealed');
+            entry.target.classList.add('is-unfolded');
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.01, rootMargin: '150px 0px 150px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
     );
 
-    revealEls.forEach(function (el) {
+    targets.forEach(function (el) {
       observer.observe(el);
     });
 
     // Safety fallback: ensure all content becomes visible after page loads
     setTimeout(function () {
-      revealEls.forEach(function (el) {
-        el.classList.add('demaze-revealed');
+      targets.forEach(function (el) {
+        el.classList.add('is-unfolded');
       });
-    }, 1200);
+    }, 1500);
   }
 
   // Run on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      initFooterYear();
-      initNavScroll();
-      initMobileNav();
-      initAccordions();
-      initReveals();
-    });
-  } else {
+  function initAll() {
+    initLenis();
     initFooterYear();
-    initNavScroll();
+    initNav();
     initMobileNav();
     initAccordions();
-    initReveals();
+    initUnfolding();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
   }
 })();

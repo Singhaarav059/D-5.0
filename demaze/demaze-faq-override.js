@@ -22,7 +22,7 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Faq"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:70px 24px 100px!important;position:relative!important;overflow:visible!important;}' +
+      'section[data-framer-name="Faq"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:50px 24px 60px!important;position:relative!important;overflow:visible!important;}' +
       'section[data-framer-name="Faq"] [data-framer-name="Container"]{width:100%!important;max-width:1100px!important;margin:0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:32px!important;}' +
       'section[data-framer-name="Faq"] h2{font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;text-align:center!important;margin:0 auto!important;}' +
       'section[data-framer-name="Faq"] [data-framer-name="Subheading"],' +

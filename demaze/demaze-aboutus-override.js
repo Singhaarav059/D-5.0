@@ -44,6 +44,7 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
+      'section[data-framer-name="Products"]{padding: 60px 24px 50px!important;height:auto!important;min-height:auto!important;}' +
       'section[data-framer-name="Products"] h2{' +
       '  font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;margin:0 0 16px!important;opacity:1!important;transform:none!important;' +
       '}' +

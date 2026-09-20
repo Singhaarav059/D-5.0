@@ -1,31 +1,10 @@
 /**
  * Our Process — Demaze's real 4-step process (Discover & Define / Design &
- * Prototype / Build & Integrate / Launch & Scale), from
- * demazetech.com homepage "HOW WE WORK: Our Process".
+ * Prototype / Build & Integrate / Launch & Scale), with MOVIQ's native
+ * scroll-linked unfolding card interaction.
  *
- * MOVIQ's native "Videos making Step" section (a 3-card row) is the obvious
- * candidate for this content. Confirmed live, exhaustively, that touching
- * that section's children — a cloned 4th card, nested extra content in an
- * existing card, even plain text-only edits with zero new nodes — can
- * trigger a fatal React reconciliation crash on mobile-width loads. Also
- * confirmed: this crash is NOT deterministic — the exact same code was
- * observed to crash on some fresh-tab loads and not others, including the
- * plain hidden state and pure unmodified MOVIQ with zero of this project's
- * scripts. It's a flaky timing race in Framer's own hydration, not a bug
- * tied to one specific technique, so no code change here can promise zero
- * risk — only lower it.
- *
- * This builds a brand-new, fully custom 4-card block appended as a nested
- * leaf inside Hero's own container (the same pattern already used for the
- * Founder Testimonial, which has been the most-tested single mutation in
- * this project across this session with no observed crash tied to it
- * specifically). MOVIQ's native "Videos making Step" section is hidden via
- * its own root `display:none` only — never mutated further — since hiding
- * a section root (with zero mutation of its children) was the one
- * operation confirmed safe across every test run this entire session.
- *
- * See DEMAZE_IMPLEMENTATION_STATE.md for the full investigation history.
- * See demaze-override-core.js for why this waits/mutates/rechecks the way it does.
+ * Symmetrically unfolds all 4 cards horizontally as the user scrolls into view,
+ * matching the exact physics and feel of MOVIQ's "Videos making Step" section.
  */
 (function () {
   var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.process;
@@ -33,36 +12,115 @@
 
   var STYLE_ID = 'demaze-process-style';
   var BLOCK_ID = 'demaze-process-block';
-  var BRAND_BLUE = '#5B4FE9';
-  var MUTED = '#6B7080';
-  var LINE_COLOR = '#E7E7F3';
+
+  var STEP_GRADIENTS = [
+    'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)', // 1: Discover & Define
+    'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', // 2: Design & Prototype
+    'linear-gradient(135deg, #0ea5e9 0%, #10b981 100%)', // 3: Build & Integrate
+    'linear-gradient(135deg, #10b981 0%, #059669 100%)', // 4: Launch & Scale
+  ];
+
+  var STEP_ICONS = [
+    // 1: Search / Discovery
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    // 2: Design / Layers / Prototype
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
+    // 3: Code / Build & Integrate
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+    // 4: Rocket / Launch & Scale
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg>',
+  ];
 
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Videos making Step"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:100px 24px 120px!important;background:#fff!important;position:relative!important;z-index:1!important;overflow:visible!important;}' +
-      '.demaze-process-wrap{background:#fff;position:relative;z-index:1;padding:0;text-align:center;width:100%;max-width:1240px;margin:0 auto;}' +
-      '.demaze-process-heading{font-size:clamp(30px,3.8vw,44px);font-weight:700;color:#0B0E17;margin:0 0 56px;letter-spacing:-0.025em;}' +
-      '.demaze-process-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;width:100%;margin:0 auto;position:relative;align-items:stretch;}' +
-      '.demaze-process-row::before{content:"";position:absolute;top:50px;left:10%;right:10%;height:1px;border-top:1px dashed ' + LINE_COLOR + ';z-index:0;pointer-events:none;}' +
-      '.demaze-process-card{background:#fff;border:1px solid ' + LINE_COLOR + ';border-radius:24px;padding:32px 26px;text-align:left;box-shadow:0 1px 2px rgba(11,14,23,0.04), 0 12px 32px -8px rgba(60,50,140,0.08);transition:all 0.3s ease;display:flex;flex-direction:column;position:relative;z-index:1;}' +
-      '.demaze-process-card:hover{transform:translateY(-4px);box-shadow:0 24px 48px -12px rgba(60,50,140,0.18);border-color:rgba(91,79,233,0.3);}' +
-      '.demaze-process-step{width:36px;height:36px;border-radius:50%;background:' + BRAND_BLUE + ';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-bottom:20px;box-shadow:0 4px 12px rgba(91,79,233,0.25);flex-shrink:0;}' +
-      '.demaze-process-card h3{font-size:20px;font-weight:600;color:#0B0E17;margin:0 0 12px;line-height:1.3;letter-spacing:-0.01em;}' +
-      '.demaze-process-card p{font-size:15px;line-height:1.6;color:' + MUTED + ';margin:0;}' +
-      '@media (max-width:1024px){.demaze-process-row{grid-template-columns:repeat(2,1fr);gap:20px;}.demaze-process-row::before{display:none;}}' +
-      '@media (max-width:640px){.demaze-process-row{grid-template-columns:1fr;gap:16px;}.demaze-process-card{padding:24px;}}';
+      'section[data-framer-name="Videos making Step"]{' +
+      '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
+      '  width:100%!important;height:auto!important;min-height:auto!important;' +
+      '  padding:50px 24px 60px!important;background:#ffffff!important;' +
+      '  position:relative!important;z-index:1!important;overflow:visible!important;' +
+      '}' +
+      '.demaze-process-wrap{' +
+      '  background:#ffffff;position:relative;z-index:1;padding:0;text-align:center;' +
+      '  width:100%;max-width:1280px;margin:0 auto;' +
+      '}' +
+      '.demaze-process-eyebrow{' +
+      '  display:inline-flex;align-items:center;gap:6px;' +
+      '  background:rgba(37, 99, 235, 0.08);color:#2563eb;' +
+      '  font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
+      '  padding:6px 16px;border-radius:100px;border:1px solid rgba(37, 99, 235, 0.18);' +
+      '  margin-bottom:16px;' +
+      '}' +
+      '.demaze-process-heading{' +
+      '  font-size:clamp(32px, 4vw, 48px);font-weight:700;color:#0B0E17;' +
+      '  margin:0 0 14px;letter-spacing:-0.025em;line-height:1.15;' +
+      '}' +
+      '.demaze-process-sub{' +
+      '  font-size:clamp(15px, 1.2vw, 17px);color:#64748b;max-width:620px;' +
+      '  margin:0 auto 56px;line-height:1.6;' +
+      '}' +
+      '.demaze-process-row{' +
+      '  display:grid;grid-template-columns:repeat(4, 1fr);gap:20px;' +
+      '  width:100%;margin:0 auto;position:relative;align-items:stretch;' +
+      '  perspective:1200px;transform-style:preserve-3d;' +
+      '}' +
+      '.demaze-process-card{' +
+      '  background:#ffffff;border:1px solid rgba(226, 232, 240, 0.9);' +
+      '  border-radius:28px;padding:32px 24px;text-align:left;' +
+      '  box-shadow:0 1px 3px rgba(0,0,0,0.02), 0 16px 36px -10px rgba(15, 23, 42, 0.06);' +
+      '  display:flex;flex-direction:column;position:relative;z-index:1;' +
+      '  will-change:transform, opacity;' +
+      '  transition:box-shadow 0.3s ease, border-color 0.3s ease;' +
+      '}' +
+      '.demaze-process-card:hover{' +
+      '  box-shadow:0 24px 50px -12px rgba(37, 99, 235, 0.16);' +
+      '  border-color:rgba(37, 99, 235, 0.35);' +
+      '}' +
+      '.demaze-process-card-top{' +
+      '  display:flex;align-items:center;justify-content:space-between;' +
+      '  margin-bottom:24px;' +
+      '}' +
+      '.demaze-process-icon{' +
+      '  width:44px;height:44px;border-radius:14px;' +
+      '  display:inline-flex;align-items:center;justify-content:center;' +
+      '  box-shadow:0 8px 18px rgba(0, 0, 0, 0.12);flex-shrink:0;' +
+      '}' +
+      '.demaze-process-step-num{' +
+      '  font-size:12.5px;font-weight:700;color:#94a3b8;' +
+      '  background:rgba(241, 245, 249, 0.8);padding:4px 10px;border-radius:8px;' +
+      '  border:1px solid rgba(226, 232, 240, 0.8);' +
+      '}' +
+      '.demaze-process-card h3{' +
+      '  font-size:20px;font-weight:700;color:#0B0E17;margin:0 0 12px;' +
+      '  line-height:1.3;letter-spacing:-0.01em;' +
+      '}' +
+      '.demaze-process-card p{' +
+      '  font-size:14.5px;line-height:1.65;color:#64748b;margin:0;' +
+      '}' +
+      '@media (max-width: 1024px){' +
+      '  .demaze-process-row{grid-template-columns:repeat(2, 1fr);gap:18px;}' +
+      '}' +
+      '@media (max-width: 640px){' +
+      '  section[data-framer-name="Videos making Step"]{padding:80px 18px 90px!important;}' +
+      '  .demaze-process-row{grid-template-columns:1fr;gap:16px;}' +
+      '  .demaze-process-card{padding:26px 20px;}' +
+      '}';
     document.head.appendChild(style);
   }
 
   function cardHTML(step, i) {
+    var grad = STEP_GRADIENTS[i % STEP_GRADIENTS.length];
+    var icon = STEP_ICONS[i % STEP_ICONS.length];
     return (
-      '<div class="demaze-process-card">' +
-      '<div class="demaze-process-step">' + (i + 1) + '</div>' +
-      '<h3>' + step.title + '</h3>' +
-      '<p>' + step.description + '</p>' +
+      '<div class="demaze-process-card" data-step-index="' + i + '">' +
+      '  <div class="demaze-process-card-top">' +
+      '    <div class="demaze-process-icon" style="background:' + grad + '">' + icon + '</div>' +
+      '    <span class="demaze-process-step-num">0' + (i + 1) + '</span>' +
+      '  </div>' +
+      '  <h3>' + step.title + '</h3>' +
+      '  <p>' + step.description + '</p>' +
       '</div>'
     );
   }
@@ -80,27 +138,84 @@
 
     // Clean up any accidental copy left in Hero
     var oldHeroBlock = document.querySelector('section[data-framer-name="Hero"] #' + BLOCK_ID);
-    if (oldHeroBlock) oldHeroBlock.remove();
+    if (oldHeroBlock) oldHeroBlock.style.display = 'none';
 
-    // Ensure this section is visible in natural document flow
+    // Ensure section is visible in natural document flow
     section.style.setProperty('display', 'flex', 'important');
     section.style.setProperty('height', 'auto', 'important');
     section.style.setProperty('min-height', 'auto', 'important');
 
-    // Hide native MOVIQ children without modifying their React structure
+    // Hide native MOVIQ children without modifying their React tree
     var nativeContainer = section.querySelector('[data-framer-name="Container"]');
     if (nativeContainer) {
       nativeContainer.style.setProperty('display', 'none', 'important');
     }
 
-    if (!document.getElementById(BLOCK_ID)) {
-      var block = document.createElement('div');
+    var block = document.getElementById(BLOCK_ID);
+    if (!block) {
+      block = document.createElement('div');
       block.id = BLOCK_ID;
       block.className = 'demaze-process-wrap';
       block.innerHTML =
+        '<span class="demaze-process-eyebrow">' + (content.eyebrow || 'How We Work') + '</span>' +
         '<h2 class="demaze-process-heading">' + content.heading + '</h2>' +
+        '<p class="demaze-process-sub">A structured, collaborative framework engineered to transform complex challenges into scalable AI products.</p>' +
         '<div class="demaze-process-row">' + content.steps.map(cardHTML).join('') + '</div>';
       section.appendChild(block);
+    }
+
+    // Bind MOVIQ scroll-linked card unfolding animation
+    if (!section.__demazeProcessScrollBound) {
+      section.__demazeProcessScrollBound = true;
+
+      function syncProcessScroll() {
+        var cards = section.querySelectorAll('.demaze-process-card');
+        if (!cards || cards.length !== 4) return;
+
+        var rect = section.getBoundingClientRect();
+        var winH = window.innerHeight || 800;
+        var isDesktop = window.innerWidth > 768;
+
+        // Progress 0 when section enters bottom 88% of screen; 1 when top reaches 28%
+        var start = winH * 0.88;
+        var end = winH * 0.28;
+        var p = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+
+        // Unfold each card symmetrically
+        if (isDesktop) {
+          // Offsets: Card 0 moves from +160px -> 0px; Card 1: +50px -> 0px; Card 2: -50px -> 0px; Card 3: -160px -> 0px
+          var xOffsets = [160, 50, -50, -160];
+          var rotY = [-5, -2, 2, 5];
+          var minScales = [0.90, 0.95, 0.95, 0.90];
+
+          for (var i = 0; i < cards.length; i++) {
+            var factor = 1 - p;
+            var curX = (xOffsets[i] * factor).toFixed(2);
+            var curRot = (rotY[i] * factor).toFixed(2);
+            var curScale = (minScales[i] + (1 - minScales[i]) * p).toFixed(3);
+            var curOp = (0.45 + 0.55 * p).toFixed(3);
+
+            cards[i].style.transform = 'translate3d(' + curX + 'px, 0, 0) scale(' + curScale + ') rotateY(' + curRot + 'deg)';
+            cards[i].style.opacity = curOp;
+          }
+        } else {
+          // Responsive mobile/tablet stagger
+          for (var j = 0; j < cards.length; j++) {
+            var factorM = 1 - p;
+            var curYM = (25 * factorM).toFixed(2);
+            var curScaleM = (0.95 + 0.05 * p).toFixed(3);
+            var curOpM = (0.50 + 0.50 * p).toFixed(3);
+            cards[j].style.transform = 'translate3d(0, ' + curYM + 'px, 0) scale(' + curScaleM + ')';
+            cards[j].style.opacity = curOpM;
+          }
+        }
+      }
+
+      window.addEventListener('scroll', syncProcessScroll, { passive: true });
+      if (window.lenis && typeof window.lenis.on === 'function') {
+        window.lenis.on('scroll', syncProcessScroll);
+      }
+      syncProcessScroll();
     }
   }
 

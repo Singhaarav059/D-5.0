@@ -1,3 +1,17 @@
 node_modules/
 .DS_Store
 *.log
+scratch/
+audit_*.png
+audit_*.js
+debug_*.js
+inspect_*.js
+test_*.js
+capture_*.js
+check_*.js
+measure_*.js
+find_*.js
+verify_*.js
+moviq_*.png
+local_*.png
+demaze_pages_scraped.json

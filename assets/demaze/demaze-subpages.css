@@ -109,9 +109,33 @@ html {
   background-color: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Official Lenis Smooth Scroll Foundation */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 body {
@@ -223,36 +247,55 @@ h4, .demaze-h4 {
   width: 100%;
   max-width: var(--nav-max-w);
   height: 64px;
-  padding: 0 28px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  padding: 0 16px 0 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-glass);
-  transition: background var(--dur-base) var(--ease-out),
-              border-color var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.35s cubic-bezier(.22, 1, .36, 1);
 }
 
 .demaze-nav-bar.demaze-nav-scrolled {
-  background: rgba(255, 255, 255, 0.96);
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: var(--shadow-lg);
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28) !important;
 }
 
-.demaze-nav-bar.demaze-nav-transparent {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-logo img {
+  filter: brightness(0) invert(1) !important;
 }
 
-.demaze-nav-bar.demaze-nav-transparent .demaze-nav-item a {
-  color: #ffffff;
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a {
+  color: #ffffff !important;
+  opacity: 0.90;
 }
 
-.demaze-nav-bar.demaze-nav-transparent .demaze-nav-logo img {
-  filter: brightness(0) invert(1);
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a.active {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary:hover {
+  background: #ffffff !important;
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .demaze-nav-logo {
@@ -271,7 +314,7 @@ h4, .demaze-h4 {
 .demaze-nav-menu {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 10px;
   list-style: none;
 }
 
@@ -280,29 +323,23 @@ h4, .demaze-h4 {
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  transition: color var(--dur-fast) var(--ease-out);
-  position: relative;
-  padding: 6px 2px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .demaze-nav-item a:hover {
+  background: rgba(0, 0, 0, 0.06);
   color: var(--ink);
+  transform: translateY(-1px);
 }
 
 .demaze-nav-item a.active {
-  color: var(--ink);
+  background: rgba(91, 79, 233, 0.09);
+  color: var(--brand);
   font-weight: 600;
-}
-
-.demaze-nav-item a.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--brand);
-  border-radius: 2px;
 }
 
 .demaze-nav-action {
@@ -355,44 +392,60 @@ h4, .demaze-h4 {
 }
 
 /* ==========================================================================
-   PAGE HERO HEADER
+   PAGE HERO HEADER (COMPACT & CLEAN)
    ========================================================================== */
 .demaze-subpage-hero {
-  padding: 150px 24px 60px;
+  padding: 108px 24px 36px;
   text-align: center;
-  max-width: 900px;
+  max-width: 880px;
   margin: 0 auto;
   position: relative;
 }
 
 .demaze-badge-pill {
   display: inline-block;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  font-size: 12.5px !important;
+  background: rgba(91, 79, 233, 0.08) !important;
+  border: 1px solid rgba(91, 79, 233, 0.15) !important;
+  padding: 5px 14px !important;
+  border-radius: var(--radius-pill) !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.12em !important;
+  letter-spacing: 0.1em !important;
   color: var(--brand) !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 14px !important;
 }
 
 .demaze-hero-h1 {
-  font-size: clamp(36px, 4.6vw, 60px);
+  font-size: clamp(34px, 4.2vw, 56px);
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.025em;
   color: var(--ink);
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .demaze-hero-desc {
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.65;
-  color: var(--ink-2);
-  max-width: 720px;
-  margin: 0 auto 32px;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.6;
+  color: #475569;
+  max-width: 700px;
+  margin: 0 auto 24px;
+}
+
+/* ==========================================================================
+   MOVIQ-STYLE UNFOLDING & ENTRANCE MOTION
+   ========================================================================== */
+.demaze-unfold {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  transition: opacity 0.65s cubic-bezier(.22, 1, .36, 1), transform 0.65s cubic-bezier(.22, 1, .36, 1);
+  will-change: opacity, transform;
+}
+
+.demaze-unfold.is-unfolded {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* ==========================================================================
@@ -402,7 +455,7 @@ h4, .demaze-h4 {
   width: 100%;
   max-width: var(--container-max-w);
   margin: 0 auto;
-  padding: 0 clamp(20px, 4vw, 40px) 100px;
+  padding: 0 clamp(20px, 4vw, 40px) 64px;
   flex: 1;
 }
 
@@ -1433,12 +1486,12 @@ h4, .demaze-h4 {
 }
 
 /* ==========================================================================
-   UNIFIED 4-COLUMN FOOTER
+   UNIFIED 3-COLUMN REDESIGNED FOOTER (Brand, Navigation, Reach Us)
    ========================================================================== */
 .demaze-footer {
-  background: var(--bg-soft);
-  border-top: 1px solid var(--line);
-  padding: 80px 24px 36px;
+  background: #FAFAFC;
+  border-top: 1px solid #EAEAEF;
+  padding: 72px 24px 36px;
   margin-top: auto;
   width: 100%;
 }
@@ -1447,32 +1500,72 @@ h4, .demaze-h4 {
   max-width: var(--container-max-w);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1.2fr 1.3fr;
+  grid-template-columns: 2.2fr 1fr 1.3fr 1.1fr;
   gap: 48px;
-  margin-bottom: 50px;
+  margin-bottom: 48px;
+}
+
+.demaze-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .demaze-footer-brand img {
-  height: 30px;
+  height: 32px;
   width: auto;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   display: block;
+  object-fit: contain;
+  align-self: flex-start;
+}
+
+.demaze-footer-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #166534;
+  width: fit-content;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.demaze-status-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: demazePulse 2s infinite;
+}
+
+@keyframes demazePulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 
 .demaze-footer-brand .footer-tagline {
+  font-family: var(--font-heading) !important;
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .demaze-footer-brand .footer-mission {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--brand);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
 .demaze-footer-brand p {
@@ -1480,12 +1573,36 @@ h4, .demaze-h4 {
   font-size: 13.5px;
   line-height: 1.6;
   max-width: 380px;
+  margin-bottom: 10px;
+}
+
+.demaze-footer-cta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #0B0E17;
+  color: #ffffff !important;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  width: fit-content;
+  transition: all 0.2s ease;
+}
+
+.demaze-footer-cta-pill:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
 }
 
 .demaze-footer-col h4 {
-  color: var(--ink);
-  font-size: 15px;
+  font-family: var(--font-heading) !important;
+  color: #0F172A;
+  font-size: 13px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin-bottom: 18px;
 }
 
@@ -1497,26 +1614,32 @@ h4, .demaze-h4 {
 }
 
 .demaze-footer-nav a {
-  color: var(--ink-2);
+  color: #475569;
   font-size: 14px;
+  font-weight: 500;
   text-decoration: none;
-  transition: color var(--dur-fast) var(--ease-out);
+  transition: all 0.2s cubic-bezier(.22, 1, .36, 1);
+  display: inline-block;
+  width: fit-content;
 }
 
 .demaze-footer-nav a:hover {
   color: var(--brand);
+  transform: translateX(4px);
 }
 
 .demaze-footer-bottom {
   max-width: var(--container-max-w);
   margin: 0 auto;
-  padding-top: 28px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 24px;
+  border-top: 1px solid #EAEAEF;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 13px;
   color: var(--ink-3);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 /* ==========================================================================
@@ -1674,6 +1797,9 @@ h4, .demaze-h4 {
     grid-template-columns: 1fr;
     gap: 36px;
   }
+  .demaze-footer {
+    padding-bottom: 120px;
+  }
   .demaze-footer-bottom {
     flex-direction: column;
     gap: 12px;
@@ -1702,33 +1828,33 @@ h4, .demaze-h4 {
   color: rgba(255, 255, 255, 0.82) !important;
 }
 
-/* SERVICES: Alternating 2-Column Feature Rows */
+/* SERVICES: Alternating 2-Column Feature Rows (Compact & Refined) */
 .services-alternating-container {
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  margin-bottom: 90px;
+  gap: 36px;
+  margin-bottom: 60px;
 }
 
 .service-feature-row {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
-  gap: 48px;
+  gap: 36px;
   align-items: center;
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
-  padding: 48px;
+  padding: 38px 40px;
   box-shadow: var(--shadow-sm);
-  transition: transform var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
-              border-color var(--dur-base) var(--ease-out);
+  transition: transform 0.35s cubic-bezier(.22, 1, .36, 1),
+              box-shadow 0.35s cubic-bezier(.22, 1, .36, 1),
+              border-color 0.35s ease;
 }
 
 .service-feature-row:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--brand-glow);
+  box-shadow: 0 20px 48px -12px rgba(91, 79, 233, 0.12);
+  border-color: rgba(91, 79, 233, 0.35);
 }
 
 .service-feature-row.row-reversed {

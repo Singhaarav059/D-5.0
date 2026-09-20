@@ -39,17 +39,17 @@
       // (e.g. ".framer-ScIth .framer-1a3dchp") combine an ancestor class with
       // the element's own class, which beats a plain single-class override
       // on specificity alone — confirmed by testing, not a defensive guess.
-      'section[data-framer-name="Sricpt"]{height:auto!important;min-height:auto!important;padding:80px 24px 100px!important;overflow:visible!important;}' +
-      '.demaze-showcase-grid{display:flex!important;flex-direction:row!important;gap:48px!important;' +
+      'section[data-framer-name="Sricpt"]{height:auto!important;min-height:auto!important;padding:60px 24px 64px!important;overflow:visible!important;}' +
+      '.demaze-showcase-grid{display:flex!important;flex-direction:row!important;gap:40px!important;' +
       'align-items:flex-start!important;background:transparent!important;padding:0!important;border:none!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;}' +
-      '.demaze-showcase-left{flex:0 0 360px!important;position:sticky!important;top:150px!important;height:fit-content!important;align-self:flex-start!important;z-index:2;}' +
+      '.demaze-showcase-left{flex:0 0 340px!important;position:sticky!important;top:130px!important;height:fit-content!important;align-self:flex-start!important;z-index:2;}' +
       '.demaze-showcase-eyebrow{display:inline-flex;align-items:center;gap:8px;background:#F0EEFF;color:' + BRAND_BLUE + ';' +
       'font-size:12.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;border:1px solid #E7E7F3;}' +
       '.demaze-showcase-heading{font-size:clamp(34px,3.8vw,48px);font-weight:700;color:#0B0E17;margin:0;line-height:1.18;letter-spacing:-0.025em;}' +
       '.demaze-project-stack{flex:1 1 auto!important;min-width:0!important;display:block!important;' +
       'background:transparent!important;padding:0 0 20px 0!important;border:none!important;width:auto!important;}' +
-      '.demaze-project-card{background:#fff;border-radius:28px;border:1px solid #E7E7F3;box-shadow:0 1px 2px rgba(11,14,23,0.04), 0 16px 48px rgba(60,50,140,0.08);' +
-      'display:grid!important;grid-template-columns:1.15fr 1fr!important;gap:32px!important;align-items:center!important;padding:32px!important;margin-bottom:48px!important;box-sizing:border-box;transition:all 0.3s ease;}' +
+      '.demaze-project-card{background:#fff;border-radius:24px;border:1px solid #E7E7F3;box-shadow:0 1px 2px rgba(11,14,23,0.04), 0 16px 48px rgba(60,50,140,0.08);' +
+      'display:grid!important;grid-template-columns:1.15fr 1fr!important;gap:28px!important;align-items:center!important;padding:28px 30px!important;margin-bottom:32px!important;box-sizing:border-box;transition:all 0.3s ease;}' +
       '.demaze-project-text{display:flex;flex-direction:column;justify-content:center;min-width:0;}' +
       '.demaze-project-media{border-radius:20px;overflow:hidden;background:linear-gradient(135deg, #F0EEFF 0%, #E8E5FF 100%);border:1px solid rgba(91,79,233,0.15);aspect-ratio:16/10;max-height:340px;height:auto;width:100%;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;}' +
       '.demaze-project-media img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;transition:transform 0.4s ease;}' +

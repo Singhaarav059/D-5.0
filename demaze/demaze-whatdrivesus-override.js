@@ -32,7 +32,7 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Ai Powered"]{height:auto!important;min-height:auto!important;padding:80px 24px 100px!important;overflow:visible!important;}' +
+      'section[data-framer-name="Ai Powered"]{height:auto!important;min-height:auto!important;padding:60px 24px 70px!important;overflow:visible!important;}' +
       'section[data-framer-name="Ai Powered"] h2{font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;margin-bottom:36px!important;text-align:center!important;}' +
       'section[data-framer-name="Ai Powered"] [data-framer-name="Cards wrapper"]{' +
       '  display:flex!important;flex-direction:column!important;gap:28px!important;' +
@@ -40,8 +40,12 @@
       '}' +
       'section[data-framer-name="Ai Powered"] [data-framer-name="Firs row"],' +
       'section[data-framer-name="Ai Powered"] [data-framer-name="Second row"]{' +
-      '  display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:28px!important;' +
+      '  display:grid!important;grid-template-columns:repeat(2,1fr)!important;grid-template-rows:none!important;grid-auto-rows:auto!important;gap:28px!important;' +
       '  width:100%!important;height:auto!important;align-items:stretch!important;' +
+      '}' +
+      'section[data-framer-name="Ai Powered"] [data-framer-name="Firs row"] > div:nth-child(3){' +
+      '  display:none!important;position:absolute!important;width:0!important;height:0!important;min-height:0!important;' +
+      '  margin:0!important;padding:0!important;overflow:hidden!important;pointer-events:none!important;' +
       '}' +
       'section[data-framer-name="Ai Powered"] [data-framer-name="Firs row"] > div,' +
       'section[data-framer-name="Ai Powered"] [data-framer-name="Second row"] > div{' +
@@ -146,8 +150,14 @@
       { card: secondCards[1], item: content.items[3], graphic: DEMO_GRAPHICS[3] }
     ];
 
-    // Hide extra 3rd card in first row
+    // Hide extra 3rd card in first row and remove from grid layout
     firstCards[2].style.setProperty('display', 'none', 'important');
+    firstCards[2].style.setProperty('position', 'absolute', 'important');
+    firstCards[2].style.setProperty('width', '0px', 'important');
+    firstCards[2].style.setProperty('height', '0px', 'important');
+    firstCards[2].style.setProperty('min-height', '0px', 'important');
+    firstCards[2].style.setProperty('overflow', 'hidden', 'important');
+    firstCards[2].style.setProperty('pointer-events', 'none', 'important');
 
     activeCards.forEach(function (entry) {
       var card = entry.card;
