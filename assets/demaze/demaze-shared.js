@@ -50,21 +50,34 @@
   // 3. Navigation Scroll State & Hover Pill
   function initNav() {
     var navBar = document.querySelector('.demaze-nav-bar');
-    if (!navBar) return;
+    if (!navBar || navBar.__demazeScrollAttached) return;
+    // On homepage, demaze-branding-override.js handles the header scroll state
+    if (document.querySelector('section[data-framer-name="Hero"]')) return;
+
+    navBar.__demazeScrollAttached = true;
+    var isScrolled = false;
+    var scrollTicking = false;
 
     function onScroll() {
       var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-      if (y > 40) {
-        navBar.classList.add('demaze-nav-scrolled');
-      } else {
-        navBar.classList.remove('demaze-nav-scrolled');
+      var shouldBeScrolled = y > 50;
+      if (shouldBeScrolled !== isScrolled) {
+        isScrolled = shouldBeScrolled;
+        navBar.classList.toggle('demaze-nav-scrolled', isScrolled);
       }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    if (window.lenis && typeof window.lenis.on === 'function') {
-      window.lenis.on('scroll', onScroll);
+    function requestScroll() {
+      if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(function () {
+          onScroll();
+          scrollTicking = false;
+        });
+      }
     }
+
+    window.addEventListener('scroll', requestScroll, { passive: true });
     onScroll();
 
     // Moviq-style hover highlight indicator

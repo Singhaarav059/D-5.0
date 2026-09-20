@@ -21,7 +21,7 @@
       sphereLoading = false;
       var activeContainer = document.getElementById('hero-sphere-container') || container;
       if (!activeContainer || activeContainer.querySelector('canvas')) return;
-      var particlesCount = 3200;
+      var particlesCount = 1800;
       var speed = 0.45;
       var smoothing = 1.0;
       var scale = 0.50;
@@ -104,7 +104,7 @@
       group.add(instancedMesh);
 
       // Internal Synaptic Brain Plexus
-      var synapseCount = 42;
+      var synapseCount = 36;
       var synapsePositions = [];
       for (var s = 0; s < synapseCount; s++) {
         var u = Math.random();
@@ -161,7 +161,7 @@
       var orbitGroup = new THREE.Group();
       scene.add(orbitGroup);
 
-      var ringGeo1 = new THREE.TorusGeometry(sphereRadius * 1.08, 0.0022, 16, 120);
+      var ringGeo1 = new THREE.TorusGeometry(sphereRadius * 1.08, 0.0022, 16, 80);
       var ringMat1 = new THREE.MeshBasicMaterial({
         color: 0x38bdf8,
         blending: THREE.AdditiveBlending,
@@ -173,7 +173,7 @@
       ring1.rotation.y = Math.PI * 0.12;
       orbitGroup.add(ring1);
 
-      var ringGeo2 = new THREE.TorusGeometry(sphereRadius * 1.14, 0.0018, 16, 120);
+      var ringGeo2 = new THREE.TorusGeometry(sphereRadius * 1.14, 0.0018, 16, 80);
       var ringMat2 = new THREE.MeshBasicMaterial({
         color: 0x22c55e,
         blending: THREE.AdditiveBlending,
@@ -188,7 +188,7 @@
       // Orbiting satellites
       var satelliteOrbs = [
         {
-          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.016, 24, 24), new THREE.MeshBasicMaterial({ color: 0x38bdf8 })),
+          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.016, 18, 18), new THREE.MeshBasicMaterial({ color: 0x38bdf8 })),
           radius: sphereRadius * 1.08,
           inclination: Math.PI * 0.38,
           yaw: Math.PI * 0.12,
@@ -196,7 +196,7 @@
           offset: 0
         },
         {
-          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.013, 24, 24), new THREE.MeshBasicMaterial({ color: 0x34d399 })),
+          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.013, 18, 18), new THREE.MeshBasicMaterial({ color: 0x34d399 })),
           radius: sphereRadius * 1.08,
           inclination: Math.PI * 0.38,
           yaw: Math.PI * 0.12,
@@ -204,7 +204,7 @@
           offset: Math.PI * 0.85
         },
         {
-          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.014, 24, 24), new THREE.MeshBasicMaterial({ color: 0x22c55e })),
+          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.014, 18, 18), new THREE.MeshBasicMaterial({ color: 0x22c55e })),
           radius: sphereRadius * 1.14,
           inclination: -Math.PI * 0.32,
           yaw: Math.PI * 0.36,
@@ -212,7 +212,7 @@
           offset: 1.5
         },
         {
-          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.011, 24, 24), new THREE.MeshBasicMaterial({ color: 0xffffff })),
+          mesh: new THREE.Mesh(new THREE.SphereGeometry(0.011, 18, 18), new THREE.MeshBasicMaterial({ color: 0xffffff })),
           radius: sphereRadius * 1.14,
           inclination: -Math.PI * 0.32,
           yaw: Math.PI * 0.36,
@@ -229,9 +229,9 @@
       var camera = new THREE.PerspectiveCamera(45, boxW / boxH, 0.1, 1000);
       camera.position.z = 2.95;
 
-      var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setSize(boxW, boxH);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
 
       var canvas = renderer.domElement;
@@ -249,6 +249,9 @@
       var velocityRot = { x: 0, y: 0 };
       var isDragging = false;
       var isHovered = false;
+      var isSphereVisible = true;
+      var sphereAnimId = null;
+      var hasActiveDisplacements = false;
       var lastX = 0, lastY = 0, lastDragTime = 0;
       var mousePos = null;
 
@@ -257,7 +260,44 @@
       var smoothingFactor = smoothing === 0 ? 1 : mapRange(smoothing, 0, 1, 0.4, 0.03);
       var momentumDecay = mapRange(smoothing, 0, 1, 0.7, 0.96);
 
+      // Pre-allocated vectors for displacement physics & orbital satellites
+      var tempV = new THREE.Vector3();
+      var worldV = new THREE.Vector3();
+      var projV = new THREE.Vector3();
+      var camCol0 = new THREE.Vector3();
+      var camCol1 = new THREE.Vector3();
+      var camCol2 = new THREE.Vector3();
+      var pushVec = new THREE.Vector3();
+      var invWorld = new THREE.Matrix4();
+      var matrixItem = new THREE.Matrix4();
+      var orbitV = new THREE.Vector3();
+      var axisX = new THREE.Vector3(1, 0, 0);
+      var axisY = new THREE.Vector3(0, 1, 0);
+
+      var isPageScrolling = false;
+      var scrollReleaseTimer = null;
+      var frameCount = 0;
+      window.addEventListener('scroll', function () {
+        isPageScrolling = true;
+        clearTimeout(scrollReleaseTimer);
+        scrollReleaseTimer = setTimeout(function () {
+          isPageScrolling = false;
+        }, 120);
+      }, { passive: true });
+
       function animate(now) {
+        if (!isSphereVisible) {
+          sphereAnimId = null;
+          return;
+        }
+
+        frameCount++;
+        // During active page scrolling, render every 2nd frame to leave 100% frame budget for butter-smooth 60 FPS scrolling
+        if (isPageScrolling && (frameCount % 2 !== 0)) {
+          sphereAnimId = requestAnimationFrame(animate);
+          return;
+        }
+
         var elapsed = now - lastTime;
         lastTime = now;
         var n = Math.min(Math.max(elapsed / targetDelta, 0.1), 3);
@@ -303,9 +343,6 @@
         orbitGroup.rotation.x = currentRot.y * 0.4;
         orbitGroup.updateMatrixWorld(true);
 
-        var orbitV = new THREE.Vector3();
-        var axisX = new THREE.Vector3(1, 0, 0);
-        var axisY = new THREE.Vector3(0, 1, 0);
         for (var orbIdx = 0; orbIdx < satelliteOrbs.length; orbIdx++) {
           var orb = satelliteOrbs[orbIdx];
           var orbTheta = now * orb.speed + orb.offset;
@@ -315,21 +352,17 @@
           orb.mesh.position.copy(orbitV);
         }
 
-        var curW = canvas.clientWidth || 540;
-        var curH = canvas.clientHeight || 540;
-        var radSq = cursorRadius * cursorRadius;
+        // Only compute individual particle displacements when mouse is active or settling!
+        // When mouse is idle, group.rotation rotates the entire sphere with 0 CPU matrix math and 0 GPU uploads!
+        if (mousePos || hasActiveDisplacements) {
+          var curW = canvas.clientWidth || 540;
+          var curH = canvas.clientHeight || 540;
+          var radSq = cursorRadius * cursorRadius;
 
-        var tempV = new THREE.Vector3();
-        var worldV = new THREE.Vector3();
-        var projV = new THREE.Vector3();
-        var camCol0 = new THREE.Vector3();
-        var camCol1 = new THREE.Vector3();
-        var pushVec = new THREE.Vector3();
-        var invWorld = new THREE.Matrix4();
-        var matrixItem = new THREE.Matrix4();
+          camera.matrixWorld.extractBasis(camCol0, camCol1, camCol2);
+          invWorld.copy(group.matrixWorld).invert();
 
-        if (cursorConfig.enabled && originalPositions.length > 0) {
-          camera.matrixWorld.extractBasis(camCol0, camCol1, new THREE.Vector3());
+          var maxDispSq = 0;
 
           for (var pi = 0; pi < originalPositions.length; pi++) {
             var orig = originalPositions[pi];
@@ -358,39 +391,70 @@
                 pushVec.set(0, 0, 0);
                 pushVec.addScaledVector(camCol0, forceX);
                 pushVec.addScaledVector(camCol1, forceY);
-
-                invWorld.copy(group.matrixWorld).invert();
                 pushVec.applyMatrix4(invWorld);
                 disp.add(pushVec);
+                hasActiveDisplacements = true;
               }
             }
 
             disp.multiplyScalar(Math.pow(frictionCoeff, n));
             disp.multiplyScalar(1 - returnForceCoeff * speed * n);
+
+            var dSq = disp.lengthSq();
+            if (dSq > maxDispSq) maxDispSq = dSq;
+          }
+
+          if (impulseVelocities.length > 0) {
+            for (var vi = 0; vi < impulseVelocities.length; vi++) {
+              var vel = impulseVelocities[vi];
+              displacements[vi].addScaledVector(vel, n * 0.1);
+              vel.multiplyScalar(Math.pow(0.95, n));
+              vel.multiplyScalar(1 - returnForceCoeff * speed * n);
+            }
+            hasActiveDisplacements = true;
+          }
+
+          for (var mi = 0; mi < originalPositions.length; mi++) {
+            tempV.copy(originalPositions[mi]).add(displacements[mi]);
+            matrixItem.setPosition(tempV.x, tempV.y, tempV.z);
+            instancedMesh.setMatrixAt(mi, matrixItem);
+          }
+          instancedMesh.instanceMatrix.needsUpdate = true;
+
+          // When mouse left and displacements have decayed below threshold, return to resting state
+          if (!mousePos && maxDispSq < 0.00002) {
+            hasActiveDisplacements = false;
+            for (var rmi = 0; rmi < originalPositions.length; rmi++) {
+              displacements[rmi].set(0, 0, 0);
+              var origR = originalPositions[rmi];
+              matrixItem.setPosition(origR.x, origR.y, origR.z);
+              instancedMesh.setMatrixAt(rmi, matrixItem);
+            }
+            instancedMesh.instanceMatrix.needsUpdate = true;
           }
         }
-
-        if (impulseVelocities.length > 0) {
-          for (var vi = 0; vi < impulseVelocities.length; vi++) {
-            var vel = impulseVelocities[vi];
-            displacements[vi].addScaledVector(vel, n * 0.1);
-            vel.multiplyScalar(Math.pow(0.95, n));
-            vel.multiplyScalar(1 - returnForceCoeff * speed * n);
-          }
-        }
-
-        for (var mi = 0; mi < originalPositions.length; mi++) {
-          tempV.copy(originalPositions[mi]).add(displacements[mi]);
-          matrixItem.setPosition(tempV.x, tempV.y, tempV.z);
-          instancedMesh.setMatrixAt(mi, matrixItem);
-        }
-        instancedMesh.instanceMatrix.needsUpdate = true;
 
         renderer.render(scene, camera);
-        requestAnimationFrame(animate);
+        sphereAnimId = requestAnimationFrame(animate);
       }
 
-      requestAnimationFrame(animate);
+      // IntersectionObserver: Pause RAF loop when hero sphere is off-screen!
+      if ('IntersectionObserver' in window) {
+        var sphereObserver = new IntersectionObserver(function (entries) {
+          var entry = entries[0];
+          isSphereVisible = entry.isIntersecting;
+          if (isSphereVisible && !sphereAnimId) {
+            lastTime = performance.now();
+            sphereAnimId = requestAnimationFrame(animate);
+          } else if (!isSphereVisible && sphereAnimId) {
+            cancelAnimationFrame(sphereAnimId);
+            sphereAnimId = null;
+          }
+        }, { rootMargin: '100px 0px 100px 0px' });
+        sphereObserver.observe(activeContainer);
+      }
+
+      sphereAnimId = requestAnimationFrame(animate);
 
       if (drag) {
         canvas.addEventListener('mousedown', function (e) {
@@ -444,6 +508,7 @@
         var relY = e.clientY - rect.top;
         if (relX >= 0 && relX <= rect.width && relY >= 0 && relY <= rect.height) {
           mousePos = { x: relX, y: relY };
+          hasActiveDisplacements = true;
         } else {
           mousePos = null;
         }
@@ -652,31 +717,6 @@
       }
       initHeroSphere(document.getElementById('hero-sphere-container'));
 
-      // 7b. Smooth scroll synchronization for 3D card perspective tilt & container parallax
-      if (!tabCardEl.__demazeScrollSync) {
-        tabCardEl.__demazeScrollSync = true;
-        function syncHeroScroll() {
-          var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-          // Container text parallax translation matching MOVIQ (-10px per 100px scroll up to -90px)
-          var container = hero.querySelector('[data-framer-name="Container"]');
-          if (container) {
-            var transY = Math.max(-90, -0.1 * y);
-            container.style.transform = 'translate3d(0, ' + transY.toFixed(2) + 'px, 0)';
-            container.style.willChange = 'transform';
-          }
-          // Mockup card 3D tilt
-          var p = Math.min(1, Math.max(0, y / 750));
-          var rotX = (8.2 * (1 - p)).toFixed(3);
-          var s = (0.94 + 0.06 * p).toFixed(4);
-          tabCardEl.style.transform = 'translateX(-50%) perspective(1200px) translateZ(30px) scale(' + s + ') rotateX(' + rotX + 'deg)';
-          tabCardEl.style.willChange = 'transform';
-        }
-        window.addEventListener('scroll', syncHeroScroll, { passive: true });
-        if (window.lenis && typeof window.lenis.on === 'function') {
-          window.lenis.on('scroll', syncHeroScroll);
-        }
-        syncHeroScroll();
-      }
     }
 
     // 8. Inject Master Hero Styles
@@ -802,16 +842,14 @@
         '}' +
         '.demaze-browser-card{' +
         '  width:100%;height:100%;border-radius:20px;' +
-        '  background:rgba(255, 255, 255, 0.42);' +
-        '  backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);' +
-        '  border:1px solid rgba(255, 255, 255, 0.65);' +
-        '  box-shadow:0 30px 80px -20px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9);' +
+        '  background:rgba(255, 255, 255, 0.70);' +
+        '  border:1px solid rgba(255, 255, 255, 0.75);' +
+        '  box-shadow:0 30px 80px -20px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.9);' +
         '  overflow:hidden;position:relative;display:flex;flex-direction:column;' +
         '}' +
         '.demaze-browser-bar{' +
-        '  height:38px;background:rgba(255, 255, 255, 0.55);' +
-        '  border-bottom:1px solid rgba(255, 255, 255, 0.35);' +
-        '  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);' +
+        '  height:38px;background:rgba(255, 255, 255, 0.85);' +
+        '  border-bottom:1px solid rgba(255, 255, 255, 0.45);' +
         '  display:flex;align-items:center;justify-content:space-between;' +
         '  padding:0 16px;user-select:none;z-index:4;' +
         '}' +
@@ -821,7 +859,7 @@
         '.demaze-window-dots .dot.min{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.4);}' +
         '.demaze-window-dots .dot.expand{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.4);}' +
         '.demaze-browser-tab{' +
-        '  background:rgba(255, 255, 255, 0.85);border:1px solid rgba(255, 255, 255, 0.95);' +
+        '  background:rgba(255, 255, 255, 0.90);border:1px solid rgba(255, 255, 255, 0.95);' +
         '  box-shadow:0 2px 8px rgba(0, 0, 0, 0.04);' +
         '  border-radius:8px;padding:3px 12px;display:flex;align-items:center;gap:8px;' +
         '  color:#0f172a;font-size:12px;' +
@@ -842,7 +880,6 @@
         '  flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;' +
         '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.62) 0%, rgba(10, 15, 30, 0.88) 100%), url("https://framerusercontent.com/images/cbqUuccZCA1meuXGvWGnmnbmek.png?scale-down-to=1024");' +
         '  background-size:cover;background-position:center bottom;background-repeat:no-repeat;' +
-        '  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);' +
         '}' +
         '.demaze-sphere-stage::before{' +
         '  content:"";position:absolute;inset:0;' +
@@ -858,9 +895,9 @@
         '}' +
         '.demaze-telemetry-card{' +
         '  position:absolute;z-index:5;' +
-        '  background:rgba(255, 255, 255, 0.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);' +
-        '  border:1px solid rgba(255, 255, 255, 0.85);border-radius:12px;padding:10px 14px;' +
-        '  box-shadow:0 10px 28px rgba(0, 0, 0, 0.08);pointer-events:auto;' +
+        '  background:rgba(255, 255, 255, 0.90);' +
+        '  border:1px solid rgba(255, 255, 255, 0.95);border-radius:12px;padding:10px 14px;' +
+        '  box-shadow:0 12px 32px rgba(0, 0, 0, 0.16);pointer-events:auto;' +
         '  transition:transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;' +
         '}' +
         '.demaze-telemetry-card:hover{transform:translateY(-3px);border-color:rgba(37, 99, 235, 0.3);box-shadow:0 14px 32px rgba(0,0,0,0.12);}' +

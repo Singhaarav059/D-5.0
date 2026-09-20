@@ -164,26 +164,59 @@
       section.appendChild(block);
     }
 
-    // Bind MOVIQ scroll-linked card unfolding animation
+    // Bind MOVIQ scroll-linked card unfolding animation with zero forced reflows
     if (!section.__demazeProcessScrollBound) {
       section.__demazeProcessScrollBound = true;
 
-      function syncProcessScroll() {
-        var cards = section.querySelectorAll('.demaze-process-card');
-        if (!cards || cards.length !== 4) return;
+      var processScrollTicking = false;
+      var lastProgress = -1;
+      var isProcessVisible = false;
+      var cachedSectionTop = 0;
 
+      function updateSectionMetrics() {
         var rect = section.getBoundingClientRect();
+        var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
+        cachedSectionTop = rect.top + scrollY;
+      }
+      updateSectionMetrics();
+      window.addEventListener('resize', updateSectionMetrics, { passive: true });
+
+      if ('IntersectionObserver' in window) {
+        var procObserver = new IntersectionObserver(function (entries) {
+          isProcessVisible = entries[0].isIntersecting;
+          if (isProcessVisible) {
+            updateSectionMetrics();
+            syncProcessScroll();
+          }
+        }, { rootMargin: '120px 0px 120px 0px' });
+        procObserver.observe(section);
+      } else {
+        isProcessVisible = true;
+      }
+
+      function syncProcessScroll() {
+        if (!isProcessVisible) return;
+
         var winH = window.innerHeight || 800;
-        var isDesktop = window.innerWidth > 768;
+        var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
+        var rectTop = cachedSectionTop - scrollY;
 
         // Progress 0 when section enters bottom 88% of screen; 1 when top reaches 28%
         var start = winH * 0.88;
         var end = winH * 0.28;
-        var p = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+        var p = Math.min(1, Math.max(0, (start - rectTop) / (start - end)));
+
+        // Skip DOM writes if progress hasn't changed noticeably
+        if (Math.abs(p - lastProgress) < 0.003 && (p === 0 || p === 1)) return;
+        lastProgress = p;
+
+        var cards = section.querySelectorAll('.demaze-process-card');
+        if (!cards || cards.length !== 4) return;
+
+        var isDesktop = window.innerWidth > 768;
 
         // Unfold each card symmetrically
         if (isDesktop) {
-          // Offsets: Card 0 moves from +160px -> 0px; Card 1: +50px -> 0px; Card 2: -50px -> 0px; Card 3: -160px -> 0px
           var xOffsets = [160, 50, -50, -160];
           var rotY = [-5, -2, 2, 5];
           var minScales = [0.90, 0.95, 0.95, 0.90];
@@ -211,10 +244,18 @@
         }
       }
 
-      window.addEventListener('scroll', syncProcessScroll, { passive: true });
-      if (window.lenis && typeof window.lenis.on === 'function') {
-        window.lenis.on('scroll', syncProcessScroll);
+      function requestProcessScrollSync() {
+        if (!isProcessVisible) return;
+        if (!processScrollTicking) {
+          processScrollTicking = true;
+          requestAnimationFrame(function () {
+            syncProcessScroll();
+            processScrollTicking = false;
+          });
+        }
       }
+
+      window.addEventListener('scroll', requestProcessScrollSync, { passive: true });
       syncProcessScroll();
     }
   }

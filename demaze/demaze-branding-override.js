@@ -157,21 +157,29 @@
       nav.appendChild(linksWrap);
     }
 
-    // Scroll strengthening
+    // Scroll strengthening (RAF throttled with boolean diffing)
     if (!nav.__demazeScrollAttached) {
       nav.__demazeScrollAttached = true;
+      var navScrollTicking = false;
+      var isNavScrolled = false;
       function updateNavScroll() {
         var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-        if (y > 360) {
-          nav.classList.add('demaze-nav-scrolled');
-        } else {
-          nav.classList.remove('demaze-nav-scrolled');
+        var shouldBeScrolled = y > 360;
+        if (shouldBeScrolled !== isNavScrolled) {
+          isNavScrolled = shouldBeScrolled;
+          nav.classList.toggle('demaze-nav-scrolled', isNavScrolled);
         }
       }
-      window.addEventListener('scroll', updateNavScroll, { passive: true });
-      if (window.lenis && typeof window.lenis.on === 'function') {
-        window.lenis.on('scroll', updateNavScroll);
+      function requestNavScroll() {
+        if (!navScrollTicking) {
+          navScrollTicking = true;
+          requestAnimationFrame(function () {
+            updateNavScroll();
+            navScrollTicking = false;
+          });
+        }
       }
+      window.addEventListener('scroll', requestNavScroll, { passive: true });
       updateNavScroll();
     }
 
