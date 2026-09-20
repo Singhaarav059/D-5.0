@@ -44,19 +44,21 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      '.demaze-about-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:860px;margin:28px auto 36px;}' +
+      'section[data-framer-name="Products"] h2{' +
+      '  font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;margin:0 0 16px!important;opacity:1!important;transform:none!important;' +
+      '}' +
+      '.demaze-about-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:860px;margin:24px auto 32px;}' +
       '.demaze-about-badge{background:#fff;border:1px solid rgba(44,83,199,0.18);color:#2C53C7;font-size:12.5px;font-weight:600;' +
       'padding:6px 16px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s ease;}' +
       '.demaze-about-badge:hover{transform:translateY(-1px);border-color:#2C53C7;box-shadow:0 4px 12px rgba(44,83,199,0.12);}' +
-      '.demaze-about-img-card{max-width:960px;margin:0 auto;border-radius:24px;overflow:hidden;' +
-      'box-shadow:0 20px 60px rgba(0,0,0,0.08);background:#fff;border:1px solid rgba(0,0,0,0.06);}' +
-      '.demaze-about-img-card img{width:100%;height:auto;display:block;max-height:480px;object-fit:cover;}' +
-      '.demaze-founder-statement-block{max-width:820px;margin:56px auto 0;text-align:center;padding:40px 24px 20px;border-top:1px solid rgba(0,0,0,0.07);}' +
-      '.demaze-founder-mark{font-size:56px;line-height:1;color:#2C53C7;font-family:Georgia,serif;margin-bottom:6px;}' +
-      '.demaze-founder-quote{font-size:clamp(19px,2.4vw,26px);line-height:1.5;font-weight:500;color:#0b0f19;margin:0 0 24px;}' +
-      '.demaze-founder-byline{display:inline-flex;flex-direction:column;align-items:center;gap:4px;}' +
-      '.demaze-founder-name{font-size:15px;font-weight:700;color:#0b0f19;letter-spacing:-0.01em;}' +
-      '.demaze-founder-title{font-size:13px;color:rgb(108, 119, 131);}';
+      '.demaze-founder-statement-block{max-width:820px;margin:40px auto 0;text-align:center;padding:40px 24px 20px;border-top:1px solid rgba(0,0,0,0.07);}' +
+      '.demaze-founder-mark{font-size:56px;line-height:1;color:#5B4FE9;font-family:Georgia,serif;margin-bottom:6px;}' +
+      '.demaze-founder-quote{font-family:"Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;font-size:clamp(20px,2.2vw,28px)!important;line-height:1.55!important;font-weight:500!important;color:#0b0f19!important;margin:0 0 24px!important;}' +
+      '.demaze-founder-byline{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px;margin:0 auto!important;text-align:center!important;}' +
+      '.demaze-testimonial-avatar{width:72px!important;height:72px!important;border-radius:50%!important;object-fit:cover!important;object-position:center top!important;box-shadow:0 4px 18px rgba(0,0,0,0.12)!important;border:2px solid #5B4FE9!important;margin:0 auto 12px!important;display:block!important;}' +
+      '.demaze-founder-info{text-align:center!important;}' +
+      '.demaze-founder-name{font-size:16px;font-weight:700;color:#0b0f19;letter-spacing:-0.01em;}' +
+      '.demaze-founder-title{font-size:13.5px;color:rgb(108, 119, 131);}';
     document.head.appendChild(style);
   }
 
@@ -73,7 +75,7 @@
       var p = document.createElement('p');
       p.className = PARA_CLASS;
       p.style.cssText =
-        'max-width:760px;margin:20px auto 0;text-align:center;font-size:16px;line-height:1.7;color:rgb(108, 119, 131);';
+        'max-width:800px;margin:16px auto 0;text-align:center;font-size:16.5px;line-height:1.68;color:#3F4454;';
       p.textContent = content.paragraphs.join(' ');
       headerText.insertAdjacentElement('afterend', p);
 
@@ -88,15 +90,7 @@
           .join('');
         p.insertAdjacentElement('afterend', badgesWrap);
 
-        // Illustration image card
         var lastEl = badgesWrap;
-        if (content.image && !section.querySelector('.demaze-about-img-card')) {
-          var imgCard = document.createElement('div');
-          imgCard.className = 'demaze-about-img-card';
-          imgCard.innerHTML = '<img src="' + content.image + '" alt="Demaze Digital Transformation">';
-          badgesWrap.insertAdjacentElement('afterend', imgCard);
-          lastEl = imgCard;
-        }
 
         // Founder Statement Block
         var testimonial = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.testimonial;

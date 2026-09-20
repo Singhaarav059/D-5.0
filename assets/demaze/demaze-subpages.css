@@ -6,6 +6,42 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+@font-face {
+  font-family: "Stack Sans Headline";
+  src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc4zIgFCqgUA3ZCX.woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Stack Sans Headline";
+  src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5tIgFCqgUA3ZCX.woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Stack Sans Headline";
+  src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5fIgFCqgUA3ZCX.woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Stack Sans Headline";
+  src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6zJQFCqgUA3ZCX.woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Stack Sans Headline";
+  src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6KJQFCqgUA3ZCX.woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
 :root {
   /* Spec Design Tokens */
   --bg: #FFFFFF;
@@ -25,6 +61,7 @@
   --dur-slow: 700ms;
 
   /* Typography Scale */
+  --font-heading: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Radii */
@@ -101,17 +138,28 @@ a[href*="framer.com/?utm_campaign"],
 body:not(:has(#main)) {
   display: flex;
   flex-direction: column;
-  background-image: 
-    radial-gradient(circle at 50% -8%, rgba(91, 79, 233, 0.06) 0%, transparent 55%),
-    radial-gradient(circle at 90% 25%, rgba(122, 79, 230, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 10% 65%, rgba(42, 102, 222, 0.04) 0%, transparent 45%);
+  background-color: var(--bg);
+  background-image: none !important;
 }
 
 /* ==========================================================================
    TYPOGRAPHY FOUNDATION
    ========================================================================== */
+h1, h2, h3, h4, h5, h6,
+.demaze-h1, .demaze-h2, .demaze-h3, .demaze-h4,
+.demaze-hero-h1, .demaze-section-h2,
+.service-row-title, .project-title, .about-bento-title,
+.industry-content-title, .why-benefit-title,
+.demaze-footer-col h4, .footer-tagline, .demaze-cta-heading {
+  font-family: var(--font-heading) !important;
+}
+
+body, p, span, li, a, input, textarea, button, select, blockquote,
+.service-checklist-item, .project-desc, .about-bento-desc {
+  font-family: var(--font-sans) !important;
+}
+
 h1, .demaze-h1 {
-  font-family: var(--font-sans);
   font-size: clamp(38px, 4.8vw, 68px);
   font-weight: 700;
   line-height: 1.1;
@@ -120,7 +168,6 @@ h1, .demaze-h1 {
 }
 
 h2, .demaze-h2 {
-  font-family: var(--font-sans);
   font-size: clamp(30px, 3.8vw, 48px);
   font-weight: 700;
   line-height: 1.15;
@@ -129,7 +176,6 @@ h2, .demaze-h2 {
 }
 
 h3, .demaze-h3 {
-  font-family: var(--font-sans);
   font-size: clamp(22px, 2.5vw, 32px);
   font-weight: 600;
   line-height: 1.25;
@@ -138,19 +184,20 @@ h3, .demaze-h3 {
 }
 
 h4, .demaze-h4 {
-  font-family: var(--font-sans);
   font-size: clamp(18px, 1.8vw, 24px);
   font-weight: 600;
   line-height: 1.3;
   color: var(--ink);
 }
 
+/* S-1: Neutralize tacky gradient text to match MOVIQ's solid, crisp typography */
 .demaze-gradient-word,
 .demaze-gradient-text {
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: inherit !important;
+  display: inline !important;
 }
 
 /* ==========================================================================
@@ -319,18 +366,16 @@ h4, .demaze-h4 {
 }
 
 .demaze-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: var(--bg-soft);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-pill);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--brand);
-  margin-bottom: 20px;
+  display: inline-block;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.12em !important;
+  color: var(--brand) !important;
+  margin-bottom: 16px !important;
 }
 
 .demaze-hero-h1 {
@@ -877,13 +922,15 @@ h4, .demaze-h4 {
   margin-bottom: 80px;
 }
 
-.industries-tabs-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 36px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+.industries-tabs-wrapper,
+.industry-tabs-scroll {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  justify-content: center !important;
+  margin-bottom: 32px !important;
+  padding-bottom: 24px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
 
 .industry-tab-btn {
@@ -904,15 +951,59 @@ h4, .demaze-h4 {
 }
 
 .industry-tab-btn.active {
-  background: #000000;
-  color: #ffffff;
-  font-weight: 600;
+  background: #000000 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
 }
 
-.industry-items-panel {
+/* S-5: Ensure industry title has generous breathing room and matching heading font */
+.industry-content-title {
+  font-family: var(--font-heading) !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #0B0E17 !important;
+  margin: 28px 0 20px !important;
+  line-height: 1.3 !important;
+}
+
+.industry-showcase-panel {
+  display: grid !important;
+  grid-template-columns: 1.15fr 1fr !important;
+  gap: 36px !important;
+  align-items: center !important;
+  margin-top: 20px !important;
+}
+
+@media (max-width: 860px) {
+  .industry-showcase-panel {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.industry-items-panel,
+.industry-subitems-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.industry-panel-visual {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.industry-panel-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .industry-subitem {
@@ -1953,23 +2044,29 @@ h4, .demaze-h4 {
   }
 }
 
+/* S-9: Balanced 2x2 grid matching Home page What Drives Us */
 .about-bento-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 28px !important;
   margin-bottom: 90px;
 }
 
-.about-bento-card {
+.about-bento-card,
+.about-bento-card.span-7,
+.about-bento-card.span-5 {
+  grid-column: span 1 !important;
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 34px;
+  padding: 34px 32px 32px;
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 440px !important;
   transition: transform var(--dur-base) var(--ease-out),
               box-shadow var(--dur-base) var(--ease-out),
               border-color var(--dur-base) var(--ease-out);
@@ -1979,14 +2076,6 @@ h4, .demaze-h4 {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
   border-color: var(--brand-glow);
-}
-
-.about-bento-card.span-7 {
-  grid-column: span 7;
-}
-
-.about-bento-card.span-5 {
-  grid-column: span 5;
 }
 
 .about-bento-card.card-tinted {
@@ -2025,7 +2114,9 @@ h4, .demaze-h4 {
 .about-bento-visual {
   margin-top: auto;
   width: 100%;
-  border-radius: 14px;
+  height: 220px !important;
+  max-height: 220px !important;
+  border-radius: 16px;
   overflow: hidden;
   background: var(--bg-soft);
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -2036,9 +2127,11 @@ h4, .demaze-h4 {
 
 .about-bento-visual img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
+  border-radius: 16px;
 }
 
 .concentric-rings-visual {
@@ -2063,11 +2156,7 @@ h4, .demaze-h4 {
 
 @media (max-width: 960px) {
   .about-bento-grid {
-    grid-template-columns: 1fr;
-  }
-  .about-bento-card.span-7,
-  .about-bento-card.span-5 {
-    grid-column: span 1;
+    grid-template-columns: 1fr !important;
   }
 }
 

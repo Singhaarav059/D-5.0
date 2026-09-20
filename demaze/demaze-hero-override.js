@@ -27,24 +27,17 @@
     );
     badgeParagraphs.forEach(function (p) {
       p.textContent = content.badge;
-      // MOVIQ's stylesheet caps this text box at width:67% of the pill,
-      // sized for the original (shorter) phrase. Override it inline so
-      // Demaze's longer phrase isn't force-wrapped at that fixed fraction.
       var textBox = p.closest('[data-framer-name="Badge Text"]');
       if (textBox) textBox.style.width = 'auto';
     });
 
-    // The pill itself also has an inline pixel width computed for the
-    // original phrase. Clear it so the pill sizes to the new content
-    // (it can still wrap naturally on narrow viewports if truly needed).
     var tagWrapper = hero.querySelector('[data-framer-name="Tag"]');
     if (tagWrapper) {
       tagWrapper.style.width = 'auto';
       tagWrapper.style.maxWidth = 'none';
     }
 
-    // MOVIQ's second pill ("$29/Lifetime") has no Demaze equivalent — hide,
-    // don't remove, so React still owns the node.
+    // MOVIQ's second pill ("$29/Lifetime") has no Demaze equivalent — hide
     var pricePill = hero.querySelector('.framer-zeccam[data-framer-name="tag"]');
     if (pricePill) pricePill.style.display = 'none';
 
@@ -52,22 +45,14 @@
     var h1 = hero.querySelector('h1');
     if (h1) h1.textContent = content.headline;
 
-    // Description — MOVIQ's hero has no matching node, so insert one after
-    // the headline wrapper, reusing an existing MOVIQ text style preset.
+    // Description
     var headlineWrapper = hero.querySelector('[data-framer-name="Headline"]');
     if (headlineWrapper && !hero.querySelector('.demaze-hero-desc')) {
       var desc = document.createElement('div');
       desc.className = 'demaze-hero-desc';
-      desc.style.maxWidth = '600px';
-      desc.style.margin = '24px auto 0';
       var p = document.createElement('p');
       p.className = 'framer-text framer-styles-preset-17kfgzm';
       p.setAttribute('dir', 'auto');
-      // The hero sits over a busy photo background, not a plain surface, so
-      // this reuses the headline's white treatment (plus a soft shadow for
-      // a smaller/lighter weight) instead of MOVIQ's on-white muted gray.
-      p.style.color = 'rgba(255, 255, 255, 0.92)';
-      p.style.textShadow = '0 1px 6px rgba(0, 0, 0, 0.45)';
       p.textContent = content.description;
       desc.appendChild(p);
       headlineWrapper.insertAdjacentElement('afterend', desc);
@@ -92,36 +77,75 @@
         });
     }
 
+    // Background image replacement (H-5: tulip replacement)
+    var bgImg = hero.querySelector('[data-framer-background-image-wrapper="true"] img');
+    if (bgImg) {
+      bgImg.style.setProperty('display', 'none', 'important');
+    }
+
     // Ensure style
     if (!document.getElementById('demaze-hero-style')) {
       var hStyle = document.createElement('style');
       hStyle.id = 'demaze-hero-style';
       hStyle.textContent =
         '@keyframes demazeHeroFadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}' +
-        'section[data-framer-name="Hero"]{position:relative!important;overflow:visible!important;}' +
+        'section[data-framer-name="Hero"], .framer-xj5vkr{' +
+        '  position:relative!important;overflow:visible!important;height:auto!important;min-height:auto!important;padding:85px 0 25px!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] [data-framer-background-image-wrapper="true"]{' +
+        '  height:100%!important;min-height:500px!important;' +
+        '  background:radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0f172a 60%, #020617 100%)!important;' +
+        '}' +
         'section[data-framer-name="Hero"] [data-framer-background-image-wrapper="true"]::after{' +
-        'content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,20,60,0.35) 0%,rgba(6,20,60,0.10) 40%,rgba(6,20,60,0.55) 100%);pointer-events:none;border-radius:inherit;z-index:1;}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Container"]{position:relative;z-index:2;}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;position:relative;z-index:2;}' +
-        'section[data-framer-name="Hero"] h1{animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;position:relative;z-index:2;text-wrap:balance;}' +
-        'section[data-framer-name="Hero"] .demaze-hero-desc{animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:2;max-width:640px!important;margin:24px auto 0!important;text-align:center!important;}' +
-        'section[data-framer-name="Hero"] .demaze-hero-desc p{text-align:center!important;font-size:clamp(16px,1.4vw,19px)!important;line-height:1.6!important;color:rgba(255,255,255,0.95)!important;text-shadow:0 1px 12px rgba(0,0,0,0.35)!important;}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"]{animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;position:relative;z-index:2;gap:16px!important;}' +
-        'section[data-framer-name="Hero"] a[href="./contact"], section[data-framer-name="Hero"] [data-framer-name="Get In Touch"]{' +
-        'width:auto!important;min-width:160px!important;max-width:none!important;overflow:visible!important;}' +
-        'section[data-framer-name="Hero"] a[href="./contact"] *{white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;}' +
-        'section[data-framer-name="Hero"] a[href="./services"], section[data-framer-name="Hero"] a[href="./integration"]{' +
-        'background:rgba(255,255,255,0.18)!important;border:1px solid rgba(255,255,255,0.38)!important;' +
-        'backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,0.15)!important;border-radius:100px!important;transition:all 0.25s ease!important;color:#ffffff!important;text-decoration:none!important;width:auto!important;min-width:160px!important;padding:0 24px!important;}' +
-        'section[data-framer-name="Hero"] a[href="./services"]:hover, section[data-framer-name="Hero"] a[href="./integration"]:hover{' +
-        'background:rgba(255,255,255,0.28)!important;border-color:rgba(255,255,255,0.6)!important;transform:translateY(-1px)!important;}' +
-        'section[data-framer-name="Hero"] a[href="./services"] *, section[data-framer-name="Hero"] a[href="./integration"] *{' +
-        'color:#ffffff!important;font-weight:600!important;text-shadow:0 1px 3px rgba(0,0,0,0.4)!important;text-decoration:none!important;white-space:nowrap!important;}' +
-        '.demaze-hero-product-peek{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:90%;max-width:840px;z-index:3;pointer-events:none;animation:demazeProductFloat 6s ease-in-out infinite;}' +
-        '@keyframes demazeProductFloat{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,-8px);}}' +
-        '.demaze-hero-product-peek img{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.25));border-radius:20px;}' +
-        '@media (max-width:768px){.demaze-hero-product-peek{display:none!important;}}';
+        '  content:"";position:absolute;inset:0;' +
+        '  background:radial-gradient(circle at 50% 40%, rgba(91, 79, 233, 0.18) 0%, rgba(8, 14, 28, 0.4) 50%, rgba(8, 14, 28, 0.9) 100%),' +
+        '              linear-gradient(180deg, rgba(8, 14, 28, 0.35) 0%, rgba(8, 14, 28, 0.75) 100%);' +
+        '  pointer-events:none;border-radius:inherit;z-index:1;' +
+        '}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Container"], .framer-384jw6{' +
+        '  position:relative!important;z-index:2!important;height:auto!important;min-height:auto!important;padding:16px 30px 30px!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
+        '  animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;position:relative;z-index:2;' +
+        '}' +
+        'section[data-framer-name="Hero"] h1{' +
+        '  animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;position:relative;z-index:2;text-wrap:balance;' +
+        '  font-size:clamp(34px, 4vw, 50px)!important;line-height:1.18!important;margin:12px auto 0!important;' +
+        '  color:#ffffff!important;text-shadow:0 2px 14px rgba(0,0,0,0.65)!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] .demaze-hero-desc{' +
+        '  animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:2;max-width:680px!important;margin:12px auto 0!important;text-align:center!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] .demaze-hero-desc p{' +
+        '  text-align:center!important;font-size:clamp(16px,1.3vw,18.5px)!important;line-height:1.65!important;' +
+        '  color:rgba(255,255,255,0.98)!important;text-shadow:0 2px 10px rgba(0,0,0,0.75)!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"]{' +
+        '  animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;position:relative;z-index:2;gap:16px!important;margin-top:18px!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="contact"]{' +
+        '  width:auto!important;min-width:160px!important;max-width:none!important;overflow:hidden!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="contact"] [data-framer-name="Title"]{' +
+        '  overflow:hidden!important;height:24px!important;max-height:24px!important;position:relative!important;display:block!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="contact"] .framer-ef3qfq{' +
+        '  position:absolute!important;top:100%!important;left:0!important;opacity:0!important;visibility:hidden!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="contact"]:hover .framer-ef3qfq{' +
+        '  opacity:1!important;visibility:visible!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="services"], section[data-framer-name="Hero"] a[href*="integration"]{' +
+        '  background:#ffffff!important;border:1px solid #ffffff!important;' +
+        '  box-shadow:0 4px 18px rgba(0,0,0,0.25)!important;border-radius:100px!important;transition:all 0.25s ease!important;' +
+        '  color:#0f172a!important;text-decoration:none!important;width:auto!important;min-width:160px!important;padding:0 26px!important;height:48px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="services"]:hover, section[data-framer-name="Hero"] a[href*="integration"]:hover{' +
+        '  background:#f8fafc!important;transform:translateY(-2px)!important;box-shadow:0 8px 24px rgba(0,0,0,0.3)!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] a[href*="services"] *, section[data-framer-name="Hero"] a[href*="integration"] *{' +
+        '  color:#0f172a!important;font-weight:600!important;text-shadow:none!important;text-decoration:none!important;white-space:nowrap!important;' +
+        '}';
       document.head.appendChild(hStyle);
     }
 
@@ -134,6 +158,10 @@
         .forEach(function (p) {
           p.textContent = content.secondaryCTA.text;
         });
+    }
+
+    if (window.DemazeOverride && window.DemazeOverride.markReady) {
+      window.DemazeOverride.markReady();
     }
   }
 

@@ -1,28 +1,11 @@
 /**
  * Post-hydration content override for the Core Capabilities section (MOVIQ's
- * "Tools" section: a heading + a 6-card grid).
+ * "Tools" section: a heading + a 4-card service grid).
  *
- * Demaze has 4 real service categories (from demazetech.com/services). Per
- * explicit direction (checked against a reference recording), the card area
- * is rebuilt as a scroll-driven "unfold" composition:
- *   - a tall scroll stage holds a sticky viewport
- *   - inside it, 4 blocks are laid out in their final horizontal row from
- *     the start, but begin translated down + transparent
- *   - each block has its own progress window within the stage's scroll
- *     range; as scroll advances through that window, the block eases up
- *     into its final position — blocks reveal with a stagger, not at once
- *   - this is driven by actual scroll position (via scroll/resize listeners
- *     + requestAnimationFrame), so scrolling back up reverses it naturally
+ * Sits directly under "Our Work" on the home page. Clean, responsive,
+ * immediately visible grid with zero ghosting or dead white space.
  *
- * MOVIQ has no native version of this mechanism anywhere in the repo or the
- * live reference site (checked its appear-animation config directly — every
- * element there uses a one-shot "fade up once when visible" spring, never a
- * continuous scroll-scrubbed timeline). This is new logic, not extracted
- * from MOVIQ, built to match the requested reference behavior.
- *
- * See demaze-override-core.js for why the initial content swap (heading,
- * eyebrow) waits/rechecks the way it does; the scroll-unfold part below is a
- * separate, ongoing mechanism (a real scroll listener, not a bounded retry).
+ * See demaze-override-core.js for why this waits/mutates/rechecks the way it does.
  */
 (function () {
   var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.coreCapabilities;
@@ -30,56 +13,61 @@
 
   var EYEBROW_CLASS = 'demaze-capabilities-eyebrow';
   var STYLE_ID = 'demaze-capabilities-style';
-  var BRAND_BLUE = '#5B5FEF';
-  var MUTED = 'rgb(108, 119, 131)';
+  var BRAND_BLUE = '#5B4FE9';
+  var MUTED = '#6C7783';
 
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      // !important: MOVIQ's own rule for this element (".framer-ScIth
-      // .framer-wte4vf") sets height:min-content and display:grid via an
-      // ancestor+own-class selector, which beats a plain single-class
-      // override on specificity — confirmed by testing (the stage was
-      '.demaze-capabilities-stage{position:relative!important;height:180vh!important;display:block!important;margin:0 auto!important;}' +
-      '.demaze-capabilities-viewport{position:sticky!important;top:90px!important;height:520px!important;display:flex!important;align-items:center!important;width:100%!important;}' +
+      'section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]){' +
+      '  height:auto!important;min-height:auto!important;padding:70px 24px 50px!important;overflow:visible!important;' +
+      '}' +
+      'section.framer-1e6ypd3 [data-framer-name="Headline Container"], section[data-framer-name="Tools"] [data-framer-name="Headline Container"]{' +
+      '  margin-bottom:32px!important;display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;' +
+      '}' +
+      'section.framer-1e6ypd3 h2, section[data-framer-name="Tools"] h2{' +
+      '  opacity:1!important;visibility:visible!important;transform:none!important;color:#0B0E17!important;' +
+      '  font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;margin:0 0 16px!important;' +
+      '}' +
+      '.demaze-capabilities-stage{position:relative!important;height:auto!important;min-height:auto!important;display:block!important;margin:0 auto!important;}' +
+      '.demaze-capabilities-viewport{position:relative!important;top:0!important;height:auto!important;display:block!important;width:100%!important;}' +
       '.demaze-capabilities-row{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:20px!important;width:100%!important;max-width:1320px!important;margin:0 auto!important;align-items:stretch!important;}' +
-      '.demaze-capabilities-block{min-width:0;background:linear-gradient(180deg,#f8f9fa 0%,#fff 100%);' +
-      'border:1px solid rgba(0,0,0,0.07);border-radius:24px;padding:28px 20px;text-align:left;display:flex;flex-direction:column;' +
-      'box-shadow:0 12px 32px rgba(0,0,0,0.04);will-change:transform,opacity;transition:border-color 0.2s, box-shadow 0.2s;}' +
-      '.demaze-capabilities-block:hover{transform:translateY(-4px)!important;box-shadow:0 18px 44px rgba(91,95,239,0.12)!important;border-color:rgba(91,95,239,0.3)!important;}' +
-      '.demaze-capabilities-block-icon{width:52px;height:52px;margin:0 0 16px;border-radius:14px;' +
-      'display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,0.08);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.04);}' +
-      '.demaze-capabilities-block-icon img{width:100%;height:100%;object-fit:cover;display:block;}' +
-      '.demaze-capabilities-block h6{font-size:17px;font-weight:700;color:rgb(33,37,41);margin:0 0 8px;line-height:1.3;}' +
-      '.demaze-capabilities-block p{font-size:13px;line-height:1.55;color:' + MUTED + ';margin:0 0 16px;}' +
-      '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(0,0,0,0.06);padding-top:14px;}' +
-      '.demaze-capabilities-sublist li{font-size:12px;line-height:1.4;color:rgb(55,65,81);display:flex;align-items:center;gap:7px;}' +
-      '.demaze-capabilities-explore{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:' + BRAND_BLUE + ';text-decoration:none;margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06);transition:transform 0.2s ease;}' +
+      '.demaze-capabilities-block{min-width:0;background:#ffffff!important;border:1px solid rgba(0,0,0,0.08)!important;' +
+      'border-radius:24px!important;padding:32px 24px!important;text-align:left;display:flex;flex-direction:column;' +
+      'box-shadow:0 8px 24px rgba(0,0,0,0.04)!important;opacity:1!important;transform:none!important;' +
+      'transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease!important;}' +
+      '.demaze-capabilities-block:hover{transform:translateY(-4px)!important;box-shadow:0 18px 44px rgba(91,79,233,0.12)!important;border-color:rgba(91,79,233,0.3)!important;}' +
+      '.demaze-capabilities-block-icon{width:48px;height:48px;margin:0 0 20px;border-radius:14px;' +
+      'display:flex;align-items:center;justify-content:center;background:#F0EEFF;border:1px solid rgba(91,79,233,0.12);overflow:hidden;color:' + BRAND_BLUE + ';flex-shrink:0;}' +
+      '.demaze-capabilities-block-icon svg{width:24px;height:24px;stroke-width:2;}' +
+      '.demaze-capabilities-block h6{font-size:18px;font-weight:700;color:#0B0E17;margin:0 0 10px;line-height:1.3;}' +
+      '.demaze-capabilities-block p{font-size:13.5px;line-height:1.6;color:' + MUTED + ';margin:0 0 18px;}' +
+      '.demaze-capabilities-sublist{list-style:none;padding:0;margin:auto 0 0 0;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(0,0,0,0.06);padding-top:16px;}' +
+      '.demaze-capabilities-sublist li{font-size:12.5px;line-height:1.4;color:#3F4454;display:flex;align-items:center;gap:8px;}' +
+      '.demaze-capabilities-explore{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:' + BRAND_BLUE + ';text-decoration:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.06);transition:transform 0.2s ease;}' +
       '.demaze-capabilities-explore:hover{transform:translateX(3px);}' +
-      '@media (max-width:1024px){' +
-      '.demaze-capabilities-stage{height:auto!important;}' +
-      '.demaze-capabilities-viewport{position:static!important;height:auto!important;}' +
-      '.demaze-capabilities-row{grid-template-columns:repeat(2,1fr)!important;gap:16px!important;}' +
-      '.demaze-capabilities-block{opacity:1!important;transform:none!important;margin-bottom:16px;}' +
+      '@media (max-width:1080px){' +
+      '  .demaze-capabilities-row{grid-template-columns:repeat(2,1fr)!important;gap:18px!important;}' +
       '}' +
       '@media (max-width:640px){' +
-      '.demaze-capabilities-row{grid-template-columns:1fr!important;}' +
-      '.demaze-capabilities-block{margin-bottom:16px;}' +
+      '  .demaze-capabilities-row{grid-template-columns:1fr!important;}' +
+      '  .demaze-capabilities-block{margin-bottom:16px;}' +
       '}';
     document.head.appendChild(style);
   }
 
-  function iconSvg() {
-    return (
-      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-      '<rect x="3" y="3" width="18" height="18" rx="4" stroke="' + BRAND_BLUE + '" stroke-width="1.5"/>' +
-      '<path d="M3 9H21" stroke="' + BRAND_BLUE + '" stroke-width="1.5"/>' +
-      '<path d="M9 9V21" stroke="' + BRAND_BLUE + '" stroke-width="1.5"/>' +
-      '</svg>'
-    );
-  }
+  var PILLAR_ICONS = [
+    // 1. AI & Machine Learning
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path><circle cx="12" cy="12" r="4"></circle></svg>',
+    // 2. Web, Mobile App & SaaS
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
+    // 3. Intelligent E-Commerce
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>',
+    // 4. Cloud Infrastructure
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>'
+  ];
 
   function checkSmallSvg() {
     return (
@@ -89,10 +77,8 @@
     );
   }
 
-  function blockHTML(item) {
-    var iconHTML = item.image
-      ? '<img src="' + item.image + '" alt="' + item.title + '">'
-      : iconSvg();
+  function blockHTML(item, i) {
+    var iconHTML = PILLAR_ICONS[i % PILLAR_ICONS.length];
     var sublistHTML = item.subItems
       ? '<ul class="demaze-capabilities-sublist">' +
         item.subItems
@@ -114,78 +100,8 @@
     );
   }
 
-  // Each block's own [start, end] progress window within the stage's scroll
-  // range (0 to 1), staggered so they reveal one after another rather than
-  // all at once, with room at the end for the completed row to just sit
-  // still before the section releases.
-  function revealWindows(count) {
-    var span = 0.70; // 70% of the stage scroll range covers the full stagger
-    var duration = 0.35; // each block's own unfold takes 35% of that span
-    var windows = [];
-    for (var i = 0; i < count; i++) {
-      var start = (span * i) / Math.max(count - 1, 1);
-      windows.push([start, Math.min(start + duration, 1)]);
-    }
-    return windows;
-  }
-
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
-  }
-
-  function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
-  }
-
-  function initScrollUnfold(stage) {
-    if (!stage) return;
-    if (stage.dataset.demazeUnfoldInit) return;
-    stage.dataset.demazeUnfoldInit = '1';
-
-    var blocks = Array.prototype.slice.call(stage.querySelectorAll('.demaze-capabilities-block'));
-    var windows = revealWindows(blocks.length);
-    var ticking = false;
-
-    function update() {
-      ticking = false;
-      // Below the desktop breakpoint the CSS fallback takes over (static, fully visible)
-      if (window.innerWidth < 810) {
-        blocks.forEach(function (b) {
-          b.style.opacity = '1';
-          b.style.transform = 'none';
-        });
-        return;
-      }
-
-      var rect = stage.getBoundingClientRect();
-      var scrollable = rect.height - window.innerHeight;
-      var stickyTop = 90;
-      var progress = scrollable > 0 ? clamp((stickyTop - rect.top) / scrollable, 0, 1) : 1;
-
-      blocks.forEach(function (block, i) {
-        var w = windows[i];
-        var t = clamp((progress - w[0]) / (w[1] - w[0]), 0, 1);
-        var eased = easeOutCubic(t);
-        // Base opacity 0.1 ensures subtle card outline is visible, preventing a blank white void
-        block.style.opacity = String(0.1 + eased * 0.9);
-        block.style.transform = 'translateY(' + (1 - eased) * 60 + 'px)';
-      });
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    update();
-  }
-
   function getSection() {
-    return document.querySelector('section[data-framer-name="Tools"]');
+    return document.querySelector('section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]), section[data-framer-name="Tools"]');
   }
 
   function isHydrated(section) {
@@ -197,9 +113,6 @@
   function applyOverride(section) {
     ensureStyle();
 
-    // Heading. The gradient effect lives on an inner <span data-text-fill>,
-    // so update that span's text in place — replacing h2's own textContent
-    // would delete the span and lose the gradient-clip styling with it.
     var headlineContainer = section.querySelector('[data-framer-name="Headline Container"]');
     var h2 = section.querySelector('h2');
     var gradientSpan = h2 && h2.querySelector('span');
@@ -209,8 +122,6 @@
       h2.textContent = content.heading;
     }
 
-    // Eyebrow — MOVIQ has no badge slot here, so add one above the heading,
-    // matching the small pill treatment used elsewhere on this page.
     var titleWrapper = h2 && h2.closest('[data-framer-name="Title"]');
     if (headlineContainer && titleWrapper && !headlineContainer.querySelector('.' + EYEBROW_CLASS)) {
       var eyebrow = document.createElement('div');
@@ -219,22 +130,19 @@
       eyebrow.style.alignItems = 'center';
       eyebrow.style.background = '#f1f2fe';
       eyebrow.style.color = BRAND_BLUE;
-      eyebrow.style.fontSize = '13px';
+      eyebrow.style.fontSize = '12.5px';
       eyebrow.style.fontWeight = '600';
-      eyebrow.style.letterSpacing = '0.02em';
-      eyebrow.style.padding = '6px 14px';
+      eyebrow.style.letterSpacing = '0.04em';
+      eyebrow.style.padding = '5px 14px';
       eyebrow.style.borderRadius = '100px';
-      eyebrow.style.margin = '0 auto 16px';
+      eyebrow.style.margin = '0 auto 14px';
       eyebrow.textContent = content.eyebrow;
       headlineContainer.insertBefore(eyebrow, titleWrapper);
     }
 
-    // Subtitle has no Demaze equivalent copy for this heading — hide, don't
-    // remove, so React still owns the node.
     var subtitle = section.querySelector('[data-framer-name="Subtitle"]');
     if (subtitle) subtitle.style.display = 'none';
 
-    // Replace MOVIQ's 6-card grid with the 4-block capabilities stage.
     var grid = section.querySelector('[data-framer-name="Grid"]');
     if (grid && !grid.classList.contains('demaze-capabilities-stage')) {
       grid.classList.add('demaze-capabilities-stage');
@@ -245,11 +153,7 @@
         '</div>' +
         '</div>';
     }
-    if (grid) {
-      initScrollUnfold(grid);
-    }
-
-    }
+  }
 
   function verifyStuck(section) {
     var h2 = section.querySelector('h2');

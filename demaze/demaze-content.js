@@ -126,7 +126,7 @@ window.DEMAZE_CONTENT = {
     cardHref: "./services",
     items: [
       {
-        title: "AI & ML",
+        title: "AI & Machine Learning",
         image: "https://framerusercontent.com/images/Duf4IQUMIa6MIBdumJk5C3PYR5w.png",
         description:
           "We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.",
@@ -140,7 +140,7 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
-        title: "Web / Mobile App / SaaS",
+        title: "Web, Mobile App & SaaS",
         image: "https://framerusercontent.com/images/YFL2wUsxGifdIbDr6qI69fyzZc.png",
         description:
           "We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.",
@@ -154,7 +154,7 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
-        title: "Ecommerce",
+        title: "Intelligent E-Commerce",
         image: "https://framerusercontent.com/images/0K8yspLc6XlnFG9G9wxsXa7P1cQ.png",
         description:
           "We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.",
@@ -168,7 +168,7 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
-        title: "Cloud",
+        title: "Cloud Infrastructure",
         image: "https://framerusercontent.com/images/miuw5HMaBt8VhyOLvGTezxmbFhI.png",
         description:
           "We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.",

@@ -41,9 +41,9 @@ Files:
 | 5 | `Tools` (1st) | Core Capabilities (Services) | ✅ Done — 4 service pillars with immediate visibility and zero white space gap. |
 | 6 | `CTA` (1st) | — | ✅ **Removed** (hidden). |
 | 7 | `Tools` (2nd) | Industries We Serve | ✅ Done — 19 interactive domain tabs with sub-item checklists and zero section collisions. |
-| 8 | `Ai Powered` | What Drives Us | ✅ Done — 4 real value cards with bespoke high-res AI & cloud engineering graphics. |
+| 8 | `Ai Powered` | What Drives Us | ✅ Done — 2x2 Bento grid layout architecture, 4 value cards with bespoke high-res AI & cloud engineering graphics, zero text collapse, zero overlap. |
 | 9 | `Products` | Who We Are | ✅ Done — Heading, narrative text, 9 capability keyword badges, and Demaze illustration card. |
-| 10 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + stat row. |
+| 10 | `Moviq vs Traditional Video` | Why Demaze + Metrics | ✅ Done — 3 benefit cards with Demaze's real hosted illustration assets + 4 stat metrics counters, full hydration resilience. |
 | 11 | `CTA` (2nd) | — | ✅ **Removed** (hidden). |
 | 12 | `Pricing` | — | ✅ **Removed** (hidden). |
 | 13 | `CTA` (3rd) | Final CTA + Reach Us At Anytime (Contact) | ✅ Done — Closing banner + sleek 3-card frosted glass contact bar (Email, Calendly, Ahmedabad office). |

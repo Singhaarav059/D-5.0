@@ -23,17 +23,13 @@ window.DemazeOverride = {
     function scheduleRechecks() {
       recheckDelaysMs.forEach(function (delay) {
         setTimeout(function () {
-          // A stale root from a mid-swap DOM (e.g. a section whose subtree
-          // Framer is actively replacing) shouldn't take down other
-          // sections' independent recheck timers.
           try {
             var root = getRoot();
             if (root && !verify(root)) {
               apply(root);
             }
           } catch (e) {
-            /* swallow — next scheduled recheck (or this section's own
-               longer-term fix, if it has one) will retry */
+            /* swallow — next scheduled recheck will retry */
           }
         }, delay);
       });
@@ -52,11 +48,16 @@ window.DemazeOverride = {
       }
     }
 
-    if (document.readyState === 'complete') {
-      tick();
-    } else {
+    // Start polling immediately! Do NOT wait for window.onload, which blocks on slow network images
+    tick();
+    if (document.readyState !== 'complete') {
+      window.addEventListener('DOMContentLoaded', tick);
       window.addEventListener('load', tick);
     }
+  },
+  markReady: function () {
+    if (window.__demazeReadyTimer) clearTimeout(window.__demazeReadyTimer);
+    document.documentElement.classList.add('demaze-ready');
   },
 };
 

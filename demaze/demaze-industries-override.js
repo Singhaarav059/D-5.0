@@ -61,22 +61,36 @@
   }
 
   var INDUSTRY_IMAGES = {
-    'Healthcare': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
-    'Automotive': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
-    'Legal & Professional Services': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
-    'Retail': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
-    'Ecommerce': 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024',
+    'Healthcare': 'https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?width=3924&height=3500',
+    'Automotive': 'https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?width=3924&height=3500',
+    'Legal & Professional Services': 'https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?width=4872&height=2740',
+    'Retail': 'https://framerusercontent.com/images/kl6BbE7vPzKmqIbeDQ2Qi0qBgrw.png?width=2198&height=1650',
+    'Ecommerce': 'https://framerusercontent.com/images/K9H6ej2APXMnI3TZXYvyYkXZtJQ.png?width=1962&height=1750',
+    'Fintech': 'https://framerusercontent.com/images/n2k5j6C5nfmufhjsYnF8HXy5qY.png?width=4096&height=4096',
+    'Logistics': 'https://framerusercontent.com/images/d6j0sZ9K35yv7jK9Z2lJ98c0dY.png?width=4096&height=4096',
+    'Insurance': '/assets/demaze/cloud_scale_graphic_1789813631564.jpg',
+    'SaaS Products': '/assets/demaze/eng_ownership_graphic_1789813608834.jpg',
   };
 
   function paintActiveTab(section) {
     var tabWrap = getTabWrap(section);
+    if (tabWrap) {
+      tabWrap.style.setProperty('display', 'flex', 'important');
+      tabWrap.style.setProperty('flex-wrap', 'wrap', 'important');
+      tabWrap.style.setProperty('gap', '10px 12px', 'important');
+      tabWrap.style.setProperty('justify-content', 'center', 'important');
+      tabWrap.style.setProperty('max-width', '1120px', 'important');
+      tabWrap.style.setProperty('margin', '0 auto 36px', 'important');
+      tabWrap.style.setProperty('width', '100%', 'important');
+      tabWrap.style.setProperty('height', 'auto', 'important');
+    }
     Array.prototype.forEach.call(tabWrap.children, function (tabEl, i) {
       var isActive = i === activeIndex;
       var p = tabEl.querySelector('p');
       if (p) {
         p.style.color = isActive ? '#5B4FE9' : '#3F4454';
         p.style.fontWeight = isActive ? '600' : '500';
-        p.style.fontSize = '14.5px';
+        p.style.fontSize = '14px';
         p.style.margin = '0';
         p.style.transition = 'color 0.2s ease';
       }
@@ -85,12 +99,13 @@
         line.style.display = 'none'; // purge inconsistent gradient underlines
       }
       tabEl.style.cursor = 'pointer';
-      tabEl.style.height = '40px';
+      tabEl.style.height = '38px';
       tabEl.style.display = 'inline-flex';
       tabEl.style.alignItems = 'center';
       tabEl.style.justifyContent = 'center';
-      tabEl.style.padding = '0 18px';
-      tabEl.style.margin = '4px 6px';
+      tabEl.style.padding = '0 16px';
+      tabEl.style.margin = '0';
+      tabEl.style.whiteSpace = 'nowrap';
       tabEl.style.borderRadius = '999px';
       tabEl.style.border = isActive ? '1px solid #5B4FE9' : '1px solid #E7E7F3';
       tabEl.style.background = isActive ? '#F0EEFF' : '#FFFFFF';
@@ -138,7 +153,7 @@
     var panelImgs = section.querySelectorAll('img');
     var mainPanelImg = panelImgs[panelImgs.length - 1];
     if (mainPanelImg) {
-      var targetImg = INDUSTRY_IMAGES[industry.name] || 'https://framerusercontent.com/images/3f18N2B5y47dOaP58yW4ZfG07c.png?scale-down-to=1024';
+      var targetImg = INDUSTRY_IMAGES[industry.name] || '/assets/demaze/ai_execution_graphic_1789813451769.jpg';
       mainPanelImg.src = targetImg;
       mainPanelImg.style.borderRadius = '20px';
       mainPanelImg.style.objectFit = 'cover';
@@ -146,13 +161,12 @@
 
     var panel = section.querySelector('[data-framer-name="Text Content"]');
     if (panel) {
-      panel.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-      panel.style.opacity = '0.6';
-      panel.style.transform = 'translateY(3px)';
+      panel.style.transition = 'transform 0.2s ease';
+      panel.style.opacity = '1';
+      panel.style.transform = 'translateY(2px)';
       setTimeout(function () {
-        panel.style.opacity = '1';
         panel.style.transform = 'translateY(0)';
-      }, 50);
+      }, 40);
     }
   }
 

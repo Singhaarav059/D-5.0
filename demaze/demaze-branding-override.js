@@ -95,6 +95,26 @@
     document.head.appendChild(style);
   }
 
+  var TYPOGRAPHY_STYLE_ID = 'demaze-typography-style';
+  function ensureTypography() {
+    if (document.getElementById(TYPOGRAPHY_STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = TYPOGRAPHY_STYLE_ID;
+    style.textContent =
+      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc4zIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 300; }' +
+      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5tIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 400; }' +
+      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5fIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 500; }' +
+      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6zJQFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 600; }' +
+      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6KJQFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 700; }' +
+      'h1, h2, h3, h4, h5, h6, [data-framer-name="Headline"], [data-framer-name="Title"], [data-framer-name="Section Title"], [data-framer-name="Tagline"], [data-framer-name="Hero Title"] {' +
+      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;' +
+      '}' +
+      'body, p, span, li, a, input, textarea, button, select, blockquote, [data-framer-name="Desc"], [data-framer-name="Description"], [data-framer-name="Subtitle"], .demaze-testimonial-quote {' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;' +
+      '}';
+    document.head.appendChild(style);
+  }
+
   function applyNav(nav) {
     ensureNavStyle();
     var logoImg = nav.querySelector('img');
@@ -214,6 +234,13 @@
           var titleH = titleNode.querySelector('h6') || titleNode.querySelector('p') || titleNode;
           titleH.textContent = col.title;
           titleNode.style.display = '';
+          // H-26: Standardize column headings styling matching subpages
+          titleH.style.setProperty('font-size', '14px', 'important');
+          titleH.style.setProperty('font-weight', '600', 'important');
+          titleH.style.setProperty('text-transform', 'uppercase', 'important');
+          titleH.style.setProperty('letter-spacing', '0.05em', 'important');
+          titleH.style.setProperty('color', '#0B0E17', 'important');
+          titleH.style.setProperty('font-family', '"Stack Sans Headline", -apple-system, sans-serif', 'important');
         }
         var links = menu.querySelectorAll('a');
         links.forEach(function (a, j) {
@@ -226,19 +253,47 @@
             if (emptyNode) emptyNode.textContent = '';
             return;
           }
+          // H-25: Purge dead Pricing links
+          var linkText = (item.text || '').trim().toLowerCase();
+          if (linkText === 'pricing' || linkText.indexOf('pricing') !== -1 || (item.href && item.href.indexOf('pricing') !== -1)) {
+            a.style.display = 'none';
+            if (container !== a) container.style.display = 'none';
+            return;
+          }
           a.style.display = '';
           if (container !== a) container.style.display = '';
           a.setAttribute('href', item.href);
           var textNode = a.querySelector('p') || a;
           textNode.textContent = item.text;
+          textNode.style.setProperty('font-family', '"Inter", -apple-system, sans-serif', 'important');
+          textNode.style.setProperty('font-size', '14px', 'important');
+          textNode.style.setProperty('color', '#475569', 'important');
         });
       } else {
         menu.style.display = 'none';
       }
     });
 
-    var bottomText = footer.querySelector('[data-framer-name="Footer Bottom"] p');
-    if (bottomText) bottomText.textContent = content.copyright + " • " + (content.tagline || "Empowering AI Innovation Worldwide");
+    // H-25: Search entire footer for any rogue Pricing links and hide them
+    var rogueLinks = footer.querySelectorAll('a');
+    rogueLinks.forEach(function (a) {
+      var txt = (a.textContent || '').trim().toLowerCase();
+      var href = (a.getAttribute('href') || '').toLowerCase();
+      if (txt === 'pricing' || href.indexOf('pricing') !== -1 || href === './price' || href === '/price') {
+        var container = a.closest('[class*="-container"]') || a;
+        container.style.setProperty('display', 'none', 'important');
+      }
+    });
+
+    // H-26: Format bottom copyright + tagline into separate space-between spans matching subpages
+    var bottomContainer = footer.querySelector('[data-framer-name="Footer Bottom"]');
+    if (bottomContainer) {
+      bottomContainer.innerHTML =
+        '<div class="demaze-footer-bottom-row" style="display:flex!important;justify-content:space-between!important;align-items:center!important;width:100%!important;flex-wrap:wrap!important;gap:12px!important;font-size:13.5px!important;color:#64748b!important;font-family:\'Inter\',-apple-system,sans-serif!important;">' +
+        '<span>' + content.copyright + '</span>' +
+        '<span style="color:#64748b!important;font-weight:500!important;">' + (content.tagline || "Empowering AI Innovation Worldwide") + '</span>' +
+        '</div>';
+    }
 
     // No confirmed Demaze social links — hide rather than invent.
     var social = footer.querySelector('[data-framer-name="Social"]');
@@ -247,19 +302,23 @@
 
   function applyOverride() {
     document.title = "Demaze Technologies - Your Strategic Partner in Building Scalable AI Products";
+    ensureTypography();
     var nav = getNav();
     if (nav) applyNav(nav);
     applyFooter();
     document.querySelectorAll('img:not([alt])').forEach(function (img) {
       img.setAttribute('alt', '');
     });
+    if (window.DemazeOverride && window.DemazeOverride.markReady) {
+      window.DemazeOverride.markReady();
+    }
   }
 
   function verifyStuck() {
     var nav = getNav();
     var navLogoOk = !!(nav && nav.querySelector('img') && nav.querySelector('img').getAttribute('src') === LOGO_SRC);
     var footer = document.querySelector('footer');
-    var bottomText = footer && footer.querySelector('[data-framer-name="Footer Bottom"] p');
+    var bottomText = footer && footer.querySelector('[data-framer-name="Footer Bottom"]');
     return !!(navLogoOk && bottomText && bottomText.textContent.includes(content.copyright));
   }
 

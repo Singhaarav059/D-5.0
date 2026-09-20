@@ -134,7 +134,7 @@
           </div>
         </div>
         <div class="service-row-visual">
-          <img src="https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?scale-down-to=1024" alt="AI & Machine Learning Systems" loading="lazy">
+          <img src="/assets/demaze/ai_execution_graphic_1789813451769.jpg" alt="AI & Machine Learning Systems" loading="lazy">
         </div>
       </article>
 
@@ -264,7 +264,7 @@
     <div class="demaze-section-header">
       <div class="demaze-badge-pill">PLATFORMS & PARTNERS</div>
       <h2 class="demaze-section-h2">Tools & Technologies</h2>
-      <p class="demaze-section-subtitle">Battle-tested enterprise frameworks and AI platforms we use to engineer production-ready systems.</p>
+      
     </div>
 
     <div class="demaze-subpage-marquee">
@@ -340,7 +340,7 @@
 
     <!-- Industries We Serve (Interactive 19-Industry Explorer) -->
     <div class="demaze-section-header">
-      <div class="demaze-badge-pill">DOMAIN EXPERTISE</div>
+      <div class="demaze-badge-pill">INDUSTRIES</div>
       <h2 class="demaze-section-h2">Industries <span class="demaze-gradient-text">We Serve</span></h2>
       <p class="demaze-section-subtitle">Deep technological capability across 19 critical modern industry sectors.</p>
     </div>
@@ -349,21 +349,27 @@
       <div class="industry-tabs-scroll" id="industryTabs" role="tablist" aria-label="Industries">
         <!-- Injected via JavaScript -->
       </div>
-      <h3 class="industry-content-title" id="industryTitle">Healthcare</h3>
-      <div class="industry-subitems-grid" id="industryItems">
-        <!-- Injected via JavaScript -->
+      <div class="industry-showcase-panel">
+        <div class="industry-panel-info">
+          <h3 class="industry-content-title" id="industryTitle">Healthcare</h3>
+          <div class="industry-subitems-grid" id="industryItems">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+        <div class="industry-panel-visual">
+          <img id="industryImg" src="https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?width=3924&height=3500" alt="Healthcare Industry Solution" loading="lazy">
+        </div>
       </div>
     </div>
 
     <!-- Final CTA Banner -->
     <section class="demaze-cta-banner">
       <div class="demaze-cta-banner-content">
-        <div class="demaze-cta-eyebrow">READY TO SCALE?</div>
-        <h2 class="demaze-cta-heading">Let's connect and build <span class="demaze-gradient-word">smarter, faster, stronger</span> – together.</h2>
+        <h2 class="demaze-cta-heading">Have a bold <span class="demaze-gradient-word">product vision</span> in mind?</h2>
         <p class="demaze-cta-desc">
-          Partner with our engineering team to accelerate your product roadmap and bring your AI vision to life.
+          Let's discuss how Demaze Technologies can architect and engineer your next breakthrough digital product.
         </p>
-        <a href="/contact" class="demaze-btn-primary" style="padding: 12px 28px; font-size: 14px;">Schedule A Consultation →</a>
+        <a href="/contact" class="demaze-btn-primary" style="padding: 12px 28px; font-size: 14px;">Book A Strategy Session →</a>
       </div>
     </section>
 
@@ -396,7 +402,7 @@
         </div>
         <div class="demaze-contact-card-info">
           <h4>Book with Calendly</h4>
-          <p>Feel free to book a 30-minute strategy session at your convenience.</p>
+          <p>Feel free to book a call if that’s more convenient and easier for you.</p>
         </div>
         <div class="demaze-contact-action">Schedule Call &rarr;</div>
       </a>
@@ -411,7 +417,7 @@
           <h4>Ahmedabad, India</h4>
           <p>A 804, Ganesh Glory 11, Jagatpur road, Near S.G. Highway, Gota, Ahmedabad</p>
         </div>
-        <div class="demaze-contact-action">Global Delivery</div>
+        <div class="demaze-contact-action">View Location &rarr;</div>
       </div>
     </div>
 
@@ -469,9 +475,22 @@
       const data = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.industries;
       if (!data || !data.items) return;
 
+      const INDUSTRY_IMAGES = {
+        'Healthcare': 'https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?width=3924&height=3500',
+        'Automotive': 'https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?width=3924&height=3500',
+        'Legal & Professional Services': 'https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?width=4872&height=2740',
+        'Retail': 'https://framerusercontent.com/images/kl6BbE7vPzKmqIbeDQ2Qi0qBgrw.png?width=2198&height=1650',
+        'Ecommerce': 'https://framerusercontent.com/images/K9H6ej2APXMnI3TZXYvyYkXZtJQ.png?width=1962&height=1750',
+        'Fintech': 'https://framerusercontent.com/images/n2k5j6C5nfmufhjsYnF8HXy5qY.png?width=4096&height=4096',
+        'Logistics': 'https://framerusercontent.com/images/d6j0sZ9K35yv7jK9Z2lJ98c0dY.png?width=4096&height=4096',
+        'Insurance': '/assets/demaze/cloud_scale_graphic_1789813631564.jpg',
+        'SaaS Products': '/assets/demaze/eng_ownership_graphic_1789813608834.jpg',
+      };
+
       const tabsContainer = document.getElementById('industryTabs');
       const titleEl = document.getElementById('industryTitle');
       const itemsContainer = document.getElementById('industryItems');
+      const imgEl = document.getElementById('industryImg');
 
       function selectIndustry(index) {
         const item = data.items[index];
@@ -481,6 +500,12 @@
             <span>${sub}</span>
           </div>
         `).join('');
+
+        if (imgEl) {
+          const targetImg = INDUSTRY_IMAGES[item.name] || 'https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png';
+          imgEl.src = targetImg;
+          imgEl.alt = item.name + ' Industry Solution';
+        }
         
         document.querySelectorAll('.industry-tab-btn').forEach((btn, idx) => {
           if (idx === index) {
