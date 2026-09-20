@@ -159,10 +159,6 @@
           p.textContent = content.secondaryCTA.text;
         });
     }
-
-    if (window.DemazeOverride && window.DemazeOverride.markReady) {
-      window.DemazeOverride.markReady();
-    }
   }
 
   function verifyStuck(hero) {

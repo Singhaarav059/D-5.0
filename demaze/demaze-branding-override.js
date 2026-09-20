@@ -309,9 +309,6 @@
     document.querySelectorAll('img:not([alt])').forEach(function (img) {
       img.setAttribute('alt', '');
     });
-    if (window.DemazeOverride && window.DemazeOverride.markReady) {
-      window.DemazeOverride.markReady();
-    }
   }
 
   function verifyStuck() {

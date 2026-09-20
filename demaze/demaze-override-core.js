@@ -20,6 +20,22 @@ window.DemazeOverride = {
     var recheckDelaysMs = options.recheckDelaysMs || [300, 800, 1500, 3000, 5000];
     var attempts = 0;
 
+    var task = {
+      getRoot: getRoot,
+      isHydrated: isHydrated,
+      apply: apply,
+      verify: verify,
+      isVerified: function () {
+        try {
+          var root = getRoot();
+          return !root || verify(root);
+        } catch (e) {
+          return false;
+        }
+      }
+    };
+    window.DemazeOverride.tasks.push(task);
+
     function scheduleRechecks() {
       recheckDelaysMs.forEach(function (delay) {
         setTimeout(function () {
@@ -31,6 +47,7 @@ window.DemazeOverride = {
           } catch (e) {
             /* swallow — next scheduled recheck will retry */
           }
+          window.DemazeOverride.checkReadiness();
         }, delay);
       });
     }
@@ -41,6 +58,7 @@ window.DemazeOverride = {
       if (root && isHydrated(root)) {
         apply(root);
         scheduleRechecks();
+        window.DemazeOverride.checkReadiness();
         return;
       }
       if (attempts < maxAttempts) {
@@ -55,11 +73,49 @@ window.DemazeOverride = {
       window.addEventListener('load', tick);
     }
   },
+
+  tasks: [],
+
+  checkReadiness: function () {
+    if (document.documentElement.classList.contains('demaze-ready')) return;
+
+    var main = document.querySelector('[data-framer-name="Main"]') || document.querySelector('main');
+    var isReactHydrated = !!(main && Object.keys(main).some(function (k) {
+      return k.indexOf('__react') === 0;
+    }));
+
+    var tasks = window.DemazeOverride.tasks;
+    var allTasksPass = tasks.length >= 10 && tasks.every(function (t) {
+      return t.isVerified();
+    });
+
+    if ((isReactHydrated || document.readyState === 'complete') && allTasksPass) {
+      window.DemazeOverride.markReady();
+    }
+  },
+
   markReady: function () {
     if (window.__demazeReadyTimer) clearTimeout(window.__demazeReadyTimer);
     document.documentElement.classList.add('demaze-ready');
   },
 };
+
+// Fast polling coordinator to unveil the moment React hydrates and all tasks pass
+(function () {
+  var coordinatorTimer = setInterval(function () {
+    if (document.documentElement.classList.contains('demaze-ready')) {
+      clearInterval(coordinatorTimer);
+      return;
+    }
+    window.DemazeOverride.checkReadiness();
+  }, 40);
+
+  // Safety fallback after 2200ms
+  setTimeout(function () {
+    clearInterval(coordinatorTimer);
+    window.DemazeOverride.markReady();
+  }, 2200);
+})();
 
 // Enforce Section Order across Framer's Main flex container
 (function () {
