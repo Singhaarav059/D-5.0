@@ -242,13 +242,169 @@
     targets.forEach(function (el) {
       observer.observe(el);
     });
+  }
 
-    // Safety fallback: ensure all content becomes visible after page loads
-    setTimeout(function () {
-      targets.forEach(function (el) {
-        el.classList.add('is-unfolded');
+  // 7. Valist Capabilities Unfolding Stage (Services)
+  function initValistCapabilities() {
+    var stages = document.querySelectorAll('.valist-capabilities-stage');
+    stages.forEach(function (stage) {
+      var navItems = stage.querySelectorAll('.valist-capability-nav-item');
+      var panes = stage.querySelectorAll('.valist-showcase-pane');
+
+      if (!navItems.length || !panes.length) return;
+
+      function setActivePillar(targetIndex) {
+        navItems.forEach(function (btn, idx) {
+          var isActive = idx === targetIndex;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        panes.forEach(function (pane, idx) {
+          var isActive = idx === targetIndex;
+          pane.classList.toggle('active', isActive);
+        });
+      }
+
+      navItems.forEach(function (btn, idx) {
+        btn.addEventListener('click', function () {
+          setActivePillar(idx);
+        });
+
+        btn.addEventListener('mouseenter', function () {
+          // Subtle focus on hover
+          if (!btn.classList.contains('active')) {
+            btn.querySelector('.nav-item-title').style.transform = 'translateX(2px)';
+          }
+        });
+
+        btn.addEventListener('mouseleave', function () {
+          if (!btn.classList.contains('active')) {
+            btn.querySelector('.nav-item-title').style.transform = '';
+          }
+        });
       });
-    }, 1500);
+    });
+  }
+
+  // 8. Valist FAQ Accordion (Clean Rounded Cards with Purple Circle Toggle)
+  function initValistFAQ() {
+    var faqCards = document.querySelectorAll('.valist-faq-card');
+    faqCards.forEach(function (card) {
+      var header = card.querySelector('.valist-faq-header');
+      if (!header || header.__valistBound) return;
+      header.__valistBound = true;
+
+      header.addEventListener('click', function () {
+        var isOpen = card.classList.contains('open');
+
+        // Single open: close siblings
+        faqCards.forEach(function (other) {
+          if (other !== card) {
+            other.classList.remove('open');
+          }
+        });
+
+        card.classList.toggle('open', !isOpen);
+      });
+    });
+  }
+
+  // 9. Valist Metric Counters Animation
+  function initValistCounters() {
+    var counterEls = document.querySelectorAll('.valist-counter-number[data-target]');
+    if (!counterEls.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          var targetVal = parseInt(el.getAttribute('data-target'), 10);
+          var prefix = el.getAttribute('data-prefix') || '';
+          var suffix = el.getAttribute('data-suffix') || '';
+          var duration = 1600;
+          var start = 0;
+          var startTime = null;
+
+          function animateCounter(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            // Ease-out expo
+            var currentVal = Math.floor((1 - Math.pow(2, -10 * progress)) * targetVal);
+            el.textContent = prefix + currentVal + suffix;
+            if (progress < 1) {
+              requestAnimationFrame(animateCounter);
+            } else {
+              el.textContent = prefix + targetVal + suffix;
+            }
+          }
+
+          requestAnimationFrame(animateCounter);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    counterEls.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  // 10. Valist Scroll-Scrubbed Text Reveal
+  function initValistScrollScrub() {
+    var scrubContainers = document.querySelectorAll('.valist-scroll-scrub-text');
+    scrubContainers.forEach(function (el) {
+      if (el.__valistScrubInit) return;
+      el.__valistScrubInit = true;
+
+      var text = el.textContent.trim();
+      var words = text.split(/\s+/);
+      el.innerHTML = words.map(function (w) {
+        return '<span class="word">' + w + '</span>';
+      }).join(' ');
+
+      var wordSpans = el.querySelectorAll('.word');
+
+      function updateScrub() {
+        var rect = el.getBoundingClientRect();
+        var winH = window.innerHeight;
+        // Progress through the viewport
+        var startY = winH * 0.85;
+        var endY = winH * 0.25;
+        var totalDist = startY - endY;
+        var current = startY - rect.top;
+        var progress = Math.max(0, Math.min(1, current / totalDist));
+
+        var litCount = Math.floor(progress * wordSpans.length);
+        wordSpans.forEach(function (span, i) {
+          span.classList.toggle('is-lit', i <= litCount);
+        });
+      }
+
+      window.addEventListener('scroll', updateScrub, { passive: true });
+      updateScrub();
+    });
+  }
+
+  // 11. Valist Reveal Animations
+  function initValistReveals() {
+    var revealItems = document.querySelectorAll('.valist-reveal, .valist-case-card, .valist-process-card, .valist-metric-counter-card');
+    if (!revealItems.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+    revealItems.forEach(function (item, idx) {
+      var stagger = (idx % 2) * 0.1;
+      item.style.transitionDelay = stagger + 's';
+      observer.observe(item);
+    });
   }
 
   // Run on DOM ready
@@ -259,6 +415,11 @@
     initMobileNav();
     initAccordions();
     initUnfolding();
+    initValistCapabilities();
+    initValistFAQ();
+    initValistCounters();
+    initValistScrollScrub();
+    initValistReveals();
   }
 
   if (document.readyState === 'loading') {
@@ -267,3 +428,4 @@
     initAll();
   }
 })();
+

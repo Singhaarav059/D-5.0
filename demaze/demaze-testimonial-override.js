@@ -1,24 +1,24 @@
 /**
- * Founder testimonial — a new section with no MOVIQ homepage equivalent.
+ * Founder testimonial - a new section with no MOVIQ homepage equivalent.
  *
  * MOVIQ's homepage has no quote/testimonial component at all (checked every
  * section's data-framer-name children). A real author/quote card component
  * does exist elsewhere in this same MOVIQ export (reviews.html), but that
- * page ships its own separate compiled CSS bundle — its classes aren't
- * available on index.html — so its exact markup can't be reused directly.
+ * page ships its own separate compiled CSS bundle - its classes aren't
+ * available on index.html - so its exact markup can't be reused directly.
  * This borrows its editorial *pattern* (large quote, avatar-less
  * name+title byline) using the same brand color/typography language the
  * other custom-built sections on this page already use (BRAND_BLUE, MUTED,
  * MOVIQ's own gradient-heading treatment), inserted as a new section right
- * after Hero — matching where the quote sits on the live Demaze homepage.
+ * after Hero - matching where the quote sits on the live Demaze homepage.
  *
  * This node is NOT part of React's compiled tree, so it can't be inserted
- * as a new top-level sibling section — confirmed live: doing that crashes
+ * as a new top-level sibling section - confirmed live: doing that crashes
  * React's reconciler with a fatal "insertBefore/removeChild: not a child of
  * this node" the next time it reconciles the section list (same failure
  * class as moving a node between parents). Instead this is appended as the
  * last child *inside* Hero's own container, which keeps Hero's position in
- * the top-level section list untouched — only Hero's own internal child
+ * the top-level section list untouched - only Hero's own internal child
  * count changes, which is safe. It's styled with its own opaque background
  * so it still reads as a distinct section, not part of Hero's image panel.
  *

@@ -2479,3 +2479,806 @@ select:focus-visible,
   }
 }
 
+/* ==========================================================================
+   VALIST DESIGN SYSTEM ADAPTATION & UNFOLDING MOTION
+   Aesthetic: Ultra-refined airy light theme, high-contrast typography,
+   floating frosted glass title pills, sticky capabilities unfolding,
+   timeline nodes, purple glowing accents, and smooth scroll choreography.
+   ========================================================================== */
+
+:root {
+  --valist-bg: #FFFBFB;
+  --valist-surface: #FFFFFF;
+  --valist-ink: #000000;
+  --valist-ink-muted: #575757;
+  --valist-purple: #9132F7;
+  --valist-purple-subtle: rgba(145, 50, 247, 0.08);
+  --valist-purple-glow: rgba(145, 50, 247, 0.25);
+  --valist-border: rgba(0, 0, 0, 0.06);
+  --valist-border-hover: rgba(145, 50, 247, 0.35);
+  --valist-card-shadow: 0 14px 44px rgba(0, 0, 0, 0.04);
+  --valist-card-shadow-hover: 0 24px 60px rgba(145, 50, 247, 0.12);
+  --valist-radius-card: 20px;
+  --valist-radius-pill: 50px;
+}
+
+body {
+  background-color: var(--valist-bg) !important;
+  color: var(--valist-ink) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Valist Centered Badge Pill */
+.demaze-badge-pill,
+.valist-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: var(--valist-radius-pill) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--valist-ink) !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.valist-pill-tag.accent,
+.demaze-badge-pill.accent {
+  background: var(--valist-purple-subtle) !important;
+  border-color: rgba(145, 50, 247, 0.18) !important;
+  color: var(--valist-purple) !important;
+}
+
+/* Valist Hero Typography */
+.demaze-subpage-hero {
+  text-align: center;
+  padding: 130px 24px 60px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.demaze-hero-h1 {
+  font-size: clamp(38px, 5.2vw, 68px) !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.035em !important;
+  color: var(--valist-ink) !important;
+  margin-bottom: 20px !important;
+}
+
+.demaze-hero-desc {
+  font-size: clamp(16px, 1.35vw, 19px) !important;
+  line-height: 1.65 !important;
+  color: var(--valist-ink-muted) !important;
+  max-width: 680px;
+  margin: 0 auto 32px;
+}
+
+/* ==========================================================================
+   VALIST CASE STUDY CARDS (PROJECTS PAGE)
+   2-Column Layout, High-Res Visual Frame, Floating Frosted Glass Bottom Pill
+   ========================================================================== */
+
+.valist-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin: 40px 0 80px;
+}
+
+.valist-case-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid var(--valist-border);
+  border-radius: var(--valist-radius-card);
+  overflow: hidden;
+  box-shadow: var(--valist-card-shadow);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.valist-case-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--valist-border-hover);
+  box-shadow: var(--valist-card-shadow-hover);
+}
+
+.valist-case-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10.5;
+  background: #f5f2f9;
+  overflow: hidden;
+}
+
+.valist-case-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.valist-case-card:hover .valist-case-visual img {
+  transform: scale(1.035);
+}
+
+/* Inset Floating Frosted Title Pill */
+.valist-card-title-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 3;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.valist-case-card:hover .valist-card-title-pill {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 40px rgba(145, 50, 247, 0.15);
+  border-color: rgba(145, 50, 247, 0.25);
+  transform: translateY(-2px);
+}
+
+.valist-pill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.valist-pill-tag-mini {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--valist-purple);
+  letter-spacing: 0.04em;
+}
+
+.valist-pill-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--valist-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.valist-pill-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.valist-case-card:hover .valist-pill-btn {
+  background: var(--valist-purple);
+  transform: scale(1.08) rotate(-45deg);
+}
+
+/* Unfolding Content Drawer Beneath */
+.valist-case-drawer {
+  padding: 24px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #ffffff;
+}
+
+.valist-case-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--valist-ink-muted);
+  margin-bottom: 20px;
+}
+
+.valist-case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.valist-tag-chip {
+  font-size: 12px;
+  padding: 5px 12px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  color: var(--valist-ink-muted);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.valist-case-card:hover .valist-tag-chip {
+  border-color: rgba(145, 50, 247, 0.2);
+  color: var(--valist-ink);
+}
+
+/* ==========================================================================
+   VALIST CAPABILITIES UNFOLDING STAGE (SERVICES)
+   Sticky Left Selector (01)-(04) + Synchronized Right Feature Showcase Pane
+   ========================================================================== */
+
+.valist-capabilities-stage {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 56px;
+  align-items: start;
+  margin: 60px 0 100px;
+  position: relative;
+}
+
+.valist-sticky-column {
+  position: sticky;
+  top: 110px;
+  display: flex;
+  flex-direction: column;
+}
+
+.valist-stage-title {
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--valist-ink);
+  margin-bottom: 16px;
+}
+
+.valist-stage-desc {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--valist-ink-muted);
+  margin-bottom: 36px;
+  max-width: 460px;
+}
+
+.valist-capability-nav-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--valist-border);
+}
+
+.valist-capability-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--valist-border);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.valist-capability-nav-item .nav-item-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.valist-capability-nav-item .nav-item-num {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.valist-capability-nav-item:hover .nav-item-title {
+  color: var(--valist-ink);
+}
+
+.valist-capability-nav-item.active .nav-item-title {
+  color: var(--valist-ink);
+  font-weight: 700;
+  transform: translateX(4px);
+}
+
+.valist-capability-nav-item.active .nav-item-num {
+  color: var(--valist-purple);
+  font-weight: 700;
+}
+
+.valist-arrow-shift {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: auto;
+}
+
+.valist-capability-nav-item:hover .valist-arrow-shift {
+  color: var(--valist-ink);
+  transform: translateX(4px);
+}
+
+.valist-capability-nav-item.active .valist-arrow-shift {
+  color: var(--valist-purple);
+  transform: translateX(6px);
+}
+
+/* Right Showcase Unfolding Panes */
+.valist-showcase-panes {
+  position: relative;
+  min-height: 520px;
+}
+
+.valist-showcase-pane {
+  background: #ffffff;
+  border: 1px solid var(--valist-border);
+  border-radius: var(--valist-radius-card);
+  padding: 32px;
+  box-shadow: var(--valist-card-shadow);
+  display: none;
+  flex-direction: column;
+  animation: valistFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.valist-showcase-pane.active {
+  display: flex;
+}
+
+@keyframes valistFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.valist-showcase-visual-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.valist-showcase-visual-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: #f3f0f7;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.valist-showcase-visual-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.valist-showcase-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--valist-ink);
+  margin-bottom: 12px;
+}
+
+.valist-showcase-paragraph {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--valist-ink-muted);
+  margin-bottom: 24px;
+}
+
+.valist-showcase-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.valist-showcase-pill {
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--valist-radius-pill);
+  color: var(--valist-ink);
+}
+
+/* ==========================================================================
+   VALIST PROCESS CARDS (OUR PROCESS)
+   Sticky Left Intro + Stepped Sequential Cards 01/04 through 04/04
+   ========================================================================== */
+
+.valist-process-stage {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 56px;
+  align-items: start;
+  margin: 60px 0 100px;
+}
+
+.valist-process-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.valist-process-card {
+  background: #ffffff;
+  border: 1px solid var(--valist-border);
+  border-radius: var(--valist-radius-card);
+  padding: 32px 36px;
+  box-shadow: var(--valist-card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.valist-process-card:hover {
+  border-color: var(--valist-border-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--valist-card-shadow-hover);
+}
+
+.valist-process-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.valist-process-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--valist-purple);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 6px 18px rgba(145, 50, 247, 0.35);
+}
+
+.valist-process-step-num {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.02em;
+}
+
+.valist-process-card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--valist-ink);
+  margin-bottom: 12px;
+}
+
+.valist-process-card-desc {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--valist-ink-muted);
+}
+
+/* ==========================================================================
+   VALIST TIMELINE & METRIC STATS (ABOUT US)
+   ========================================================================== */
+
+.valist-metric-counters-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 40px 0 80px;
+}
+
+.valist-metric-counter-card {
+  background: #ffffff;
+  border: 1px solid var(--valist-border);
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: var(--valist-card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.valist-metric-counter-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--valist-border-hover);
+  box-shadow: var(--valist-card-shadow-hover);
+}
+
+.valist-counter-icon {
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: var(--valist-purple);
+}
+
+.valist-counter-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--valist-ink-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.valist-counter-number {
+  font-size: clamp(36px, 3.5vw, 48px);
+  font-weight: 800;
+  color: var(--valist-ink);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* Mission Timeline with Node Dots */
+.valist-timeline-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 36px;
+  margin: 40px 0 80px;
+}
+
+.valist-timeline-container::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  bottom: 20px;
+  width: 2px;
+  background: rgba(145, 50, 247, 0.2);
+}
+
+.valist-timeline-node {
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.valist-timeline-node:last-child {
+  margin-bottom: 0;
+}
+
+.valist-timeline-dot {
+  position: absolute;
+  left: -36px;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--valist-purple);
+  box-shadow: 0 0 14px rgba(145, 50, 247, 0.6);
+}
+
+.valist-timeline-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--valist-ink);
+  margin-bottom: 10px;
+}
+
+.valist-timeline-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--valist-ink-muted);
+  margin-bottom: 14px;
+  max-width: 640px;
+}
+
+.valist-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--valist-ink);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.valist-checklist-item::before {
+  content: "✓";
+  color: var(--valist-purple);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   VALIST REFINED FAQ ACCORDION
+   ========================================================================== */
+
+.valist-faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  margin: 40px auto 80px;
+}
+
+.valist-faq-card {
+  background: #ffffff;
+  border: 1px solid var(--valist-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--valist-card-shadow);
+  transition: all 0.3s ease;
+}
+
+.valist-faq-card:hover {
+  border-color: rgba(145, 50, 247, 0.25);
+}
+
+.valist-faq-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.valist-faq-question {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--valist-ink);
+  line-height: 1.35;
+}
+
+.valist-faq-toggle-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(145, 50, 247, 0.1);
+  color: var(--valist-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.valist-faq-card.open .valist-faq-toggle-circle {
+  background: var(--valist-purple);
+  color: #ffffff;
+  transform: rotate(45deg);
+}
+
+.valist-faq-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0 28px;
+}
+
+.valist-faq-card.open .valist-faq-body {
+  max-height: 400px;
+  padding-bottom: 24px;
+}
+
+.valist-faq-answer {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--valist-ink-muted);
+}
+
+/* ==========================================================================
+   SCROLL-SCRUBBED TEXT & STAGGER REVEAL ENHANCEMENTS
+   ========================================================================== */
+
+.valist-scroll-scrub-text {
+  font-size: clamp(28px, 3.8vw, 44px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  color: var(--valist-ink);
+  max-width: 920px;
+  margin: 60px auto;
+  text-align: center;
+}
+
+.valist-scroll-scrub-text .word {
+  display: inline-block;
+  opacity: 0.25;
+  transition: opacity 0.3s ease, color 0.3s ease;
+  margin-right: 0.25em;
+}
+
+.valist-scroll-scrub-text .word.is-lit {
+  opacity: 1;
+  color: var(--valist-ink);
+}
+
+/* Stagger Entrance Classes */
+.valist-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.valist-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS (VALIST THEME)
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .valist-projects-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .valist-capabilities-stage,
+  .valist-process-stage {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .valist-sticky-column {
+    position: static;
+  }
+
+  .valist-metric-counters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .valist-metric-counters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .valist-showcase-visual-row {
+    grid-template-columns: 1fr;
+  }
+
+  .valist-card-title-pill {
+    padding: 12px 16px;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+  }
+
+  .valist-pill-title {
+    font-size: 14.5px;
+  }
+}
+
+

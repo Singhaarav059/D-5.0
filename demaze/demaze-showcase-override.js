@@ -6,16 +6,16 @@
  * Per explicit direction (matched against a reference recording, not just a
  * screenshot), this is rebuilt as:
  *   - a left column (eyebrow + section heading) that stays sticky/fixed in
- *     place while the section scrolls past — desktop only (>=810px, matching
+ *     place while the section scrolls past - desktop only (>=810px, matching
  *     MOVIQ's own tablet breakpoint)
  *   - a right column: an ordered stack of project cards, each already
  *     positioned one under the next. Each card sticks at a slightly larger
  *     `top` offset than the one before it, so as you scroll, the current
  *     card holds its pinned position while the next card's box (positioned
- *     right after it in normal flow) rises and progressively covers it —
+ *     right after it in normal flow) rises and progressively covers it  - 
  *     the previous card's top edge stays visible as a thin strip until the
  *     next one fully takes over the active position. No carousel, fade, or
- *     side-entry transitions — this is pure position:sticky + document flow.
+ *     side-entry transitions - this is pure position:sticky + document flow.
  *
  * Below 810px this collapses to a plain stacked column (heading, then cards,
  * no sticky/stacking) since the effect was only requested for desktop.
@@ -38,7 +38,7 @@
       // !important throughout this block: MOVIQ's own rules for these nodes
       // (e.g. ".framer-ScIth .framer-1a3dchp") combine an ancestor class with
       // the element's own class, which beats a plain single-class override
-      // on specificity alone — confirmed by testing, not a defensive guess.
+      // on specificity alone - confirmed by testing, not a defensive guess.
       'section[data-framer-name="Sricpt"]{height:auto!important;min-height:auto!important;padding:60px 24px 64px!important;overflow:visible!important;}' +
       '.demaze-showcase-grid{display:flex!important;flex-direction:row!important;gap:40px!important;' +
       'align-items:flex-start!important;background:transparent!important;padding:0!important;border:none!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;}' +
@@ -147,7 +147,7 @@
       headlineContainer.appendChild(ctaWrap);
     }
 
-    // Subtitle has no Demaze equivalent copy — hide, don't remove, so React
+    // Subtitle has no Demaze equivalent copy - hide, don't remove, so React
     // still owns the node.
     var subtitle = section.querySelector('[data-framer-name="Subtitle"]');
     if (subtitle) subtitle.style.display = 'none';

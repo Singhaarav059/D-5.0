@@ -5,34 +5,34 @@
  *
  * Logo: hotlinked directly from the current demazetech.com homepage (its
  * own site is also a Framer export, so this is a real asset URL, not an
- * invented one) — the same hotlinking approach already used for the
+ * invented one) - the same hotlinking approach already used for the
  * Showcase project images in demaze-content.js.
  *
  * Nav links: confirmed live that MOVIQ's hamburger icon in `<nav>` doesn't
  * mount any link panel in this exported build (clicking it produces no DOM
- * change — no overlay, no new nodes anywhere in the document). What looked
+ * change - no overlay, no new nodes anywhere in the document). What looked
  * like a nav dropdown in an earlier pass ("How It Works/Features/Use
  * Cases/Pricing/Demo") was actually the footer's own "Quick Links" column
  * (confirmed via `.closest('nav')` on every `[data-framer-name="Menu"]` in
- * the document — all 4 are inside `<footer>`, none in `<nav>`). Only the nav
+ * the document - all 4 are inside `<footer>`, none in `<nav>`). Only the nav
  * logo is updated for now; there is no real nav link menu to update.
  *
  * Footer: MOVIQ has 4 link columns (Quick Links/Company/Resources/Legal)
  * plus a social-icon row. Demaze's real footer is a flat 4-link list with
  * no categories, so the first column is repurposed for those 4 links
- * (title hidden — no real category name for them) and the other 3 columns
+ * (title hidden - no real category name for them) and the other 3 columns
  * + social row are hidden (no Demaze equivalents, and social links are
  * never invented).
  *
  * NOTE on risk: setting `style.display='none'` on these footer siblings was
  * observed, across repeated testing, to sometimes trigger a fatal React
  * reconciliation crash on mobile-width loads. Further testing showed this
- * crash is NOT deterministic — the exact same code, and even the plain
+ * crash is NOT deterministic - the exact same code, and even the plain
  * hidden-only state of other sections, crashed on some fresh-tab loads and
  * not others. It's a flaky timing race in Framer's own hydration that
  * scales with how much post-hydration DOM mutation happens, not a bug tied
  * to this specific operation, so it can't be fully eliminated by avoiding
- * this one technique — only reduced. Shipped anyway per explicit direction
+ * this one technique - only reduced. Shipped anyway per explicit direction
  * to complete this content cleanup; see DEMAZE_IMPLEMENTATION_STATE.md for
  * the full investigation.
  *
@@ -62,7 +62,8 @@
     var style = document.createElement('style');
     style.id = NAV_STYLE_ID;
     style.textContent =
-      'header{' +
+      '.framer-1rmnfff-container, header{' +
+      '  z-index:99999!important;' +
       '  transition:max-width 0.4s cubic-bezier(.22,1,.36,1), padding 0.4s ease!important;' +
       '}' +
       'nav[data-framer-name="Nav"]{' +
@@ -577,7 +578,7 @@
         '</div>';
     }
 
-    // No confirmed Demaze social links — hide
+    // No confirmed Demaze social links - hide
     var social = footer.querySelector('[data-framer-name="Social"]');
     if (social) social.style.display = 'none';
   }

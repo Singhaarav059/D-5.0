@@ -1,7 +1,7 @@
 /**
  * Demaze content source of truth.
  * MOVIQ (repo HTML/CSS/Framer runtime) controls design; this file controls content only.
- * Populated from https://www.demazetech.com/ — 100% verified against live site.
+ * Populated from https://www.demazetech.com/ - 100% verified against live site.
  */
 window.DEMAZE_CONTENT = {
   hero: {

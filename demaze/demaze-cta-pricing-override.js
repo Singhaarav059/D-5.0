@@ -4,7 +4,7 @@
  * already linking to "./contact") at Demaze's real final CTA copy.
  *
  * MOVIQ's "CTA" data-framer-name repeats 3x on this page with identical
- * markup shape; only the third instance already targets "./contact" — that's
+ * markup shape; only the third instance already targets "./contact" - that's
  * the stable identifying signal used to find it (never index into the
  * NodeList directly, per the Framer breakpoint-variant lesson in
  * DEMAZE_IMPLEMENTATION_STATE.md).

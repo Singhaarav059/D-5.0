@@ -74,7 +74,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 
   console.log('Homepage Sections Audit:');
   sectionsAudit.sections.forEach(s => {
-    console.log(`[${s.idx}] ${s.name.padEnd(28)} | Visible: ${s.visible ? 'YES' : 'NO '} | Top: ${String(s.top).padStart(5)}px | Height: ${String(s.height).padStart(5)}px | Heading: ${s.heading || '—'}`);
+    console.log(`[${s.idx}] ${s.name.padEnd(28)} | Visible: ${s.visible ? 'YES' : 'NO '} | Top: ${String(s.top).padStart(5)}px | Height: ${String(s.height).padStart(5)}px | Heading: ${s.heading || ' - '}`);
   });
   console.log('Made in Framer Badge Visible:', sectionsAudit.badgeVisible);
   console.log('Has FAQPage JSON-LD Schema:', sectionsAudit.hasFaqSchema);

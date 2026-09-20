@@ -12,12 +12,12 @@
  *
  * MOVIQ's document order has "Ai Powered" (What Drives Us) BEFORE
  * "Products" (Who We Are). The approved mapping proposed reordering them so
- * "Who We Are" leads into "What Drives Us" — but moving a React-owned DOM
+ * "Who We Are" leads into "What Drives Us" - but moving a React-owned DOM
  * node to a different parent's child list (via insertBefore across
  * sections) crashes React's reconciler with a fatal, unrecoverable
  * "NotFoundError: removeChild"/"insertBefore" the next time it tries to
  * reconcile that subtree (confirmed live, not a guess). Content order stays
- * as MOVIQ built it — What Drives Us, then Who We Are — content only, no
+ * as MOVIQ built it - What Drives Us, then Who We Are - content only, no
  * DOM reordering.
  *
  * See demaze-override-core.js for why this waits/mutates/rechecks the way it does.
@@ -91,28 +91,6 @@
           .join('');
         p.insertAdjacentElement('afterend', badgesWrap);
 
-        var lastEl = badgesWrap;
-
-        // Founder Statement Block
-        var testimonial = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.testimonial;
-        if (testimonial && !section.querySelector('.demaze-founder-statement-block')) {
-          var fBlock = document.createElement('div');
-          fBlock.className = 'demaze-founder-statement-block';
-          var avatarHTML = testimonial.avatar
-            ? '<img src="' + testimonial.avatar + '" class="demaze-testimonial-avatar" alt="' + testimonial.name + '">'
-            : '';
-          fBlock.innerHTML =
-            '<div class="demaze-founder-mark">&ldquo;</div>' +
-            '<p class="demaze-founder-quote">' + testimonial.quote + '</p>' +
-            '<div class="demaze-founder-byline">' +
-            avatarHTML +
-            '<div class="demaze-founder-info">' +
-            '<div class="demaze-founder-name">' + testimonial.name + '</div>' +
-            '<div class="demaze-founder-title">' + testimonial.title + '</div>' +
-            '</div>' +
-            '</div>';
-          lastEl.insertAdjacentElement('afterend', fBlock);
-        }
       }
     }
 

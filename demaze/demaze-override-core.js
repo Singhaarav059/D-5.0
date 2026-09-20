@@ -7,7 +7,7 @@
  * existing DOM in place (never replacing/removing nodes React owns), then
  * re-checks a fixed number of times in case Framer swaps in a different
  * responsive-variant subtree shortly after. No MutationObserver, no
- * setInterval, no unbounded loop — every run terminates on its own.
+ * setInterval, no unbounded loop - every run terminates on its own.
  */
 window.DemazeOverride = {
   run: function (options) {
@@ -45,7 +45,7 @@ window.DemazeOverride = {
               apply(root);
             }
           } catch (e) {
-            /* swallow — next scheduled recheck will retry */
+            /* swallow - next scheduled recheck will retry */
           }
           window.DemazeOverride.checkReadiness();
         }, delay);

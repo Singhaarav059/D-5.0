@@ -22,7 +22,7 @@
       navTitle: 'Autonomous AI & Velocity',
       eyebrow: '01 · AGENTIC VELOCITY',
       title: 'Autonomous Agents.<br>Zero Delivery Lag.',
-      description: 'We architect self-healing agent pipelines and generative workflows that compress months of legacy engineering into hours—accelerating time-to-market while strictly preserving enterprise grade verification and safety.',
+      description: 'We architect self-healing agent pipelines and generative workflows that compress months of legacy engineering into hours, accelerating time-to-market while strictly preserving enterprise grade verification and safety.',
       chips: ['Autonomous Agents', 'Sub-Second Inference', 'Automated CI/CD'],
       accentColor: '#2563eb',
       badgeText: 'LIVE · 142ms',
@@ -34,7 +34,7 @@
       navTitle: 'Extreme Scale & Resilience',
       eyebrow: '02 · HIGH-THROUGHPUT CLOUD',
       title: 'Extreme Scalability.<br>Zero Downtime.',
-      description: 'From distributed multi-region Kubernetes clusters to sub-millisecond edge data planes, our architectures are hardened for peak enterprise loads—ensuring uninterrupted SLAs when concurrent traffic spikes 100x.',
+      description: 'From distributed multi-region Kubernetes clusters to sub-millisecond edge data planes, our architectures are hardened for peak enterprise loads, ensuring uninterrupted SLAs when concurrent traffic spikes 100x.',
       chips: ['Multi-Region Mesh', 'Auto-Scaling Pods', '99.999% SLA'],
       accentColor: '#0284c7',
       badgeText: '99.999% SLA',
@@ -95,12 +95,11 @@
       '  width: 100%; max-width: 1240px; margin: 0 auto; box-sizing: border-box; position: relative;' +
       '}' +
 
-      /* Split Section Header (Cognira style) */
+      /* Section Header (Unified editorial flow) */
       '.demaze-drives-header {' +
-      '  display: flex; justify-content: space-between; align-items: flex-end;' +
-      '  margin-bottom: 56px; gap: 32px;' +
+      '  display: flex; flex-direction: column; align-items: flex-start;' +
+      '  margin-bottom: 48px; max-width: 840px;' +
       '}' +
-      '.demaze-drives-header-left { flex: 1; min-width: 0; }' +
       '.demaze-drives-eyebrow {' +
       '  display: inline-flex; align-items: center; gap: 8px;' +
       '  padding: 5px 14px; border-radius: 999px;' +
@@ -114,15 +113,12 @@
       '}' +
       '.demaze-drives-title {' +
       '  font-size: clamp(32px, 3.8vw, 48px); font-weight: 700; line-height: 1.16;' +
-      '  color: #0f172a; letter-spacing: -0.025em; margin: 0;' +
+      '  color: #0f172a; letter-spacing: -0.025em; margin: 0 0 16px;' +
       '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
-      '.demaze-drives-header-right {' +
-      '  max-width: 440px; flex-shrink: 0; padding-bottom: 6px;' +
-      '}' +
       '.demaze-drives-subtitle {' +
-      '  font-size: 15px; line-height: 1.6; color: #64748b;' +
-      '  margin: 0; font-weight: 400;' +
+      '  font-size: 16px; line-height: 1.65; color: #64748b;' +
+      '  margin: 0; max-width: 760px; font-weight: 400;' +
       '}' +
 
       /* Split Body (Sticky Sidebar + Cards) */
@@ -133,7 +129,7 @@
       /* Sticky Sidebar */
       '.demaze-drives-sidebar {' +
       '  width: 250px; position: sticky; top: 120px; flex-shrink: 0;' +
-      '  display: flex; flex-direction: column; gap: 14px; z-index: 10;' +
+      '  display: flex; flex-direction: column; gap: 14px; z-index: 5 !important;' +
       '}' +
       '.demaze-drives-nav {' +
       '  background: #f8fafc; border: 1px solid #e2e8f0;' +
@@ -389,7 +385,7 @@
       '    flex-direction: column; gap: 24px;' +
       '  }' +
       '  .demaze-drives-sidebar {' +
-      '    width: 100%; position: sticky; top: 75px; z-index: 100;' +
+      '    width: 100%; position: sticky; top: 95px; z-index: 5 !important;' +
       '    flex-direction: row; align-items: center; gap: 10px;' +
       '  }' +
       '  .demaze-drives-nav {' +
@@ -712,25 +708,20 @@
     var wrapper = document.createElement('div');
     wrapper.className = 'demaze-drives-wrapper';
 
-    // Header (Cognira style split layout in site tone)
+    // Header (Unified clean layout)
     var header = document.createElement('div');
     header.className = 'demaze-drives-header';
     header.innerHTML =
-      '<div class="demaze-drives-header-left">' +
-      '  <div class="demaze-drives-eyebrow">' +
-      '    <span class="demaze-drives-eyebrow-dot"></span>' +
-      '    <span>What Drives Us</span>' +
-      '  </div>' +
-      '  <h2 class="demaze-drives-title">' +
-      '    Engineering Principles.<br>' +
-      '    Relentless Execution.' +
-      '  </h2>' +
+      '<div class="demaze-drives-eyebrow">' +
+      '  <span class="demaze-drives-eyebrow-dot"></span>' +
+      '  <span>What Drives Us</span>' +
       '</div>' +
-      '<div class="demaze-drives-header-right">' +
-      '  <p class="demaze-drives-subtitle">' +
-      '    How we build at Demaze Technologies: zero compromise on architecture, radical transparency in execution, and software engineered for compounding scale.' +
-      '  </p>' +
-      '</div>';
+      '<h2 class="demaze-drives-title">' +
+      '  Engineering Principles. Relentless Execution.' +
+      '</h2>' +
+      '<p class="demaze-drives-subtitle">' +
+      '  How we build at Demaze Technologies: zero compromise on architecture, radical transparency in execution, and software engineered for compounding scale.' +
+      '</p>';
     wrapper.appendChild(header);
 
     // Body (Split Sidebar + Cards Stack)

@@ -1,34 +1,40 @@
 /**
- * Our Process — Demaze's real 4-step process (Discover & Define / Design &
- * Prototype / Build & Integrate / Launch & Scale), with MOVIQ's native
- * scroll-linked unfolding card interaction.
- *
- * Symmetrically unfolds all 4 cards horizontally as the user scrolls into view,
- * matching the exact physics and feel of MOVIQ's "Videos making Step" section.
+ * How We Work / Our Process - Rebuilt faithfully matching Fora AI's Features section
+ * (https://foraai.framer.website/ - "Features" section):
+ * - Clean light tone, white background (#ffffff), refined grey eyebrow pill (#EEECED)
+ * - Dual-tone display typography ("Engineering that Adapts to Scale")
+ * - Signature 4-card Bento Grid layout with #F4F4F6 card surfaces, 30px border radius:
+ *   1. Card 1 (Left Tall Card): Discovery & Architecture with chat/spec feed, Demaze AI response,
+ *      syntax-highlighted code block, and memory status pill.
+ *   2. Card 2 (Top Middle Card): Rapid Prototyping with staging action bar, live preview skeleton,
+ *      and stakeholder verification badge.
+ *   3. Card 3 (Top Right Card): Autonomous Build & QA with pink/coral gradient action card,
+ *      canary rollout prompt, and interactive action buttons.
+ *   4. Card 4 (Bottom Wide Card): Connect Your Stack with orbital rotating app constellation
+ *      and smooth tech stack marquee (OpenAI, Python, LangChain, Kafka, Pinecone, AWS, Docker,
+ *      Kubernetes, GitHub, PostgreSQL, Hugging Face, Slack, Notion).
+ * - Fully responsive across Desktop (1440px), Tablet (1024px/768px), and Mobile (390px).
  */
 (function () {
   var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.process;
-  if (!content || !window.DemazeOverride) return;
+  if (!window.DemazeOverride) return;
 
-  var STYLE_ID = 'demaze-process-style';
-  var BLOCK_ID = 'demaze-process-block';
+  var STYLE_ID = 'demaze-process-fora-style';
+  var BLOCK_ID = 'demaze-process-fora-block';
 
-  var STEP_GRADIENTS = [
-    'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)', // 1: Discover & Define
-    'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', // 2: Design & Prototype
-    'linear-gradient(135deg, #0ea5e9 0%, #10b981 100%)', // 3: Build & Integrate
-    'linear-gradient(135deg, #10b981 0%, #059669 100%)', // 4: Launch & Scale
-  ];
-
-  var STEP_ICONS = [
-    // 1: Search / Discovery
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-    // 2: Design / Layers / Prototype
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
-    // 3: Code / Build & Integrate
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
-    // 4: Rocket / Launch & Scale
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg>',
+  var TECH_STACK_APPS = [
+    { name: 'OpenAI', icon: 'https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png' },
+    { name: 'Python', icon: 'https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png' },
+    { name: 'LangChain', icon: 'https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png' },
+    { name: 'Kafka', icon: 'https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png' },
+    { name: 'Pinecone', icon: 'https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png' },
+    { name: 'Hugging Face', icon: 'https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png' },
+    { name: 'Figma', icon: 'https://framerusercontent.com/images/pkhh0EQ5InrWQZ4rekwPwzJ6px4.png?width=808&height=810' },
+    { name: 'Slack', icon: 'https://framerusercontent.com/images/sPO3l9jrekyDIkw72r19RXoebQ.png?width=832&height=826' },
+    { name: 'Notion', icon: 'https://framerusercontent.com/images/JMH2Clnl4mQx7hrDfSXujXDNPBY.png?width=1024&height=1024' },
+    { name: 'GitHub', icon: 'https://framerusercontent.com/images/MRfVTgKvw7Tlxkf0bqVoJW8C8.jpg?width=400&height=400' },
+    { name: 'Linear', icon: 'https://framerusercontent.com/images/DK2TndnnYvvsi6b7ruZBawDDz94.png?width=2106&height=2088' },
+    { name: 'Chrome', icon: 'https://framerusercontent.com/images/Re5Nwt658dW1qeFFF0zVV8xDXg.png?width=1728&height=1818' }
   ];
 
   function ensureStyle() {
@@ -36,93 +42,321 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Videos making Step"]{' +
-      '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
-      '  width:100%!important;height:auto!important;min-height:auto!important;' +
-      '  padding:50px 24px 60px!important;background:#ffffff!important;' +
-      '  position:relative!important;z-index:1!important;overflow:visible!important;' +
+      /* Section Container */
+      'section[data-framer-name="Videos making Step"] {' +
+      '  display: flex !important; flex-direction: column !important; align-items: center !important;' +
+      '  width: 100% !important; height: auto !important; min-height: auto !important;' +
+      '  padding: 96px 24px 110px !important; background: #ffffff !important;' +
+      '  position: relative !important; z-index: 1 !important; overflow: visible !important;' +
+      '  box-sizing: border-box !important;' +
       '}' +
-      '.demaze-process-wrap{' +
-      '  background:#ffffff;position:relative;z-index:1;padding:0;text-align:center;' +
-      '  width:100%;max-width:1280px;margin:0 auto;' +
-      '}' +
-      '.demaze-process-eyebrow{' +
-      '  display:inline-flex;align-items:center;gap:6px;' +
-      '  background:rgba(37, 99, 235, 0.08);color:#2563eb;' +
-      '  font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
-      '  padding:6px 16px;border-radius:100px;border:1px solid rgba(37, 99, 235, 0.18);' +
-      '  margin-bottom:16px;' +
-      '}' +
-      '.demaze-process-heading{' +
-      '  font-size:clamp(32px, 4vw, 48px);font-weight:700;color:#0B0E17;' +
-      '  margin:0 0 14px;letter-spacing:-0.025em;line-height:1.15;' +
-      '}' +
-      '.demaze-process-sub{' +
-      '  font-size:clamp(15px, 1.2vw, 17px);color:#64748b;max-width:620px;' +
-      '  margin:0 auto 56px;line-height:1.6;' +
-      '}' +
-      '.demaze-process-row{' +
-      '  display:grid;grid-template-columns:repeat(4, 1fr);gap:20px;' +
-      '  width:100%;margin:0 auto;position:relative;align-items:stretch;' +
-      '  perspective:1200px;transform-style:preserve-3d;' +
-      '}' +
-      '.demaze-process-card{' +
-      '  background:#ffffff;border:1px solid rgba(226, 232, 240, 0.9);' +
-      '  border-radius:28px;padding:32px 24px;text-align:left;' +
-      '  box-shadow:0 1px 3px rgba(0,0,0,0.02), 0 16px 36px -10px rgba(15, 23, 42, 0.06);' +
-      '  display:flex;flex-direction:column;position:relative;z-index:1;' +
-      '  will-change:transform, opacity;' +
-      '  transition:box-shadow 0.3s ease, border-color 0.3s ease;' +
-      '}' +
-      '.demaze-process-card:hover{' +
-      '  box-shadow:0 24px 50px -12px rgba(37, 99, 235, 0.16);' +
-      '  border-color:rgba(37, 99, 235, 0.35);' +
-      '}' +
-      '.demaze-process-card-top{' +
-      '  display:flex;align-items:center;justify-content:space-between;' +
-      '  margin-bottom:24px;' +
-      '}' +
-      '.demaze-process-icon{' +
-      '  width:44px;height:44px;border-radius:14px;' +
-      '  display:inline-flex;align-items:center;justify-content:center;' +
-      '  box-shadow:0 8px 18px rgba(0, 0, 0, 0.12);flex-shrink:0;' +
-      '}' +
-      '.demaze-process-step-num{' +
-      '  font-size:12.5px;font-weight:700;color:#94a3b8;' +
-      '  background:rgba(241, 245, 249, 0.8);padding:4px 10px;border-radius:8px;' +
-      '  border:1px solid rgba(226, 232, 240, 0.8);' +
-      '}' +
-      '.demaze-process-card h3{' +
-      '  font-size:20px;font-weight:700;color:#0B0E17;margin:0 0 12px;' +
-      '  line-height:1.3;letter-spacing:-0.01em;' +
-      '}' +
-      '.demaze-process-card p{' +
-      '  font-size:14.5px;line-height:1.65;color:#64748b;margin:0;' +
-      '}' +
-      '@media (max-width: 1024px){' +
-      '  .demaze-process-row{grid-template-columns:repeat(2, 1fr);gap:18px;}' +
-      '}' +
-      '@media (max-width: 640px){' +
-      '  section[data-framer-name="Videos making Step"]{padding:80px 18px 90px!important;}' +
-      '  .demaze-process-row{grid-template-columns:1fr;gap:16px;}' +
-      '  .demaze-process-card{padding:26px 20px;}' +
-      '}';
-    document.head.appendChild(style);
-  }
 
-  function cardHTML(step, i) {
-    var grad = STEP_GRADIENTS[i % STEP_GRADIENTS.length];
-    var icon = STEP_ICONS[i % STEP_ICONS.length];
-    return (
-      '<div class="demaze-process-card" data-step-index="' + i + '">' +
-      '  <div class="demaze-process-card-top">' +
-      '    <div class="demaze-process-icon" style="background:' + grad + '">' + icon + '</div>' +
-      '    <span class="demaze-process-step-num">0' + (i + 1) + '</span>' +
-      '  </div>' +
-      '  <h3>' + step.title + '</h3>' +
-      '  <p>' + step.description + '</p>' +
-      '</div>'
-    );
+      /* Inner Wrapper */
+      '.' + BLOCK_ID + ' {' +
+      '  width: 100%; max-width: 1180px; margin: 0 auto; box-sizing: border-box;' +
+      '  display: flex; flex-direction: column; align-items: center;' +
+      '}' +
+
+      /* Header */
+      '.demaze-proc-header {' +
+      '  display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 54px; max-width: 720px;' +
+      '}' +
+      '.demaze-proc-eyebrow {' +
+      '  display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 12px;' +
+      '  background: #EEECED; color: #18181B; font-size: 13.5px; font-weight: 500;' +
+      '  margin-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0.05);' +
+      '  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);' +
+      '}' +
+      '.demaze-proc-heading {' +
+      '  font-size: clamp(34px, 4.2vw, 52px); font-weight: 700; line-height: 1.15;' +
+      '  letter-spacing: -0.025em; color: #09090B; margin: 0 0 16px;' +
+      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '}' +
+      '.demaze-proc-dim {' +
+      '  color: #71717A !important; font-weight: 600;' +
+      '}' +
+      '.demaze-proc-subtitle {' +
+      '  font-size: 17px; line-height: 1.6; color: #64748B; margin: 0;' +
+      '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '}' +
+
+      /* Bento Grid Container */
+      '.demaze-proc-bento {' +
+      '  display: flex; gap: 24px; width: 100%; align-items: stretch; justify-content: center; box-sizing: border-box;' +
+      '}' +
+
+      /* Card Base Styles matching Fora AI */
+      '.demaze-bento-card {' +
+      '  background: #F4F4F6; border-radius: 30px; padding: 30px 28px;' +
+      '  box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;' +
+      '  position: relative; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.03);' +
+      '  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);' +
+      '  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;' +
+      '}' +
+      '.demaze-bento-card:hover {' +
+      '  transform: translateY(-4px);' +
+      '  box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);' +
+      '}' +
+      '.demaze-card-title {' +
+      '  font-size: 24px; font-weight: 600; color: #09090B; margin: 0 0 8px;' +
+      '  letter-spacing: -0.015em;' +
+      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '}' +
+      '.demaze-card-desc {' +
+      '  font-size: 15.5px; line-height: 1.5; color: #64748B; margin: 0 0 20px;' +
+      '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '}' +
+
+      /* Left Column: Card 1 (Tall) */
+      '.demaze-card-1 {' +
+      '  width: 386px; flex-shrink: 0; min-height: 610px;' +
+      '}' +
+      '.demaze-c1-feed {' +
+      '  display: flex; flex-direction: column; gap: 12px; margin-top: auto; width: 100%;' +
+      '}' +
+      '.demaze-chat-user {' +
+      '  background: linear-gradient(135deg, #ff7a93 0%, #ff5376 100%);' +
+      '  color: #ffffff; border-radius: 18px 18px 4px 18px; padding: 12px 16px;' +
+      '  font-size: 13.5px; font-weight: 500; line-height: 1.45;' +
+      '  max-width: 90%; align-self: flex-end; box-shadow: 0 4px 14px rgba(255, 83, 118, 0.22);' +
+      '}' +
+      '.demaze-chat-row {' +
+      '  display: flex; align-items: flex-start; gap: 10px; width: 100%;' +
+      '}' +
+      '.demaze-chat-avatar {' +
+      '  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;' +
+      '  background: #ff5376; display: flex; align-items: center; justify-content: center;' +
+      '  box-shadow: 0 2px 8px rgba(255, 83, 118, 0.25);' +
+      '}' +
+      '.demaze-chat-avatar img {' +
+      '  width: 18px; height: 18px; object-fit: contain; filter: brightness(0) invert(1);' +
+      '}' +
+      '.demaze-chat-bot {' +
+      '  background: #ffffff; color: #18181B; border-radius: 18px 18px 18px 4px;' +
+      '  padding: 12px 16px; font-size: 13.5px; line-height: 1.45; font-weight: 500;' +
+      '  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.04);' +
+      '}' +
+      '.demaze-terminal {' +
+      '  background: #0F172A; border-radius: 18px; padding: 14px 16px; width: 100%;' +
+      '  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14); box-sizing: border-box;' +
+      '  font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;' +
+      '  font-size: 12.5px; line-height: 1.6; color: #E2E8F0;' +
+      '}' +
+      '.demaze-t-kw { color: #C084FC; font-weight: 600; }' +
+      '.demaze-t-var { color: #60A5FA; }' +
+      '.demaze-t-fn { color: #38BDF8; }' +
+      '.demaze-t-prop { color: #94A3B8; }' +
+      '.demaze-t-str { color: #34D399; }' +
+      '.demaze-t-meta { color: #64748B; font-size: 11px; margin-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px; }' +
+      '.demaze-memory-pill {' +
+      '  display: inline-flex; align-items: center; gap: 8px;' +
+      '  background: rgba(255, 83, 118, 0.12); color: #E11D48; border-radius: 100px;' +
+      '  padding: 6px 14px; font-size: 12px; font-weight: 600; width: fit-content; margin-top: 4px;' +
+      '}' +
+      '.demaze-memory-dot {' +
+      '  width: 7px; height: 7px; border-radius: 50%; background: #E11D48;' +
+      '}' +
+
+      /* Right Column Container */
+      '.demaze-proc-right-col {' +
+      '  flex: 1; min-width: 0; max-width: 670px; display: flex; flex-direction: column; gap: 20px;' +
+      '}' +
+
+      /* Top Row: Cards 2 & 3 */
+      '.demaze-proc-top-row {' +
+      '  display: flex; gap: 20px; width: 100%;' +
+      '}' +
+
+      /* Card 2: Rapid Prototyping */
+      '.demaze-card-2 {' +
+      '  flex: 1; min-width: 0; min-height: 310px;' +
+      '}' +
+      '.demaze-proto-bar {' +
+      '  background: #ffffff; border-radius: 100px; padding: 7px 8px 7px 16px;' +
+      '  display: flex; align-items: center; justify-content: space-between;' +
+      '  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.04);' +
+      '  margin-top: auto;' +
+      '}' +
+      '.demaze-proto-bar span {' +
+      '  font-size: 12.5px; color: #52525B; font-weight: 500;' +
+      '}' +
+      '.demaze-proto-arrow {' +
+      '  width: 26px; height: 26px; border-radius: 50%; background: #FF5376;' +
+      '  display: flex; align-items: center; justify-content: center; color: #ffffff;' +
+      '  font-size: 12px; flex-shrink: 0;' +
+      '}' +
+      '.demaze-proto-box {' +
+      '  background: #ffffff; border-radius: 18px; padding: 14px 16px; margin-top: 12px;' +
+      '  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.04);' +
+      '}' +
+      '.demaze-proto-status {' +
+      '  display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: #10B981;' +
+      '  margin-bottom: 10px;' +
+      '}' +
+      '.demaze-proto-status-dot {' +
+      '  width: 7px; height: 7px; border-radius: 50%; background: #10B981;' +
+      '}' +
+      '.demaze-proto-skel {' +
+      '  height: 6px; border-radius: 6px; background: #E4E4E7; margin-bottom: 6px;' +
+      '}' +
+      '.demaze-proto-skel.w80 { width: 85%; }' +
+      '.demaze-proto-skel.w55 { width: 55%; margin-bottom: 0; }' +
+      '.demaze-proto-verified {' +
+      '  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;' +
+      '  border-radius: 100px; background: rgba(16, 185, 129, 0.10); color: #059669;' +
+      '  font-size: 11.5px; font-weight: 600; margin-top: 10px; width: fit-content;' +
+      '}' +
+
+      /* Card 3: Autonomous Build & QA */
+      '.demaze-card-3 {' +
+      '  flex: 1; min-width: 0; min-height: 310px;' +
+      '}' +
+      '.demaze-qa-box {' +
+      '  background: linear-gradient(135deg, #ff7a93 0%, #ff5376 100%);' +
+      '  border-radius: 20px; padding: 18px; color: #ffffff;' +
+      '  box-shadow: 0 6px 20px rgba(255, 83, 118, 0.22); margin-top: auto;' +
+      '}' +
+      '.demaze-qa-eyebrow {' +
+      '  font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;' +
+      '  color: rgba(255, 255, 255, 0.88); font-weight: 600; margin-bottom: 6px;' +
+      '}' +
+      '.demaze-qa-question {' +
+      '  font-size: 15px; font-weight: 700; line-height: 1.35; margin-bottom: 14px;' +
+      '}' +
+      '.demaze-qa-btns {' +
+      '  display: flex; gap: 8px;' +
+      '}' +
+      '.demaze-qa-btn-yes {' +
+      '  background: #ffffff; color: #E11D48; border-radius: 100px;' +
+      '  padding: 6px 13px; font-size: 12px; font-weight: 600;' +
+      '  box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer;' +
+      '  transition: transform 0.2s ease;' +
+      '}' +
+      '.demaze-qa-btn-yes:hover { transform: scale(1.04); }' +
+      '.demaze-qa-btn-no {' +
+      '  background: rgba(255, 255, 255, 0.25); color: #ffffff; border-radius: 100px;' +
+      '  padding: 6px 13px; font-size: 12px; font-weight: 600; cursor: pointer;' +
+      '  transition: background 0.2s ease;' +
+      '}' +
+      '.demaze-qa-btn-no:hover { background: rgba(255, 255, 255, 0.35); }' +
+
+      /* Card 4: Connect Your Stack (Wide) matching Fora AI exact specs */
+      '.demaze-card-4 {' +
+      '  width: 100%; height: 273px; min-height: 273px; box-sizing: border-box;' +
+      '  flex-direction: row; align-items: flex-start; justify-content: flex-start;' +
+      '  padding: 28px 32px; position: relative; overflow: hidden;' +
+      '}' +
+      '.demaze-card-4-left {' +
+      '  width: 260px; max-width: 260px; flex-shrink: 0; position: relative; z-index: 2; pointer-events: none;' +
+      '}' +
+      '.demaze-card-4-left .demaze-card-desc { margin-bottom: 0; }' +
+      '.demaze-card-4-constellation {' +
+      '  position: absolute; width: 505px; height: 505px; bottom: -252px; right: -104px;' +
+      '  z-index: 1; pointer-events: none;' +
+      '}' +
+      '.demaze-orbit-wheel.demaze-orbit-outer-ring {' +
+      '  width: 100%; height: 100%; position: relative;' +
+      '  animation: demazeConstellationOrbit 46s linear infinite;' +
+      '  will-change: transform;' +
+      '}' +
+      '.demaze-orbit-wheel-inner.demaze-orbit-inner-ring {' +
+      '  position: absolute; inset: 100px;' +
+      '  animation: demazeConstellationReverse 34s linear infinite;' +
+      '  will-change: transform;' +
+      '}' +
+      '@keyframes demazeConstellationOrbit {' +
+      '  from { transform: rotate(0deg); }' +
+      '  to { transform: rotate(360deg); }' +
+      '}' +
+      '@keyframes demazeConstellationReverse {' +
+      '  from { transform: rotate(0deg); }' +
+      '  to { transform: rotate(-360deg); }' +
+      '}' +
+
+      /* Spoke Columns & App Badges matching Fora AI */
+      '.demaze-spoke-65 {' +
+      '  position: absolute; top: 0; bottom: 0; left: 50%; width: 65px;' +
+      '  display: flex; flex-direction: column; justify-content: space-between; align-items: center;' +
+      '  padding: 0; pointer-events: auto;' +
+      '}' +
+      '.demaze-node-65 {' +
+      '  width: 65px; height: 65px; border-radius: 63px; overflow: hidden; flex-shrink: 0; position: relative;' +
+      '  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);' +
+      '  background: #ffffff; display: flex; align-items: center; justify-content: center;' +
+      '  transition: transform 0.25s ease, box-shadow 0.25s ease;' +
+      '}' +
+      '.demaze-node-65:hover {' +
+      '  transform: scale(1.12) !important;' +
+      '  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);' +
+      '}' +
+      '.demaze-node-65 img {' +
+      '  width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit;' +
+      '}' +
+      '.demaze-spoke-35 {' +
+      '  position: absolute; top: 0; bottom: 0; left: 50%; width: 35px;' +
+      '  display: flex; flex-direction: column; justify-content: space-between; align-items: center;' +
+      '  padding: 0; pointer-events: auto;' +
+      '}' +
+      '.demaze-node-35 {' +
+      '  width: 35px; height: 35px; border-radius: 43px; overflow: hidden; flex-shrink: 0; position: relative;' +
+      '  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.07);' +
+      '  background: #ffffff; display: flex; align-items: center; justify-content: center;' +
+      '  transition: transform 0.25s ease, box-shadow 0.25s ease;' +
+      '}' +
+      '.demaze-node-35:hover {' +
+      '  transform: scale(1.15) !important;' +
+      '  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);' +
+      '}' +
+      '.demaze-node-35 img {' +
+      '  width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit;' +
+      '}' +
+
+      /* Responsive Marquee for Mobile/Tablet */
+      '.demaze-stack-marquee-wrap {' +
+      '  display: none; width: 100%; overflow: hidden; position: relative; margin-top: 16px;' +
+      '  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);' +
+      '  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);' +
+      '}' +
+      '.demaze-stack-marquee-row {' +
+      '  display: flex; gap: 14px; width: max-content;' +
+      '  animation: demazeMarquee 20s linear infinite;' +
+      '}' +
+      '@keyframes demazeMarquee {' +
+      '  from { transform: translateX(0); }' +
+      '  to { transform: translateX(-50%); }' +
+      '}' +
+      '.demaze-marquee-pill {' +
+      '  width: 48px; height: 48px; border-radius: 50%; background: #ffffff;' +
+      '  display: flex; align-items: center; justify-content: center;' +
+      '  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06); border: 1px solid rgba(0, 0, 0, 0.05);' +
+      '  flex-shrink: 0;' +
+      '}' +
+      '.demaze-marquee-pill img {' +
+      '  width: 28px; height: 28px; object-fit: contain; border-radius: 6px;' +
+      '}' +
+
+      /* Responsive Breakpoints */
+      '@media (max-width: 1040px) {' +
+      '  section[data-framer-name="Videos making Step"] { padding: 75px 20px 85px !important; }' +
+      '  .demaze-proc-bento { flex-direction: column; align-items: center; gap: 20px; }' +
+      '  .demaze-card-1 { width: 100%; max-width: 680px; min-height: auto; }' +
+      '  .demaze-proc-right-col { width: 100%; max-width: 680px; }' +
+      '  .demaze-card-4 { height: 273px; min-height: 273px; }' +
+      '}' +
+
+      '@media (max-width: 680px) {' +
+      '  section[data-framer-name="Videos making Step"] { padding: 60px 16px 70px !important; }' +
+      '  .demaze-proc-header { margin-bottom: 36px; }' +
+      '  .demaze-proc-top-row { flex-direction: column; gap: 20px; }' +
+      '  .demaze-card-2, .demaze-card-3 { min-height: auto; }' +
+      '  .demaze-bento-card { border-radius: 24px; padding: 24px 20px; }' +
+      '  .demaze-card-title { font-size: 21px; }' +
+      '  .demaze-card-desc { font-size: 14.5px; }' +
+      '  .demaze-card-4 { height: auto; min-height: auto; flex-direction: column; align-items: flex-start; gap: 16px; }' +
+      '  .demaze-card-4-constellation { display: none; }' +
+      '  .demaze-stack-marquee-wrap { display: block; }' +
+      '}';;
+    document.head.appendChild(style);
   }
 
   function getProcessSection() {
@@ -133,144 +367,281 @@
     return !!section;
   }
 
-  function applyOverride(section) {
-    ensureStyle();
+  var OUTER_SPOKES = [
+    {
+      angle: 0,
+      top: { name: 'Figma', icon: 'https://framerusercontent.com/images/pkhh0EQ5InrWQZ4rekwPwzJ6px4.png?width=808&height=810' },
+      bottom: { name: 'Slack', icon: 'https://framerusercontent.com/images/sPO3l9jrekyDIkw72r19RXoebQ.png?width=832&height=826' }
+    },
+    {
+      angle: 23,
+      top: { name: 'Notion', icon: 'https://framerusercontent.com/images/JMH2Clnl4mQx7hrDfSXujXDNPBY.png?width=1024&height=1024' },
+      bottom: { name: 'OpenAI', icon: 'https://framerusercontent.com/images/q6TYVLjzAdGsfPL653l4KUo62w.png?width=426&height=430' }
+    },
+    {
+      angle: 45,
+      top: { name: 'Linear', icon: 'https://framerusercontent.com/images/DK2TndnnYvvsi6b7ruZBawDDz94.png?width=2106&height=2088' },
+      bottom: { name: 'Python', icon: 'https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png' }
+    },
+    {
+      angle: 68,
+      top: { name: 'Sketch', icon: 'https://framerusercontent.com/images/Y8D5l1qrb3yH10pGTl25O4a9L0.jpg?width=736&height=736' },
+      bottom: { name: 'LangChain', icon: 'https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png' }
+    },
+    {
+      angle: 90,
+      top: { name: 'GitHub', icon: 'https://framerusercontent.com/images/MRfVTgKvw7Tlxkf0bqVoJW8C8.jpg?width=400&height=400' },
+      bottom: { name: 'Kafka', icon: 'https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png' }
+    },
+    {
+      angle: 112,
+      top: { name: 'Chrome', icon: 'https://framerusercontent.com/images/Re5Nwt658dW1qeFFF0zVV8xDXg.png?width=1728&height=1818' },
+      bottom: { name: 'Framer', icon: 'https://framerusercontent.com/images/ys4oTL2lYdKDfdrlLPl3LDRY.png?width=1761&height=1839' }
+    },
+    {
+      angle: 135,
+      top: { name: 'Discord', icon: 'https://framerusercontent.com/images/XeWCGuA2kcV1SoqBYdhi2eC8.jpg?width=980&height=980' },
+      bottom: { name: 'Pinecone', icon: 'https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png' }
+    },
+    {
+      angle: 158,
+      top: { name: 'VSCode', icon: 'https://framerusercontent.com/images/BGijJ9067qvpOmUTGEqdlmxFhmQ.png?width=512&height=512' },
+      bottom: { name: 'Hugging Face', icon: 'https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png' }
+    }
+  ];
 
-    // Clean up any accidental copy left in Hero
-    var oldHeroBlock = document.querySelector('section[data-framer-name="Hero"] #' + BLOCK_ID);
-    if (oldHeroBlock) oldHeroBlock.style.display = 'none';
+  var INNER_SPOKES = [
+    {
+      angle: 0,
+      top: { name: 'App 1', icon: 'https://framerusercontent.com/images/XWV3ToSPgwKLoRS4BsA1z7zk.png?width=1280&height=1280' },
+      bottom: { name: 'App 2', icon: 'https://framerusercontent.com/images/XWV3ToSPgwKLoRS4BsA1z7zk.png?width=1280&height=1280' }
+    },
+    {
+      angle: 22,
+      top: { name: 'App 3', icon: 'https://framerusercontent.com/images/o0zXm37n7mp8M1RAf6M4Ga28ui0.png?width=230&height=230' },
+      bottom: { name: 'App 4', icon: 'https://framerusercontent.com/images/o0zXm37n7mp8M1RAf6M4Ga28ui0.png?width=230&height=230' }
+    },
+    {
+      angle: 45,
+      top: { name: 'App 5', icon: 'https://framerusercontent.com/images/2dTXUAQpn5rzQOL7lKEsYtLLFjY.png?width=1200&height=1170' },
+      bottom: { name: 'App 6', icon: 'https://framerusercontent.com/images/2dTXUAQpn5rzQOL7lKEsYtLLFjY.png?width=1200&height=1170' }
+    },
+    {
+      angle: 67,
+      top: { name: 'App 7', icon: 'https://framerusercontent.com/images/Cdf08c28Yrjl5hKtE2cgevzSt9g.png?width=1200&height=630' },
+      bottom: { name: 'App 8', icon: 'https://framerusercontent.com/images/Cdf08c28Yrjl5hKtE2cgevzSt9g.png?width=1200&height=630' }
+    },
+    {
+      angle: 90,
+      top: { name: 'App 9', icon: 'https://framerusercontent.com/images/eTkhMPhl62nrViQrNpxCEGvWaE.png?width=512&height=512' },
+      bottom: { name: 'App 10', icon: 'https://framerusercontent.com/images/eTkhMPhl62nrViQrNpxCEGvWaE.png?width=512&height=512' }
+    },
+    {
+      angle: 113,
+      top: { name: 'App 11', icon: 'https://framerusercontent.com/images/jQo9RG3CJxTrdtG5b4RMVlenWQ.jpeg?width=225&height=225' },
+      bottom: { name: 'App 12', icon: 'https://framerusercontent.com/images/jQo9RG3CJxTrdtG5b4RMVlenWQ.jpeg?width=225&height=225' }
+    },
+    {
+      angle: 135,
+      top: { name: 'App 13', icon: 'https://framerusercontent.com/images/H9NZcElmoHU0v78tfNUIL2rr9E.png?width=200&height=200' },
+      bottom: { name: 'App 14', icon: 'https://framerusercontent.com/images/H9NZcElmoHU0v78tfNUIL2rr9E.png?width=200&height=200' }
+    },
+    {
+      angle: 158,
+      top: { name: 'App 15', icon: 'https://framerusercontent.com/images/eTkhMPhl62nrViQrNpxCEGvWaE.png?width=512&height=512' },
+      bottom: { name: 'App 16', icon: 'https://framerusercontent.com/images/eTkhMPhl62nrViQrNpxCEGvWaE.png?width=512&height=512' }
+    }
+  ];
 
-    // Ensure section is visible in natural document flow
-    section.style.setProperty('display', 'flex', 'important');
-    section.style.setProperty('height', 'auto', 'important');
-    section.style.setProperty('min-height', 'auto', 'important');
+  function buildSpokes65(spokes) {
+    return spokes.map(function (s) {
+      return (
+        '<div class="demaze-spoke-65" style="transform: translateX(-50%) rotate(' + s.angle + 'deg);">' +
+        '  <div class="demaze-node-65" title="' + s.top.name + '">' +
+        '    <img src="' + s.top.icon + '" alt="' + s.top.name + '" />' +
+        '  </div>' +
+        '  <div class="demaze-node-65" style="transform: rotate(180deg);" title="' + s.bottom.name + '">' +
+        '    <img src="' + s.bottom.icon + '" alt="' + s.bottom.name + '" />' +
+        '  </div>' +
+        '</div>'
+      );
+    }).join('');
+  }
 
-    // Hide native MOVIQ children without modifying their React tree
+  function buildSpokes35(spokes) {
+    return spokes.map(function (s) {
+      return (
+        '<div class="demaze-spoke-35" style="transform: translateX(-50%) rotate(' + s.angle + 'deg);">' +
+        '  <div class="demaze-node-35" title="' + s.top.name + '">' +
+        '    <img src="' + s.top.icon + '" alt="' + s.top.name + '" />' +
+        '  </div>' +
+        '  <div class="demaze-node-35" style="transform: rotate(180deg);" title="' + s.bottom.name + '">' +
+        '    <img src="' + s.bottom.icon + '" alt="' + s.bottom.name + '" />' +
+        '  </div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function mountStage(section) {
+    // Hide native MOVIQ children safely
     var nativeContainer = section.querySelector('[data-framer-name="Container"]');
     if (nativeContainer) {
       nativeContainer.style.setProperty('display', 'none', 'important');
     }
 
-    var block = document.getElementById(BLOCK_ID);
-    if (!block) {
-      block = document.createElement('div');
-      block.id = BLOCK_ID;
-      block.className = 'demaze-process-wrap';
-      block.innerHTML =
-        '<span class="demaze-process-eyebrow">' + (content.eyebrow || 'How We Work') + '</span>' +
-        '<h2 class="demaze-process-heading">' + content.heading + '</h2>' +
-        '<p class="demaze-process-sub">A structured, collaborative framework engineered to transform complex challenges into scalable AI products.</p>' +
-        '<div class="demaze-process-row">' + content.steps.map(cardHTML).join('') + '</div>';
-      section.appendChild(block);
-    }
+    var existing = section.querySelector('.' + BLOCK_ID);
+    if (existing) return;
 
-    // Bind MOVIQ scroll-linked card unfolding animation with zero forced reflows
-    if (!section.__demazeProcessScrollBound) {
-      section.__demazeProcessScrollBound = true;
+    var outer = document.createElement('div');
+    outer.className = BLOCK_ID;
 
-      var processScrollTicking = false;
-      var lastProgress = -1;
-      var isProcessVisible = false;
-      var cachedSectionTop = 0;
+    // Header
+    var headerHTML =
+      '<div class="demaze-proc-header">' +
+      '  <div class="demaze-proc-eyebrow">HOW WE WORK</div>' +
+      '  <h2 class="demaze-proc-heading">' +
+      '    Engineering that Adapts to <span class="demaze-proc-dim">Scale</span>' +
+      '  </h2>' +
+      '  <p class="demaze-proc-subtitle">' +
+      '    A proven engineering methodology taking you from architectural discovery to high-throughput enterprise scale.' +
+      '  </p>' +
+      '</div>';
 
-      function updateSectionMetrics() {
-        var rect = section.getBoundingClientRect();
-        var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-        cachedSectionTop = rect.top + scrollY;
-      }
-      updateSectionMetrics();
-      window.addEventListener('resize', updateSectionMetrics, { passive: true });
+    // Build Card 1: Discovery & Architecture
+    var card1HTML =
+      '<div class="demaze-bento-card demaze-card-1">' +
+      '  <div class="demaze-c1-top">' +
+      '    <h3 class="demaze-card-title">Discovery &amp; Architecture</h3>' +
+      '    <p class="demaze-card-desc">We map your workflows, eliminate technical bottlenecks, and define the complete blueprint before building.</p>' +
+      '  </div>' +
+      '  <div class="demaze-c1-feed">' +
+      '    <div class="demaze-chat-user">We need autonomous agent orchestration with sub-second inference.</div>' +
+      '    <div class="demaze-chat-row">' +
+      '      <div class="demaze-chat-avatar"><img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?width=1344&height=420" alt="Demaze" /></div>' +
+      '      <div class="demaze-chat-bot">Blueprint generated: LangChain + Kafka event bus with Pinecone vector memory.</div>' +
+      '    </div>' +
+      '    <div class="demaze-chat-user">Enforce zero data loss with self-healing failover.</div>' +
+      '    <div class="demaze-chat-row">' +
+      '      <div class="demaze-chat-avatar"><img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?width=1344&height=420" alt="Demaze" /></div>' +
+      '      <div class="demaze-terminal">' +
+      '        <div><span class="demaze-t-kw">const</span> <span class="demaze-t-var">agent</span> = <span class="demaze-t-kw">new</span> <span class="demaze-t-fn">AgentRuntime</span>({</div>' +
+      '        <div style="padding-left:14px;"><span class="demaze-t-prop">model:</span> <span class="demaze-t-str">\'claude-3-5-sonnet\'</span>,</div>' +
+      '        <div style="padding-left:14px;"><span class="demaze-t-prop">vectorStore:</span> <span class="demaze-t-str">\'Pinecone\'</span>,</div>' +
+      '        <div style="padding-left:14px;"><span class="demaze-t-prop">resilience:</span> <span class="demaze-t-str">\'zero-data-loss\'</span></div>' +
+      '        <div>});</div>' +
+      '        <div class="demaze-t-meta">// TypeScript · Production Hardened</div>' +
+      '      </div>' +
+      '    </div>' +
+      '    <div class="demaze-memory-pill">' +
+      '      <span class="demaze-memory-dot"></span> Architecture Validated from Memory' +
+      '    </div>' +
+      '  </div>' +
+      '</div>';
 
-      if ('IntersectionObserver' in window) {
-        var procObserver = new IntersectionObserver(function (entries) {
-          isProcessVisible = entries[0].isIntersecting;
-          if (isProcessVisible) {
-            updateSectionMetrics();
-            syncProcessScroll();
-          }
-        }, { rootMargin: '120px 0px 120px 0px' });
-        procObserver.observe(section);
-      } else {
-        isProcessVisible = true;
-      }
+    // Build Card 2: Rapid Prototyping
+    var card2HTML =
+      '<div class="demaze-bento-card demaze-card-2">' +
+      '  <div>' +
+      '    <h3 class="demaze-card-title">Rapid Prototyping</h3>' +
+      '    <p class="demaze-card-desc">Interactive prototypes to validate user flows and verify requirements with real feedback.</p>' +
+      '  </div>' +
+      '  <div class="demaze-proto-bar">' +
+      '    <span>Deploy interactive build to staging</span>' +
+      '    <span class="demaze-proto-arrow">➔</span>' +
+      '  </div>' +
+      '  <div class="demaze-proto-box">' +
+      '    <div class="demaze-proto-status">' +
+      '      <span class="demaze-proto-status-dot"></span> Build live on staging' +
+      '    </div>' +
+      '    <div class="demaze-proto-skel w80"></div>' +
+      '    <div class="demaze-proto-skel w55"></div>' +
+      '  </div>' +
+      '  <div class="demaze-proto-verified">✓ Sent to Stakeholder Review</div>' +
+      '</div>';
 
-      function syncProcessScroll() {
-        if (!isProcessVisible) return;
+    // Build Card 3: Autonomous Build & QA
+    var card3HTML =
+      '<div class="demaze-bento-card demaze-card-3">' +
+      '  <div>' +
+      '    <h3 class="demaze-card-title">Automated Build &amp; QA</h3>' +
+      '    <p class="demaze-card-desc">Autonomous CI/CD pipelines, validated models, and sub-second SLAs deployed daily.</p>' +
+      '  </div>' +
+      '  <div class="demaze-qa-box">' +
+      '    <div class="demaze-qa-eyebrow">Demaze DevOps Engine</div>' +
+      '    <div class="demaze-qa-question">Ready to trigger canary rollout v4.2?</div>' +
+      '    <div class="demaze-qa-actions">' +
+      '      <span class="demaze-qa-btn-yes">✓ Deploy Now</span>' +
+      '      <span class="demaze-qa-btn-no">✕ Dry Run</span>' +
+      '    </div>' +
+      '  </div>' +
+      '</div>';
 
-        var winH = window.innerHeight || 800;
-        var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-        var rectTop = cachedSectionTop - scrollY;
+    // Build Card 4: Connect Your Stack (With Exact Fora AI Orbital Constellation)
+    var outerWheelSpokes = buildSpokes65(OUTER_SPOKES);
+    var innerWheelSpokes = buildSpokes35(INNER_SPOKES);
 
-        // Progress 0 when section enters bottom 88% of screen; 1 when top reaches 28%
-        var start = winH * 0.88;
-        var end = winH * 0.28;
-        var p = Math.min(1, Math.max(0, (start - rectTop) / (start - end)));
+    // Marquee pills for mobile fallback
+    var marqueeItems = TECH_STACK_APPS.concat(TECH_STACK_APPS).map(function (a) {
+      return (
+        '<div class="demaze-marquee-pill" title="' + a.name + '">' +
+        '  <img src="' + a.icon + '" alt="' + a.name + '" />' +
+        '</div>'
+      );
+    }).join('');
 
-        // Skip DOM writes if progress hasn't changed noticeably
-        if (Math.abs(p - lastProgress) < 0.003 && (p === 0 || p === 1)) return;
-        lastProgress = p;
+    var card4HTML =
+      '<div class="demaze-bento-card demaze-card-4">' +
+      '  <div class="demaze-card-4-left">' +
+      '    <h3 class="demaze-card-title">Connect Your Stack</h3>' +
+      '    <p class="demaze-card-desc">Plug into your favorite tools and enterprise APIs, and let Demaze handle the rest.</p>' +
+      '    <div class="demaze-stack-marquee-wrap">' +
+      '      <div class="demaze-stack-marquee-row">' + marqueeItems + '</div>' +
+      '    </div>' +
+      '  </div>' +
+      '  <div class="demaze-card-4-constellation">' +
+      '    <div class="demaze-orbit-wheel demaze-orbit-outer-ring">' +
+      outerWheelSpokes +
+      '      <div class="demaze-orbit-wheel-inner demaze-orbit-inner-ring">' +
+      innerWheelSpokes +
+      '      </div>' +
+      '    </div>' +
+      '  </div>' +
+      '</div>';
 
-        var cards = section.querySelectorAll('.demaze-process-card');
-        if (!cards || cards.length !== 4) return;
+    // Assemble Bento Grid
+    var bentoGridHTML =
+      '<div class="demaze-proc-bento">' +
+      card1HTML +
+      '<div class="demaze-proc-right-col">' +
+      '  <div class="demaze-proc-top-row">' +
+      card2HTML +
+      card3HTML +
+      '  </div>' +
+      card4HTML +
+      '</div>' +
+      '</div>';
 
-        var isDesktop = window.innerWidth > 768;
-
-        // Unfold each card symmetrically
-        if (isDesktop) {
-          var xOffsets = [160, 50, -50, -160];
-          var rotY = [-5, -2, 2, 5];
-          var minScales = [0.90, 0.95, 0.95, 0.90];
-
-          for (var i = 0; i < cards.length; i++) {
-            var factor = 1 - p;
-            var curX = (xOffsets[i] * factor).toFixed(2);
-            var curRot = (rotY[i] * factor).toFixed(2);
-            var curScale = (minScales[i] + (1 - minScales[i]) * p).toFixed(3);
-            var curOp = (0.45 + 0.55 * p).toFixed(3);
-
-            cards[i].style.transform = 'translate3d(' + curX + 'px, 0, 0) scale(' + curScale + ') rotateY(' + curRot + 'deg)';
-            cards[i].style.opacity = curOp;
-          }
-        } else {
-          // Responsive mobile/tablet stagger
-          for (var j = 0; j < cards.length; j++) {
-            var factorM = 1 - p;
-            var curYM = (25 * factorM).toFixed(2);
-            var curScaleM = (0.95 + 0.05 * p).toFixed(3);
-            var curOpM = (0.50 + 0.50 * p).toFixed(3);
-            cards[j].style.transform = 'translate3d(0, ' + curYM + 'px, 0) scale(' + curScaleM + ')';
-            cards[j].style.opacity = curOpM;
-          }
-        }
-      }
-
-      function requestProcessScrollSync() {
-        if (!isProcessVisible) return;
-        if (!processScrollTicking) {
-          processScrollTicking = true;
-          requestAnimationFrame(function () {
-            syncProcessScroll();
-            processScrollTicking = false;
-          });
-        }
-      }
-
-      window.addEventListener('scroll', requestProcessScrollSync, { passive: true });
-      syncProcessScroll();
-    }
+    outer.innerHTML = headerHTML + bentoGridHTML;
+    section.appendChild(outer);
   }
 
-  function verifyStuck() {
-    var sec = getProcessSection();
-    var secVisible = sec && sec.style.display !== 'none';
-    var block = document.getElementById(BLOCK_ID);
-    return !!(secVisible && block);
+  function applyOverride(section) {
+    ensureStyle();
+    mountStage(section);
+  }
+
+  function verifyStuck(section) {
+    var outer = section && section.querySelector('.' + BLOCK_ID);
+    var cards = section && section.querySelectorAll('.demaze-bento-card');
+    var orbit = section && section.querySelector('.demaze-orbit-wheel');
+    return !!(outer && cards && cards.length === 4 && orbit);
   }
 
   window.DemazeOverride.run({
     getRoot: getProcessSection,
     isHydrated: isHydrated,
     apply: applyOverride,
-    verify: verifyStuck,
+    verify: verifyStuck
   });
 })();

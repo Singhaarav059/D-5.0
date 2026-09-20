@@ -5,11 +5,11 @@
  * Faithfully adapts the exact split layout and light-mode glass style
  * from Fora AI (https://foraai.framer.website/ - "Why Us" section):
  * - Left column: Large high-end glass testimonial card with dunes background image,
- *   progressive blur gradient overlay, 5 golden stars, Demaze Founder quote,
- *   and Krupal Chaudhary author byline.
+ *   progressive blur gradient overlay, 5 golden stars, Krupal's profile pic,
+ *   Demaze Founder quote, and Krupal Chaudhary author byline.
  * - Right column: "Why choose us?" grey glass eyebrow pill, dual-tone display heading
- *   ("Built to deliver results, Not just Promises"), 3 editorial value-proposition
- *   paragraphs, and 2 frosted glass stat cards ("3X Faster Delivery" & "$10M+ Client Value Generated").
+ *   ("Built to deliver results, Not just Promises"), editorial value-proposition
+ *   paragraphs with scroll-scrubbed word highlighting, and 2 frosted glass stat cards.
  * - Fully responsive across Desktop (1440px), Tablet (768px), and Mobile (375px).
  * - Hydration safe: hides native container without deleting React-managed DOM nodes.
  */
@@ -53,7 +53,7 @@
 
       /* Left Testimonial Card (Fora Dune Glass Style) */
       '.demaze-fora-left {' +
-      '  width: 478px; max-width: 100%; height: 590px; border-radius: 32px;' +
+      '  width: 478px; max-width: 100%; height: 600px; border-radius: 32px;' +
       '  position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;' +
       '  flex-shrink: 0; box-sizing: border-box;' +
       '  box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04);' +
@@ -76,40 +76,48 @@
       /* Dark gradient to ensure high readability */
       '.demaze-fora-left-gradient {' +
       '  position: absolute; inset: 0; z-index: 2; pointer-events: none;' +
-      '  background: linear-gradient(180deg, rgba(0,0,0,0) 18%, rgba(15, 23, 42, 0.25) 45%, rgba(15, 23, 42, 0.75) 75%, rgba(15, 23, 42, 0.92) 100%);' +
+      '  background: linear-gradient(180deg, rgba(0,0,0,0) 14%, rgba(15, 23, 42, 0.30) 42%, rgba(15, 23, 42, 0.82) 75%, rgba(15, 23, 42, 0.95) 100%);' +
       '}' +
 
       /* Progressive blur glass overlay at bottom */
       '.demaze-fora-left-blur {' +
       '  position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 32px;' +
       '  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);' +
-      '  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.85) 70%, rgba(0,0,0,1) 100%);' +
-      '  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.85) 70%, rgba(0,0,0,1) 100%);' +
+      '  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,1) 100%);' +
+      '  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,1) 100%);' +
       '}' +
 
       /* Glass content container */
       '.demaze-fora-left-content {' +
-      '  position: relative; z-index: 10; padding: 34px 32px; display: flex; flex-direction: column;' +
+      '  position: relative; z-index: 10; padding: 32px 30px; display: flex; flex-direction: column;' +
       '  justify-content: flex-end; box-sizing: border-box;' +
       '}' +
       '.demaze-fora-stars {' +
-      '  display: flex; align-items: center; gap: 4px; color: #F59E0B; font-size: 20px;' +
-      '  letter-spacing: 2px; margin-bottom: 16px; line-height: 1;' +
+      '  display: flex; align-items: center; gap: 4px; color: #F59E0B; font-size: 19px;' +
+      '  letter-spacing: 2px; margin-bottom: 14px; line-height: 1;' +
       '  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);' +
       '}' +
+      '.demaze-fora-avatar-wrap {' +
+      '  display: flex; align-items: center; margin-bottom: 16px;' +
+      '}' +
+      '.demaze-fora-avatar {' +
+      '  width: 58px; height: 58px; border-radius: 50%; object-fit: cover; object-position: center top;' +
+      '  border: 2px solid rgba(255, 255, 255, 0.9);' +
+      '  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35); background: #ffffff;' +
+      '}' +
       '.demaze-fora-quote {' +
-      '  font-size: clamp(17px, 1.75vw, 21.5px); font-weight: 500; line-height: 1.42;' +
-      '  color: #FFFFFF; margin: 0 0 22px; letter-spacing: -0.01em;' +
+      '  font-size: clamp(16px, 1.65vw, 20.5px); font-weight: 500; line-height: 1.44;' +
+      '  color: #FFFFFF; margin: 0 0 20px; letter-spacing: -0.01em;' +
       '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);' +
       '}' +
       '.demaze-fora-user-name {' +
-      '  font-size: 18px; font-weight: 600; color: #FFFFFF; margin: 0 0 3px;' +
+      '  font-size: 17.5px; font-weight: 600; color: #FFFFFF; margin: 0 0 3px;' +
       '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  letter-spacing: -0.01em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);' +
       '}' +
       '.demaze-fora-user-role {' +
-      '  font-size: 14.5px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin: 0;' +
+      '  font-size: 14px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin: 0;' +
       '  letter-spacing: 0.01em;' +
       '}' +
 
@@ -139,8 +147,19 @@
       '  display: flex; flex-direction: column; gap: 14px; max-width: 620px;' +
       '}' +
       '.demaze-fora-text p {' +
-      '  font-size: 15.5px; line-height: 1.65; color: #52525B; margin: 0;' +
+      '  font-size: 16px; line-height: 1.68; margin: 0;' +
       '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '}' +
+
+      /* Scroll Highlight Words (Right Side Only) */
+      '.demaze-scroll-word {' +
+      '  color: #A1A1AA;' +
+      '  transition: color 0.18s cubic-bezier(0.16, 1, 0.3, 1);' +
+      '  will-change: color;' +
+      '  display: inline;' +
+      '}' +
+      '.demaze-scroll-word.demaze-word-active {' +
+      '  color: #09090B;' +
       '}' +
 
       /* 2 Frosted Glass Stat Cards (Fora AI style) */
@@ -200,6 +219,7 @@
       '  .demaze-fora-left { height: 540px; border-radius: 26px; }' +
       '  .demaze-fora-left-content { padding: 26px 20px; }' +
       '  .demaze-fora-stars { margin-bottom: 12px; font-size: 19px; }' +
+      '  .demaze-fora-avatar { width: 50px; height: 50px; }' +
       '  .demaze-fora-quote { font-size: 15px; margin-bottom: 16px; line-height: 1.42; }' +
       '  .demaze-fora-br { display: none; }' +
       '  .demaze-fora-stats { grid-template-columns: 1fr; gap: 14px; }' +
@@ -218,20 +238,27 @@
     return !!section;
   }
 
+  function wrapWordsInSpans(text) {
+    var words = text.split(/\s+/);
+    return words.map(function (w) {
+      return '<span class="demaze-scroll-word">' + w + '</span>';
+    }).join(' ');
+  }
+
   function mountStage(section) {
     var existing = section.querySelector('.' + WRAPPER_CLASS);
     if (existing) return;
 
     var quoteText =
-      (testimonial && testimonial.quote) ||
-      "We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive — and we're with you, executing every step of the way.";
+      "We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive, and we're with you, executing every step of the way.";
     var authorName = (testimonial && testimonial.name) || "Krupal Chaudhary";
     var authorRole = (testimonial && testimonial.title ? testimonial.title + ", Demaze Technologies" : "Founder & CEO, Demaze Technologies");
+    var authorAvatar = (testimonial && testimonial.avatar) || "https://framerusercontent.com/images/e57nypBBfPrAXfYYyYgNJBgJBo.jpeg?width=895&height=980";
 
     var wrapper = document.createElement('div');
     wrapper.className = WRAPPER_CLASS;
 
-    // Build Left Testimonial Dune Glass Card
+    // Build Left Testimonial Dune Glass Card with Krupal's Avatar ABOVE the quote
     var leftCard = document.createElement('div');
     leftCard.className = 'demaze-fora-left';
     leftCard.innerHTML =
@@ -240,6 +267,9 @@
       '<div class="demaze-fora-left-blur"></div>' +
       '<div class="demaze-fora-left-content">' +
       '  <div class="demaze-fora-stars">★★★★★</div>' +
+      '  <div class="demaze-fora-avatar-wrap">' +
+      '    <img class="demaze-fora-avatar" src="' + authorAvatar + '" alt="' + authorName + '" />' +
+      '  </div>' +
       '  <p class="demaze-fora-quote">"' + quoteText + '"</p>' +
       '  <div class="demaze-fora-user">' +
       '    <div class="demaze-fora-user-name">' + authorName + '</div>' +
@@ -247,7 +277,12 @@
       '  </div>' +
       '</div>';
 
-    // Build Right Column: Eyebrow + Dual-Tone Title + 3 Paragraphs + 2 Glass Stat Cards
+    // Right Column paragraphs without em-dashes
+    var p1 = "Demaze was built for ambitious companies that can't afford to lose velocity. Whether you're architecting enterprise AI, scaling custom cloud systems, or automating core operations, Demaze steps in and gets it done.";
+    var p2 = "We analyze your workflows, eliminate technical bottlenecks, and build production-ready solutions that integrate directly into how your teams operate.";
+    var p3 = "Within the first deployment cycle, our partners consistently experience accelerated delivery, reduced overhead, and measurable business growth.";
+
+    // Build Right Column: Eyebrow + Dual-Tone Title + 3 Paragraphs with Word Highlight Spans + 2 Glass Stat Cards
     var rightCol = document.createElement('div');
     rightCol.className = 'demaze-fora-right';
     rightCol.innerHTML =
@@ -258,9 +293,9 @@
       '    Not just <span class="demaze-fora-dim">Promises</span>' +
       '  </h2>' +
       '  <div class="demaze-fora-text">' +
-      '    <p>Demaze was built for ambitious companies that can\'t afford to lose velocity. Whether you\'re architecting enterprise AI, scaling custom cloud systems, or automating core operations — Demaze steps in and gets it done.</p>' +
-      '    <p>We analyze your workflows, eliminate technical bottlenecks, and build production-ready solutions that integrate directly into how your teams operate.</p>' +
-      '    <p>Within the first deployment cycle, our partners consistently experience accelerated delivery, reduced overhead, and measurable business growth.</p>' +
+      '    <p>' + wrapWordsInSpans(p1) + '</p>' +
+      '    <p>' + wrapWordsInSpans(p2) + '</p>' +
+      '    <p>' + wrapWordsInSpans(p3) + '</p>' +
       '  </div>' +
       '</div>' +
       '<div class="demaze-fora-stats">' +
@@ -284,6 +319,48 @@
     wrapper.appendChild(rightCol);
 
     section.appendChild(wrapper);
+
+    // Attach Scroll-Scrubbed Word Highlighting on Right Side Text Only
+    var wordElements = Array.from(rightCol.querySelectorAll('.demaze-scroll-word'));
+    if (wordElements.length > 0) {
+      var isTicking = false;
+      function onScroll() {
+        if (!isTicking) {
+          isTicking = true;
+          requestAnimationFrame(function () {
+            var rect = rightCol.getBoundingClientRect();
+            var windowH = window.innerHeight || document.documentElement.clientHeight;
+            // Reveal starts when top of rightCol enters view (at 85% viewport)
+            // and finishes when bottom of rightCol approaches 30% viewport
+            var startY = windowH * 0.85;
+            var endY = windowH * 0.30;
+            var totalDist = (rect.height + startY - endY) || 1;
+            var currentDist = startY - rect.top;
+            var progress = currentDist / totalDist;
+            progress = Math.max(0, Math.min(1, progress));
+
+            var activeCount = Math.round(progress * wordElements.length);
+            for (var i = 0; i < wordElements.length; i++) {
+              if (i < activeCount) {
+                if (!wordElements[i].classList.contains('demaze-word-active')) {
+                  wordElements[i].classList.add('demaze-word-active');
+                }
+              } else {
+                if (wordElements[i].classList.contains('demaze-word-active')) {
+                  wordElements[i].classList.remove('demaze-word-active');
+                }
+              }
+            }
+            isTicking = false;
+          });
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      // Initial trigger
+      onScroll();
+    }
   }
 
   function applyOverride(section) {
@@ -296,7 +373,9 @@
     var left = section && section.querySelector('.demaze-fora-left');
     var right = section && section.querySelector('.demaze-fora-right');
     var stats = section && section.querySelectorAll('.demaze-fora-stat-card');
-    return !!(wrapper && left && right && stats && stats.length === 2);
+    var avatar = section && section.querySelector('.demaze-fora-avatar');
+    var words = section && section.querySelectorAll('.demaze-scroll-word');
+    return !!(wrapper && left && right && stats && stats.length === 2 && avatar && words.length > 0);
   }
 
   window.DemazeOverride.run({
