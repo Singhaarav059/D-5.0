@@ -7,6 +7,7 @@
  * - Smooth scroll-spy that dynamically highlights the active tab as cards scroll past.
  * - Click-to-scroll on tabs with smooth offset targeting.
  * - 4 high-end split cards (left: copy, tags, chips; right: bespoke designer UI mockup).
+ * - Light theme crafted to match Demaze's exact site tone (#ffffff background, slate typography, crisp card elevation).
  * - 100% responsive: on tablets & mobile, sidebar adapts to a horizontal sticky pill bar.
  * - Hydration safe: hides native container without deleting nodes.
  */
@@ -23,8 +24,7 @@
       title: 'Autonomous Agents.<br>Zero Delivery Lag.',
       description: 'We architect self-healing agent pipelines and generative workflows that compress months of legacy engineering into hours—accelerating time-to-market while strictly preserving enterprise grade verification and safety.',
       chips: ['Autonomous Agents', 'Sub-Second Inference', 'Automated CI/CD'],
-      glow: 'radial-gradient(ellipse at center, rgba(99, 102, 241, 0.22) 0%, rgba(13, 14, 20, 0) 70%)',
-      accentColor: '#6366f1',
+      accentColor: '#2563eb',
       badgeText: 'LIVE · 142ms',
       fileName: 'agent_runtime.ts',
       mockupType: 'ai'
@@ -36,8 +36,7 @@
       title: 'Extreme Scalability.<br>Zero Downtime.',
       description: 'From distributed multi-region Kubernetes clusters to sub-millisecond edge data planes, our architectures are hardened for peak enterprise loads—ensuring uninterrupted SLAs when concurrent traffic spikes 100x.',
       chips: ['Multi-Region Mesh', 'Auto-Scaling Pods', '99.999% SLA'],
-      glow: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.22) 0%, rgba(13, 14, 20, 0) 70%)',
-      accentColor: '#06b6d4',
+      accentColor: '#0284c7',
       badgeText: '99.999% SLA',
       fileName: 'cluster_mesh.k8s',
       mockupType: 'scale'
@@ -49,8 +48,7 @@
       title: 'Sub-Millisecond Speed.<br>60 FPS Fluidity.',
       description: 'We reject sloppy defaults and uncalibrated code. Every micro-interaction, database indexing strategy, and WebGL shader is obsessively profiled and benchmarked to deliver instant response and butter-smooth motion.',
       chips: ['60 FPS Fluid UI', 'Zero-Jank WebGL', 'Sub-50ms TTFB'],
-      glow: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.22) 0%, rgba(13, 14, 20, 0) 70%)',
-      accentColor: '#10b981',
+      accentColor: '#059669',
       badgeText: 'Lighthouse 100',
       fileName: 'performance_profiler.trace',
       mockupType: 'craft'
@@ -62,8 +60,7 @@
       title: 'Direct Partnership.<br>Zero Bureaucracy.',
       description: 'No non-technical account managers, no junior delegating. You work directly with principal architects and senior engineers who have skin in the game, deploying production-tested code with absolute ownership.',
       chips: ['Principal Engineers', 'Daily GitOps Deploys', 'Direct Architect Sync'],
-      glow: 'radial-gradient(ellipse at center, rgba(245, 158, 11, 0.22) 0%, rgba(13, 14, 20, 0) 70%)',
-      accentColor: '#f59e0b',
+      accentColor: '#d97706',
       badgeText: 'CANARY · VERIFIED',
       fileName: 'gitops_pipeline.yaml',
       mockupType: 'ownership'
@@ -80,17 +77,17 @@
       '  display: none !important;' +
       '}' +
 
-      /* Section Darkroom Showcase Framing */
+      /* Section Framing - Clean Light Tone matching Demaze */
       'section[data-framer-name="Ai Powered"] {' +
       '  height: auto !important; min-height: auto !important;' +
-      '  padding: 120px 24px 130px !important;' +
+      '  padding: 100px 24px 110px !important;' +
       '  overflow: visible !important;' +
-      '  background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, rgba(9, 10, 15, 1) 75%), #090a0f !important;' +
-      '  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;' +
-      '  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;' +
+      '  background: #ffffff !important;' +
+      '  border-top: 1px solid #f1f5f9 !important;' +
+      '  border-bottom: 1px solid #f1f5f9 !important;' +
       '  position: relative !important;' +
       '  box-sizing: border-box !important;' +
-      '  color: #ffffff !important;' +
+      '  color: #0f172a !important;' +
       '}' +
 
       /* Outer Wrapper */
@@ -107,24 +104,24 @@
       '.demaze-drives-eyebrow {' +
       '  display: inline-flex; align-items: center; gap: 8px;' +
       '  padding: 5px 14px; border-radius: 999px;' +
-      '  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);' +
-      '  color: rgba(255, 255, 255, 0.85); font-size: 11.5px; font-weight: 600;' +
+      '  background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.20);' +
+      '  color: #2563eb; font-size: 11.5px; font-weight: 700;' +
       '  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px;' +
       '}' +
       '.demaze-drives-eyebrow-dot {' +
-      '  width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;' +
-      '  box-shadow: 0 0 10px #3b82f6;' +
+      '  width: 6px; height: 6px; border-radius: 50%; background: #2563eb;' +
+      '  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);' +
       '}' +
       '.demaze-drives-title {' +
-      '  font-size: clamp(32px, 3.8vw, 48px); font-weight: 700; line-height: 1.15;' +
-      '  color: #ffffff; letter-spacing: -0.025em; margin: 0;' +
+      '  font-size: clamp(32px, 3.8vw, 48px); font-weight: 700; line-height: 1.16;' +
+      '  color: #0f172a; letter-spacing: -0.025em; margin: 0;' +
       '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
       '.demaze-drives-header-right {' +
       '  max-width: 440px; flex-shrink: 0; padding-bottom: 6px;' +
       '}' +
       '.demaze-drives-subtitle {' +
-      '  font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.65);' +
+      '  font-size: 15px; line-height: 1.6; color: #64748b;' +
       '  margin: 0; font-weight: 400;' +
       '}' +
 
@@ -139,34 +136,34 @@
       '  display: flex; flex-direction: column; gap: 14px; z-index: 10;' +
       '}' +
       '.demaze-drives-nav {' +
-      '  background: #0f1015; border: 1px solid rgba(255, 255, 255, 0.08);' +
+      '  background: #f8fafc; border: 1px solid #e2e8f0;' +
       '  border-radius: 18px; padding: 6px;' +
-      '  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);' +
+      '  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);' +
       '  display: flex; flex-direction: column; gap: 4px;' +
       '}' +
       '.demaze-drives-tab {' +
-      '  display: flex; align-items: center; gap: 10px; padding: 13px 14px;' +
+      '  display: flex; align-items: center; gap: 10px; padding: 12px 14px;' +
       '  border-radius: 12px; border: 1px solid transparent;' +
-      '  background: transparent; color: rgba(255, 255, 255, 0.55);' +
+      '  background: transparent; color: #64748b;' +
       '  font-size: 13px; font-weight: 500; text-align: left;' +
       '  cursor: pointer; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);' +
       '  width: 100%; box-sizing: border-box; outline: none; font-family: inherit;' +
       '}' +
       '.demaze-drives-tab:hover {' +
-      '  color: rgba(255, 255, 255, 0.9); background: rgba(255, 255, 255, 0.04);' +
+      '  color: #0f172a; background: rgba(255, 255, 255, 0.8);' +
       '}' +
       '.demaze-drives-tab.is-active {' +
-      '  background: rgba(255, 255, 255, 0.10); color: #ffffff;' +
-      '  border-color: rgba(255, 255, 255, 0.12); font-weight: 600;' +
-      '  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);' +
+      '  background: #ffffff; color: #0f172a;' +
+      '  border-color: #e2e8f0; font-weight: 600;' +
+      '  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);' +
       '}' +
       '.demaze-drives-tab-dot {' +
       '  width: 6px; height: 6px; border-radius: 50%;' +
-      '  background: rgba(255, 255, 255, 0.3); flex-shrink: 0;' +
+      '  background: #cbd5e1; flex-shrink: 0;' +
       '  transition: all 0.22s ease;' +
       '}' +
       '.demaze-drives-tab.is-active .demaze-drives-tab-dot {' +
-      '  background: #3b82f6; box-shadow: 0 0 8px #3b82f6;' +
+      '  background: #2563eb; box-shadow: 0 0 8px rgba(37, 99, 235, 0.45);' +
       '}' +
       '.demaze-drives-tab-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }' +
 
@@ -174,14 +171,14 @@
       '.demaze-drives-cta {' +
       '  display: flex; align-items: center; justify-content: center; gap: 8px;' +
       '  width: 100%; padding: 12px 20px; border-radius: 999px;' +
-      '  background: #ffffff; color: #0a0b10; font-size: 13px; font-weight: 600;' +
+      '  background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 600;' +
       '  text-decoration: none; box-sizing: border-box;' +
-      '  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);' +
+      '  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);' +
       '  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;' +
       '}' +
       '.demaze-drives-cta:hover {' +
-      '  background: #f1f5f9; transform: translateY(-2px);' +
-      '  box-shadow: 0 10px 28px rgba(255, 255, 255, 0.22);' +
+      '  background: #1e293b; transform: translateY(-2px);' +
+      '  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);' +
       '}' +
 
       /* Cards Column */
@@ -189,18 +186,19 @@
       '  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 32px;' +
       '}' +
 
-      /* Individual Split Card */
+      /* Individual Split Card - Clean Light Elevation */
       '.demaze-drives-card {' +
-      '  background: #0f1015; border: 1px solid rgba(255, 255, 255, 0.08);' +
-      '  border-radius: 32px; padding: 34px 36px;' +
+      '  background: #ffffff; border: 1px solid #e2e8f0;' +
+      '  border-radius: 30px; padding: 34px 36px;' +
       '  display: flex; align-items: stretch; gap: 36px;' +
       '  box-sizing: border-box; position: relative; overflow: hidden;' +
-      '  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);' +
-      '  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;' +
+      '  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.035), 0 1px 3px rgba(15, 23, 42, 0.02);' +
+      '  transition: border-color 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;' +
       '}' +
       '.demaze-drives-card:hover {' +
-      '  border-color: rgba(255, 255, 255, 0.16);' +
-      '  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);' +
+      '  border-color: rgba(37, 99, 235, 0.35);' +
+      '  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.08), 0 0 0 1px rgba(37, 99, 235, 0.15);' +
+      '  transform: translateY(-2px);' +
       '}' +
 
       /* Card Left: Copy & Chips */
@@ -210,20 +208,20 @@
       '}' +
       '.demaze-card-tag {' +
       '  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;' +
-      '  text-transform: uppercase; color: rgba(255, 255, 255, 0.45);' +
+      '  text-transform: uppercase; color: #2563eb;' +
       '  margin-bottom: 14px; display: flex; align-items: center; gap: 7px;' +
       '}' +
       '.demaze-card-tag-dot {' +
-      '  width: 5px; height: 5px; border-radius: 50%; background: #3b82f6;' +
+      '  width: 5px; height: 5px; border-radius: 50%; background: #2563eb;' +
       '}' +
       '.demaze-card-title {' +
-      '  font-size: clamp(24px, 2.5vw, 30px); font-weight: 700; line-height: 1.18;' +
-      '  color: #ffffff; margin: 0 0 14px;' +
+      '  font-size: clamp(23px, 2.4vw, 29px); font-weight: 700; line-height: 1.2;' +
+      '  color: #0f172a; margin: 0 0 14px;' +
       '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  letter-spacing: -0.015em;' +
       '}' +
       '.demaze-card-desc {' +
-      '  font-size: 14px; line-height: 1.62; color: rgba(255, 255, 255, 0.65);' +
+      '  font-size: 14px; line-height: 1.62; color: #475569;' +
       '  margin: 0 0 28px; font-weight: 400;' +
       '}' +
       '.demaze-card-chips {' +
@@ -232,38 +230,34 @@
       '.demaze-card-chip {' +
       '  display: inline-flex; align-items: center; gap: 6px;' +
       '  padding: 6px 13px; border-radius: 999px;' +
-      '  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.10);' +
-      '  color: rgba(255, 255, 255, 0.85); font-size: 11.5px; font-weight: 500;' +
+      '  background: #f8fafc; border: 1px solid #e2e8f0;' +
+      '  color: #334155; font-size: 11.5px; font-weight: 500;' +
       '  transition: all 0.2s ease;' +
       '}' +
       '.demaze-card-chip:hover {' +
-      '  background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.2);' +
-      '  color: #ffffff; transform: translateY(-1px);' +
+      '  background: #ffffff; border-color: #cbd5e1;' +
+      '  color: #0f172a; transform: translateY(-1px);' +
       '}' +
 
-      /* Card Right: High-End UI Mockup */
+      /* Card Right: Inset Preview Container */
       '.demaze-card-right {' +
       '  flex: 1.15; min-width: 0; display: flex; align-items: center;' +
       '  justify-content: center; position: relative; border-radius: 22px;' +
       '  overflow: hidden; padding: 20px; box-sizing: border-box;' +
-      '  background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.04);' +
-      '}' +
-      '.demaze-card-glow {' +
-      '  position: absolute; inset: 0; pointer-events: none; z-index: 1;' +
+      '  background: #f8fafc; border: 1px solid #e2e8f0;' +
       '}' +
 
-      /* UI Window Mockup */
+      /* UI Window Mockup (Clean Light/Slate Aesthetic) */
       '.demaze-mockup-window {' +
       '  width: 100%; border-radius: 16px; position: relative; z-index: 2;' +
-      '  background: rgba(15, 16, 22, 0.92); border: 1px solid rgba(255, 255, 255, 0.11);' +
-      '  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);' +
-      '  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);' +
+      '  background: #ffffff; border: 1px solid #e2e8f0;' +
+      '  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);' +
       '  display: flex; flex-direction: column; overflow: hidden;' +
       '}' +
       '.demaze-mockup-header {' +
       '  display: flex; align-items: center; justify-content: space-between;' +
-      '  padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.07);' +
-      '  background: rgba(255, 255, 255, 0.02);' +
+      '  padding: 10px 14px; border-bottom: 1px solid #f1f5f9;' +
+      '  background: #f8fafc;' +
       '}' +
       '.demaze-mockup-dots {' +
       '  display: flex; align-items: center; gap: 5px;' +
@@ -276,7 +270,7 @@
       '.demaze-mockup-dot.green { background: #10b981; }' +
       '.demaze-mockup-file {' +
       '  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;' +
-      '  font-size: 11px; color: rgba(255, 255, 255, 0.6);' +
+      '  font-size: 11px; color: #475569; font-weight: 500;' +
       '}' +
       '.demaze-mockup-badge {' +
       '  display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px;' +
@@ -294,35 +288,35 @@
       '}' +
       '.demaze-mockup-body {' +
       '  padding: 14px 16px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;' +
-      '  font-size: 11.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.75);' +
+      '  font-size: 11.5px; line-height: 1.6; color: #1e293b; background: #ffffff;' +
       '}' +
       '.demaze-mockup-footer {' +
       '  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;' +
-      '  padding: 10px 14px; border-top: 1px solid rgba(255, 255, 255, 0.07);' +
-      '  background: rgba(0, 0, 0, 0.25);' +
+      '  padding: 10px 14px; border-top: 1px solid #f1f5f9;' +
+      '  background: #f8fafc;' +
       '}' +
       '.demaze-stat-col { display: flex; flex-direction: column; gap: 2px; }' +
       '.demaze-stat-label {' +
       '  font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em;' +
-      '  text-transform: uppercase; color: rgba(255, 255, 255, 0.4);' +
+      '  text-transform: uppercase; color: #94a3b8;' +
       '}' +
       '.demaze-stat-val {' +
-      '  font-size: 12px; font-weight: 700; color: #ffffff;' +
+      '  font-size: 12px; font-weight: 700; color: #0f172a;' +
       '  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;' +
       '}' +
-      '.text-green { color: #10b981 !important; }' +
-      '.text-cyan { color: #06b6d4 !important; }' +
-      '.text-accent { color: #818cf8 !important; }' +
-      '.text-amber { color: #f59e0b !important; }' +
+      '.text-green { color: #059669 !important; }' +
+      '.text-cyan { color: #0284c7 !important; }' +
+      '.text-accent { color: #4f46e5 !important; }' +
+      '.text-amber { color: #d97706 !important; }' +
 
-      /* Syntax Highlighting for Code Mockups */
-      '.c-kw { color: #c084fc; font-weight: 600; }' +
-      '.c-var { color: #67e8f9; }' +
-      '.c-fn { color: #60a5fa; }' +
-      '.c-prop { color: #cbd5e1; }' +
-      '.c-str { color: #34d399; }' +
-      '.c-num { color: #f472b6; }' +
-      '.c-bool { color: #fb923c; }' +
+      /* Syntax Highlighting for Light Theme Code Mockups */
+      '.c-kw { color: #7c3aed; font-weight: 600; }' +
+      '.c-var { color: #0284c7; font-weight: 600; }' +
+      '.c-fn { color: #2563eb; }' +
+      '.c-prop { color: #475569; }' +
+      '.c-str { color: #059669; }' +
+      '.c-num { color: #db2777; }' +
+      '.c-bool { color: #ea580c; }' +
       '.demaze-code-line { margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }' +
       '.demaze-code-line.indent { padding-left: 14px; }' +
 
@@ -333,61 +327,61 @@
       '  display: flex; justify-content: space-between; align-items: center;' +
       '  font-size: 11px; margin-bottom: 4px; font-family: ui-monospace, SFMono-Regular, monospace;' +
       '}' +
-      '.demaze-node-name { color: #ffffff; font-weight: 600; }' +
-      '.demaze-node-stat { color: rgba(255, 255, 255, 0.5); font-size: 10px; }' +
+      '.demaze-node-name { color: #0f172a; font-weight: 600; }' +
+      '.demaze-node-stat { color: #64748b; font-size: 10px; }' +
       '.demaze-node-bar {' +
-      '  height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.08);' +
+      '  height: 6px; border-radius: 999px; background: #e2e8f0;' +
       '  overflow: hidden; position: relative;' +
       '}' +
       '.demaze-node-fill {' +
-      '  height: 100%; border-radius: 999px; background: linear-gradient(90deg, #0284c7, #06b6d4);' +
+      '  height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #06b6d4);' +
       '}' +
 
       /* Mockup 3 (Frame Profiler) */
       '.demaze-fps-header {' +
       '  display: flex; justify-content: space-between; align-items: center;' +
       '  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;' +
-      '  margin-bottom: 12px; color: rgba(255, 255, 255, 0.5);' +
+      '  margin-bottom: 12px; color: #64748b;' +
       '}' +
       '.demaze-fps-timeline {' +
       '  display: flex; align-items: flex-end; gap: 8px; height: 54px;' +
-      '  padding: 4px 6px; background: rgba(0, 0, 0, 0.35); border-radius: 8px;' +
-      '  border: 1px solid rgba(255, 255, 255, 0.05);' +
+      '  padding: 4px 6px; background: #f1f5f9; border-radius: 8px;' +
+      '  border: 1px solid #e2e8f0;' +
       '}' +
       '.demaze-fps-bar {' +
       '  flex: 1; border-radius: 3px 3px 0 0;' +
-      '  background: linear-gradient(to top, rgba(16, 185, 129, 0.4), #10b981);' +
+      '  background: linear-gradient(to top, rgba(16, 185, 129, 0.4), #059669);' +
       '  position: relative; display: flex; justify-content: center;' +
       '}' +
       '.demaze-fps-val {' +
-      '  position: absolute; top: -14px; font-size: 8.5px; color: #10b981;' +
+      '  position: absolute; top: -14px; font-size: 8.5px; color: #059669;' +
       '  font-family: ui-monospace, SFMono-Regular, monospace; font-weight: 700;' +
       '}' +
 
       /* Mockup 4 (GitOps Canary) */
       '.demaze-commit-row {' +
       '  display: flex; align-items: center; gap: 10px; padding: 7px 0;' +
-      '  border-bottom: 1px solid rgba(255, 255, 255, 0.05);' +
+      '  border-bottom: 1px solid #f1f5f9;' +
       '}' +
       '.demaze-commit-row:last-child { border-bottom: none; }' +
       '.demaze-commit-dot {' +
-      '  width: 7px; height: 7px; border-radius: 50%; background: #f59e0b;' +
-      '  box-shadow: 0 0 6px #f59e0b; flex-shrink: 0;' +
+      '  width: 7px; height: 7px; border-radius: 50%; background: #d97706;' +
+      '  box-shadow: 0 0 6px rgba(217, 119, 6, 0.5); flex-shrink: 0;' +
       '}' +
       '.demaze-commit-info { flex: 1; min-width: 0; }' +
       '.demaze-commit-title {' +
-      '  font-size: 11px; font-weight: 600; color: #ffffff;' +
+      '  font-size: 11px; font-weight: 600; color: #0f172a;' +
       '  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' +
       '}' +
-      '.demaze-commit-meta { font-size: 9.5px; color: rgba(255, 255, 255, 0.45); }' +
+      '.demaze-commit-meta { font-size: 9.5px; color: #64748b; }' +
       '.demaze-commit-status {' +
       '  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;' +
-      '  background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25);' +
+      '  background: rgba(5, 150, 105, 0.10); border: 1px solid rgba(5, 150, 105, 0.25);' +
       '}' +
 
       /* Responsive Rules */
       '@media (max-width: 1024px) {' +
-      '  section[data-framer-name="Ai Powered"] { padding: 100px 20px 80px !important; }' +
+      '  section[data-framer-name="Ai Powered"] { padding: 90px 20px 80px !important; }' +
       '  .demaze-drives-header {' +
       '    flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 32px;' +
       '  }' +
@@ -401,7 +395,7 @@
       '  .demaze-drives-nav {' +
       '    flex-direction: row; overflow-x: auto; width: 100%;' +
       '    -webkit-overflow-scrolling: touch; padding: 6px; gap: 6px;' +
-      '    background: rgba(15, 16, 21, 0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);' +
+      '    background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);' +
       '    scrollbar-width: none; -ms-overflow-style: none;' +
       '  }' +
       '  .demaze-drives-nav::-webkit-scrollbar { display: none; }' +
@@ -429,7 +423,6 @@
   function createMockupHTML(pillar) {
     if (pillar.mockupType === 'ai') {
       return (
-        '<div class="demaze-card-glow" style="background:' + pillar.glow + '"></div>' +
         '<div class="demaze-mockup-window">' +
         '  <div class="demaze-mockup-header">' +
         '    <div class="demaze-mockup-dots">' +
@@ -438,7 +431,7 @@
         '      <span class="demaze-mockup-dot green"></span>' +
         '    </div>' +
         '    <div class="demaze-mockup-file">' + pillar.fileName + '</div>' +
-        '    <div class="demaze-mockup-badge text-green" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3)">' +
+        '    <div class="demaze-mockup-badge text-green" style="background:rgba(5,150,105,0.08);border-color:rgba(5,150,105,0.25)">' +
         '      <span class="demaze-mockup-pulse"></span>' +
         '      <span>' + pillar.badgeText + '</span>' +
         '    </div>' +
@@ -471,7 +464,6 @@
 
     if (pillar.mockupType === 'scale') {
       return (
-        '<div class="demaze-card-glow" style="background:' + pillar.glow + '"></div>' +
         '<div class="demaze-mockup-window">' +
         '  <div class="demaze-mockup-header">' +
         '    <div class="demaze-mockup-dots">' +
@@ -480,7 +472,7 @@
         '      <span class="demaze-mockup-dot green"></span>' +
         '    </div>' +
         '    <div class="demaze-mockup-file">' + pillar.fileName + '</div>' +
-        '    <div class="demaze-mockup-badge text-cyan" style="background:rgba(6,182,212,0.12);border-color:rgba(6,182,212,0.3)">' +
+        '    <div class="demaze-mockup-badge text-cyan" style="background:rgba(2,132,199,0.08);border-color:rgba(2,132,199,0.25)">' +
         '      <span class="demaze-mockup-pulse"></span>' +
         '      <span>' + pillar.badgeText + '</span>' +
         '    </div>' +
@@ -528,7 +520,6 @@
 
     if (pillar.mockupType === 'craft') {
       return (
-        '<div class="demaze-card-glow" style="background:' + pillar.glow + '"></div>' +
         '<div class="demaze-mockup-window">' +
         '  <div class="demaze-mockup-header">' +
         '    <div class="demaze-mockup-dots">' +
@@ -537,7 +528,7 @@
         '      <span class="demaze-mockup-dot green"></span>' +
         '    </div>' +
         '    <div class="demaze-mockup-file">' + pillar.fileName + '</div>' +
-        '    <div class="demaze-mockup-badge text-green" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3)">' +
+        '    <div class="demaze-mockup-badge text-green" style="background:rgba(5,150,105,0.08);border-color:rgba(5,150,105,0.25)">' +
         '      <span class="demaze-mockup-pulse"></span>' +
         '      <span>' + pillar.badgeText + '</span>' +
         '    </div>' +
@@ -576,7 +567,6 @@
 
     if (pillar.mockupType === 'ownership') {
       return (
-        '<div class="demaze-card-glow" style="background:' + pillar.glow + '"></div>' +
         '<div class="demaze-mockup-window">' +
         '  <div class="demaze-mockup-header">' +
         '    <div class="demaze-mockup-dots">' +
@@ -585,7 +575,7 @@
         '      <span class="demaze-mockup-dot green"></span>' +
         '    </div>' +
         '    <div class="demaze-mockup-file">' + pillar.fileName + '</div>' +
-        '    <div class="demaze-mockup-badge text-amber" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.3)">' +
+        '    <div class="demaze-mockup-badge text-amber" style="background:rgba(217,119,6,0.08);border-color:rgba(217,119,6,0.25)">' +
         '      <span class="demaze-mockup-pulse"></span>' +
         '      <span>' + pillar.badgeText + '</span>' +
         '    </div>' +
@@ -638,7 +628,6 @@
     var isTicking = false;
 
     function updateActiveTab() {
-      // Find card that intersects best with the eye-line (~35% of viewport height)
       var viewportFocusY = window.innerHeight * 0.36;
       var activeIndex = 0;
       var minDistance = Infinity;
@@ -723,7 +712,7 @@
     var wrapper = document.createElement('div');
     wrapper.className = 'demaze-drives-wrapper';
 
-    // Header (Cognira style split layout)
+    // Header (Cognira style split layout in site tone)
     var header = document.createElement('div');
     header.className = 'demaze-drives-header';
     header.innerHTML =
