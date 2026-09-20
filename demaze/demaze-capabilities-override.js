@@ -3,7 +3,7 @@
  * "Tools" section: 4 core service pillars).
  *
  * Redesigned in compact 2-in-a-row (2x2 grid) layout with inline text alignment,
- * glowing gradient badges, proper vector tech glyphs, 2x2 capability chips,
+ * glowing gradient badges, proper vector tech glyphs, compact 2x2 capability chips,
  * live telemetry metrics, and MOVIQ's signature scroll-linked unfolding motion.
  */
 (function () {
@@ -89,38 +89,38 @@
       '  display: none !important;' +
       '}' +
 
-      /* Section & Header Framing */
+      /* Section & Header Framing - Compact & Refined */
       'section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]){' +
-      '  height: auto !important; min-height: auto !important; padding: 90px 0 !important;' +
+      '  height: auto !important; min-height: auto !important; padding: 60px 0 70px !important;' +
       '  overflow: visible !important; background: #ffffff !important; position: relative !important;' +
       '}' +
       '.demaze-cap-wrapper{' +
-      '  width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 24px; box-sizing: border-box;' +
+      '  width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 20px; box-sizing: border-box;' +
       '}' +
       '.demaze-cap-header{' +
-      '  text-align: center; margin-bottom: 48px; position: relative; z-index: 2;' +
+      '  text-align: center; margin-bottom: 32px; position: relative; z-index: 2;' +
       '}' +
       '.demaze-cap-eyebrow{' +
-      '  display: inline-flex; align-items: center; gap: 8px;' +
-      '  padding: 6px 16px; border-radius: 999px;' +
+      '  display: inline-flex; align-items: center; gap: 7px;' +
+      '  padding: 4px 13px; border-radius: 999px;' +
       '  background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.20);' +
-      '  color: #2563eb; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;' +
-      '  text-transform: uppercase; margin-bottom: 14px;' +
+      '  color: #2563eb; font-size: 11px; font-weight: 700; letter-spacing: 0.08em;' +
+      '  text-transform: uppercase; margin-bottom: 10px;' +
       '}' +
       '.demaze-cap-heading{' +
-      '  font-size: clamp(32px, 3.8vw, 50px); font-weight: 700; line-height: 1.15;' +
-      '  color: #0f172a; margin: 0 0 14px; text-wrap: balance;' +
+      '  font-size: clamp(26px, 3.2vw, 40px); font-weight: 700; line-height: 1.18;' +
+      '  color: #0f172a; margin: 0 0 10px; text-wrap: balance;' +
       '  font-family: "Stack Sans Headline", -apple-system, sans-serif;' +
       '  letter-spacing: -0.02em;' +
       '}' +
       '.demaze-cap-sub{' +
-      '  font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: #64748b;' +
-      '  max-width: 680px; margin: 0 auto; text-wrap: balance;' +
+      '  font-size: 14.5px; line-height: 1.55; color: #64748b;' +
+      '  max-width: 620px; margin: 0 auto; text-wrap: balance;' +
       '}' +
 
-      /* 2x2 Capabilities Grid */
+      /* 2x2 Capabilities Grid - Compact spacing & 3D perspective */
       '.demaze-cap-grid{' +
-      '  display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;' +
+      '  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;' +
       '  width: 100%; margin: 0 auto; perspective: 1200px; transform-style: preserve-3d;' +
       '}' +
 
@@ -129,92 +129,92 @@
       '  will-change: transform, opacity; min-width: 0;' +
       '}' +
 
-      /* Inner Card with Micro-Interactions */
+      /* Inner Card - Sleek, High-Density Compact Shell */
       '.demaze-cap-card-inner{' +
-      '  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px;' +
-      '  padding: 28px 30px; display: flex; flex-direction: column;' +
-      '  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(226, 232, 240, 0.4);' +
-      '  transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, border-color 0.25s ease;' +
+      '  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px;' +
+      '  padding: 20px 22px; display: flex; flex-direction: column;' +
+      '  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035), 0 0 0 1px rgba(226, 232, 240, 0.5);' +
+      '  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease, border-color 0.22s ease;' +
       '  box-sizing: border-box; height: 100%;' +
       '}' +
       '.demaze-cap-card-inner:hover{' +
-      '  transform: translateY(-5px); border-color: rgba(37, 99, 235, 0.35);' +
-      '  box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.14), 0 0 0 1px rgba(37, 99, 235, 0.2);' +
+      '  transform: translateY(-4px); border-color: rgba(37, 99, 235, 0.35);' +
+      '  box-shadow: 0 16px 32px -8px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(37, 99, 235, 0.2);' +
       '}' +
 
       /* Card Top Row */
       '.demaze-cap-card-top{' +
-      '  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;' +
+      '  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;' +
       '}' +
       '.demaze-cap-badge{' +
-      '  width: 52px; height: 52px; border-radius: 16px;' +
+      '  width: 38px; height: 38px; border-radius: 11px;' +
       '  display: flex; align-items: center; justify-content: center;' +
       '  color: #ffffff; flex-shrink: 0;' +
       '}' +
-      '.demaze-cap-badge svg{ width: 26px; height: 26px; }' +
-      '.demaze-cap-meta{ display: flex; align-items: center; gap: 8px; }' +
+      '.demaze-cap-badge svg{ width: 19px; height: 19px; }' +
+      '.demaze-cap-meta{ display: flex; align-items: center; gap: 6px; }' +
       '.demaze-cap-index{' +
-      '  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;' +
+      '  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;' +
       '  color: #2563eb; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.20);' +
-      '  padding: 4px 10px; border-radius: 999px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;' +
+      '  padding: 3px 8px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;' +
       '}' +
 
-      /* Inline Aligned Typography */
+      /* Inline Aligned Typography - Compact Scale */
       '.demaze-cap-title{' +
-      '  font-size: 22px; font-weight: 700; color: #0f172a; margin: 0 0 10px;' +
+      '  font-size: 18px; font-weight: 700; color: #0f172a; margin: 0 0 6px;' +
       '  line-height: 1.25; font-family: "Stack Sans Headline", -apple-system, sans-serif;' +
       '  letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' +
       '}' +
       '.demaze-cap-desc{' +
-      '  font-size: 14px; line-height: 1.55; color: #475569; margin: 0 0 20px;' +
-      '  height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;' +
+      '  font-size: 13px; line-height: 1.45; color: #475569; margin: 0 0 14px;' +
+      '  height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;' +
       '}' +
 
-      /* 2x2 Feature Chips Grid */
+      /* 2x2 Feature Chips Grid - Compact & Uniform */
       '.demaze-cap-chips{' +
-      '  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 10px; margin-bottom: 22px;' +
+      '  display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 8px; margin-bottom: 14px;' +
       '}' +
       '.demaze-cap-chip{' +
-      '  display: flex; align-items: center; gap: 7px;' +
+      '  display: flex; align-items: center; gap: 6px;' +
       '  background: #f8fafc; border: 1px solid #e2e8f0;' +
-      '  padding: 7px 11px; border-radius: 10px;' +
-      '  font-size: 12px; font-weight: 500; color: #334155;' +
+      '  padding: 5px 9px; border-radius: 8px;' +
+      '  font-size: 11.5px; font-weight: 500; color: #334155;' +
       '  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' +
-      '  transition: all 0.18s ease;' +
+      '  transition: all 0.16s ease;' +
       '}' +
       '.demaze-cap-chip:hover{ background: #ffffff; border-color: #cbd5e1; color: #0f172a; }' +
       '.demaze-cap-chip-icon{ display: inline-flex; color: #2563eb; flex-shrink: 0; }' +
-      '.demaze-cap-chip-icon svg{ width: 13px; height: 13px; }' +
+      '.demaze-cap-chip-icon svg{ width: 11.5px; height: 11.5px; }' +
 
       /* Card Footer */
       '.demaze-cap-footer{' +
       '  display: flex; align-items: center; justify-content: space-between;' +
-      '  margin-top: auto; padding-top: 16px; border-top: 1px solid #f1f5f9;' +
+      '  margin-top: auto; padding-top: 12px; border-top: 1px solid #f1f5f9;' +
       '}' +
       '.demaze-cap-live{' +
-      '  display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: #10b981;' +
+      '  display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: #10b981;' +
       '}' +
       '.demaze-cap-live-dot{' +
-      '  width: 6.5px; height: 6.5px; border-radius: 50%; background: #10b981;' +
+      '  width: 5.5px; height: 5.5px; border-radius: 50%; background: #10b981;' +
       '  box-shadow: 0 0 8px #10b981;' +
       '}' +
       '.demaze-cap-link{' +
-      '  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;' +
+      '  display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;' +
       '  color: #2563eb; text-decoration: none !important; transition: gap 0.2s ease, color 0.2s ease;' +
       '}' +
-      '.demaze-cap-link:hover{ color: #1d4ed8; gap: 9px; }' +
-      '.demaze-cap-link svg{ width: 14px; height: 14px; }' +
+      '.demaze-cap-link:hover{ color: #1d4ed8; gap: 8px; }' +
+      '.demaze-cap-link svg{ width: 13px; height: 13px; }' +
 
       /* Responsive Media Queries */
       '@media (max-width: 1024px){' +
-      '  .demaze-cap-wrapper{ padding: 0 20px; }' +
-      '  .demaze-cap-grid{ grid-template-columns: 1fr; gap: 18px; }' +
+      '  .demaze-cap-wrapper{ padding: 0 16px; }' +
+      '  .demaze-cap-grid{ grid-template-columns: 1fr; gap: 14px; }' +
       '  .demaze-cap-desc{ height: auto; -webkit-line-clamp: 3; }' +
       '}' +
       '@media (max-width: 640px){' +
-      '  section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]){ padding: 50px 0 !important; }' +
-      '  .demaze-cap-wrapper{ padding: 0 16px; }' +
-      '  .demaze-cap-card-inner{ padding: 22px 18px; }' +
+      '  section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]){ padding: 44px 0 !important; }' +
+      '  .demaze-cap-wrapper{ padding: 0 14px; }' +
+      '  .demaze-cap-card-inner{ padding: 18px 16px; }' +
       '  .demaze-cap-chips{ grid-template-columns: 1fr; }' +
       '  .demaze-cap-title{ white-space: normal; }' +
       '}';
@@ -228,24 +228,28 @@
     var capScrollTicking = false;
     var lastProgress = -1;
     var isCapVisible = false;
-    var cachedSectionTop = 0;
+    var cachedGridTop = 0;
+    var cachedGridHeight = 0;
 
-    function updateSectionMetrics() {
-      var rect = section.getBoundingClientRect();
+    function updateGridMetrics() {
+      var grid = section.querySelector('.demaze-cap-grid');
+      if (!grid) return;
+      var rect = grid.getBoundingClientRect();
       var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-      cachedSectionTop = rect.top + scrollY;
+      cachedGridTop = rect.top + scrollY;
+      cachedGridHeight = grid.offsetHeight || 500;
     }
-    updateSectionMetrics();
-    window.addEventListener('resize', updateSectionMetrics, { passive: true });
+    updateGridMetrics();
+    window.addEventListener('resize', updateGridMetrics, { passive: true });
 
     if ('IntersectionObserver' in window) {
       var capObserver = new IntersectionObserver(function (entries) {
         isCapVisible = entries[0].isIntersecting;
         if (isCapVisible) {
-          updateSectionMetrics();
+          updateGridMetrics();
           syncCapScroll();
         }
-      }, { rootMargin: '120px 0px 120px 0px' });
+      }, { rootMargin: '250px 0px 250px 0px' });
       capObserver.observe(section);
     } else {
       isCapVisible = true;
@@ -256,15 +260,21 @@
 
       var winH = window.innerHeight || 800;
       var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-      var rectTop = cachedSectionTop - scrollY;
+      var currentGridTop = cachedGridTop - scrollY;
 
-      // Progress 0 when section enters bottom 88% of screen; 1 when center reaches 40%
-      var start = winH * 0.90;
-      var end = winH * 0.38;
-      var p = Math.min(1, Math.max(0, (start - rectTop) / (start - end)));
+      // Unfolding active range directly tied to the CARDS:
+      // Start (p=0): when the top of the cards is at 82% of viewport (visibly enters lower portion)
+      // End (p=1): when the cards have traveled smoothly to 14% of viewport (fully presented in primary view)
+      var start = winH * 0.84;
+      var end = winH * 0.14;
+      var rawP = (start - currentGridTop) / (start - end);
+      var p = Math.min(1, Math.max(0, rawP));
 
-      if (Math.abs(p - lastProgress) < 0.003 && (p === 0 || p === 1)) return;
-      lastProgress = p;
+      // Ease-out curve for fluid, organic scroll fanning
+      var easedP = Math.sin((p * Math.PI) / 2);
+
+      if (Math.abs(easedP - lastProgress) < 0.002 && (p === 0 || p === 1)) return;
+      lastProgress = easedP;
 
       var cards = section.querySelectorAll('.demaze-cap-card-outer');
       if (!cards || cards.length !== 4) return;
@@ -272,30 +282,33 @@
       var isDesktop = window.innerWidth > 1024;
 
       if (isDesktop) {
-        // Symmetrically unfold outer cards towards outside as scroll progresses
-        // Row 1: Card 0 unfolds left (-), Card 1 unfolds right (+)
-        // Row 2: Card 2 unfolds left (-), Card 3 unfolds right (+)
-        var xOffsets = [150, -150, 150, -150];
-        var rotZ = [-3.5, 3.5, -3.5, 3.5];
-        var minScale = 0.91;
+        // MOVIQ-style unfolding:
+        // Left cards (0 & 2) start tucked inward to the right (+X) and tilted, unfolding outward to 0
+        // Right cards (1 & 3) start tucked inward to the left (-X) and tilted, unfolding outward to 0
+        // Row 2 cards also have slight vertical rise (+Y) to emerge gracefully from beneath Row 1
+        var factor = 1 - easedP;
+        var xOffsets = [140, -140, 140, -140];
+        var yOffsets = [10, 10, 26, 26];
+        var rotZ = [-3.0, 3.0, -3.0, 3.0];
+        var minScale = 0.92;
 
         for (var i = 0; i < cards.length; i++) {
-          var factor = 1 - p;
           var curX = (xOffsets[i] * factor).toFixed(2);
+          var curY = (yOffsets[i] * factor).toFixed(2);
           var curRot = (rotZ[i] * factor).toFixed(2);
-          var curScale = (minScale + (1 - minScale) * p).toFixed(3);
-          var curOp = (0.45 + 0.55 * p).toFixed(3);
+          var curScale = (minScale + (1 - minScale) * easedP).toFixed(3);
+          var curOp = (0.38 + 0.62 * easedP).toFixed(3);
 
-          cards[i].style.transform = 'translate3d(' + curX + 'px, 0, 0) scale(' + curScale + ') rotate(' + curRot + 'deg)';
+          cards[i].style.transform = 'translate3d(' + curX + 'px, ' + curY + 'px, 0) scale(' + curScale + ') rotate(' + curRot + 'deg)';
           cards[i].style.opacity = curOp;
         }
       } else {
         // Mobile / Tablet smooth vertical stagger
+        var factorM = 1 - easedP;
         for (var j = 0; j < cards.length; j++) {
-          var factorM = 1 - p;
-          var curYM = (20 * factorM).toFixed(2);
-          var curScaleM = (0.96 + 0.04 * p).toFixed(3);
-          var curOpM = (0.50 + 0.50 * p).toFixed(3);
+          var curYM = (22 * factorM).toFixed(2);
+          var curScaleM = (0.95 + 0.05 * easedP).toFixed(3);
+          var curOpM = (0.45 + 0.55 * easedP).toFixed(3);
           cards[j].style.transform = 'translate3d(0, ' + curYM + 'px, 0) scale(' + curScaleM + ')';
           cards[j].style.opacity = curOpM;
         }
@@ -314,6 +327,10 @@
     }
 
     window.addEventListener('scroll', requestCapScrollSync, { passive: true });
+    // Also listen to Lenis scroll if present
+    if (window.lenis && typeof window.lenis.on === 'function') {
+      window.lenis.on('scroll', requestCapScrollSync);
+    }
     syncCapScroll();
   }
 
@@ -331,12 +348,12 @@
     var wrapper = document.createElement('div');
     wrapper.className = 'demaze-cap-wrapper';
 
-    // Section header
+    // Section header - Compact & Refined
     var header = document.createElement('div');
     header.className = 'demaze-cap-header';
     header.innerHTML =
       '<span class="demaze-cap-eyebrow">' +
-      '  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+      '  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
       '  Core Capabilities' +
       '</span>' +
       '<h2 class="demaze-cap-heading">Engineered for Exponential Scale</h2>' +
@@ -366,7 +383,7 @@
       outer.innerHTML =
         '<div class="demaze-cap-card-inner">' +
         '  <div class="demaze-cap-card-top">' +
-        '    <div class="demaze-cap-badge" style="background:' + item.grad + ';box-shadow:0 8px 20px -3px ' + item.shadow + '">' +
+        '    <div class="demaze-cap-badge" style="background:' + item.grad + ';box-shadow:0 6px 16px -2px ' + item.shadow + '">' +
         item.icon +
         '    </div>' +
         '    <div class="demaze-cap-meta">' +
