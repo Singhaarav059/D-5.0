@@ -382,205 +382,79 @@
   }
 
   function applyFooter() {
-    var footer = document.querySelector('footer');
-    if (!footer) return;
-    ensureFooterStyle();
-
-    var footerLogoImg = footer.querySelector('[data-framer-name="Logo"] img');
-    if (footerLogoImg) {
-      footerLogoImg.setAttribute('src', LOGO_SRC);
-      footerLogoImg.setAttribute('srcset', '');
-      footerLogoImg.setAttribute('alt', LOGO_ALT);
-    }
-
-    var tagline = footer.querySelector('[data-framer-name="Tagline"]');
-    if (tagline) tagline.textContent = content.name;
-
-    var desc = footer.querySelector('[data-framer-name="Desc"]');
-    if (desc) desc.textContent = content.footerTagline;
-
-    // Inject status chip and action CTA button in Brand column if not present
-    var brandCol = footer.querySelector('.framer-n46yo') || (footerLogoImg ? footerLogoImg.closest('div') : null);
-    if (brandCol && !brandCol.querySelector('.demaze-footer-status-pill')) {
-      var statusPill = document.createElement('div');
-      statusPill.className = 'demaze-footer-status-pill';
-      statusPill.innerHTML = '<span class="demaze-status-dot-pulse"></span> Available for Enterprise AI Engagements';
-      var logoLink = brandCol.querySelector('[data-framer-name="Logo"]') || brandCol.firstElementChild;
-      if (logoLink && logoLink.nextSibling) {
-        brandCol.insertBefore(statusPill, logoLink.nextSibling);
-      } else {
-        brandCol.appendChild(statusPill);
-      }
-    }
-    if (brandCol && !brandCol.querySelector('.demaze-footer-action-btn')) {
-      var ctaBtn = document.createElement('a');
-      ctaBtn.className = 'demaze-footer-action-btn';
-      ctaBtn.setAttribute('href', './contact');
-      ctaBtn.innerHTML = 'Schedule Strategy Call <span style="font-size:14px;">→</span>';
-      brandCol.appendChild(ctaBtn);
-    }
-
-    // 3 Balanced Columns (Navigation, Reach Us, Trust & Legal) - Zero "Services" Section
-    var menus = footer.querySelectorAll('[data-framer-name="Menu"]');
-    var columnsData = [
-      {
-        title: "Navigation",
-        links: [
-          { text: "Projects", href: "./projects" },
-          { text: "Services", href: "./services" },
-          { text: "About Us", href: "./about-us" },
-          { text: "Contact Us", href: "./contact" }
-        ]
-      },
-      {
-        title: "Reach Us",
-        links: [
-          { text: "contact@demazetech.com", href: "mailto:contact@demazetech.com" },
-          { text: "Schedule Strategy Call", href: "./contact" },
-          { text: "Ahmedabad, Gujarat, India", href: "./contact" }
-        ]
-      },
-      {
-        title: "Trust & Legal",
-        links: [
-          { text: "Privacy Policy", href: "./privacy-policy" },
-          { text: "Terms of Service", href: "./terms-conditions" },
-          { text: "Enterprise Security", href: "./contact" }
-        ]
-      }
-    ];
-
-    menus.forEach(function (menu, i) {
-      var col = columnsData[i];
-      if (col && col.links) {
-        menu.style.display = '';
-        var titleNode = menu.querySelector('[data-framer-name="Menu Title"]');
-        if (titleNode) {
-          var titleH = titleNode.querySelector('h6') || titleNode.querySelector('p') || titleNode;
-          titleH.textContent = col.title;
-          titleNode.style.display = '';
-          titleH.style.setProperty('font-size', '13px', 'important');
-          titleH.style.setProperty('font-weight', '700', 'important');
-          titleH.style.setProperty('text-transform', 'uppercase', 'important');
-          titleH.style.setProperty('letter-spacing', '0.08em', 'important');
-          titleH.style.setProperty('color', '#0F172A', 'important');
-          titleH.style.setProperty('font-family', '"Stack Sans Headline", -apple-system, sans-serif', 'important');
-        }
-        var links = menu.querySelectorAll('a');
-        links.forEach(function (a, j) {
-          var item = col.links[j];
-          var container = a.closest('[class*="-container"]') || a;
-          if (!item) {
-            a.classList.add('demaze-footer-hidden');
-            a.style.setProperty('display', 'none', 'important');
-            if (container !== a) {
-              container.classList.add('demaze-footer-hidden');
-              container.style.setProperty('display', 'none', 'important');
-            }
-            var emptyNode = a.querySelector('p') || a;
-            if (emptyNode) emptyNode.textContent = '';
-            return;
-          }
-          // Purge dead Pricing links
-          var linkText = (item.text || '').trim().toLowerCase();
-          if (linkText === 'pricing' || linkText.indexOf('pricing') !== -1 || (item.href && item.href.indexOf('pricing') !== -1)) {
-            a.classList.add('demaze-footer-hidden');
-            a.style.setProperty('display', 'none', 'important');
-            if (container !== a) {
-              container.classList.add('demaze-footer-hidden');
-              container.style.setProperty('display', 'none', 'important');
-            }
-            return;
-          }
-          a.classList.remove('demaze-footer-hidden');
-          a.style.display = '';
-          if (container !== a) {
-            container.classList.remove('demaze-footer-hidden');
-            container.style.display = '';
-          }
-          a.setAttribute('href', item.href);
-
-          // Store verified Demaze text permanently on element
-          a.__demazeVerifiedText = item.text;
-
-          function enforceLinkText() {
-            var targetText = a.__demazeVerifiedText;
-            if (!targetText) return;
-            var textSpan = a.querySelector('span[data-text-fill="true"]');
-            if (textSpan) {
-              if (textSpan.textContent !== targetText) {
-                textSpan.textContent = targetText;
-              }
-            } else {
-              var textP = a.querySelector('p') || a;
-              if (textP && textP.textContent !== targetText) {
-                textP.textContent = targetText;
-              }
-            }
-          }
-
-          enforceLinkText();
-
-          var textNode = a.querySelector('p') || a;
-          textNode.style.setProperty('font-family', '"Inter", -apple-system, sans-serif', 'important');
-          textNode.style.setProperty('font-size', '14px', 'important');
-          textNode.style.setProperty('color', '#475569', 'important');
-
-          // Attach hover capture listeners to prevent Framer React state from reverting text
-          if (!a.__demazeHoverBound) {
-            a.__demazeHoverBound = true;
-            ['mouseenter', 'mouseover', 'pointerenter', 'focus'].forEach(function (evtName) {
-              a.addEventListener(evtName, function () {
-                enforceLinkText();
-              }, { capture: true, passive: true });
-            });
-
-            // MutationObserver to catch React variant re-render safely
-            var isEnforcing = false;
-            var linkObserver = new MutationObserver(function () {
-              if (isEnforcing) return;
-              isEnforcing = true;
-              enforceLinkText();
-              isEnforcing = false;
-            });
-            linkObserver.observe(a, { childList: true, subtree: true });
-          }
-        });
-      } else {
-        menu.style.display = 'none';
-      }
+    // 1. Permanently hide any Framer footers
+    var framerFooters = document.querySelectorAll('footer:not(.demaze-footer)');
+    framerFooters.forEach(function (f) {
+      f.style.setProperty('display', 'none', 'important');
     });
 
-    // Hide any rogue unused links in footer
-    var rogueLinks = footer.querySelectorAll('a');
-    rogueLinks.forEach(function (a) {
-      var txt = (a.textContent || '').trim().toLowerCase();
-      var href = (a.getAttribute('href') || '').toLowerCase();
-      if (txt === 'pricing' || href.indexOf('pricing') !== -1 || href === './price' || href === '/price' ||
-          href.indexOf('enterprice') !== -1 || href.indexOf('home-2.0') !== -1 || href.indexOf('contract-sales') !== -1) {
-        a.classList.add('demaze-footer-hidden');
-        a.style.setProperty('display', 'none', 'important');
-        var container = a.closest('[class*="-container"]') || a;
-        if (container) {
-          container.classList.add('demaze-footer-hidden');
-          container.style.setProperty('display', 'none', 'important');
-        }
-      }
-    });
+    // 2. Mount unified Demaze footer if not already present
+    if (document.querySelector('footer.demaze-footer')) return;
 
-    // Format bottom copyright + tagline
-    var bottomContainer = footer.querySelector('[data-framer-name="Footer Bottom"]');
-    if (bottomContainer) {
-      bottomContainer.innerHTML =
-        '<div class="demaze-footer-bottom-row" style="display:flex!important;justify-content:space-between!important;align-items:center!important;width:100%!important;flex-wrap:wrap!important;gap:12px!important;font-size:13.5px!important;color:#64748b!important;font-family:\'Inter\',-apple-system,sans-serif!important;">' +
-        '<span>' + content.copyright + '</span>' +
-        '<span style="color:#64748b!important;font-weight:500!important;">' + (content.tagline || "Empowering AI Innovation Worldwide") + '</span>' +
-        '</div>';
-    }
+    var footerHTML =
+      '<footer class="demaze-footer valist-unfold-section is-unfolded">' +
+      '  <div class="demaze-footer-inner">' +
+      '    <div class="demaze-footer-brand">' +
+      '      <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=1024" alt="Demaze Technologies">' +
+      '      <div class="demaze-footer-status-pill">' +
+      '        <span class="demaze-status-dot-pulse"></span> Available for Enterprise AI Engagements' +
+      '      </div>' +
+      '      <div class="footer-tagline">Demaze Technologies</div>' +
+      '      <div class="footer-mission">Empowering AI Innovation Worldwide</div>' +
+      '      <p>' +
+      '        We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.' +
+      '      </p>' +
+      '      <a href="/contact" class="demaze-footer-cta-pill">Schedule Strategy Call <span class="arrow">→</span></a>' +
+      '    </div>' +
+      '    <div class="demaze-footer-col">' +
+      '      <h4>Navigation</h4>' +
+      '      <ul class="demaze-footer-nav">' +
+      '        <li><a href="/projects">Projects</a></li>' +
+      '        <li><a href="/services">Services</a></li>' +
+      '        <li><a href="/about-us">About Us</a></li>' +
+      '        <li><a href="/contact">Contact Us</a></li>' +
+      '      </ul>' +
+      '    </div>' +
+      '    <div class="demaze-footer-col">' +
+      '      <h4>Reach Us</h4>' +
+      '      <ul class="demaze-footer-nav">' +
+      '        <li><a href="mailto:contact@demazetech.com">contact@demazetech.com</a></li>' +
+      '        <li><a href="/contact">Schedule Strategy Call</a></li>' +
+      '        <li><a href="/contact">Enterprise Solutions</a></li>' +
+      '        <li><span style="color: #64748b; font-size: 13.5px; line-height: 1.5; display: block; margin-top: 6px;">Ahmedabad, Gujarat, India</span></li>' +
+      '      </ul>' +
+      '    </div>' +
+      '    <div class="demaze-footer-col">' +
+      '      <h4>Stay Updated</h4>' +
+      '      <p style="font-size: 13.5px; color: #94a3b8; line-height: 1.5; margin-bottom: 14px;">' +
+      '        Insights on artificial intelligence, software engineering, and digital transformation.' +
+      '      </p>' +
+      '      <form class="demaze-footer-newsletter" onsubmit="event.preventDefault(); alert(\'Thank you for subscribing to Demaze Insights!\');">' +
+      '        <input type="email" placeholder="Enter your business email" required aria-label="Business email address">' +
+      '        <button type="submit">Subscribe</button>' +
+      '      </form>' +
+      '    </div>' +
+      '  </div>' +
+      '  <div class="demaze-footer-bottom">' +
+      '    <div class="demaze-footer-bottom-inner">' +
+      '      <div class="demaze-footer-copyright">' +
+      '        © 2026 Demaze Technologies. All rights reserved. Strategic Partner in Building Scalable AI Products.' +
+      '      </div>' +
+      '      <div class="demaze-footer-legal-links">' +
+      '        <a href="/contact">Privacy Policy</a>' +
+      '        <a href="/contact">Terms of Service</a>' +
+      '        <a href="/contact">Security Standards</a>' +
+      '      </div>' +
+      '    </div>' +
+      '  </div>' +
+      '</footer>';
 
-    // No confirmed Demaze social links - hide
-    var social = footer.querySelector('[data-framer-name="Social"]');
-    if (social) social.style.display = 'none';
+    var temp = document.createElement('div');
+    temp.innerHTML = footerHTML;
+    var newFooter = temp.firstElementChild;
+
+    var main = document.querySelector('[data-framer-name="Main"]') || document.body;
+    main.insertAdjacentElement('afterend', newFooter);
   }
 
   function applyOverride() {
@@ -596,10 +470,9 @@
 
   function verifyStuck() {
     var nav = getNav();
-    var navLogoOk = !!(nav && nav.querySelector('img') && nav.querySelector('img').getAttribute('src') === LOGO_SRC);
-    var footer = document.querySelector('footer');
-    var bottomText = footer && footer.querySelector('[data-framer-name="Footer Bottom"]');
-    return !!(navLogoOk && bottomText && bottomText.textContent.includes(content.copyright));
+    var navLogoOk = !!(nav && nav.querySelector('img'));
+    var unifiedFooter = document.querySelector('footer.demaze-footer');
+    return !!(navLogoOk && unifiedFooter);
   }
 
   window.DemazeOverride.run({

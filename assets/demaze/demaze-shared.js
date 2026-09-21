@@ -350,7 +350,16 @@
 
       if (!navItems.length || !panes.length) return;
 
-      function setActivePillar(targetIndex) {
+      var currentIndex = 0;
+      var manualOverrideUntil = 0;
+
+      function setActivePillar(targetIndex, isManual) {
+        if (targetIndex < 0 || targetIndex >= navItems.length) return;
+        currentIndex = targetIndex;
+        if (isManual) {
+          manualOverrideUntil = Date.now() + 2500;
+        }
+
         navItems.forEach(function (btn, idx) {
           var isActive = idx === targetIndex;
           btn.classList.toggle('active', isActive);
@@ -365,22 +374,46 @@
 
       navItems.forEach(function (btn, idx) {
         btn.addEventListener('click', function () {
-          setActivePillar(idx);
+          setActivePillar(idx, true);
         });
 
         btn.addEventListener('mouseenter', function () {
-          // Subtle focus on hover
           if (!btn.classList.contains('active')) {
-            btn.querySelector('.nav-item-title').style.transform = 'translateX(2px)';
+            var titleEl = btn.querySelector('.nav-item-title');
+            if (titleEl) titleEl.style.transform = 'translateX(2px)';
           }
         });
 
         btn.addEventListener('mouseleave', function () {
           if (!btn.classList.contains('active')) {
-            btn.querySelector('.nav-item-title').style.transform = '';
+            var titleEl = btn.querySelector('.nav-item-title');
+            if (titleEl) titleEl.style.transform = '';
           }
         });
       });
+
+      // Scroll-driven auto-switching through the 4 capability pillars
+      function handleScrollSwitch() {
+        if (window.innerWidth < 992) return;
+        if (Date.now() < manualOverrideUntil) return;
+
+        var rect = stage.getBoundingClientRect();
+        var totalDist = stage.offsetHeight - window.innerHeight;
+        if (totalDist <= 0) return;
+
+        var topOffset = 130;
+        var progress = (-rect.top + topOffset) / totalDist;
+
+        if (progress >= 0 && progress <= 1) {
+          var targetIndex = Math.min(3, Math.max(0, Math.floor(progress * 4)));
+          if (targetIndex !== currentIndex) {
+            setActivePillar(targetIndex, false);
+          }
+        }
+      }
+
+      window.addEventListener('scroll', handleScrollSwitch, { passive: true });
+      handleScrollSwitch();
     });
   }
 
