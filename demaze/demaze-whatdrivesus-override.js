@@ -663,7 +663,19 @@
       }
     }
 
+    var isSectionVisible = false;
+    if ('IntersectionObserver' in window) {
+      var sectionObs = new IntersectionObserver(function (entries) {
+        isSectionVisible = entries[0].isIntersecting;
+        if (isSectionVisible) updateActiveTab();
+      }, { rootMargin: '150px 0px 150px 0px' });
+      sectionObs.observe(section);
+    } else {
+      isSectionVisible = true;
+    }
+
     function onScroll() {
+      if (!isSectionVisible) return;
       if (!isTicking) {
         isTicking = true;
         requestAnimationFrame(function () {
@@ -674,9 +686,6 @@
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    if (window.lenis && typeof window.lenis.on === 'function') {
-      window.lenis.on('scroll', onScroll);
-    }
 
     // Click to scroll
     tabs.forEach(function (tab, idx) {

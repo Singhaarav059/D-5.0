@@ -14,6 +14,13 @@
 
   // 1. Initialize Lenis Smooth Scrolling
   function initLenis() {
+    // If on homepage where Framer's React engine already bundles and controls its own Lenis instance,
+    // do NOT instantiate a duplicate instance which would double-hook wheel events and RAF loops.
+    var isHomepage = !!(document.querySelector('[data-framer-name="Main"]') || document.querySelector('section[data-framer-name="Hero"]'));
+    if (isHomepage) {
+      return;
+    }
+
     if (typeof window.Lenis === 'function' && !window.lenis) {
       try {
         document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
@@ -207,11 +214,17 @@
 
   // 6. Reversible Smooth Scroll Storytelling Engine (Slow Appearance & Disappearance)
   function initUnfolding() {
+    // Skip homepage: Framer's React engine manages section appearances and transforms on the homepage.
+    // Applying .demaze-scroll-flow with CSS transform transitions creates severe layer thrashing with Framer Motion.
+    if (document.querySelector('[data-framer-name="Main"]') || document.querySelector('section[data-framer-name="Hero"]')) {
+      return;
+    }
+
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function getTargets() {
       return document.querySelectorAll(
-        '.demaze-subpage-section, .valist-unfold-section, .valist-capabilities-stage, .valist-process-stage, .demaze-industries-stage, .about-bento-grid, .values-grid, .valist-projects-grid, .contact-main-grid, .demaze-contact-grid, .valist-faq-container, .demaze-cta-banner, .valist-showcase-card, .valist-timeline-container, [data-framer-name="Badge"], [data-framer-name="Videos making Step"], [data-framer-name="Sricpt"], [data-framer-name="Tools"], [data-framer-name="Products"], [data-framer-name="Ai Powered"], [data-framer-name="Why Demaze vs Traditional"], [data-framer-name="CTA"], [data-framer-name="Faq"]'
+        '.demaze-subpage-section, .valist-unfold-section, .valist-capabilities-stage, .valist-process-stage, .demaze-industries-stage, .about-bento-grid, .values-grid, .valist-projects-grid, .contact-main-grid, .demaze-contact-grid, .valist-faq-container, .demaze-cta-banner, .valist-showcase-card, .valist-timeline-container'
       );
     }
 
@@ -314,13 +327,13 @@
     var attachInterval = setInterval(function () {
       pollCount++;
       attach();
-      if (pollCount > 15) clearInterval(attachInterval);
+      if (pollCount >= 5) {
+        clearInterval(attachInterval);
+      }
     }, 300);
 
-    window.addEventListener('scroll', attach, { passive: true });
-    if (window.lenis && typeof window.lenis.on === 'function') {
-      window.lenis.on('scroll', attach);
-    }
+    // Only re-check on resize or DOM layout changes - IntersectionObserver handles scroll reveals off the main thread
+    window.addEventListener('resize', attach, { passive: true });
   }
 
   // 6b. Dynamic Mission Timeline Progress Drawing

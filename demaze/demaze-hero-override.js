@@ -276,13 +276,12 @@
 
       var isPageScrolling = false;
       var scrollReleaseTimer = null;
-      var frameCount = 0;
       window.addEventListener('scroll', function () {
         isPageScrolling = true;
         clearTimeout(scrollReleaseTimer);
         scrollReleaseTimer = setTimeout(function () {
           isPageScrolling = false;
-        }, 120);
+        }, 100);
       }, { passive: true });
 
       function animate(now) {
@@ -291,9 +290,8 @@
           return;
         }
 
-        frameCount++;
-        // During active page scrolling, render every 2nd frame to leave 100% frame budget for butter-smooth 60 FPS scrolling
-        if (isPageScrolling && (frameCount % 2 !== 0)) {
+        // During active page scrolling, pause sphere updates to dedicate 100% frame budget to silky-smooth Lenis scrolling
+        if (isPageScrolling) {
           sphereAnimId = requestAnimationFrame(animate);
           return;
         }
@@ -450,7 +448,7 @@
             cancelAnimationFrame(sphereAnimId);
             sphereAnimId = null;
           }
-        }, { rootMargin: '100px 0px 100px 0px' });
+        }, { rootMargin: '0px' });
         sphereObserver.observe(activeContainer);
       }
 
@@ -981,9 +979,23 @@
       };
     }
 
+    var isLiquidScrolling = false;
+    var liquidScrollTimer = null;
+    window.addEventListener('scroll', function () {
+      isLiquidScrolling = true;
+      clearTimeout(liquidScrollTimer);
+      liquidScrollTimer = setTimeout(function () {
+        isLiquidScrolling = false;
+      }, 100);
+    }, { passive: true });
+
     function renderFrame() {
       if (!isSimVisible) {
         animFrameId = null;
+        return;
+      }
+      if (isLiquidScrolling) {
+        animFrameId = requestAnimationFrame(renderFrame);
         return;
       }
       if (!imgTex) {
@@ -1280,7 +1292,6 @@
       var hStyle = document.createElement('style');
       hStyle.id = 'demaze-hero-style';
       hStyle.textContent =
-        '@keyframes demazeHeroFadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}' +
         'section[data-framer-name="Hero"], .framer-xj5vkr{' +
         '  position:relative!important;overflow:visible!important;' +
         '  height:1420px!important;max-height:1520px!important;aspect-ratio:auto!important;' +
@@ -1312,12 +1323,12 @@
         '  position:relative!important;z-index:4!important;height:auto!important;min-height:auto!important;padding:0 24px!important;' +
         '}' +
         'section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
-        '  animation:demazeHeroFadeUp 0.6s ease-out 0.1s both;position:relative;z-index:4;' +
+        '  position:relative;z-index:4;opacity:1!important;transform:none!important;' +
         '  background-color:rgba(255, 255, 255, 0.3)!important;border-radius:100px!important;padding:8px 14px!important;' +
         '  border:1px solid rgba(255, 255, 255, 0.25)!important;backdrop-filter:blur(8px)!important;' +
         '}' +
         'section[data-framer-name="Hero"] h1{' +
-        '  animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;position:relative;z-index:4;text-wrap:balance;' +
+        '  position:relative;z-index:4;text-wrap:balance;opacity:1!important;transform:none!important;' +
         '  font-size:clamp(34px, 4.5vw, 68px)!important;line-height:1.15!important;margin:16px auto 0!important;' +
         '  color:#0b0e17!important;-webkit-text-fill-color:#0b0e17!important;text-shadow:0 1px 2px rgba(255,255,255,0.9)!important;text-align:center!important;' +
         '}' +
@@ -1328,7 +1339,8 @@
         '  filter:drop-shadow(0 4px 12px rgba(2, 132, 199, 0.28))!important;' +
         '}' +
         'section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '  animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:4;max-width:760px!important;margin:20px auto 0!important;text-align:center!important;' +
+        '  position:relative;z-index:4;max-width:760px!important;margin:20px auto 0!important;text-align:center!important;' +
+        '  opacity:1!important;transform:none!important;' +
         '  background:rgba(255, 255, 255, 0.65)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;' +
         '  border:1px solid rgba(255, 255, 255, 0.85)!important;border-radius:20px!important;padding:12px 24px!important;' +
         '  box-shadow:0 10px 30px rgba(2, 132, 199, 0.06)!important;' +
@@ -1338,7 +1350,7 @@
         '  color:#1e293b!important;-webkit-text-fill-color:#1e293b!important;text-shadow:none!important;font-weight:500!important;margin:0!important;' +
         '}' +
         'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"]{' +
-        '  animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;position:relative;z-index:4;gap:16px!important;margin-top:20px!important;' +
+        '  position:relative;z-index:4;gap:16px!important;margin-top:20px!important;opacity:1!important;transform:none!important;' +
         '}' +
         /* Primary CTA ("Let's Connect") Styling & Hover */
         'section[data-framer-name="Hero"] a[href*="contact"]{' +

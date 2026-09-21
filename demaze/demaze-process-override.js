@@ -143,17 +143,18 @@
       '  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.04);' +
       '}' +
       '.demaze-terminal {' +
-      '  background: #0F172A; border-radius: 18px; padding: 14px 16px; width: 100%;' +
-      '  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14); box-sizing: border-box;' +
+      '  background: #0F172A !important; border-radius: 18px; padding: 14px 16px; width: 100%;' +
+      '  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22); box-sizing: border-box;' +
       '  font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;' +
-      '  font-size: 12.5px; line-height: 1.6; color: #E2E8F0;' +
+      '  font-size: 12.5px; line-height: 1.6; color: #F8FAFC !important;' +
       '}' +
-      '.demaze-t-kw { color: #C084FC; font-weight: 600; }' +
-      '.demaze-t-var { color: #60A5FA; }' +
-      '.demaze-t-fn { color: #38BDF8; }' +
-      '.demaze-t-prop { color: #94A3B8; }' +
-      '.demaze-t-str { color: #34D399; }' +
-      '.demaze-t-meta { color: #64748B; font-size: 11px; margin-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px; }' +
+      '.demaze-terminal div { color: #F8FAFC !important; -webkit-text-fill-color: #F8FAFC !important; }' +
+      '.demaze-t-kw { color: #C084FC !important; -webkit-text-fill-color: #C084FC !important; font-weight: 600; }' +
+      '.demaze-t-var { color: #93C5FD !important; -webkit-text-fill-color: #93C5FD !important; }' +
+      '.demaze-t-fn { color: #38BDF8 !important; -webkit-text-fill-color: #38BDF8 !important; }' +
+      '.demaze-t-prop { color: #F1F5F9 !important; -webkit-text-fill-color: #F1F5F9 !important; font-weight: 500; }' +
+      '.demaze-t-str { color: #4ADE80 !important; -webkit-text-fill-color: #4ADE80 !important; }' +
+      '.demaze-t-meta { color: #94A3B8 !important; -webkit-text-fill-color: #94A3B8 !important; font-size: 11px; margin-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 6px; }' +
       '.demaze-memory-pill {' +
       '  display: inline-flex; align-items: center; gap: 8px;' +
       '  background: rgba(255, 83, 118, 0.12); color: #E11D48; border-radius: 100px;' +

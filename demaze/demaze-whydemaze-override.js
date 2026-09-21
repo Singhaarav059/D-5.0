@@ -327,14 +327,28 @@
     // Attach Scroll-Scrubbed Word Highlighting on Right Side Text Only
     var wordElements = Array.from(rightCol.querySelectorAll('.demaze-scroll-word'));
     if (wordElements.length > 0) {
+      var isWhyVisible = false;
+      if ('IntersectionObserver' in window) {
+        var whyObs = new IntersectionObserver(function (entries) {
+          isWhyVisible = entries[0].isIntersecting;
+          if (isWhyVisible) onScroll();
+        }, { rootMargin: '100px 0px 100px 0px' });
+        whyObs.observe(section);
+      } else {
+        isWhyVisible = true;
+      }
+
+      var cachedTargetEl = null;
       var isTicking = false;
       function onScroll() {
+        if (!isWhyVisible) return;
         if (!isTicking) {
           isTicking = true;
           requestAnimationFrame(function () {
-            var textEl = rightCol.querySelector('.demaze-fora-text');
-            var targetEl = textEl || rightCol;
-            var rect = targetEl.getBoundingClientRect();
+            if (!cachedTargetEl) {
+              cachedTargetEl = rightCol.querySelector('.demaze-fora-text') || rightCol;
+            }
+            var rect = cachedTargetEl.getBoundingClientRect();
             var windowH = window.innerHeight || document.documentElement.clientHeight;
             // Reveal starts when top of text enters view (at 82% viewport)
             // and completes 100% when text is centered in view (at 45% viewport)

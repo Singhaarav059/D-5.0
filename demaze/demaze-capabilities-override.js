@@ -276,7 +276,10 @@
       if (Math.abs(easedP - lastProgress) < 0.002 && (p === 0 || p === 1)) return;
       lastProgress = easedP;
 
-      var cards = section.querySelectorAll('.demaze-cap-card-outer');
+      if (!cachedCards || cachedCards.length !== 4) {
+        cachedCards = section.querySelectorAll('.demaze-cap-card-outer');
+      }
+      var cards = cachedCards;
       if (!cards || cards.length !== 4) return;
 
       var isDesktop = window.innerWidth > 1024;
@@ -327,10 +330,6 @@
     }
 
     window.addEventListener('scroll', requestCapScrollSync, { passive: true });
-    // Also listen to Lenis scroll if present
-    if (window.lenis && typeof window.lenis.on === 'function') {
-      window.lenis.on('scroll', requestCapScrollSync);
-    }
     syncCapScroll();
   }
 

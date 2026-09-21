@@ -4119,65 +4119,92 @@ h1, h2, h3, h4, h5, h6,
   font-weight: 700 !important;
 }
 
-p, span, li,
+p, li,
 .valist-showcase-desc,
 .demaze-ind-sub,
 .service-row-desc,
-.demaze-section-subtitle {
+.demaze-section-subtitle,
+.demaze-cap-sub {
   color: #334155 !important;
   line-height: 1.65 !important;
+}
+
+/* High-contrast Terminal & Dark Tab / Code Window Typography */
+.demaze-terminal {
+  background: #0F172A !important;
+  color: #F8FAFC !important;
+}
+.demaze-terminal span.demaze-t-kw {
+  color: #C084FC !important;
+  -webkit-text-fill-color: #C084FC !important;
+  font-weight: 600 !important;
+}
+.demaze-terminal span.demaze-t-var {
+  color: #93C5FD !important;
+  -webkit-text-fill-color: #93C5FD !important;
+}
+.demaze-terminal span.demaze-t-fn {
+  color: #38BDF8 !important;
+  -webkit-text-fill-color: #38BDF8 !important;
+}
+.demaze-terminal span.demaze-t-prop {
+  color: #F1F5F9 !important;
+  -webkit-text-fill-color: #F1F5F9 !important;
+  font-weight: 500 !important;
+}
+.demaze-terminal span.demaze-t-str {
+  color: #4ADE80 !important;
+  -webkit-text-fill-color: #4ADE80 !important;
+}
+.demaze-terminal .demaze-t-meta {
+  color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
+  font-size: 11px !important;
+  margin-top: 6px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  padding-top: 6px !important;
 }
 
 /* 7. REVERSIBLE SMOOTH SCROLL STORYTELLING ENGINE */
 .demaze-scroll-flow {
   opacity: 0 !important;
-  transform: translateY(34px) !important;
-  filter: blur(6px) !important;
+  transform: translate3d(0, 24px, 0) !important;
   transition: 
-    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.95s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  will-change: opacity, transform, filter !important;
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .demaze-scroll-flow.is-scroll-revealed {
   opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-  filter: blur(0px) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 /* Smooth slow exit when scrolling backwards past element */
 .demaze-scroll-flow.is-scroll-exited {
   opacity: 0 !important;
-  transform: translateY(28px) !important;
-  filter: blur(5px) !important;
+  transform: translate3d(0, 20px, 0) !important;
   transition: 
-    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.75s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Stagger delays for inner text and cards */
 .demaze-stagger-item {
   opacity: 0;
-  transform: translateY(20px);
-  filter: blur(4px);
+  transform: translate3d(0, 16px, 0);
   transition: 
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .is-scroll-revealed .demaze-stagger-item {
   opacity: 1 !important;
-  transform: translateY(0) !important;
-  filter: blur(0px) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 .is-scroll-exited .demaze-stagger-item {
   opacity: 0 !important;
-  transform: translateY(16px) !important;
-  filter: blur(4px) !important;
+  transform: translate3d(0, 12px, 0) !important;
 }
 
 .is-scroll-revealed .demaze-stagger-1 { transition-delay: 0.08s !important; }
@@ -4189,11 +4216,15 @@ p, span, li,
 /* Never hide hero at the top of the viewport */
 section[data-framer-name="Hero"],
 .demaze-hero-exempt,
-.demaze-subpage-hero {
+.demaze-subpage-hero,
+[data-framer-name="Main"] .demaze-scroll-flow,
+[data-framer-name="Main"] .demaze-stagger-item {
   opacity: 1 !important;
   transform: none !important;
   filter: none !important;
+  transition: none !important;
 }
+
 
 
 /* Pristine Nav Button & Glass CTA */
