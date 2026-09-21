@@ -3360,14 +3360,17 @@ body {
 .demaze-cta-banner,
 .demaze-contact-grid,
 .contact-main-grid,
-.valist-projects-grid,
-/* Homepage Framer sections */
-[data-framer-name="Main"] > section:not([data-framer-name="Hero"]) {
+.valist-projects-grid {
   opacity: 0.001;
   transform: translateY(32px) scale(0.985);
   transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
+}
+
+[data-framer-name="Main"] > section {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* When the section unfolds */

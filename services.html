@@ -3,6 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+    window.addEventListener('beforeunload', function () {
+      try { sessionStorage.setItem('__demaze_reload', '1'); } catch (_) {}
+      window.scrollTo(0, 0);
+    });
+    window.addEventListener('pagehide', function () {
+      window.scrollTo(0, 0);
+    });
+    window.addEventListener('DOMContentLoaded', function () {
+      window.scrollTo(0, 0);
+    });
+    window.addEventListener('load', function () {
+      window.scrollTo(0, 0);
+      if (window.lenis) {
+        window.lenis.scrollTo(0, { immediate: true });
+      }
+    });
+  </script>
   <title>Services - Demaze Technologies | AI, Software Engineering & Cloud Solutions</title>
   <meta name="description" content="Explore Demaze Technologies services: AI & ML, Web/Mobile App & SaaS Development, Intelligent Ecommerce, and Cloud Infrastructure.">
   <link rel="canonical" href="https://demazetech.com/services">

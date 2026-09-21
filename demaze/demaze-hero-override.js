@@ -591,7 +591,7 @@
 
     var canvas = document.createElement('canvas');
     canvas.className = 'demaze-liquid-canvas';
-    canvas.style.cssText = 'position:absolute;top:-10%;left:-10%;width:120%;height:120%;display:block;pointer-events:none;z-index:1;';
+    canvas.style.cssText = 'position:absolute;top:-10%;left:-10%;width:120%;height:120%;display:block;pointer-events:none;z-index:1;opacity:0;transition:opacity 0.3s ease-out;';
     bgContainer.appendChild(canvas);
 
     var gl = canvas.getContext('webgl', { alpha: true, depth: false, antialias: false });
@@ -977,12 +977,17 @@
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, imgTex);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        canvas.style.opacity = '1';
       };
     }
 
     function renderFrame() {
       if (!isSimVisible) {
         animFrameId = null;
+        return;
+      }
+      if (!imgTex) {
+        animFrameId = requestAnimationFrame(renderFrame);
         return;
       }
 
@@ -1058,8 +1063,8 @@
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, imgTex);
         gl.uniform1i(progDisplay.uniforms.u_text_texture, 0);
+        renderQuad(null);
       }
-      renderQuad(null);
 
       animFrameId = requestAnimationFrame(renderFrame);
     }

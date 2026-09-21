@@ -32,6 +32,14 @@
           infinite: false,
           autoRaf: true
         });
+
+        try {
+          if (sessionStorage.getItem('__demaze_reload') === '1') {
+            sessionStorage.removeItem('__demaze_reload');
+            window.scrollTo(0, 0);
+            window.lenis.scrollTo(0, { immediate: true });
+          }
+        } catch (_) {}
       } catch (e) {
         console.warn('Lenis init error:', e);
       }
@@ -247,10 +255,6 @@
     );
 
     function attachObservers() {
-      // If page is gated (like on homepage prepaint gate), wait until demaze-ready is applied
-      var isGated = document.documentElement.matches(':not(.demaze-ready)') && document.getElementById('demaze-prepaint-gate');
-      if (isGated) return;
-
       var currentTargets = getSections();
       var winH = window.innerHeight || 800;
 

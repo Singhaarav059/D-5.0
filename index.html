@@ -1,18 +1,123 @@
 <!doctype html>
 <!-- Made in Framer · framer.com ✨ -->
 <!-- Published Sep 17, 2026, 8:42 AM UTC -->
-<html lang="en" data-redirect-timezone="1" dir="ltr">
-<head>
+<html lang="en" data-redirect-timezone="1" dir="ltr"><head>
+	<meta charset="utf-8">
+	<meta name="color-scheme" content="light">
+	<meta name="theme-color" content="#ffffff">
+	<script>
+		if ('scrollRestoration' in history) {
+			history.scrollRestoration = 'manual';
+		}
+		window.scrollTo(0, 0);
+		window.__framer_disable_appear_effects_optimization__ = true;
+		window.addEventListener('beforeunload', function () {
+			try { sessionStorage.setItem('__demaze_reload', '1'); } catch (_) {}
+			window.scrollTo(0, 0);
+		});
+		window.addEventListener('pagehide', function () {
+			window.scrollTo(0, 0);
+		});
+		window.addEventListener('DOMContentLoaded', function () {
+			window.scrollTo(0, 0);
+		});
+		window.addEventListener('load', function () {
+			window.scrollTo(0, 0);
+			if (window.lenis) {
+				window.lenis.scrollTo(0, { immediate: true });
+			}
+		});
+	</script>
 	<style id="demaze-prepaint-gate">
+		:root {
+			color-scheme: light !important;
+			background-color: #ffffff !important;
+		}
 		html, body {
 			background-color: #ffffff !important;
-			color: #0B0E17;
+			color: #0B0E17 !important;
+			color-scheme: light !important;
+			margin: 0 !important;
+			padding: 0 !important;
 		}
 
-		/* Global Section Order */
+		/* Immediate static reveal for all appear elements to prevent lag */
+		[data-framer-appear-id] {
+			opacity: 1 !important;
+			visibility: visible !important;
+		}
+
+		/* Critical Static Hero Layout - Zero Layout Shift on t=0 */
+		section[data-framer-name="Hero"], .framer-xj5vkr {
+			position: relative !important;
+			overflow: visible !important;
+			height: 1420px !important;
+			max-height: 1520px !important;
+			aspect-ratio: auto !important;
+			padding: 160px 0 0 !important;
+			margin-bottom: 0px !important;
+		}
+		@media (max-width: 1199px) {
+			section[data-framer-name="Hero"], .framer-xj5vkr {
+				height: 1360px !important;
+				max-height: 1440px !important;
+			}
+		}
+		@media (max-width: 809px) {
+			section[data-framer-name="Hero"], .framer-xj5vkr {
+				height: 1380px !important;
+				max-height: 1480px !important;
+				padding: 150px 0 0 !important;
+			}
+		}
+		.framer-1tc22uo {
+			position: absolute !important;
+			top: 0 !important;
+			left: 50% !important;
+			transform: translate(-50%) !important;
+			width: 100% !important;
+			border-radius: 32px !important;
+			overflow: clip !important;
+			z-index: 0 !important;
+		}
+		.framer-1tc22uo img {
+			display: block !important;
+			width: 100% !important;
+			height: 100% !important;
+			border-radius: inherit !important;
+			object-position: center !important;
+			object-fit: cover !important;
+		}
+		.framer-1ib2jhf {
+			display: block !important;
+			position: absolute !important;
+			top: 650px !important;
+			left: 50% !important;
+			transform: translateX(-50%) !important;
+			opacity: 1 !important;
+			visibility: visible !important;
+			width: 75% !important;
+			max-width: 1280px !important;
+			aspect-ratio: 1.4382 / 1 !important;
+			z-index: 2 !important;
+			border-radius: 20px !important;
+			overflow: visible !important;
+		}
+		@media (max-width: 1199px) {
+			.framer-1ib2jhf { width: 88% !important; top: 640px !important; }
+		}
+		@media (max-width: 809px) {
+			.framer-1ib2jhf { width: 94% !important; top: 690px !important; }
+		}
+
+		/* Global Section Order & Visibility */
 		[data-framer-name="Main"] {
 			display: flex !important;
 			flex-direction: column !important;
+		}
+		[data-framer-name="Main"] > section {
+			opacity: 1 !important;
+			transform: none !important;
 		}
 		[data-framer-name="Main"] > section[data-framer-name="Hero"] { order: 1 !important; }
 		[data-framer-name="Main"] > section[data-framer-name="Badge"] { order: 2 !important; }
@@ -82,7 +187,6 @@
 		}
 	</style>
 
-	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="generator" content="Framer 560da95">
 	<title>Demaze Technologies - Your Strategic Partner in Building Scalable AI Products</title>
@@ -361,6 +465,7 @@ html.lenis body {
     <script src="./demaze/demaze-faq-override.js"></script>
     <script src="./demaze/demaze-contact-override.js"></script>
     <script src="./demaze/demaze-branding-override.js"></script>
+    <script src="./assets/demaze/lenis.min.js"></script>
     <script src="./assets/demaze/demaze-shared.js"></script>
     <!-- End of bodyEnd -->
 </body>
