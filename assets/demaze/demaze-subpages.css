@@ -3438,6 +3438,26 @@ body {
   transform: none !important;
 }
 
+/* Ensure contact grid and cards are always visible on homepage and in contact blocks */
+[data-framer-name="Main"] .demaze-contact-grid,
+[data-framer-name="Main"] .demaze-contact-card,
+#demaze-contact-block .demaze-contact-grid,
+#demaze-contact-block .demaze-contact-card,
+.demaze-contact-grid.is-unfolded,
+.demaze-contact-grid.is-unfolded .demaze-contact-card,
+.demaze-subpage-section.is-unfolded .demaze-contact-card,
+.is-unfolded .demaze-contact-card {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+[data-framer-name="Main"] a.demaze-contact-card:hover,
+#demaze-contact-block a.demaze-contact-card:hover,
+.demaze-contact-card:hover {
+  transform: translateY(-4px) !important;
+}
+
 /* When the section unfolds */
 .valist-unfold-section.is-unfolded,
 .demaze-subpage-section.is-unfolded,

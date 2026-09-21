@@ -227,47 +227,43 @@
 
     var capScrollTicking = false;
     var lastProgress = -1;
-    var isCapVisible = false;
-    var cachedGridTop = 0;
-    var cachedGridHeight = 0;
-
-    function updateGridMetrics() {
-      var grid = section.querySelector('.demaze-cap-grid');
-      if (!grid) return;
-      var rect = grid.getBoundingClientRect();
-      var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-      cachedGridTop = rect.top + scrollY;
-      cachedGridHeight = grid.offsetHeight || 500;
-    }
-    updateGridMetrics();
-    window.addEventListener('resize', updateGridMetrics, { passive: true });
-
-    if ('IntersectionObserver' in window) {
-      var capObserver = new IntersectionObserver(function (entries) {
-        isCapVisible = entries[0].isIntersecting;
-        if (isCapVisible) {
-          updateGridMetrics();
-          syncCapScroll();
-        }
-      }, { rootMargin: '250px 0px 250px 0px' });
-      capObserver.observe(section);
-    } else {
-      isCapVisible = true;
-    }
+    var cachedCards = null;
 
     function syncCapScroll() {
-      if (!isCapVisible) return;
+      var grid = section.querySelector('.demaze-cap-grid');
+      if (!grid) return;
 
       var winH = window.innerHeight || 800;
-      var scrollY = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-      var currentGridTop = cachedGridTop - scrollY;
+      var rect = grid.getBoundingClientRect();
+
+      // Early boundary exit for 0-overhead performance when far out of view
+      if (rect.bottom < -250) {
+        if (lastProgress === 1) return;
+      } else if (rect.top > winH + 250) {
+        if (lastProgress === 0) return;
+      }
+
+      if (!cachedCards || cachedCards.length !== 4) {
+        cachedCards = section.querySelectorAll('.demaze-cap-card-outer');
+      }
+      var cards = cachedCards;
+      if (!cards || cards.length !== 4) return;
+
+      // Honor user's reduced-motion preference
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        for (var k = 0; k < cards.length; k++) {
+          cards[k].style.transform = 'none';
+          cards[k].style.opacity = '1';
+        }
+        return;
+      }
 
       // Unfolding active range directly tied to the CARDS:
-      // Start (p=0): when the top of the cards is at 82% of viewport (visibly enters lower portion)
-      // End (p=1): when the cards have traveled smoothly to 14% of viewport (fully presented in primary view)
-      var start = winH * 0.84;
-      var end = winH * 0.14;
-      var rawP = (start - currentGridTop) / (start - end);
+      // Start (p=0): when the top of the cards is at 88% of viewport (visibly enters lower portion)
+      // End (p=1): when the cards have traveled smoothly to 16% of viewport (fully presented in primary view)
+      var start = winH * 0.88;
+      var end = winH * 0.16;
+      var rawP = (start - rect.top) / (start - end);
       var p = Math.min(1, Math.max(0, rawP));
 
       // Ease-out curve for fluid, organic scroll fanning
@@ -275,12 +271,6 @@
 
       if (Math.abs(easedP - lastProgress) < 0.002 && (p === 0 || p === 1)) return;
       lastProgress = easedP;
-
-      if (!cachedCards || cachedCards.length !== 4) {
-        cachedCards = section.querySelectorAll('.demaze-cap-card-outer');
-      }
-      var cards = cachedCards;
-      if (!cards || cards.length !== 4) return;
 
       var isDesktop = window.innerWidth > 1024;
 
@@ -319,7 +309,6 @@
     }
 
     function requestCapScrollSync() {
-      if (!isCapVisible) return;
       if (!capScrollTicking) {
         capScrollTicking = true;
         requestAnimationFrame(function () {
@@ -330,6 +319,27 @@
     }
 
     window.addEventListener('scroll', requestCapScrollSync, { passive: true });
+    window.addEventListener('resize', requestCapScrollSync, { passive: true });
+
+    // Attach to Lenis smooth scroll whenever initialized
+    function attachLenis() {
+      if (window.lenis && typeof window.lenis.on === 'function') {
+        window.lenis.on('scroll', requestCapScrollSync);
+        return true;
+      }
+      return false;
+    }
+
+    if (!attachLenis()) {
+      var lenisCheckInterval = setInterval(function () {
+        if (attachLenis()) {
+          clearInterval(lenisCheckInterval);
+        }
+      }, 150);
+      setTimeout(function () { clearInterval(lenisCheckInterval); }, 5000);
+    }
+
+    // Immediately run to apply initial folded / fanned state
     syncCapScroll();
   }
 
@@ -341,6 +351,7 @@
     }
 
     if (section.querySelector('.demaze-cap-wrapper')) {
+      bindUnfoldMotion(section);
       return;
     }
 
