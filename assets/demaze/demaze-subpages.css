@@ -331,16 +331,29 @@ h4, .demaze-h4 {
   opacity: 1 !important;
 }
 
-.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+.demaze-nav-bar .demaze-btn-primary,
+.demaze-nav-bar .demaze-nav-btn,
+.demaze-nav-action .demaze-btn-primary,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-btn,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-action .demaze-btn-primary {
+  background: #0b0e17 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
 }
 
-.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary:hover {
-  background: #ffffff !important;
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+.demaze-nav-bar .demaze-btn-primary:hover,
+.demaze-nav-bar .demaze-nav-btn:hover,
+.demaze-nav-action .demaze-btn-primary:hover,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-btn-primary:hover,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-btn:hover,
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-action .demaze-btn-primary:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.3) !important;
 }
 
 .demaze-nav-logo {
@@ -2811,34 +2824,22 @@ body {
 .valist-capabilities-stage {
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
-  gap: 56px;
+  gap: 48px;
   align-items: start;
-  margin: 60px 0 100px;
+  margin: 40px 0 60px;
   position: relative;
+  min-height: auto !important;
 }
 
 @media (min-width: 992px) {
   .valist-capabilities-stage {
-    min-height: 380vh;
+    min-height: auto !important;
     position: relative;
     padding-top: 10px;
-  }
-  .valist-stage-sidebar,
-  .valist-sticky-column {
-    position: sticky !important;
-    top: 96px !important;
-    align-self: start;
-  }
-  .valist-showcase-panes {
-    position: sticky !important;
-    top: 96px !important;
-    align-self: start;
   }
 }
 
 .valist-sticky-column {
-  position: sticky;
-  top: 96px;
   display: flex;
   flex-direction: column;
 }
@@ -2848,87 +2849,95 @@ body {
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  color: var(--valist-ink);
+  color: #0b0e17;
   margin-bottom: 12px;
 }
 
 .valist-stage-desc {
   font-size: 15px;
   line-height: 1.6;
-  color: var(--valist-ink-muted);
-  margin-bottom: 28px;
+  color: #334155;
+  margin-bottom: 24px;
   max-width: 440px;
 }
 
 .valist-capability-nav-list {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--valist-border);
+  gap: 12px;
+  border-top: none !important;
+  margin-top: 6px;
 }
 
 .valist-capability-nav-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--valist-border);
-  background: transparent;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
   cursor: pointer;
   text-align: left;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   width: 100%;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.04) !important;
+  outline: none;
+}
+
+.valist-capability-nav-item:hover {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(2, 132, 199, 0.32) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08) !important;
+}
+
+.valist-capability-nav-item.active {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 249, 255, 0.94) 100%) !important;
+  border-color: rgba(2, 132, 199, 0.45) !important;
+  box-shadow: 0 10px 32px rgba(2, 132, 199, 0.14), inset 0 1px 0 #ffffff !important;
+  transform: translateX(4px) !important;
 }
 
 .valist-capability-nav-item .nav-item-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
+  color: #0b0e17 !important;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .valist-capability-nav-item .nav-item-num {
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.02em;
-}
-
-.valist-capability-nav-item:hover .nav-item-title {
-  color: var(--valist-ink);
-}
-
-.valist-capability-nav-item.active .nav-item-title {
-  color: var(--valist-ink);
+  font-size: 12px;
   font-weight: 700;
-  transform: translateX(4px);
+  color: #0284c7 !important;
+  background: rgba(2, 132, 199, 0.10);
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 
 .valist-capability-nav-item.active .nav-item-num {
-  color: var(--valist-purple);
-  font-weight: 700;
+  background: linear-gradient(135deg, #0284c7, #4f46e5) !important;
+  color: #ffffff !important;
 }
 
 .valist-arrow-shift {
   font-size: 16px;
-  color: rgba(0, 0, 0, 0.25);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #0284c7 !important;
+  transition: transform 0.25s ease;
   margin-left: auto;
 }
 
 .valist-capability-nav-item:hover .valist-arrow-shift {
-  color: var(--valist-ink);
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 .valist-capability-nav-item.active .valist-arrow-shift {
-  color: var(--valist-purple);
-  transform: translateX(6px);
+  transform: translateX(4px);
+  color: #4f46e5 !important;
 }
 
 /* Right Showcase Unfolding Panes */
@@ -3825,4 +3834,611 @@ section.is-unfolded .framer-1a3b5v {
   }
 }
 
+
+
+
+/* ==========================================================================
+   UNIFIED CLOUD THEME, FROSTED GLASS TABS & REVERSIBLE SCROLL FLOW
+   ========================================================================== */
+
+/* 1. Cohesive Atmospheric Cloud Sky Theme */
+body {
+  background: 
+    radial-gradient(ellipse 100% 60% at 50% -10%, rgba(186, 230, 253, 0.60), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 90% 25%, rgba(224, 242, 254, 0.50), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 10% 50%, rgba(224, 242, 254, 0.45), transparent 60%),
+    linear-gradient(180deg, #f0f9ff 0%, #ffffff 25%, #f8fafc 65%, #f0f9ff 100%) !important;
+  background-attachment: fixed !important;
+  color: #0b0e17 !important;
+}
+
+/* Homepage Hero Cloud Framing & Text Contrast */
+section[data-framer-name="Hero"] .framer-1tc22uo img {
+  object-fit: cover !important;
+  object-position: center 30% !important;
+}
+
+section[data-framer-name="Hero"] .framer-1tc22uo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 95% 75% at 50% 20%, rgba(255, 255, 255, 0.40) 0%, rgba(240, 249, 255, 0.15) 55%, rgba(255, 255, 255, 0.92) 94%, #ffffff 100%) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* Hero Headings and Subtitle High Contrast */
+section[data-framer-name="Hero"] h1,
+section[data-framer-name="Hero"] [data-framer-name="Hero Title"],
+section[data-framer-name="Hero"] [data-framer-name="Title"] h1 {
+  color: #0b0e17 !important;
+  text-shadow: 0 2px 24px rgba(255, 255, 255, 0.95), 0 1px 2px rgba(15, 23, 42, 0.15) !important;
+}
+
+section[data-framer-name="Hero"] [data-framer-name="Subtitle"] p,
+section[data-framer-name="Hero"] [data-framer-name="Description"] p,
+section[data-framer-name="Hero"] p {
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 16px rgba(255, 255, 255, 0.90) !important;
+}
+
+/* Hero Badge Pill */
+section[data-framer-name="Hero"] [data-framer-name="Tag"],
+section[data-framer-name="Hero"] .framer-zeccam,
+.demaze-badge-pill {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(2, 132, 199, 0.28) !important;
+  color: #0284c7 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.10), inset 0 1px 0 #ffffff !important;
+}
+
+/* 2. Frosted Glass Navigation Pill & Tabs */
+.demaze-nav-bar {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 16px 40px -8px rgba(2, 132, 199, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+.demaze-nav-item a {
+  color: #1e293b !important;
+  font-weight: 550 !important;
+  padding: 8px 18px !important;
+  border-radius: 999px !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.demaze-nav-item a:hover {
+  background: rgba(255, 255, 255, 0.80) !important;
+  color: #0284c7 !important;
+  backdrop-filter: blur(12px) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08) !important;
+}
+
+.demaze-nav-item a.active {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0284c7 !important;
+  border: 1px solid rgba(2, 132, 199, 0.22) !important;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.12), inset 0 1px 0 #ffffff !important;
+}
+
+.demaze-nav-btn {
+  background: #0b0e17 !important;
+  color: #ffffff !important;
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.demaze-nav-btn:hover {
+  background: #0284c7 !important;
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.28) !important;
+}
+
+/* 3. Frosted Glass Industries Tabs & Subtabs */
+.demaze-industries-stage,
+.demaze-ind-stage {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 24px 64px -12px rgba(2, 132, 199, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+.demaze-ind-directory {
+  background: rgba(255, 255, 255, 0.50) !important;
+  backdrop-filter: blur(14px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.75) !important;
+}
+
+.demaze-ind-row {
+  background: rgba(255, 255, 255, 0.60) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: 12px !important;
+  transition: all 0.20s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.demaze-ind-row:hover {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(2, 132, 199, 0.30) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.10) !important;
+}
+
+.demaze-ind-row.active {
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(224, 242, 254, 0.90) 100%) !important;
+  border-color: rgba(2, 132, 199, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.16), inset 0 1px 0 #ffffff !important;
+  transform: translateX(5px) !important;
+}
+
+.demaze-ind-row.active .demaze-row-name {
+  color: #0284c7 !important;
+  font-weight: 650 !important;
+}
+
+.demaze-ind-preview {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.demaze-preview-caps,
+.demaze-preview-subsectors {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+}
+
+.demaze-cap-pill,
+.demaze-sub-chip {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(2, 132, 199, 0.20) !important;
+  color: #0f172a !important;
+  font-weight: 500 !important;
+}
+
+/* 4. Frosted Glass Core Capabilities (Services) Tabs & Showcases */
+.valist-capability-nav-item {
+  background: rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.80) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.valist-capability-nav-item:hover {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(2, 132, 199, 0.32) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08) !important;
+}
+
+.valist-capability-nav-item.active {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.92) 100%) !important;
+  border-color: rgba(2, 132, 199, 0.45) !important;
+  box-shadow: 0 10px 32px rgba(2, 132, 199, 0.14), inset 0 1px 0 #ffffff !important;
+}
+
+.valist-capability-nav-item.active .nav-item-num {
+  background: linear-gradient(135deg, #0284c7, #4f46e5) !important;
+  color: #ffffff !important;
+  padding: 3px 9px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
+}
+
+.valist-capabilities-showcase-card,
+.valist-showcase-pane {
+  background: rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 24px 64px -15px rgba(2, 132, 199, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+.valist-showcase-pill {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(2, 132, 199, 0.24) !important;
+  color: #0284c7 !important;
+  font-weight: 600 !important;
+}
+
+/* 5. Frosted Glass Cards Across Sections (Bento, Projects, FAQ, Process) */
+.valist-process-card,
+.valist-case-card,
+.project-case-card,
+.value-card,
+.about-bento-card,
+.valist-metric-counter-card,
+.valist-faq-card,
+.demaze-contact-card,
+.contact-form-shell {
+  background: rgba(255, 255, 255, 0.74) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 16px 40px -10px rgba(2, 132, 199, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  border-radius: 22px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.valist-process-card:hover,
+.valist-case-card:hover,
+.project-case-card:hover,
+.value-card:hover,
+.about-bento-card:hover,
+.demaze-contact-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  box-shadow: 0 24px 50px -12px rgba(2, 132, 199, 0.16) !important;
+}
+
+/* Partner Logo Pills in Glass Style */
+[data-framer-name="Badge"] .framer-1a3b5v,
+[data-framer-name="Badge"] a,
+.partner-logo-item {
+  background: rgba(255, 255, 255, 0.70) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.05) !important;
+}
+
+/* 6. High Contrast Typography & Vibrant Highlights */
+.demaze-highlight-gradient,
+.valist-highlight-text {
+  background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.valist-showcase-heading,
+.demaze-ind-heading,
+.service-row-title,
+.demaze-section-title {
+  color: #0b0e17 !important;
+  font-weight: 700 !important;
+}
+
+p, span, li,
+.valist-showcase-desc,
+.demaze-ind-sub,
+.service-row-desc,
+.demaze-section-subtitle {
+  color: #334155 !important;
+  line-height: 1.65 !important;
+}
+
+/* 7. REVERSIBLE SMOOTH SCROLL STORYTELLING ENGINE */
+.demaze-scroll-flow {
+  opacity: 0 !important;
+  transform: translateY(34px) !important;
+  filter: blur(6px) !important;
+  transition: 
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.95s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: opacity, transform, filter !important;
+}
+
+.demaze-scroll-flow.is-scroll-revealed {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  filter: blur(0px) !important;
+}
+
+/* Smooth slow exit when scrolling backwards past element */
+.demaze-scroll-flow.is-scroll-exited {
+  opacity: 0 !important;
+  transform: translateY(28px) !important;
+  filter: blur(5px) !important;
+  transition: 
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.75s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Stagger delays for inner text and cards */
+.demaze-stagger-item {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(4px);
+  transition: 
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.is-scroll-revealed .demaze-stagger-item {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0px) !important;
+}
+
+.is-scroll-exited .demaze-stagger-item {
+  opacity: 0 !important;
+  transform: translateY(16px) !important;
+  filter: blur(4px) !important;
+}
+
+.is-scroll-revealed .demaze-stagger-1 { transition-delay: 0.08s !important; }
+.is-scroll-revealed .demaze-stagger-2 { transition-delay: 0.16s !important; }
+.is-scroll-revealed .demaze-stagger-3 { transition-delay: 0.24s !important; }
+.is-scroll-revealed .demaze-stagger-4 { transition-delay: 0.32s !important; }
+.is-scroll-revealed .demaze-stagger-5 { transition-delay: 0.40s !important; }
+
+/* Never hide hero at the top of the viewport */
+section[data-framer-name="Hero"],
+.demaze-hero-exempt,
+.demaze-subpage-hero {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+
+/* Pristine Nav Button & Glass CTA */
+.demaze-nav-cta {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.demaze-nav-cta .demaze-nav-btn,
+.demaze-nav-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 24px !important;
+  background: #0b0e17 !important;
+  color: #ffffff !important;
+  border-radius: 999px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.demaze-nav-cta .demaze-nav-btn:hover,
+.demaze-nav-btn:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.28) !important;
+}
+
+
+/* ==========================================================================
+   POLISHED FROSTED SCROLLED NAV & VIBRANT GRADIENT HIGHLIGHTS
+   ========================================================================== */
+
+/* Scrolled Nav Pill: Ultra-Luminous Frosted Glass (Adapts to All Sections) */
+.demaze-nav-bar.demaze-nav-scrolled {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 16px 40px -8px rgba(2, 132, 199, 0.14), inset 0 1px 0 #ffffff !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a {
+  color: #1e293b !important;
+  opacity: 1 !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a:hover {
+  background: rgba(2, 132, 199, 0.08) !important;
+  color: #0284c7 !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-item a.active {
+  background: rgba(2, 132, 199, 0.12) !important;
+  color: #0284c7 !important;
+  border: 1px solid rgba(2, 132, 199, 0.25) !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-btn {
+  background: #0b0e17 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+.demaze-nav-bar.demaze-nav-scrolled .demaze-nav-btn:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+/* Vibrant Saturated Gradient Highlights */
+.demaze-highlight-gradient,
+.valist-highlight-text,
+section[data-framer-name="Hero"] h1 .demaze-highlight-gradient {
+  background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: #0284c7 !important;
+  display: inline-block !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0px !important;
+  filter: drop-shadow(0 4px 12px rgba(2, 132, 199, 0.28)) !important;
+}
+
+/* Global Card Highlights & Glass Edges */
+.demaze-card-highlight.is-illuminated,
+.valist-case-card.is-illuminated,
+.project-case-card.is-illuminated {
+  box-shadow: 0 0 24px rgba(2, 132, 199, 0.2) !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+}
+
+/* ==========================================================================
+   POLISHED CONTACT PAGE LAYOUT & FORM VISIBILITY
+   ========================================================================== */
+.contact-main-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1.3fr !important;
+  gap: 40px !important;
+  margin-bottom: 80px !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+@media (max-width: 991px) {
+  .contact-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+}
+
+.contact-info-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.contact-form-shell {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 24px !important;
+  padding: 40px 36px !important;
+  box-shadow: 0 16px 40px -10px rgba(2, 132, 199, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.contact-form-shell h3 {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #0b0e17 !important;
+  margin-bottom: 8px !important;
+}
+
+.contact-form-shell p {
+  font-size: 14.5px !important;
+  color: #475569 !important;
+  margin-bottom: 28px !important;
+}
+
+/* ==========================================================================
+   GUARANTEED TEXT CONTRAST ON DARK & GRADIENT SURFACES
+   ========================================================================== */
+.demaze-detail-btn,
+.demaze-detail-btn *,
+.demaze-detail-btn span,
+.demaze-detail-btn svg,
+.demaze-drives-cta,
+.demaze-drives-cta *,
+.demaze-drives-cta span,
+.demaze-drives-cta svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.demaze-fora-left *,
+.demaze-fora-quote,
+.demaze-fora-quote *,
+.demaze-fora-user-name,
+.demaze-fora-user-role {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.demaze-fora-stars {
+  color: #f59e0b !important;
+  -webkit-text-fill-color: #f59e0b !important;
+}
+
+.demaze-btn-primary,
+.demaze-btn-primary *,
+.demaze-footer-cta-pill,
+.demaze-footer-cta-pill *,
+button[type="submit"],
+button[type="submit"] * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.calendly-embed-box h4,
+.calendly-embed-box p {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Capabilities Clean Nav (No Breaking Line Touching Tab 1) */
+.valist-capability-nav-list {
+  border-top: none !important;
+  margin-top: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.valist-capability-nav-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Natural Section Height & Zero Large Empty Voids */
+.valist-capabilities-stage {
+  margin: 40px 0 60px !important;
+  position: relative !important;
+}
+
+@media (min-width: 992px) {
+  .valist-capabilities-stage {
+    min-height: 220vh !important;
+  }
+
+  .valist-sticky-column,
+  .valist-showcase-panes {
+    position: sticky !important;
+    top: 120px !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .valist-capabilities-stage {
+    min-height: auto !important;
+    height: auto !important;
+  }
+}
+
+.services-alternating-container {
+  min-height: auto !important;
+  height: auto !important;
+  margin-bottom: 60px !important;
+}
+
+.valist-showcase-panes {
+  min-height: auto !important;
+}
 

@@ -587,7 +587,7 @@
     var bgImg = bgContainer.querySelector('img');
     var imgSrc = (bgImg && bgImg.src && !bgImg.src.includes('undefined'))
       ? bgImg.src
-      : './assets/demaze/hero-alpine-bg.jpg';
+      : './assets/demaze/subpage-clouds-wide.jpg';
 
     var canvas = document.createElement('canvas');
     canvas.className = 'demaze-liquid-canvas';
@@ -1144,7 +1144,9 @@
 
     // 2. Headline
     var h1 = hero.querySelector('h1');
-    if (h1) h1.textContent = content.headline;
+    if (h1) {
+      h1.innerHTML = 'Your Strategic Partner in Building <span class="demaze-highlight-gradient">Scalable AI Products</span>';
+    }
 
     // 3. Description
     var headlineWrapper = hero.querySelector('[data-framer-name="Headline"]');
@@ -1188,9 +1190,9 @@
       heroBgImg.style.display = 'block';
       heroBgImg.style.visibility = 'visible';
       heroBgImg.style.opacity = '1';
-      if (!heroBgImg.src.includes('hero-alpine-bg.jpg') || heroBgImg.src.includes('cbqUucc')) {
-        heroBgImg.src = './assets/demaze/hero-alpine-bg.jpg';
-        heroBgImg.srcset = './assets/demaze/hero-alpine-bg.jpg 1x';
+      if (!heroBgImg.src.includes('subpage-clouds-wide.jpg') || heroBgImg.src.includes('cbqUucc')) {
+        heroBgImg.src = './assets/demaze/subpage-clouds-wide.jpg';
+        heroBgImg.srcset = './assets/demaze/subpage-clouds-wide.jpg 1x';
       }
     }
 
@@ -1200,9 +1202,9 @@
       bgContainer.__demazeEnforced = true;
       var bgObserver = new MutationObserver(function () {
         var img = bgContainer.querySelector('img');
-        if (img && (!img.src.includes('hero-alpine-bg.jpg') || img.src.includes('cbqUucc'))) {
-          img.src = './assets/demaze/hero-alpine-bg.jpg';
-          img.srcset = './assets/demaze/hero-alpine-bg.jpg 1x';
+        if (img && (!img.src.includes('subpage-clouds-wide.jpg') || img.src.includes('cbqUucc'))) {
+          img.src = './assets/demaze/subpage-clouds-wide.jpg';
+          img.srcset = './assets/demaze/subpage-clouds-wide.jpg 1x';
         }
         if (!bgContainer.querySelector('.demaze-liquid-canvas')) {
           initHeroLiquidHover(hero);
@@ -1317,14 +1319,23 @@
         'section[data-framer-name="Hero"] h1{' +
         '  animation:demazeHeroFadeUp 0.6s ease-out 0.25s both;position:relative;z-index:4;text-wrap:balance;' +
         '  font-size:clamp(34px, 4.5vw, 68px)!important;line-height:1.15!important;margin:16px auto 0!important;' +
-        '  color:#ffffff!important;text-shadow:0 2px 16px rgba(0,0,0,0.65)!important;text-align:center!important;' +
+        '  color:#0b0e17!important;-webkit-text-fill-color:#0b0e17!important;text-shadow:0 1px 2px rgba(255,255,255,0.9)!important;text-align:center!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] h1 .demaze-highlight-gradient{' +
+        '  background:linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)!important;' +
+        '  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;' +
+        '  text-shadow:none!important;-webkit-text-stroke:0px!important;' +
+        '  filter:drop-shadow(0 4px 12px rgba(2, 132, 199, 0.28))!important;' +
         '}' +
         'section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '  animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:4;max-width:680px!important;margin:16px auto 0!important;text-align:center!important;' +
+        '  animation:demazeHeroFadeUp 0.6s ease-out 0.4s both;position:relative;z-index:4;max-width:760px!important;margin:20px auto 0!important;text-align:center!important;' +
+        '  background:rgba(255, 255, 255, 0.65)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;' +
+        '  border:1px solid rgba(255, 255, 255, 0.85)!important;border-radius:20px!important;padding:12px 24px!important;' +
+        '  box-shadow:0 10px 30px rgba(2, 132, 199, 0.06)!important;' +
         '}' +
         'section[data-framer-name="Hero"] .demaze-hero-desc p{' +
-        '  text-align:center!important;font-size:clamp(15px,1.3vw,18.5px)!important;line-height:1.6!important;' +
-        '  color:rgba(255,255,255,0.95)!important;text-shadow:0 2px 10px rgba(0,0,0,0.75)!important;' +
+        '  text-align:center!important;font-size:clamp(15px,1.25vw,17.5px)!important;line-height:1.65!important;' +
+        '  color:#1e293b!important;-webkit-text-fill-color:#1e293b!important;text-shadow:none!important;font-weight:500!important;margin:0!important;' +
         '}' +
         'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"]{' +
         '  animation:demazeHeroFadeUp 0.6s ease-out 0.55s both;position:relative;z-index:4;gap:16px!important;margin-top:20px!important;' +
@@ -1433,8 +1444,8 @@
         '@keyframes demazePulse{0%,100%{opacity:0.6;transform:scale(0.9);}50%{opacity:1;transform:scale(1.15);box-shadow:0 0 12px #10b981;}}' +
         '.demaze-sphere-stage{' +
         '  flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;' +
-        '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.55) 0%, rgba(10, 15, 30, 0.85) 100%), url("./assets/demaze/hero-alpine-bg.jpg");' +
-        '  background-size:cover;background-position:center bottom;background-repeat:no-repeat;' +
+        '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.40) 0%, rgba(10, 15, 30, 0.75) 100%), url("/assets/demaze/subpage-clouds-wide.jpg");' +
+        '  background-size:cover;background-position:center;background-repeat:no-repeat;' +
         '}' +
         '.demaze-sphere-stage::before{' +
         '  content:"";position:absolute;inset:0;' +
@@ -1492,7 +1503,7 @@
       }
     );
     var bgImg = hero.querySelector('.framer-1tc22uo img');
-    var bgImgOk = !!(bgImg && !bgImg.src.includes('cbqUucc') && bgImg.src.includes('hero-alpine-bg.jpg'));
+    var bgImgOk = !!(bgImg && !bgImg.src.includes('cbqUucc') && (bgImg.src.includes('subpage-clouds-wide') || bgImg.src.includes('hero-alpine-bg')));
     return headlineOk && badgeOk && bgImgOk;
   }
 

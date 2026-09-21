@@ -138,7 +138,7 @@
     return !!section.querySelector('[data-framer-name="Title"]');
   }
 
-  var TARGET_CTA_BG = './assets/demaze/hero-alpine-bg.jpg';
+  var TARGET_CTA_BG = './assets/demaze/subpage-clouds-wide.jpg';
   function enforceCtaBg(section) {
     if (!section) return;
     var ctaImg = section.querySelector('[data-framer-background-image-wrapper] img');

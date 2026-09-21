@@ -59,8 +59,7 @@
   function initNav() {
     var navBar = document.querySelector('.demaze-nav-bar');
     if (!navBar || navBar.__demazeScrollAttached) return;
-    // On homepage, demaze-branding-override.js handles the header scroll state
-    if (document.querySelector('section[data-framer-name="Hero"]')) return;
+    // Unified nav handles both homepage and subpages
 
     navBar.__demazeScrollAttached = true;
     var isScrolled = false;
@@ -206,102 +205,121 @@
     });
   }
 
-  // 6. Valist Signature Section Unfolding & Cascading Motion Engine
+  // 6. Reversible Smooth Scroll Storytelling Engine (Slow Appearance & Disappearance)
   function initUnfolding() {
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function getSections() {
+    function getTargets() {
       return document.querySelectorAll(
-        '.valist-unfold-section, .demaze-subpage-section, .valist-capabilities-stage, .valist-process-stage, .valist-metric-counters-grid, .valist-timeline-container, .about-bento-grid, .values-grid, .industries-shell, .valist-faq-container, .demaze-cta-banner, .demaze-contact-grid, .contact-main-grid, .valist-projects-grid, main > section:not([data-framer-name="Hero"]), [data-framer-name="Main"] > section:not([data-framer-name="Hero"])'
+        '.demaze-subpage-section, .valist-unfold-section, .valist-capabilities-stage, .valist-process-stage, .demaze-industries-stage, .about-bento-grid, .values-grid, .valist-projects-grid, .contact-main-grid, .demaze-contact-grid, .valist-faq-container, .demaze-cta-banner, .valist-showcase-card, .valist-timeline-container, [data-framer-name="Badge"], [data-framer-name="Videos making Step"], [data-framer-name="Sricpt"], [data-framer-name="Tools"], [data-framer-name="Products"], [data-framer-name="Ai Powered"], [data-framer-name="Why Demaze vs Traditional"], [data-framer-name="CTA"], [data-framer-name="Faq"]'
       );
     }
 
-    if (prefersReduced || !('IntersectionObserver' in window)) {
-      getSections().forEach(function (el) {
-        el.classList.add('is-unfolded');
+    if (prefersReduced) {
+      getTargets().forEach(function (el) {
+        el.classList.add('is-scroll-revealed');
       });
       return;
     }
 
-    function unfoldTarget(target) {
-      if (target.classList.contains('is-unfolded')) return;
-      target.classList.add('is-unfolded');
+    function setupChildren(target) {
+      if (target.__demazeStaggerSetup) return;
+      target.__demazeStaggerSetup = true;
 
-      // Stagger all child cards inside the newly unfolded section
-      var cards = target.querySelectorAll(
-        '.valist-stagger-card, .valist-case-card, .project-case-card, .valist-process-card, .valist-metric-counter-card, .value-card, .about-bento-card, .service-feature-row, .valist-faq-card, .demaze-contact-card, .calendly-embed-box, .contact-form-shell, [data-framer-name*="Card"], [data-framer-name*="Item"], [data-framer-name*="Row"], .framer-1a3b5v'
-      );
-      cards.forEach(function (card, idx) {
-        card.style.transitionDelay = (0.06 * (idx % 8)) + 's';
+      // Stagger headings
+      var headings = target.querySelectorAll('h2, h3, .demaze-section-title, .demaze-ind-heading, .valist-showcase-heading');
+      headings.forEach(function (h) {
+        h.classList.add('demaze-stagger-item', 'demaze-stagger-1');
       });
 
-      // Illuminate any accent highlights inside the section
-      var highlights = target.querySelectorAll('.demaze-scroll-highlight');
-      highlights.forEach(function (hl) {
-        hl.classList.add('is-illuminated');
+      // Stagger subtitles & paragraphs
+      var subs = target.querySelectorAll('.demaze-section-subtitle, .demaze-ind-sub, .valist-showcase-desc, .service-row-desc');
+      subs.forEach(function (p) {
+        p.classList.add('demaze-stagger-item', 'demaze-stagger-2');
+      });
+
+      // Stagger cards & items
+      var cards = target.querySelectorAll(
+        '.valist-stagger-card, .valist-case-card, .project-case-card, .valist-process-card, .valist-metric-counter-card, .value-card, .about-bento-card, .valist-faq-card, .demaze-contact-card, .contact-form-shell, .calendly-embed-box, .service-feature-row, .demaze-ind-row, .partner-logo-item, .framer-1a3b5v'
+      );
+      cards.forEach(function (card, idx) {
+        card.classList.add('demaze-stagger-item');
+        card.classList.add('demaze-stagger-' + (Math.min(5, 3 + (idx % 3))));
       });
     }
 
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
+          var el = entry.target;
+          setupChildren(el);
+
           if (entry.isIntersecting) {
-            unfoldTarget(entry.target);
-            observer.unobserve(entry.target);
+            // Slow, graceful entrance when scrolling into section
+            el.classList.add('is-scroll-revealed');
+            el.classList.add('is-unfolded');
+            el.classList.remove('is-scroll-exited');
+
+            // Also illuminate any accent highlights
+            var highlights = el.querySelectorAll('.demaze-scroll-highlight, .valist-highlight-text');
+            highlights.forEach(function (hl) {
+              hl.classList.add('is-illuminated');
+            });
+          } else {
+            // Smooth, slow exit when scrolling backwards past element (exiting towards bottom of viewport)
+            if (entry.boundingClientRect.top > 0) {
+              el.classList.remove('is-scroll-revealed');
+              el.classList.add('is-scroll-exited');
+            }
           }
         });
       },
-      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+      { threshold: [0, 0.08, 0.2], rootMargin: '0px 0px -40px 0px' }
     );
 
-    function attachObservers() {
-      var currentTargets = getSections();
+    function attach() {
+      var currentTargets = getTargets();
       var winH = window.innerHeight || 800;
 
       currentTargets.forEach(function (el) {
-        var rect = el.getBoundingClientRect();
-        // Skip hidden 0-dimension placeholders
-        if (rect.width === 0 && rect.height === 0) return;
-
-        // If element is already scrolled past or visible in the current viewport, unfold immediately
-        if (rect.top < winH * 0.88 && rect.bottom > 0) {
-          unfoldTarget(el);
+        // Skip Hero section (must always remain visible at the top)
+        if (el.closest('[data-framer-name="Hero"]') || el.classList.contains('demaze-hero-exempt') || el.classList.contains('demaze-subpage-hero')) {
+          el.classList.add('is-scroll-revealed');
           return;
         }
 
-        if (!el.__valistObserved) {
-          el.__valistObserved = true;
+        var rect = el.getBoundingClientRect();
+        if (rect.width === 0 && rect.height === 0) return;
+
+        el.classList.add('demaze-scroll-flow');
+        setupChildren(el);
+
+        // If already visible in current viewport, reveal
+        if (rect.top < winH * 0.88 && rect.bottom > 0) {
+          el.classList.add('is-scroll-revealed');
+          el.classList.remove('is-scroll-exited');
+        }
+
+        if (!el.__demazeFlowObserved) {
+          el.__demazeFlowObserved = true;
           observer.observe(el);
         }
       });
     }
 
-    // Run initial attach
-    attachObservers();
+    attach();
 
-    // Listen for readiness gate on homepage
-    if (window.MutationObserver) {
-      var gateObserver = new MutationObserver(function () {
-        if (document.documentElement.classList.contains('demaze-ready')) {
-          attachObservers();
-          gateObserver.disconnect();
-        }
-      });
-      gateObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    }
+    // Recheck after DOM mutations or post-hydration
+    var pollCount = 0;
+    var attachInterval = setInterval(function () {
+      pollCount++;
+      attach();
+      if (pollCount > 15) clearInterval(attachInterval);
+    }, 300);
 
-    // Periodic check to bind any post-hydrated React sections smoothly
-    var polls = 0;
-    var pollTimer = setInterval(function () {
-      polls++;
-      attachObservers();
-      if (polls > 20) clearInterval(pollTimer);
-    }, 250);
-
-    // Also attach on scroll
-    window.addEventListener('scroll', attachObservers, { passive: true });
+    window.addEventListener('scroll', attach, { passive: true });
     if (window.lenis && typeof window.lenis.on === 'function') {
-      window.lenis.on('scroll', attachObservers);
+      window.lenis.on('scroll', attach);
     }
   }
 
@@ -405,24 +423,24 @@
         var totalDist = stage.offsetHeight - window.innerHeight;
         if (totalDist <= 0) return;
 
-        var topOffset = 100;
-        var progress = (-rect.top + topOffset) / totalDist;
+        var pinTop = 120;
+        var scrollPassed = pinTop - rect.top;
+        var progress = scrollPassed / totalDist;
+        progress = Math.max(0, Math.min(1, progress));
 
-        if (progress >= 0 && progress <= 1) {
-          var targetIndex = 0;
-          if (progress < 0.24) {
-            targetIndex = 0;
-          } else if (progress < 0.49) {
-            targetIndex = 1;
-          } else if (progress < 0.74) {
-            targetIndex = 2;
-          } else {
-            targetIndex = 3;
-          }
+        var targetIndex = 0;
+        if (progress < 0.25) {
+          targetIndex = 0;
+        } else if (progress < 0.50) {
+          targetIndex = 1;
+        } else if (progress < 0.75) {
+          targetIndex = 2;
+        } else {
+          targetIndex = 3;
+        }
 
-          if (targetIndex !== currentIndex) {
-            setActivePillar(targetIndex, false);
-          }
+        if (targetIndex !== currentIndex) {
+          setActivePillar(targetIndex, false);
         }
       }
 

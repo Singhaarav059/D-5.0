@@ -50,59 +50,14 @@
   }
 
   function isHydrated() {
-    var nav = getNav();
     var footer = document.querySelector('footer');
-    return !!(nav && nav.querySelector('img') && footer && footer.querySelector('[data-framer-name="Menu"]'));
+    return !!(footer && (footer.querySelector('[data-framer-name="Menu"]') || document.querySelector('footer.demaze-footer')));
   }
 
   var NAV_STYLE_ID = 'demaze-nav-style';
 
   function ensureNavStyle() {
-    if (document.getElementById(NAV_STYLE_ID)) return;
-    var style = document.createElement('style');
-    style.id = NAV_STYLE_ID;
-    style.textContent =
-      '.framer-1rmnfff-container, header{' +
-      '  z-index:99999!important;' +
-      '  transition:max-width 0.4s cubic-bezier(.22,1,.36,1), padding 0.4s ease!important;' +
-      '}' +
-      'nav[data-framer-name="Nav"]{' +
-      '  height:64px!important;border-radius:100px!important;' +
-      '  background:rgba(255,255,255,0.1)!important;' +
-      '  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;' +
-      '  border:1px solid rgba(255,255,255,0.18)!important;' +
-      '  box-shadow:none!important;' +
-      '  transition:all 0.35s cubic-bezier(.22,1,.36,1)!important;}' +
-      'nav[data-framer-name="Nav"] img{filter:none!important;max-height:36px!important;width:auto!important;transition:transform 0.25s ease;}' +
-      'nav[data-framer-name="Nav"].demaze-nav-scrolled, .framer-v-2hoya3 nav[data-framer-name="Nav"]{' +
-      '  background:rgba(15,23,42,0.85)!important;' +
-      '  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;' +
-      '  border-color:rgba(255,255,255,0.15)!important;' +
-      '  box-shadow:0 12px 36px rgba(0,0,0,0.3)!important;}' +
-      'nav[data-framer-name="Nav"].demaze-nav-scrolled img, .framer-v-2hoya3 nav[data-framer-name="Nav"] img{filter:none!important;}' +
-      '.demaze-nav-links-wrap{display:flex;align-items:center;gap:12px;margin:0 20px;z-index:2;}' +
-      '.demaze-nav-link{color:#ffffff!important;font-size:14px;font-weight:500;text-decoration:none;' +
-      '  padding:7px 14px;border-radius:100px;white-space:nowrap;opacity:0.90;' +
-      '  transition:all 0.22s cubic-bezier(0.16,1,0.3,1);position:relative;background:transparent;}' +
-      '.demaze-nav-link:hover{background:rgba(255,255,255,0.18)!important;opacity:1!important;transform:translateY(-1px);color:#ffffff!important;}' +
-      'nav[data-framer-name="Nav"].demaze-nav-scrolled .demaze-nav-link, .framer-v-2hoya3 nav[data-framer-name="Nav"] .demaze-nav-link{color:#ffffff!important;opacity:0.92;}' +
-      'nav[data-framer-name="Nav"].demaze-nav-scrolled .demaze-nav-link:hover, .framer-v-2hoya3 nav[data-framer-name="Nav"] .demaze-nav-link:hover{background:rgba(255,255,255,0.12)!important;opacity:1!important;transform:translateY(-1px);color:#ffffff!important;}' +
-      '.demaze-nav-btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 22px;' +
-      '  border-radius:100px;background:#ffffff!important;color:#0f172a!important;font-size:13.5px;font-weight:600;text-decoration:none;' +
-      '  transition:all 0.22s cubic-bezier(0.16,1,0.3,1);white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,0.15);margin-left:8px;}' +
-      '.demaze-nav-btn:hover{background:#ffffff!important;transform:translateY(-1px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.22);color:#0f172a!important;}' +
-      'nav[data-framer-name="Nav"] [data-framer-name="Menu"],' +
-      'nav[data-framer-name="Nav"] [data-framer-name="Button"]{display:none!important;}' +
-      '@media (max-width:809px){.demaze-nav-links-wrap{display:none!important;}}' +
-      '.demaze-mobile-drawer{display:none;position:fixed;top:76px;left:16px;right:16px;background:rgba(15,23,42,0.92)!important;' +
-      '  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.15);' +
-      '  border-radius:24px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.4);z-index:99999;flex-direction:column;gap:12px;animation:demazeFadeDown 0.25s cubic-bezier(.22,1,.36,1);}' +
-      '.demaze-mobile-drawer.active{display:flex!important;}' +
-      '.demaze-mobile-drawer a{color:#ffffff!important;font-size:16px;font-weight:500;text-decoration:none;padding:12px 16px;border-radius:12px;transition:background 0.2s, color 0.2s;}' +
-      '.demaze-mobile-drawer a:hover{background:rgba(255,255,255,0.08);color:#38bdf8!important;}' +
-      '.demaze-mobile-drawer .demaze-mobile-btn{background:#ffffff!important;color:#0f172a!important;text-align:center;font-weight:600;margin-top:8px;border-radius:999px;padding:12px 20px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}' +
-      '@keyframes demazeFadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}';
-    document.head.appendChild(style);
+    // Nav styles are now cleanly provided by demaze-subpages.css
   }
 
   var TYPOGRAPHY_STYLE_ID = 'demaze-typography-style';
@@ -126,104 +81,7 @@
   }
 
   function applyNav(nav) {
-    ensureNavStyle();
-    var logoImg = nav.querySelector('img');
-    if (logoImg) {
-      logoImg.setAttribute('src', LOGO_SRC);
-      logoImg.setAttribute('srcset', '');
-      logoImg.setAttribute('alt', LOGO_ALT);
-    }
-
-    // Completely hide MOVIQ's native navigation items
-    var moviqMenu = nav.querySelector('[data-framer-name="Menu"]');
-    if (moviqMenu) moviqMenu.style.setProperty('display', 'none', 'important');
-    var moviqBtn = nav.querySelector('[data-framer-name="Button"]');
-    if (moviqBtn) moviqBtn.style.setProperty('display', 'none', 'important');
-
-    if (content.navLinks && !nav.querySelector('.demaze-nav-links-wrap')) {
-      var linksWrap = document.createElement('div');
-      linksWrap.className = 'demaze-nav-links-wrap';
-      linksWrap.innerHTML = content.navLinks
-        .map(function (l) {
-          return '<a href="' + l.href + '" class="demaze-nav-link">' + l.text + '</a>';
-        })
-        .join('');
-
-      var ctaBtn = document.createElement('a');
-      ctaBtn.className = 'demaze-nav-btn';
-      ctaBtn.href = content.ctaButton ? content.ctaButton.href : './contact';
-      ctaBtn.textContent = content.ctaButton ? content.ctaButton.text : 'Book A Call';
-      linksWrap.appendChild(ctaBtn);
-
-      nav.appendChild(linksWrap);
-    }
-
-    // Scroll strengthening (RAF throttled with boolean diffing)
-    if (!nav.__demazeScrollAttached) {
-      nav.__demazeScrollAttached = true;
-      var navScrollTicking = false;
-      var isNavScrolled = false;
-      function updateNavScroll() {
-        var y = (window.lenis && typeof window.lenis.scroll === 'number') ? window.lenis.scroll : window.scrollY;
-        var shouldBeScrolled = y > 360;
-        if (shouldBeScrolled !== isNavScrolled) {
-          isNavScrolled = shouldBeScrolled;
-          nav.classList.toggle('demaze-nav-scrolled', isNavScrolled);
-        }
-      }
-      function requestNavScroll() {
-        if (!navScrollTicking) {
-          navScrollTicking = true;
-          requestAnimationFrame(function () {
-            updateNavScroll();
-            navScrollTicking = false;
-          });
-        }
-      }
-      window.addEventListener('scroll', requestNavScroll, { passive: true });
-      updateNavScroll();
-    }
-
-    // Mobile drawer setup
-    if (!document.getElementById('demaze-mobile-nav-drawer')) {
-      var drawer = document.createElement('div');
-      drawer.id = 'demaze-mobile-nav-drawer';
-      drawer.className = 'demaze-mobile-drawer';
-      drawer.innerHTML = content.navLinks
-        .map(function (l) {
-          return '<a href="' + l.href + '">' + l.text + '</a>';
-        })
-        .join('') +
-        '<a href="./contact" class="demaze-mobile-btn">Book A Call</a>';
-      document.body.appendChild(drawer);
-
-      document.addEventListener(
-        'click',
-        function (e) {
-          var d = document.getElementById('demaze-mobile-nav-drawer');
-          if (!d) return;
-
-          // Only allow mobile drawer toggle on mobile viewports (< 810px)
-          if (window.innerWidth > 809) {
-            d.classList.remove('active');
-            return;
-          }
-
-          // STRICT CHECK: Only trigger from the header/nav hamburger icon, NEVER from FAQ or other section variants!
-          var btn = e.target.closest('header .framer-1p6a152-container, nav .framer-1p6a152-container, nav [data-framer-name="Menu"], nav [data-framer-name="Button"]');
-          if (btn) {
-            e.preventDefault();
-            e.stopPropagation();
-            d.classList.toggle('active');
-            return;
-          }
-          if (!d.contains(e.target)) {
-            d.classList.remove('active');
-          }
-        },
-        true
-      );
-    }
+    // Static demaze-nav-wrapper is active. No React DOM tampering needed!
   }
 
   var FOOTER_STYLE_ID = 'demaze-footer-style';
@@ -458,8 +316,6 @@
   function applyOverride() {
     document.title = "Demaze Technologies - Your Strategic Partner in Building Scalable AI Products";
     ensureTypography();
-    var nav = getNav();
-    if (nav) applyNav(nav);
     applyFooter();
     document.querySelectorAll('img:not([alt])').forEach(function (img) {
       img.setAttribute('alt', '');
@@ -467,10 +323,9 @@
   }
 
   function verifyStuck() {
-    var nav = getNav();
-    var navLogoOk = !!(nav && nav.querySelector('img'));
+    var navOk = !!document.querySelector('.demaze-nav-bar');
     var unifiedFooter = document.querySelector('footer.demaze-footer');
-    return !!(navLogoOk && unifiedFooter);
+    return !!(navOk && unifiedFooter);
   }
 
   window.DemazeOverride.run({

@@ -407,16 +407,19 @@
       '}' +
       '.demaze-detail-btn{' +
       '  display: inline-flex; align-items: center; gap: 8px;' +
-      '  background: #0f172a; color: #ffffff !important;' +
-      '  padding: 9px 18px; border-radius: 999px;' +
-      '  font-size: 12.5px; font-weight: 600; text-decoration: none !important;' +
-      '  transition: all 0.2s cubic-bezier(.22,1,.36,1); box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);' +
+      '  background: #0284c7 !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;' +
+      '  padding: 10px 20px; border-radius: 999px;' +
+      '  font-size: 13px; font-weight: 600; text-decoration: none !important;' +
+      '  transition: all 0.2s cubic-bezier(.22,1,.36,1); box-shadow: 0 4px 16px rgba(2, 132, 199, 0.28);' +
+      '}' +
+      '.demaze-detail-btn, .demaze-detail-btn *, .demaze-detail-btn span{' +
+      '  color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-decoration: none !important;' +
       '}' +
       '.demaze-detail-btn:hover{' +
-      '  background: #2563eb; transform: translateY(-1px);' +
-      '  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);' +
+      '  background: #0369a1 !important; transform: translateY(-2px);' +
+      '  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);' +
       '}' +
-      '.demaze-detail-btn svg{ width: 14px; height: 14px; transition: transform 0.2s ease; }' +
+      '.demaze-detail-btn svg{ width: 14px; height: 14px; transition: transform 0.2s ease; fill: currentColor; }' +
       '.demaze-detail-btn:hover svg{ transform: translateX(3px); }' +
 
       /* Telemetry Metric Cards Below the Stage */

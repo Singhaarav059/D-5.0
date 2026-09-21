@@ -84,36 +84,40 @@
 
       /* Glass content container */
       '.demaze-fora-left-content {' +
-      '  position: relative; z-index: 10; padding: 28px 24px; display: flex; flex-direction: column;' +
-      '  justify-content: flex-end; box-sizing: border-box;' +
+      '  position: relative; z-index: 10; padding: 36px 28px 30px; display: flex; flex-direction: column;' +
+      '  align-items: center; text-align: center; justify-content: flex-end; box-sizing: border-box;' +
       '}' +
-      '.demaze-fora-stars {' +
-      '  display: flex; align-items: center; gap: 4px; color: #F59E0B; font-size: 17px;' +
-      '  letter-spacing: 2px; margin-bottom: 12px; line-height: 1;' +
-      '  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);' +
-      '}' +
-      '.demaze-fora-avatar-wrap {' +
-      '  display: flex; align-items: center; margin-bottom: 18px;' +
+      '.demaze-fora-author-header {' +
+      '  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; margin-bottom: 22px; width: 100%;' +
       '}' +
       '.demaze-fora-avatar {' +
-      '  width: 76px; height: 76px; border-radius: 50%; object-fit: cover; object-position: center top;' +
-      '  border: 3px solid rgba(255, 255, 255, 0.95);' +
-      '  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2); background: #ffffff;' +
+      '  width: 100px !important; height: 100px !important; border-radius: 50%; object-fit: cover; object-position: center top;' +
+      '  border: 4px solid rgba(255, 255, 255, 0.98); margin: 0 auto;' +
+      '  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.25); background: #ffffff;' +
+      '  flex-shrink: 0;' +
       '}' +
-      '.demaze-fora-quote {' +
-      '  font-size: clamp(15px, 1.5vw, 18px); font-weight: 500; line-height: 1.45;' +
-      '  color: #FFFFFF; margin: 0 0 16px; letter-spacing: -0.01em;' +
-      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
-      '  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);' +
+      '.demaze-fora-user {' +
+      '  display: flex; flex-direction: column; align-items: center; text-align: center;' +
       '}' +
       '.demaze-fora-user-name {' +
-      '  font-size: 16px; font-weight: 600; color: #FFFFFF; margin: 0 0 2px;' +
+      '  font-size: 19px !important; font-weight: 700 !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; margin: 0 0 4px;' +
       '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
-      '  letter-spacing: -0.01em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);' +
+      '  letter-spacing: -0.01em; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important; text-align: center;' +
       '}' +
       '.demaze-fora-user-role {' +
-      '  font-size: 13.5px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin: 0;' +
-      '  letter-spacing: 0.01em;' +
+      '  font-size: 13.5px !important; font-weight: 500 !important; color: rgba(255, 255, 255, 0.92) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.92) !important; margin: 0;' +
+      '  letter-spacing: 0.01em; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4) !important; text-align: center;' +
+      '}' +
+      '.demaze-fora-quote, .demaze-fora-quote * {' +
+      '  font-size: 15.5px !important; font-weight: 500 !important; line-height: 1.6 !important;' +
+      '  color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; margin: 0; letter-spacing: -0.01em;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important; text-align: center !important;' +
+      '}' +
+      '.demaze-fora-stars {' +
+      '  display: flex; align-items: center; justify-content: center; gap: 6px; color: #f59e0b !important; font-size: 20px !important;' +
+      '  letter-spacing: 2px; margin-top: 16px; margin-bottom: 0; line-height: 1;' +
+      '  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);' +
       '}' +
 
       /* Right Column: Content + Stats */
@@ -258,23 +262,23 @@
     var wrapper = document.createElement('div');
     wrapper.className = WRAPPER_CLASS;
 
-    // Build Left Testimonial Dune Glass Card with Krupal's Avatar ABOVE the quote
+    // Build Left Testimonial Card with Author Header at top, Quote, and Rating Stars below the comment
     var leftCard = document.createElement('div');
     leftCard.className = 'demaze-fora-left';
     leftCard.innerHTML =
-      '<img class="demaze-fora-left-bg" src="./assets/demaze/hero-alpine-bg.jpg" alt="Why Demaze" />' +
+      '<img class="demaze-fora-left-bg" src="./assets/demaze/subpage-clouds-wide.jpg" alt="Why Demaze" />' +
       '<div class="demaze-fora-left-gradient"></div>' +
       '<div class="demaze-fora-left-blur"></div>' +
       '<div class="demaze-fora-left-content">' +
-      '  <div class="demaze-fora-stars">★★★★★</div>' +
-      '  <div class="demaze-fora-avatar-wrap">' +
+      '  <div class="demaze-fora-author-header">' +
       '    <img class="demaze-fora-avatar" src="' + authorAvatar + '" alt="' + authorName + '" />' +
+      '    <div class="demaze-fora-user">' +
+      '      <div class="demaze-fora-user-name">' + authorName + '</div>' +
+      '      <div class="demaze-fora-user-role">' + authorRole + '</div>' +
+      '    </div>' +
       '  </div>' +
       '  <p class="demaze-fora-quote">"' + quoteText + '"</p>' +
-      '  <div class="demaze-fora-user">' +
-      '    <div class="demaze-fora-user-name">' + authorName + '</div>' +
-      '    <div class="demaze-fora-user-role">' + authorRole + '</div>' +
-      '  </div>' +
+      '  <div class="demaze-fora-stars">★★★★★</div>' +
       '</div>';
 
     // Right Column paragraphs without em-dashes

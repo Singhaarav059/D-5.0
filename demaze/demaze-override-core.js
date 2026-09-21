@@ -100,7 +100,7 @@ window.DemazeOverride = {
   },
 };
 
-// Fast polling coordinator to unveil the moment React hydrates and all tasks pass
+// Lightweight coordinator to unveil the moment React hydrates and all tasks pass
 (function () {
   var coordinatorTimer = setInterval(function () {
     if (document.documentElement.classList.contains('demaze-ready')) {
@@ -108,7 +108,7 @@ window.DemazeOverride = {
       return;
     }
     window.DemazeOverride.checkReadiness();
-  }, 40);
+  }, 120);
 
   // Safety fallback after 2200ms
   setTimeout(function () {

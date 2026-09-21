@@ -167,14 +167,21 @@
       '.demaze-drives-cta {' +
       '  display: flex; align-items: center; justify-content: center; gap: 8px;' +
       '  width: 100%; padding: 12px 20px; border-radius: 999px;' +
-      '  background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 600;' +
-      '  text-decoration: none; box-sizing: border-box;' +
-      '  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);' +
+      '  background: #0284c7 !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;' +
+      '  font-size: 13.5px; font-weight: 600;' +
+      '  text-decoration: none !important; box-sizing: border-box;' +
+      '  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.28);' +
       '  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;' +
       '}' +
+      '.demaze-drives-cta, .demaze-drives-cta *, .demaze-drives-cta span {' +
+      '  color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-decoration: none !important;' +
+      '}' +
+      '.demaze-drives-cta svg {' +
+      '  stroke: #ffffff !important; color: #ffffff !important;' +
+      '}' +
       '.demaze-drives-cta:hover {' +
-      '  background: #1e293b; transform: translateY(-2px);' +
-      '  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);' +
+      '  background: #0369a1 !important; transform: translateY(-2px);' +
+      '  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);' +
       '}' +
 
       /* Cards Column */
