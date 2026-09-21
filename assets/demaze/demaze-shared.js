@@ -198,50 +198,147 @@
     });
   }
 
-  // 6. Moviq-Style Section Unfolding & Entrance Animation Observer
+  // 6. Valist Signature Section Unfolding & Cascading Motion Engine
   function initUnfolding() {
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var targets = document.querySelectorAll(
-      '.project-case-card, .service-feature-row, .why-benefit-card, .stat-metric-card, .about-who-grid, .contact-info-card, .contact-form-container, .demaze-reveal, .demaze-unfold'
-    );
 
-    if (prefersReduced) {
-      targets.forEach(function (el) {
+    function getSections() {
+      return document.querySelectorAll(
+        '.valist-unfold-section, .demaze-subpage-section, .valist-capabilities-stage, .valist-process-stage, .valist-metric-counters-grid, .valist-timeline-container, .about-bento-grid, .values-grid, .industries-shell, .valist-faq-container, .demaze-cta-banner, .demaze-contact-grid, .contact-main-grid, .valist-projects-grid, main > section:not([data-framer-name="Hero"]), [data-framer-name="Main"] > section:not([data-framer-name="Hero"])'
+      );
+    }
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      getSections().forEach(function (el) {
         el.classList.add('is-unfolded');
       });
       return;
     }
 
-    if (!('IntersectionObserver' in window)) {
-      targets.forEach(function (el) {
-        el.classList.add('is-unfolded');
-      });
-      return;
-    }
+    function unfoldTarget(target) {
+      if (target.classList.contains('is-unfolded')) return;
+      target.classList.add('is-unfolded');
 
-    // Set initial unfold class
-    targets.forEach(function (el, idx) {
-      el.classList.add('demaze-unfold');
-      // Stagger slight transition delay within clusters
-      var stagger = (idx % 3) * 0.08;
-      el.style.transitionDelay = stagger + 's';
-    });
+      // Stagger all child cards inside the newly unfolded section
+      var cards = target.querySelectorAll(
+        '.valist-stagger-card, .valist-case-card, .project-case-card, .valist-process-card, .valist-metric-counter-card, .value-card, .about-bento-card, .service-feature-row, .valist-faq-card, .demaze-contact-card, .calendly-embed-box, .contact-form-shell, [data-framer-name*="Card"], [data-framer-name*="Item"], [data-framer-name*="Row"], .framer-1a3b5v'
+      );
+      cards.forEach(function (card, idx) {
+        card.style.transitionDelay = (0.06 * (idx % 8)) + 's';
+      });
+
+      // Illuminate any accent highlights inside the section
+      var highlights = target.querySelectorAll('.demaze-scroll-highlight');
+      highlights.forEach(function (hl) {
+        hl.classList.add('is-illuminated');
+      });
+    }
 
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-unfolded');
+            unfoldTarget(entry.target);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
     );
 
-    targets.forEach(function (el) {
-      observer.observe(el);
-    });
+    function attachObservers() {
+      // If page is gated (like on homepage prepaint gate), wait until demaze-ready is applied
+      var isGated = document.documentElement.matches(':not(.demaze-ready)') && document.getElementById('demaze-prepaint-gate');
+      if (isGated) return;
+
+      var currentTargets = getSections();
+      var winH = window.innerHeight || 800;
+
+      currentTargets.forEach(function (el) {
+        var rect = el.getBoundingClientRect();
+        // Skip hidden 0-dimension placeholders
+        if (rect.width === 0 && rect.height === 0) return;
+
+        // If element is already scrolled past or visible in the current viewport, unfold immediately
+        if (rect.top < winH * 0.88 && rect.bottom > 0) {
+          unfoldTarget(el);
+          return;
+        }
+
+        if (!el.__valistObserved) {
+          el.__valistObserved = true;
+          observer.observe(el);
+        }
+      });
+    }
+
+    // Run initial attach
+    attachObservers();
+
+    // Listen for readiness gate on homepage
+    if (window.MutationObserver) {
+      var gateObserver = new MutationObserver(function () {
+        if (document.documentElement.classList.contains('demaze-ready')) {
+          attachObservers();
+          gateObserver.disconnect();
+        }
+      });
+      gateObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // Periodic check to bind any post-hydrated React sections smoothly
+    var polls = 0;
+    var pollTimer = setInterval(function () {
+      polls++;
+      attachObservers();
+      if (polls > 20) clearInterval(pollTimer);
+    }, 250);
+
+    // Also attach on scroll
+    window.addEventListener('scroll', attachObservers, { passive: true });
+    if (window.lenis && typeof window.lenis.on === 'function') {
+      window.lenis.on('scroll', attachObservers);
+    }
+  }
+
+  // 6b. Dynamic Mission Timeline Progress Drawing
+  function initTimelineProgress() {
+    var timeline = document.querySelector('.valist-timeline-container');
+    if (!timeline || timeline.__valistTimelineInit) return;
+    timeline.__valistTimelineInit = true;
+
+    // Ensure progress bar element exists
+    var bar = timeline.querySelector('.valist-timeline-progress-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'valist-timeline-progress-bar';
+      timeline.prepend(bar);
+    }
+
+    var nodes = timeline.querySelectorAll('.valist-timeline-node');
+
+    function onTimelineScroll() {
+      var rect = timeline.getBoundingClientRect();
+      var winH = window.innerHeight;
+      var triggerPoint = winH * 0.65;
+      var totalH = rect.height;
+      var current = triggerPoint - rect.top;
+      var progress = Math.max(0, Math.min(1, current / totalH));
+
+      bar.style.transform = 'scaleY(' + progress + ')';
+
+      nodes.forEach(function (node) {
+        var nodeRect = node.getBoundingClientRect();
+        if (nodeRect.top <= triggerPoint) {
+          node.classList.add('is-passed');
+        } else {
+          node.classList.remove('is-passed');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', onTimelineScroll, { passive: true });
+    onTimelineScroll();
   }
 
   // 7. Valist Capabilities Unfolding Stage (Services)
@@ -415,6 +512,7 @@
     initMobileNav();
     initAccordions();
     initUnfolding();
+    initTimelineProgress();
     initValistCapabilities();
     initValistFAQ();
     initValistCounters();

@@ -80,7 +80,7 @@
       /* Section Framing - Clean Light Tone matching Demaze */
       'section[data-framer-name="Ai Powered"] {' +
       '  height: auto !important; min-height: auto !important;' +
-      '  padding: 100px 24px 110px !important;' +
+      '  padding: 48px 24px 56px !important;' +
       '  overflow: visible !important;' +
       '  background: #ffffff !important;' +
       '  border-top: 1px solid #f1f5f9 !important;' +
@@ -92,38 +92,38 @@
 
       /* Outer Wrapper */
       '.demaze-drives-wrapper {' +
-      '  width: 100%; max-width: 1240px; margin: 0 auto; box-sizing: border-box; position: relative;' +
+      '  width: 100%; max-width: 1200px; margin: 0 auto; box-sizing: border-box; position: relative;' +
       '}' +
 
       /* Section Header (Unified editorial flow) */
       '.demaze-drives-header {' +
       '  display: flex; flex-direction: column; align-items: flex-start;' +
-      '  margin-bottom: 48px; max-width: 840px;' +
+      '  margin-bottom: 32px; max-width: 800px;' +
       '}' +
       '.demaze-drives-eyebrow {' +
       '  display: inline-flex; align-items: center; gap: 8px;' +
       '  padding: 5px 14px; border-radius: 999px;' +
       '  background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.20);' +
       '  color: #2563eb; font-size: 11.5px; font-weight: 700;' +
-      '  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px;' +
+      '  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px;' +
       '}' +
       '.demaze-drives-eyebrow-dot {' +
       '  width: 6px; height: 6px; border-radius: 50%; background: #2563eb;' +
       '  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);' +
       '}' +
       '.demaze-drives-title {' +
-      '  font-size: clamp(32px, 3.8vw, 48px); font-weight: 700; line-height: 1.16;' +
-      '  color: #0f172a; letter-spacing: -0.025em; margin: 0 0 16px;' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: clamp(26px, 3vw, 36px); font-weight: 700; line-height: 1.2;' +
+      '  color: #0f172a; letter-spacing: -0.025em; margin: 0 0 12px;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
       '.demaze-drives-subtitle {' +
-      '  font-size: 16px; line-height: 1.65; color: #64748b;' +
-      '  margin: 0; max-width: 760px; font-weight: 400;' +
+      '  font-size: 15px; line-height: 1.6; color: #64748b;' +
+      '  margin: 0; max-width: 720px; font-weight: 400;' +
       '}' +
 
       /* Split Body (Sticky Sidebar + Cards) */
       '.demaze-drives-body {' +
-      '  display: flex; gap: 48px; align-items: flex-start; position: relative;' +
+      '  display: flex; gap: 36px; align-items: flex-start; position: relative;' +
       '}' +
 
       /* Sticky Sidebar */

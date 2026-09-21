@@ -37,7 +37,7 @@
       'section[data-framer-name="Why Demaze vs Traditional"],' +
       'section[data-framer-name="Moviq vs Traditional Video"] {' +
       '  height: auto !important; min-height: auto !important;' +
-      '  padding: 100px 32px 110px !important;' +
+      '  padding: 44px 24px 52px !important;' +
       '  overflow: visible !important;' +
       '  background: #ffffff !important;' +
       '  position: relative !important;' +
@@ -48,25 +48,20 @@
       '.' + WRAPPER_CLASS + ' {' +
       '  width: 100%; max-width: 1200px; margin: 0 auto; box-sizing: border-box;' +
       '  display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;' +
-      '  gap: 48px; position: relative; z-index: 2;' +
+      '  gap: 36px; position: relative; z-index: 2;' +
       '}' +
 
       /* Left Testimonial Card (Fora Dune Glass Style) */
       '.demaze-fora-left {' +
-      '  width: 478px; max-width: 100%; height: 600px; border-radius: 32px;' +
+      '  width: 440px; max-width: 100%; height: 500px; border-radius: 24px;' +
       '  position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;' +
       '  flex-shrink: 0; box-sizing: border-box;' +
-      '  box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04);' +
+      '  box-shadow: 0 16px 40px -12px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);' +
       '  border: 1px solid rgba(255, 255, 255, 0.4);' +
-      '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;' +
-      '}' +
-      '.demaze-fora-left:hover {' +
-      '  transform: translateY(-4px);' +
-      '  box-shadow: 0 28px 60px -12px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(0, 0, 0, 0.06);' +
       '}' +
       '.demaze-fora-left-bg {' +
-      '  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;' +
-      '  display: block; z-index: 1; pointer-events: none;' +
+      '  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top;' +
+      '  z-index: 1;' +
       '  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);' +
       '}' +
       '.demaze-fora-left:hover .demaze-fora-left-bg {' +
@@ -81,7 +76,7 @@
 
       /* Progressive blur glass overlay at bottom */
       '.demaze-fora-left-blur {' +
-      '  position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 32px;' +
+      '  position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 24px;' +
       '  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);' +
       '  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,1) 100%);' +
       '  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,1) 100%);' +
@@ -89,35 +84,35 @@
 
       /* Glass content container */
       '.demaze-fora-left-content {' +
-      '  position: relative; z-index: 10; padding: 32px 30px; display: flex; flex-direction: column;' +
+      '  position: relative; z-index: 10; padding: 28px 24px; display: flex; flex-direction: column;' +
       '  justify-content: flex-end; box-sizing: border-box;' +
       '}' +
       '.demaze-fora-stars {' +
-      '  display: flex; align-items: center; gap: 4px; color: #F59E0B; font-size: 19px;' +
-      '  letter-spacing: 2px; margin-bottom: 14px; line-height: 1;' +
+      '  display: flex; align-items: center; gap: 4px; color: #F59E0B; font-size: 17px;' +
+      '  letter-spacing: 2px; margin-bottom: 12px; line-height: 1;' +
       '  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);' +
       '}' +
       '.demaze-fora-avatar-wrap {' +
-      '  display: flex; align-items: center; margin-bottom: 16px;' +
+      '  display: flex; align-items: center; margin-bottom: 14px;' +
       '}' +
       '.demaze-fora-avatar {' +
-      '  width: 58px; height: 58px; border-radius: 50%; object-fit: cover; object-position: center top;' +
+      '  width: 52px; height: 52px; border-radius: 50%; object-fit: cover; object-position: center top;' +
       '  border: 2px solid rgba(255, 255, 255, 0.9);' +
       '  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35); background: #ffffff;' +
       '}' +
       '.demaze-fora-quote {' +
-      '  font-size: clamp(16px, 1.65vw, 20.5px); font-weight: 500; line-height: 1.44;' +
-      '  color: #FFFFFF; margin: 0 0 20px; letter-spacing: -0.01em;' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: clamp(15px, 1.5vw, 18px); font-weight: 500; line-height: 1.45;' +
+      '  color: #FFFFFF; margin: 0 0 16px; letter-spacing: -0.01em;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);' +
       '}' +
       '.demaze-fora-user-name {' +
-      '  font-size: 17.5px; font-weight: 600; color: #FFFFFF; margin: 0 0 3px;' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: 16px; font-weight: 600; color: #FFFFFF; margin: 0 0 2px;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  letter-spacing: -0.01em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);' +
       '}' +
       '.demaze-fora-user-role {' +
-      '  font-size: 14px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin: 0;' +
+      '  font-size: 13.5px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin: 0;' +
       '  letter-spacing: 0.01em;' +
       '}' +
 
@@ -130,25 +125,28 @@
       '  display: flex; flex-direction: column; align-items: flex-start;' +
       '}' +
       '.demaze-fora-eyebrow {' +
-      '  display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 12px;' +
-      '  background: #EEECED; color: #18181B; font-size: 13.5px; font-weight: 500;' +
-      '  margin-bottom: 20px; align-self: flex-start; border: 1px solid rgba(0, 0, 0, 0.05);' +
-      '  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);' +
+      '  display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 999px;' +
+      '  background: rgba(16, 185, 129, 0.08); color: #059669; font-size: 12px; font-weight: 600;' +
+      '  margin-bottom: 14px; align-self: flex-start; border: 1px solid rgba(16, 185, 129, 0.2);' +
+      '  text-transform: uppercase; letter-spacing: 0.06em;' +
       '}' +
       '.demaze-fora-heading {' +
-      '  font-size: clamp(36px, 4.2vw, 54px); font-weight: 700; line-height: 1.14;' +
-      '  letter-spacing: -0.025em; color: #09090B; margin: 0 0 24px;' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: clamp(26px, 3vw, 36px); font-weight: 700; line-height: 1.2;' +
+      '  letter-spacing: -0.025em; color: #09090B; margin: 0 0 16px;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
       '.demaze-fora-dim {' +
-      '  color: #71717A !important; font-weight: 600;' +
+      '  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;' +
+      '  -webkit-background-clip: text !important;' +
+      '  -webkit-text-fill-color: transparent !important;' +
+      '  font-weight: 700;' +
       '}' +
       '.demaze-fora-text {' +
-      '  display: flex; flex-direction: column; gap: 14px; max-width: 620px;' +
+      '  display: flex; flex-direction: column; gap: 12px; max-width: 600px;' +
       '}' +
       '.demaze-fora-text p {' +
-      '  font-size: 16px; line-height: 1.68; margin: 0;' +
-      '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: 15px; line-height: 1.65; margin: 0;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
 
       /* Scroll Highlight Words (Right Side Only) */
@@ -159,25 +157,27 @@
       '  display: inline;' +
       '}' +
       '.demaze-scroll-word.demaze-word-active {' +
-      '  color: #09090B;' +
+      '  color: #059669;' +
+      '  font-weight: 600;' +
       '}' +
 
       /* 2 Frosted Glass Stat Cards (Fora AI style) */
       '.demaze-fora-stats {' +
-      '  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; width: 100%;' +
+      '  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; width: 100%;' +
       '}' +
       '.demaze-fora-stat-card {' +
       '  background: rgba(244, 244, 246, 0.88);' +
       '  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);' +
       '  border: 1px solid rgba(228, 228, 231, 0.85);' +
-      '  border-radius: 28px; padding: 26px 24px; box-sizing: border-box;' +
+      '  border-radius: 20px; padding: 20px 20px; box-sizing: border-box;' +
       '  display: flex; flex-direction: column; justify-content: space-between;' +
-      '  min-height: 146px;' +
+      '  min-height: 120px;' +
       '  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);' +
       '  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);' +
       '}' +
       '.demaze-fora-stat-card:hover {' +
       '  transform: translateY(-3px);' +
+      '  border-color: rgba(16, 185, 129, 0.3);' +
       '  background: rgba(244, 244, 246, 0.98);' +
       '  border-color: rgba(91, 79, 233, 0.28);' +
       '  box-shadow: 0 14px 32px -8px rgba(91, 79, 233, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);' +

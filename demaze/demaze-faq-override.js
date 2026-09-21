@@ -22,22 +22,22 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent =
-      'section[data-framer-name="Faq"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:50px 24px 60px!important;position:relative!important;overflow:visible!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="Container"]{width:100%!important;max-width:1100px!important;margin:0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:32px!important;}' +
-      'section[data-framer-name="Faq"] h2{font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;text-align:center!important;margin:0 auto!important;}' +
+      'section[data-framer-name="Faq"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;height:auto!important;min-height:auto!important;padding:42px 24px 48px!important;position:relative!important;overflow:visible!important;}' +
+      'section[data-framer-name="Faq"] [data-framer-name="Container"]{width:100%!important;max-width:1000px!important;margin:0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:24px!important;}' +
+      'section[data-framer-name="Faq"] h2{font-size:clamp(26px, 3vw, 36px)!important;font-weight:700!important;color:#0B0E17!important;text-align:center!important;margin:0 auto!important;}' +
       'section[data-framer-name="Faq"] [data-framer-name="Subheading"],' +
       'section[data-framer-name="Faq"] .framer-9kf38p,' +
       'section[data-framer-name="Faq"] .framer-9kf38p p{' +
-      '  text-align:center!important;font-size:16px!important;color:#6C7783!important;margin:12px auto 0!important;width:100%!important;max-width:600px!important;display:block!important;' +
+      '  text-align:center!important;font-size:15px!important;color:#6C7783!important;margin:8px auto 0!important;width:100%!important;max-width:560px!important;display:block!important;' +
       '}' +
       'section[data-framer-name="Faq"] [data-framer-name="Heading"], section[data-framer-name="Faq"] [data-framer-name="title"]{opacity:1!important;transform:none!important;text-align:center!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;max-width:840px!important;margin:0 auto!important;gap:16px!important;opacity:1!important;transform:none!important;padding:0!important;border:none!important;background:transparent!important;}' +
+      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"]{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;max-width:840px!important;margin:0 auto!important;gap:12px!important;opacity:1!important;transform:none!important;padding:0!important;border:none!important;background:transparent!important;}' +
       'section[data-framer-name="Faq"] [data-framer-name="Tab"]{display:none!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"] > div{width:100%!important;background:#ffffff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:20px!important;box-shadow:0 4px 16px rgba(0,0,0,0.03)!important;padding:24px 28px!important;box-sizing:border-box!important;transition:all 0.25s ease!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"] > div:hover{border-color:rgba(91,79,233,0.3)!important;box-shadow:0 8px 24px rgba(91,79,233,0.08)!important;}' +
+      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"] > div{width:100%!important;background:#ffffff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:16px!important;box-shadow:0 4px 16px rgba(0,0,0,0.03)!important;padding:20px 24px!important;box-sizing:border-box!important;transition:all 0.25s ease!important;}' +
+      'section[data-framer-name="Faq"] [data-framer-name="Basic ALl"] > div:hover{border-color:rgba(145,50,247,0.3)!important;box-shadow:0 8px 24px rgba(145,50,247,0.06)!important;}' +
       'section[data-framer-name="Faq"] [data-framer-name="question-row"]{cursor:pointer!important;user-select:none!important;display:flex!important;align-items:center!important;justify-content:space-between!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="question-text"] h6{font-size:17.5px!important;font-weight:600!important;color:#0b0f19!important;line-height:1.4!important;}' +
-      'section[data-framer-name="Faq"] [data-framer-name="answer-text"] p{font-size:15px!important;line-height:1.68!important;color:#475569!important;margin-top:14px!important;}';
+      'section[data-framer-name="Faq"] [data-framer-name="question-text"] h6{font-size:16.5px!important;font-weight:600!important;color:#0b0f19!important;line-height:1.4!important;}' +
+      'section[data-framer-name="Faq"] [data-framer-name="answer-text"] p{font-size:14.5px!important;line-height:1.65!important;color:#475569!important;margin-top:12px!important;}';
     document.head.appendChild(style);
   }
 

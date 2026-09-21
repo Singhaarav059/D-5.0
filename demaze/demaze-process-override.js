@@ -46,9 +46,12 @@
       'section[data-framer-name="Videos making Step"] {' +
       '  display: flex !important; flex-direction: column !important; align-items: center !important;' +
       '  width: 100% !important; height: auto !important; min-height: auto !important;' +
-      '  padding: 96px 24px 110px !important; background: #ffffff !important;' +
+      '  padding: 36px 24px 56px !important; background: #ffffff !important;' +
       '  position: relative !important; z-index: 1 !important; overflow: visible !important;' +
       '  box-sizing: border-box !important;' +
+      '}' +
+      'section[data-framer-name="Videos making Step"] > :not(.' + BLOCK_ID + ') {' +
+      '  display: none !important;' +
       '}' +
 
       /* Inner Wrapper */
@@ -59,25 +62,28 @@
 
       /* Header */
       '.demaze-proc-header {' +
-      '  display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 54px; max-width: 720px;' +
+      '  display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 36px; max-width: 720px;' +
       '}' +
       '.demaze-proc-eyebrow {' +
-      '  display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 12px;' +
-      '  background: #EEECED; color: #18181B; font-size: 13.5px; font-weight: 500;' +
-      '  margin-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0.05);' +
-      '  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);' +
+      '  display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 999px;' +
+      '  background: rgba(6, 182, 212, 0.08); color: #0891B2; font-size: 12.5px; font-weight: 600;' +
+      '  margin-bottom: 14px; border: 1px solid rgba(6, 182, 212, 0.2);' +
+      '  letter-spacing: 0.04em; text-transform: uppercase;' +
       '}' +
       '.demaze-proc-heading {' +
-      '  font-size: clamp(34px, 4.2vw, 52px); font-weight: 700; line-height: 1.15;' +
-      '  letter-spacing: -0.025em; color: #09090B; margin: 0 0 16px;' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: clamp(28px, 3.2vw, 38px); font-weight: 700; line-height: 1.2;' +
+      '  letter-spacing: -0.025em; color: #09090B; margin: 0 0 12px;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
       '.demaze-proc-dim {' +
-      '  color: #71717A !important; font-weight: 600;' +
+      '  background: linear-gradient(135deg, #06B6D4 0%, #4F46E5 100%) !important;' +
+      '  -webkit-background-clip: text !important;' +
+      '  -webkit-text-fill-color: transparent !important;' +
+      '  font-weight: 700;' +
       '}' +
       '.demaze-proc-subtitle {' +
-      '  font-size: 17px; line-height: 1.6; color: #64748B; margin: 0;' +
-      '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+      '  font-size: 15.5px; line-height: 1.6; color: #64748B; margin: 0;' +
+      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '}' +
 
       /* Bento Grid Container */
