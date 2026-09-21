@@ -262,7 +262,7 @@
     var leftCard = document.createElement('div');
     leftCard.className = 'demaze-fora-left';
     leftCard.innerHTML =
-      '<img class="demaze-fora-left-bg" src="https://framerusercontent.com/images/iXJ14TtQhbQPpmn0VgyAV5eBQI.png?width=1800&height=2400" alt="Why Demaze" />' +
+      '<img class="demaze-fora-left-bg" src="./assets/demaze/hero-alpine-bg.jpg" alt="Why Demaze" />' +
       '<div class="demaze-fora-left-gradient"></div>' +
       '<div class="demaze-fora-left-blur"></div>' +
       '<div class="demaze-fora-left-content">' +

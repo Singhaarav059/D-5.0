@@ -52,6 +52,12 @@
       '.demaze-contact-card-info h4{font-size:16px!important;font-weight:700!important;color:#0B0E17!important;margin:4px 0 4px!important;line-height:1.3!important;}' +
       '.demaze-contact-card-info p{font-size:13px!important;line-height:1.5!important;color:' + MUTED + '!important;margin:0 0 12px!important;}' +
       '.demaze-contact-link-text{font-size:13px!important;font-weight:600!important;color:' + BRAND_BLUE + '!important;display:inline-flex!important;align-items:center!important;gap:4px!important;margin-top:auto!important;}' +
+      'section.framer-1uf6wvw [data-framer-name="Container"] [data-framer-background-image-wrapper]::after,' +
+      'section[data-framer-name="CTA"]:has(#demaze-contact-block) [data-framer-name="Container"] [data-framer-background-image-wrapper]::after{' +
+      '  content:""!important;position:absolute!important;inset:0!important;' +
+      '  background:radial-gradient(circle at 50% 25%, rgba(14, 116, 144, 0.40) 0%, rgba(11, 14, 23, 0.72) 75%)!important;' +
+      '  pointer-events:none!important;z-index:1!important;border-radius:inherit!important;' +
+      '}' +
       '@media (max-width:809px){.demaze-contact-grid{grid-template-columns:1fr!important;gap:16px!important;}}';
     document.head.appendChild(style);
   }
@@ -132,15 +138,42 @@
     return !!section.querySelector('[data-framer-name="Title"]');
   }
 
+  var TARGET_CTA_BG = './assets/demaze/hero-alpine-bg.jpg';
+  function enforceCtaBg(section) {
+    if (!section) return;
+    var ctaImg = section.querySelector('[data-framer-background-image-wrapper] img');
+    if (ctaImg) {
+      if (ctaImg.getAttribute('src') !== TARGET_CTA_BG) {
+        ctaImg.setAttribute('src', TARGET_CTA_BG);
+        ctaImg.src = TARGET_CTA_BG;
+      }
+      if (ctaImg.hasAttribute('srcset')) {
+        ctaImg.removeAttribute('srcset');
+      }
+    }
+  }
+
   function applyOverride(section) {
     ensureStyle();
+    enforceCtaBg(section);
+    if (!section.__demaze_cta_obs) {
+      var obs = new MutationObserver(function() {
+        enforceCtaBg(section);
+      });
+      obs.observe(section, { attributes: true, subtree: true, attributeFilter: ['src', 'srcset'] });
+      section.__demaze_cta_obs = obs;
+    }
     if (document.getElementById(BLOCK_ID)) return;
     var container = section.querySelector('[data-framer-name="Container"]') || section;
     container.appendChild(buildBlock());
   }
 
   function verifyStuck() {
-    return !!document.getElementById(BLOCK_ID);
+    var blockOk = !!document.getElementById(BLOCK_ID);
+    var sec = getFinalCTASection();
+    var img = sec ? sec.querySelector('[data-framer-background-image-wrapper] img') : null;
+    var imgOk = !img || (img.getAttribute('src') === TARGET_CTA_BG);
+    return blockOk && imgOk;
   }
 
   window.DemazeOverride.run({

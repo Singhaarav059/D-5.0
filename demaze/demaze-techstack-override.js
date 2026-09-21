@@ -21,8 +21,8 @@
       tStyle.id = 'demaze-techstack-style';
       tStyle.textContent =
         'section[data-framer-name="Badge"]{' +
-        '  border-radius:28px 28px 0 0!important;background:#ffffff!important;position:relative!important;z-index:2!important;' +
-        '  margin-top:-28px!important;padding:48px 0 24px!important;height:auto!important;min-height:auto!important;box-shadow:0 -10px 40px rgba(0,0,0,0.03)!important;' +
+        '  border-radius:28px 28px 0 0!important;background:linear-gradient(180deg, #f0f9ff 0%, #ffffff 54px, #ffffff 100%)!important;position:relative!important;z-index:2!important;' +
+        '  margin-top:-28px!important;padding:48px 0 24px!important;height:auto!important;min-height:auto!important;box-shadow:0 -10px 40px rgba(2,132,199,0.04)!important;' +
         '}' +
         'section[data-framer-name="Badge"] [data-framer-name="Container"]{' +
         '  height:auto!important;min-height:auto!important;padding:0!important;margin:0 auto!important;' +

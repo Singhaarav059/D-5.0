@@ -114,6 +114,23 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Cloud style soft sky blue background for subpages and secondary views */
+body.demaze-subpage,
+body:has(.demaze-subpage-hero),
+body:has(.valist-capabilities-stage),
+body:has(.valist-projects-grid),
+body:has(.about-bento-grid),
+body:has(.contact-main-grid) {
+  background-color: #f0f9ff !important;
+  background-image: 
+    radial-gradient(ellipse 90% 55% at 50% -12%, rgba(186, 230, 253, 0.45) 0%, rgba(224, 242, 254, 0.22) 50%, transparent 80%),
+    radial-gradient(circle at 92% 28%, rgba(224, 242, 254, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 8% 52%, rgba(240, 249, 255, 0.60) 0%, transparent 50%),
+    linear-gradient(180deg, #f0f9ff 0%, #ffffff 42%, #f8fafc 85%, #f0f9ff 100%) !important;
+  background-attachment: fixed !important;
+  color: var(--ink) !important;
+}
+
 /* Official Lenis Smooth Scroll Foundation */
 html.lenis,
 html.lenis body {
@@ -420,14 +437,53 @@ h4, .demaze-h4 {
 }
 
 /* ==========================================================================
-   PAGE HERO HEADER (COMPACT & CLEAN)
+   PAGE HERO HEADER - CLOUD STYLE SOFT SKY BLUE
    ========================================================================== */
 .demaze-subpage-hero {
-  padding: clamp(144px, 15vh, 168px) 24px 32px !important;
+  padding: clamp(144px, 16vh, 172px) clamp(24px, 5vw, 56px) clamp(44px, 5vw, 64px) !important;
   text-align: center;
-  max-width: 840px;
-  margin: 0 auto;
+  max-width: 980px;
+  margin: 0 auto 36px !important;
   position: relative;
+  border-radius: 36px;
+  background: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(240, 249, 255, 0.86) 65%, rgba(224, 242, 254, 0.75) 100%),
+    url('./subpage-sky-bg.jpg') center top / cover no-repeat !important;
+  border: 1px solid rgba(186, 230, 253, 0.75) !important;
+  box-shadow: 0 20px 48px -12px rgba(2, 132, 199, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.demaze-subpage-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 12%, rgba(255, 255, 255, 0.7) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.demaze-subpage-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.demaze-subpage-hero .demaze-badge-pill {
+  background: rgba(2, 132, 199, 0.08) !important;
+  border: 1px solid rgba(2, 132, 199, 0.24) !important;
+  color: #0284c7 !important;
+}
+
+.demaze-subpage-hero .demaze-hero-h1 {
+  color: #0b0e17 !important;
+}
+
+.demaze-subpage-hero .demaze-scroll-highlight {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 .demaze-badge-pill {
@@ -512,7 +568,7 @@ h4, .demaze-h4 {
    SHARED COMPONENT: CTA BANNER (<CtaBanner />)
    ========================================================================== */
 .demaze-cta-banner {
-  background: #0B0E17;
+  background: #0B0E17 url('./subpage-clouds-wide.jpg') center center / cover no-repeat !important;
   border-radius: var(--radius-xl);
   position: relative;
   overflow: hidden;
@@ -520,15 +576,15 @@ h4, .demaze-h4 {
   text-align: center;
   color: #ffffff;
   margin: 60px 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(186, 230, 253, 0.25) !important;
+  box-shadow: 0 20px 50px -10px rgba(2, 132, 199, 0.20), var(--shadow-lg);
 }
 
 .demaze-cta-banner::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 20%, rgba(91, 79, 233, 0.28) 0%, rgba(11, 14, 23, 0.85) 70%);
+  background: radial-gradient(circle at 50% 25%, rgba(14, 116, 144, 0.72) 0%, rgba(11, 14, 23, 0.88) 75%) !important;
   pointer-events: none;
 }
 

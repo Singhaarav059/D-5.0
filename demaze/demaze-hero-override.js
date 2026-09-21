@@ -587,7 +587,7 @@
     var bgImg = bgContainer.querySelector('img');
     var imgSrc = (bgImg && bgImg.src && !bgImg.src.includes('undefined'))
       ? bgImg.src
-      : 'https://framerusercontent.com/images/cbqUuccZCA1meuXGvWGnmnbmek.png?width=3720&height=1988';
+      : './assets/demaze/hero-alpine-bg.jpg';
 
     var canvas = document.createElement('canvas');
     canvas.className = 'demaze-liquid-canvas';
@@ -1181,16 +1181,34 @@
         });
     }
 
-    // 6. Background image: ensure MOVIQ native meadow background is visible
+    // 6. Background image: enforce local alpine background
     var heroBgImg = hero.querySelector('.framer-1tc22uo img');
     if (heroBgImg) {
       heroBgImg.style.removeProperty('display');
       heroBgImg.style.display = 'block';
       heroBgImg.style.visibility = 'visible';
       heroBgImg.style.opacity = '1';
-      if (!heroBgImg.src || heroBgImg.src.includes('undefined')) {
-        heroBgImg.src = 'https://framerusercontent.com/images/cbqUuccZCA1meuXGvWGnmnbmek.png?width=3720&height=1988';
+      if (!heroBgImg.src.includes('hero-alpine-bg.jpg') || heroBgImg.src.includes('cbqUucc')) {
+        heroBgImg.src = './assets/demaze/hero-alpine-bg.jpg';
+        heroBgImg.srcset = './assets/demaze/hero-alpine-bg.jpg 1x';
       }
+    }
+
+    // Ensure background image and liquid canvas stay locked post-hydration
+    var bgContainer = hero.querySelector('.framer-1tc22uo');
+    if (bgContainer && !bgContainer.__demazeEnforced) {
+      bgContainer.__demazeEnforced = true;
+      var bgObserver = new MutationObserver(function () {
+        var img = bgContainer.querySelector('img');
+        if (img && (!img.src.includes('hero-alpine-bg.jpg') || img.src.includes('cbqUucc'))) {
+          img.src = './assets/demaze/hero-alpine-bg.jpg';
+          img.srcset = './assets/demaze/hero-alpine-bg.jpg 1x';
+        }
+        if (!bgContainer.querySelector('.demaze-liquid-canvas')) {
+          initHeroLiquidHover(hero);
+        }
+      });
+      bgObserver.observe(bgContainer, { childList: true, subtree: true, attributes: true, attributeFilter: ['src', 'srcset'] });
     }
 
     // Fuel-style Liquid Water Floating Ripple Effect
@@ -1415,7 +1433,7 @@
         '@keyframes demazePulse{0%,100%{opacity:0.6;transform:scale(0.9);}50%{opacity:1;transform:scale(1.15);box-shadow:0 0 12px #10b981;}}' +
         '.demaze-sphere-stage{' +
         '  flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;' +
-        '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.62) 0%, rgba(10, 15, 30, 0.88) 100%), url("https://framerusercontent.com/images/cbqUuccZCA1meuXGvWGnmnbmek.png?scale-down-to=1024");' +
+        '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.55) 0%, rgba(10, 15, 30, 0.85) 100%), url("./assets/demaze/hero-alpine-bg.jpg");' +
         '  background-size:cover;background-position:center bottom;background-repeat:no-repeat;' +
         '}' +
         '.demaze-sphere-stage::before{' +
@@ -1473,7 +1491,9 @@
         return p.closest('.framer-zeccam') || p.textContent.trim() === content.badge;
       }
     );
-    return headlineOk && badgeOk;
+    var bgImg = hero.querySelector('.framer-1tc22uo img');
+    var bgImgOk = !!(bgImg && !bgImg.src.includes('cbqUucc') && bgImg.src.includes('hero-alpine-bg.jpg'));
+    return headlineOk && badgeOk && bgImgOk;
   }
 
   window.DemazeOverride.run({
