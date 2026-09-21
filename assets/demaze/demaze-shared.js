@@ -357,7 +357,7 @@
         if (targetIndex < 0 || targetIndex >= navItems.length) return;
         currentIndex = targetIndex;
         if (isManual) {
-          manualOverrideUntil = Date.now() + 2500;
+          manualOverrideUntil = Date.now() + 4000;
         }
 
         navItems.forEach(function (btn, idx) {
@@ -401,11 +401,21 @@
         var totalDist = stage.offsetHeight - window.innerHeight;
         if (totalDist <= 0) return;
 
-        var topOffset = 130;
+        var topOffset = 100;
         var progress = (-rect.top + topOffset) / totalDist;
 
         if (progress >= 0 && progress <= 1) {
-          var targetIndex = Math.min(3, Math.max(0, Math.floor(progress * 4)));
+          var targetIndex = 0;
+          if (progress < 0.24) {
+            targetIndex = 0;
+          } else if (progress < 0.49) {
+            targetIndex = 1;
+          } else if (progress < 0.74) {
+            targetIndex = 2;
+          } else {
+            targetIndex = 3;
+          }
+
           if (targetIndex !== currentIndex) {
             setActivePillar(targetIndex, false);
           }

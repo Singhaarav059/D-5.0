@@ -425,14 +425,12 @@
       '      </ul>' +
       '    </div>' +
       '    <div class="demaze-footer-col">' +
-      '      <h4>Stay Updated</h4>' +
-      '      <p style="font-size: 13.5px; color: #94a3b8; line-height: 1.5; margin-bottom: 14px;">' +
-      '        Insights on artificial intelligence, software engineering, and digital transformation.' +
-      '      </p>' +
-      '      <form class="demaze-footer-newsletter" onsubmit="event.preventDefault(); alert(\'Thank you for subscribing to Demaze Insights!\');">' +
-      '        <input type="email" placeholder="Enter your business email" required aria-label="Business email address">' +
-      '        <button type="submit">Subscribe</button>' +
-      '      </form>' +
+      '      <h4>Trust & Legal</h4>' +
+      '      <ul class="demaze-footer-nav">' +
+      '        <li><a href="/privacy-policy">Privacy Policy</a></li>' +
+      '        <li><a href="/terms-conditions">Terms & Conditions</a></li>' +
+      '        <li><a href="/contact">Enterprise Security</a></li>' +
+      '      </ul>' +
       '    </div>' +
       '  </div>' +
       '  <div class="demaze-footer-bottom">' +

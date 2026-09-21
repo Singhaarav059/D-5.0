@@ -1356,6 +1356,7 @@
         /* Tabbed Browser Mockup Container & Light Frosted Glass 3D Card */
         '.framer-1ib2jhf{' +
         '  display:block!important;position:absolute!important;top:650px!important;left:50%!important;' +
+        '  transform:translateX(-50%)!important;opacity:1!important;visibility:visible!important;' +
         '  width:75%!important;max-width:1280px!important;aspect-ratio:1.4382 / 1!important;z-index:2!important;' +
         '  border-radius:20px!important;overflow:visible!important;' +
         '  transform-style:preserve-3d!important;will-change:transform!important;' +

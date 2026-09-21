@@ -93,12 +93,12 @@
       '  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);' +
       '}' +
       '.demaze-fora-avatar-wrap {' +
-      '  display: flex; align-items: center; margin-bottom: 14px;' +
+      '  display: flex; align-items: center; margin-bottom: 18px;' +
       '}' +
       '.demaze-fora-avatar {' +
-      '  width: 52px; height: 52px; border-radius: 50%; object-fit: cover; object-position: center top;' +
-      '  border: 2px solid rgba(255, 255, 255, 0.9);' +
-      '  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35); background: #ffffff;' +
+      '  width: 76px; height: 76px; border-radius: 50%; object-fit: cover; object-position: center top;' +
+      '  border: 3px solid rgba(255, 255, 255, 0.95);' +
+      '  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2); background: #ffffff;' +
       '}' +
       '.demaze-fora-quote {' +
       '  font-size: clamp(15px, 1.5vw, 18px); font-weight: 500; line-height: 1.45;' +
@@ -328,13 +328,15 @@
         if (!isTicking) {
           isTicking = true;
           requestAnimationFrame(function () {
-            var rect = rightCol.getBoundingClientRect();
+            var textEl = rightCol.querySelector('.demaze-fora-text');
+            var targetEl = textEl || rightCol;
+            var rect = targetEl.getBoundingClientRect();
             var windowH = window.innerHeight || document.documentElement.clientHeight;
-            // Reveal starts when top of rightCol enters view (at 85% viewport)
-            // and finishes when bottom of rightCol approaches 30% viewport
-            var startY = windowH * 0.85;
-            var endY = windowH * 0.30;
-            var totalDist = (rect.height + startY - endY) || 1;
+            // Reveal starts when top of text enters view (at 82% viewport)
+            // and completes 100% when text is centered in view (at 45% viewport)
+            var startY = windowH * 0.82;
+            var endY = windowH * 0.45;
+            var totalDist = Math.max(1, rect.height + (startY - endY));
             var currentDist = startY - rect.top;
             var progress = currentDist / totalDist;
             progress = Math.max(0, Math.min(1, progress));

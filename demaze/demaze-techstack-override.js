@@ -1,7 +1,7 @@
 /**
  * Post-hydration content override for the Technology Stack / Trust section
- * only (MOVIQ's "Badge" section: a heading + a logo ticker).
- * Matched 1:1 with /services marquee.
+ * (MOVIQ's "Badge" section: Platforms & Partners / Tools & Technologies + marquee).
+ * Matched 1:1 with /services marquee and design system.
  */
 (function () {
   var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.technologyStack;
@@ -12,8 +12,7 @@
   }
 
   function isHydrated(section) {
-    var h3 = section.querySelector('h3');
-    return !!(h3 && h3.textContent.trim().length > 0);
+    return !!(section && (section.querySelector('[data-framer-name="Container"]') || section.children.length > 0));
   }
 
   function applyOverride(section) {
@@ -23,15 +22,34 @@
       tStyle.textContent =
         'section[data-framer-name="Badge"]{' +
         '  border-radius:28px 28px 0 0!important;background:#ffffff!important;position:relative!important;z-index:2!important;' +
-        '  margin-top:-28px!important;padding:36px 0 18px!important;height:auto!important;min-height:auto!important;box-shadow:0 -10px 40px rgba(0,0,0,0.03)!important;' +
+        '  margin-top:-28px!important;padding:48px 0 24px!important;height:auto!important;min-height:auto!important;box-shadow:0 -10px 40px rgba(0,0,0,0.03)!important;' +
         '}' +
-        'section[data-framer-name="Badge"] [data-framer-name="Container"],' +
-        'section[data-framer-name="Badge"] [data-framer-name="Trusted by description"]{' +
+        'section[data-framer-name="Badge"] [data-framer-name="Container"]{' +
         '  height:auto!important;min-height:auto!important;padding:0!important;margin:0 auto!important;' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
         '}' +
-        'section[data-framer-name="Badge"] h3{' +
-        '  font-size:clamp(24px, 2.8vw, 32px)!important;font-weight:700!important;color:#0B0E17!important;letter-spacing:-0.02em!important;' +
-        '  text-align:center!important;margin:0 auto 20px!important;' +
+        'section[data-framer-name="Badge"] [data-framer-name="Trusted by description"]{' +
+        '  display:none!important;' +
+        '}' +
+        '.demaze-techstack-header{' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
+        '  text-align:center!important;margin:0 auto 28px!important;position:relative!important;z-index:5!important;' +
+        '}' +
+        '.demaze-techstack-eyebrow{' +
+        '  display:inline-flex!important;align-items:center!important;padding:4px 14px!important;' +
+        '  border-radius:999px!important;background:rgba(124, 58, 237, 0.08)!important;' +
+        '  border:1px solid rgba(124, 58, 237, 0.20)!important;color:#7C3AED!important;' +
+        '  font-size:11.5px!important;font-weight:700!important;letter-spacing:0.08em!important;' +
+        '  text-transform:uppercase!important;margin-bottom:12px!important;' +
+        '}' +
+        '.demaze-techstack-title{' +
+        '  font-size:clamp(26px, 3vw, 36px)!important;font-weight:700!important;color:#0F172A!important;' +
+        '  letter-spacing:-0.025em!important;margin:0 auto 8px!important;line-height:1.2!important;' +
+        '  font-family:"Inter", -apple-system, sans-serif!important;' +
+        '}' +
+        '.demaze-techstack-sub{' +
+        '  font-size:15px!important;color:#64748B!important;margin:0 auto!important;' +
+        '  max-width:560px!important;line-height:1.5!important;' +
         '}' +
         'section[data-framer-name="Badge"] [data-framer-name="Logo Ticker"],' +
         'section[data-framer-name="Badge"] .framer-ticker,' +
@@ -55,15 +73,25 @@
       document.head.appendChild(tStyle);
     }
 
-    var h3 = section.querySelector('h3');
-    if (h3) h3.textContent = content.heading;
+    // Build or update the dedicated Tech Stack Header (Eyebrow + Title + Subtitle)
+    var container = section.querySelector('[data-framer-name="Container"]') || section;
+    var existingHdr = section.querySelector('.demaze-techstack-header');
+    if (!existingHdr) {
+      var hdr = document.createElement('div');
+      hdr.className = 'demaze-techstack-header';
+      hdr.innerHTML =
+        '<div class="demaze-techstack-eyebrow">' + (content.eyebrow || 'Platforms & Partners') + '</div>' +
+        '<h2 class="demaze-techstack-title">' + (content.heading || 'Tools & Technologies') + '</h2>' +
+        '<p class="demaze-techstack-sub">Powering high-scale enterprise intelligence and resilient automation</p>';
+      container.insertBefore(hdr, container.firstChild);
+    }
 
     // Build or update the /services matching marquee
     var marquee = section.querySelector('.demaze-subpage-marquee');
     if (!marquee) {
       marquee = document.createElement('div');
       marquee.className = 'demaze-subpage-marquee';
-      
+
       var items = content.items;
       // 2 sets for seamless loop
       var setsHTML = [items, items].map(function (set) {
@@ -78,16 +106,15 @@
       }).join('');
 
       marquee.innerHTML = '<div class="demaze-subpage-marquee-track">' + setsHTML + '</div>';
-      section.appendChild(marquee);
+      container.appendChild(marquee);
     }
   }
 
   function verifyStuck(section) {
-    var h3 = section.querySelector('h3');
-    var headingOk = !!(h3 && h3.textContent.trim() === content.heading);
-    var marquee = section.querySelector('.demaze-subpage-marquee');
+    var hdr = section && section.querySelector('.demaze-techstack-header');
+    var marquee = section && section.querySelector('.demaze-subpage-marquee');
     var chips = marquee ? marquee.querySelectorAll('.marquee-brand-chip') : [];
-    return headingOk && chips.length >= 16;
+    return !!(hdr && chips.length >= 16);
   }
 
   window.DemazeOverride.run({

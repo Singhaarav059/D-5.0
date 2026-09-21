@@ -4,15 +4,9 @@
 <html lang="en" data-redirect-timezone="1" dir="ltr">
 <head>
 	<style id="demaze-prepaint-gate">
-		html:not(.demaze-ready) {
-			opacity: 0 !important;
-			visibility: hidden !important;
-			pointer-events: none !important;
-		}
-		html.demaze-ready {
-			opacity: 1 !important;
-			visibility: visible !important;
-			transition: opacity 0.15s ease-out !important;
+		html, body {
+			background-color: #ffffff !important;
+			color: #0B0E17;
 		}
 
 		/* Global Section Order */
@@ -40,7 +34,6 @@
 		section.framer-glfp2y,
 		section.framer-yc1mky,
 		section[data-framer-name="Videos making Step"] > :not(.demaze-process-fora-block),
-		section[data-framer-name="Badge"] [data-framer-name="Trusted by description"],
 		footer:not(.demaze-footer),
 		footer.framer-076M4,
 		footer[data-framer-name="Desktop"],
@@ -88,18 +81,6 @@
 			transform: translateY(-50%) !important;
 		}
 	</style>
-	<script>
-		if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      document.documentElement.classList.add('demaze-ready');
-    });
-  } else {
-    document.documentElement.classList.add('demaze-ready');
-  }
-  window.__demazeReadyTimer = setTimeout(function() {
-    document.documentElement.classList.add('demaze-ready');
-  }, 120);
-	</script>
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
