@@ -22,114 +22,271 @@ window.DEMAZE_CONTENT = {
     avatar: "https://framerusercontent.com/images/e57nypBBfPrAXfYYyYgNJBgJBo.jpeg?width=895&height=980",
   },
   technologyStack: {
-    // From demazetech.com homepage -> "Platforms & Partners: Tools & Technologies" (AI & ML)
-    eyebrow: "Platforms & Partners",
+    // Verified Demaze Engineering Stack powering production systems
+    eyebrow: "Engineering Stack",
     heading: "Tools & Technologies",
+    subtitle:
+      "AI frameworks, vector databases, and real-time streaming infrastructure powering our systems.",
     items: [
-      { name: "Langchain", icon: "https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png" },
-      { name: "Python", icon: "https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png" },
-      { name: "Tensorflow", icon: "https://framerusercontent.com/images/ZDKJY420KwTFElm5cbE51nd1uI.png" },
-      { name: "OpenAI", icon: "https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png" },
-      { name: "Hugging Face", icon: "https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png" },
-      { name: "Pinecone Database", icon: "https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png" },
-      { name: "Apache Kafka", icon: "https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png" },
-      { name: "Elastic Search", icon: "https://framerusercontent.com/images/CEWChIc50KX3RlDIkbgZZdxje4M.png" },
+      { name: "Langchain", role: "LLM Orchestration", icon: "https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png" },
+      { name: "Python", role: "Core AI & APIs", icon: "https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png" },
+      { name: "Tensorflow", role: "Machine Learning Models", icon: "https://framerusercontent.com/images/ZDKJY420KwTFElm5cbE51nd1uI.png" },
+      { name: "OpenAI", role: "Large Language Models", icon: "https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png" },
+      { name: "Hugging Face", role: "Open-Source AI Models", icon: "https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png" },
+      { name: "Pinecone Database", role: "Vector Database", icon: "https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png" },
+      { name: "Apache Kafka", role: "Real-Time Streaming", icon: "https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png" },
+      { name: "Elastic Search", role: "Search & Indexing", icon: "https://framerusercontent.com/images/CEWChIc50KX3RlDIkbgZZdxje4M.png" },
+    ],
+  },
+  engineeringSystems: {
+    // Conceptual flow of Demaze's connected technology ecosystem
+    eyebrow: "ENGINEERING SYSTEMS",
+    heading: "Connected Intelligence, Built for Production",
+    subtitle:
+      "How Demaze connects foundation AI models, orchestration frameworks, and real-time data infrastructure into resilient production software.",
+    conceptualFlow: [
+      { step: "01", label: "AI Models" },
+      { step: "02", label: "Orchestration" },
+      { step: "03", label: "Data & ML" },
+      { step: "04", label: "Streaming & Search" },
+      { step: "05", label: "Production Systems" },
+    ],
+    technologies: [
+      {
+        id: "openai",
+        name: "OpenAI",
+        role: "Large Language Models",
+        layer: "AI Models",
+        orbit: "inner",
+        angle: 0,
+        icon: "https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png",
+        desc: "Proprietary foundation LLMs for complex reasoning, multi-turn dialogue, and structured JSON output.",
+      },
+      {
+        id: "langchain",
+        name: "LangChain",
+        role: "LLM Orchestration",
+        layer: "Orchestration",
+        orbit: "inner",
+        angle: 90,
+        icon: "https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png",
+        desc: "Multi-agent routing, dynamic tool invocation, and retrieval-augmented context management.",
+      },
+      {
+        id: "python",
+        name: "Python",
+        role: "Core AI & APIs",
+        layer: "Orchestration",
+        orbit: "inner",
+        angle: 180,
+        icon: "https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png",
+        desc: "High-concurrency backend services, model execution pipelines, and enterprise API gateways.",
+      },
+      {
+        id: "tensorflow",
+        name: "TensorFlow",
+        role: "Machine Learning Models",
+        layer: "Data & ML",
+        orbit: "inner",
+        angle: 270,
+        icon: "https://framerusercontent.com/images/ZDKJY420KwTFElm5cbE51nd1uI.png",
+        desc: "Custom predictive algorithms, vehicle appraisal valuations, and financial risk stress-testing.",
+      },
+      {
+        id: "huggingface",
+        name: "Hugging Face",
+        role: "Open-Source AI Models",
+        layer: "AI Models",
+        orbit: "outer",
+        angle: 45,
+        icon: "https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png",
+        desc: "Open-weight transformers, domain-adapted embedding models, and specialized local inference.",
+      },
+      {
+        id: "pinecone",
+        name: "Pinecone Database",
+        role: "Vector Database",
+        layer: "Data & ML",
+        orbit: "outer",
+        angle: 135,
+        icon: "https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png",
+        desc: "Sub-second vector similarity search, long-term semantic memory, and scalable hybrid retrieval.",
+      },
+      {
+        id: "kafka",
+        name: "Apache Kafka",
+        role: "Real-Time Streaming",
+        layer: "Streaming & Search",
+        orbit: "outer",
+        angle: 225,
+        icon: "https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png",
+        desc: "Distributed event streaming, real-time FX rate feeds, and asynchronous transaction pipelines.",
+      },
+      {
+        id: "elasticsearch",
+        name: "Elasticsearch",
+        role: "Search & Indexing",
+        layer: "Streaming & Search",
+        orbit: "outer",
+        angle: 315,
+        icon: "https://framerusercontent.com/images/CEWChIc50KX3RlDIkbgZZdxje4M.png",
+        desc: "Full-text evidence indexing, faceted search, and multi-tenant audit trail query execution.",
+      },
     ],
   },
   process: {
-    // From demazetech.com homepage "HOW WE WORK: Our Process" (4 real steps)
+    // From demazetech.com homepage "HOW WE WORK: Our Process" (4 verified steps)
     eyebrow: "HOW WE WORK",
-    heading: "Our Process",
+    heading: "How We Deliver: From Discovery to Scale",
+    subtitle:
+      "A sprint-driven workflow designed to deliver working software on schedule with full architectural transparency.",
     steps: [
       {
+        id: "01",
         title: "Discover & Define",
         description:
-          "We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.",
+          "We analyze your requirements, audit existing systems, and define technical blueprints and data models before writing code.",
+        milestones: [
+          {
+            num: "01",
+            title: "Workflow & System Audits",
+            desc: "Deep-dive architecture analysis and discovery workshops.",
+          },
+          {
+            num: "02",
+            title: "Technical Blueprint",
+            desc: "AI model scoping, database schemas & API contracts.",
+          },
+          {
+            num: "03",
+            title: "Security & Governance",
+            desc: "Data privacy, compliance standards, and architecture review.",
+          },
+        ],
       },
       {
+        id: "02",
         title: "Design & Prototype",
         description:
-          "Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.",
+          "Interactive prototypes to validate user flows and verify requirements with real feedback.",
+        deliverables: [
+          "Clickable Wireframes & UX Flows",
+          "High-Fidelity Design System",
+          "Stakeholder Alignment & Review",
+        ],
       },
       {
+        id: "03",
         title: "Build & Integrate",
         description:
-          "Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.",
+          "Sprint-based engineering, continuous automated testing, and production code deployed in close collaboration with your team.",
+        deliverables: [
+          "2–3 Week Sprints & Progress Reviews",
+          "Automated CI/CD & Unit Tests",
+          "Staging Validation & Code Reviews",
+        ],
       },
       {
+        id: "04",
         title: "Launch & Scale",
         description:
-          "Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.",
+          "Production cutover, automated performance monitoring, team training, and continuous scaling support.",
+        deliverables: [
+          "Staging Validation & Production Cutover",
+          "Real-Time Observability & Monitoring",
+          "100% Code Ownership & Documentation Handover",
+          "Post-Launch SLAs & Feature Iteration",
+        ],
       },
     ],
   },
   visualShowcase: {
-    // From demazetech.com homepage "OUR WORK: The Project we did!"
-    heading: "The Project we did!",
+    // From demazetech.com homepage "OUR WORK: Featured Projects"
+    heading: "Featured Projects",
     eyebrow: "OUR WORK",
     viewAllCTA: { text: "View all work", href: "./projects" },
     projects: [
       {
         title: "AI-Based software for luxury car dealers",
+        domainTag: "Automotive & Mobility",
         image: "https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?width=3924&height=3500",
         description:
-          "This comprehensive AI-based software solution was developed for one of India's largest luxury car dealerships to streamline various operations, including used car valuation, new car EMI calculations, car refurbishment management, and serving as a powerful backend system for the sales team. The tool enhances operational efficiency and significantly improves the customer experience, making it an indispensable asset for the dealership.",
+          "End-to-end dealership operations platform engineered for one of India's largest luxury automotive groups, streamlining used car appraisal algorithms, instant multi-bank EMI matrix calculations, and service bay refurbishment pipelines.",
         features: [
-          "Accurate Used Car Valuations",
-          "Instant New Car EMIs",
-          "Seamless Car Refurbishment",
-          "Efficient Sales Team Backend",
+          "Accurate Valuation AI",
+          "Instant Multi-Bank EMIs",
+          "Refurbishment Workflow",
+          "Sales CRM & Floor App",
         ],
+        href: "./projects",
       },
       {
         title: "Investigative Case Management Software",
+        domainTag: "Legal Tech & Compliance",
         image: "https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?width=4872&height=2740",
         description:
-          "It is an advanced web-based software designed to enhance the capabilities of private investigators with AI-powered tools and comprehensive case management features. It supports seamless organization of case information and media, secure data storage, and automated workflow management, accessible from anywhere.",
+          "Secure, web-based operations workspace empowering private investigators with encrypted evidence indexing, automated forensic report generation, role-based document permissions, and subscription auto-deposit pricing.",
         features: [
-          "Case Management",
-          "AI-Powered Tools",
-          "Document Automation, Subscription-based Auto deposit pricing model",
-          "Web-Based Access & Data Security",
+          "Case File Indexing",
+          "AI Evidence Analysis",
+          "Document Automation",
+          "Subscription Auto-Deposits",
         ],
+        href: "./projects",
       },
       {
         title: "AI-Powered luxury eCommerce Platform",
+        domainTag: "Intelligent E-Commerce",
         image: "https://framerusercontent.com/images/K9H6ej2APXMnI3TZXYvyYkXZtJQ.png?width=1962&height=1750",
         description:
-          "Developed a modern e-commerce and lifestyle platform focused on sustainability and luxury retail. The project involved designing and implementing intuitive user journeys, personalization mechanisms, and secure data handling to ensure a premium digital experience. The result was a scalable, user-friendly solution aligned with the client's vision for innovation and environmental responsibility.",
+          "High-performance lifestyle and luxury retail platform featuring virtual try-on models, interactive video live selling streams, a custom drag-and-drop CMS, and automated multi-channel inventory management.",
         features: [
-          "AI-Powered Search, Try-ons, Recommendations, Price models",
-          "AI-Powered Dashboard & Analytics, Custom Drag & Drop CMS",
-          "Live Selling, Workflow Automations, Product Authentication",
-          "Smart Order & Inventory Management",
+          "AI Search & Virtual Try-Ons",
+          "Custom Drag & Drop CMS",
+          "Live Selling Video Engine",
+          "Smart Inventory Automation",
         ],
+        href: "./projects",
       },
       {
-        title: "Senior Engagement & Support platform",
-        image: "https://framerusercontent.com/images/VsL7mX1NiP3eW5xTBH6fPjjVFfw.png?width=3924&height=3500",
+        title: "Global Payment Transfer Platform",
+        domainTag: "Financial AI & Banking",
+        image: "https://framerusercontent.com/images/kyC8zhxd43towb5gNsnL6f6dFv8.png?width=3840&height=2160",
         description:
-          "Sukoon Unlimited is an innovative platform designed to help seniors lead a connected, purposeful, and fulfilled life by providing access to support, meaningful conversations, and activities. The platform offers various services including personalized coaching, meetups, and a community of compassionate individuals, all aimed at reducing isolation and fostering connections. Sukoon Unlimited serves as a dedicated space for seniors to share experiences, seek guidance, and participate in enriching discussions that enhance mental and emotional well-being.",
+          "High-throughput cross-border remittance engine engineered with real-time foreign exchange rate feeds, automated AML/KYC identity screening, and bank-grade multi-tier settlement rails for global transfers.",
         features: [
-          "Speak with Sarathis, Club Sukoon",
-          "Coaching and Counseling",
-          "Meetups and Social Engagements",
-          "Sukoon Corner Blog",
+          "Instant Cross-Border Transfers",
+          "Real-Time FX Feed Engine",
+          "Automated KYC/AML Screening",
+          "Multi-Tier Bank Settlement",
         ],
+        href: "./projects",
       },
     ],
   },
   coreCapabilities: {
-    // From demazetech.com homepage -> "SERVICES: Apps, websites, AI and more"
-    eyebrow: "SERVICES",
-    heading: "Apps, websites, AI and more",
+    // Demaze Core Capabilities & Engineering Offerings
+    eyebrow: "CORE CAPABILITIES",
+    heading: "Full-Lifecycle AI & Software Engineering",
+    subtitle: "From initial architecture to production deployment, built and maintained by senior engineers.",
     cardHref: "./services",
     items: [
       {
+        id: "01",
+        tag: "AI SYSTEMS",
         title: "AI & Machine Learning",
         image: "https://framerusercontent.com/images/Duf4IQUMIa6MIBdumJk5C3PYR5w.png",
         description:
-          "We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.",
+          "Custom predictive algorithms, domain-tuned LLM agents, and computer vision pipelines engineered for complex enterprise operations.",
+        grad: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%)",
+        shadow: "rgba(124, 58, 237, 0.35)",
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path><circle cx="12" cy="12" r="4"></circle></svg>',
+        chips: [
+          "Predictive Analytics & Forecasting",
+          "NLP & Large Language Models",
+          "Computer Vision & Image AI",
+          "Generative AI & Model Tuning",
+        ],
         subItems: [
           "Predictive Analytics & Forecasting",
           "NLP & Conversational AI",
@@ -140,10 +297,21 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
+        id: "02",
+        tag: "WEB & MOBILE",
         title: "Web, Mobile App & SaaS",
         image: "https://framerusercontent.com/images/YFL2wUsxGifdIbDr6qI69fyzZc.png",
         description:
-          "We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.",
+          "Multi-tenant SaaS platforms, cross-platform mobile apps, and high-concurrency web systems with role-based access and API integrations.",
+        grad: "linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)",
+        shadow: "rgba(37, 99, 235, 0.35)",
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
+        chips: [
+          "Enterprise SaaS Platforms",
+          "iOS & Android Mobile Apps",
+          "Custom Web Applications",
+          "Automated Workflow Engines",
+        ],
         subItems: [
           "Web App Development",
           "Mobile App Development",
@@ -154,10 +322,21 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
+        id: "03",
+        tag: "E-COMMERCE",
         title: "Intelligent E-Commerce",
         image: "https://framerusercontent.com/images/0K8yspLc6XlnFG9G9wxsXa7P1cQ.png",
         description:
-          "We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.",
+          "Multi-vendor marketplace architectures, headless commerce engines, real-time inventory synchronization, and AI product recommendations.",
+        grad: "linear-gradient(135deg, #ea580c 0%, #f59e0b 50%, #e11d48 100%)",
+        shadow: "rgba(234, 88, 12, 0.35)",
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>',
+        chips: [
+          "Headless & D2C Marketplaces",
+          "AI Personalization & Search",
+          "Payment Gateway & Fraud Integration",
+          "Subscription & Billing Engines",
+        ],
         subItems: [
           "D2C / Multi-Vendor Marketplace",
           "AI-Powered Personalization & Recommendation",
@@ -168,10 +347,21 @@ window.DEMAZE_CONTENT = {
         ],
       },
       {
+        id: "04",
+        tag: "CLOUD & DEVOPS",
         title: "Cloud Infrastructure",
         image: "https://framerusercontent.com/images/miuw5HMaBt8VhyOLvGTezxmbFhI.png",
         description:
-          "We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.",
+          "Resilient AWS cloud architectures, containerized Kubernetes microservices, automated CI/CD pipelines, and encrypted data infrastructure.",
+        grad: "linear-gradient(135deg, #0284c7 0%, #10b981 100%)",
+        shadow: "rgba(2, 132, 199, 0.35)",
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>',
+        chips: [
+          "AWS & Cloud Architecture",
+          "Kubernetes & Microservices",
+          "Infrastructure Security & Monitoring",
+          "Automated CI/CD Delivery",
+        ],
         subItems: [
           "Cloud Migration & Modernization",
           "Cloud Native App Development",
@@ -190,20 +380,10 @@ window.DEMAZE_CONTENT = {
       heading: "Who We Are",
       image: "https://framerusercontent.com/images/8dANM4w4wJIzmtS0xJgDEOS4rLc.png",
       paragraphs: [
-        "At Demaze Technologies, we're more than just developers; we're digital transformation architects. We're a passionate team of 35+ technologists, innovators, and strategic thinkers who believe in the power of AI and cutting-edge technology to reshape businesses.",
-        "Founded with a vision to democratize advanced technology, we bridge the gap between complex technical possibilities and real business outcomes.",
+        "Demaze Technologies is an engineering team of 35+ technologists and developers. We partner with growing companies to turn complex ideas into robust, production-ready digital products.",
+        "We work directly alongside your internal team to design architecture, develop core features, and integrate scalable software into your daily operations.",
       ],
-      badges: [
-        "Scalable Solutions",
-        "Digital Transformation",
-        "Future-Ready Architecture",
-        "Automation Excellence",
-        "Strategic Partnership",
-        "Cutting-Edge Technology",
-        "Business Intelligence",
-        "Agile Development",
-        "End-to-End Solutions",
-      ],
+      badges: [],
     },
     whatDrivesUs: {
       heading: "What Drives Us",
@@ -236,29 +416,113 @@ window.DEMAZE_CONTENT = {
     },
   },
   industries: {
-    // From demazetech.com homepage "INDUSTRIES: Industries We Serve" (19 real categories)
-    eyebrow: "INDUSTRIES",
-    heading: "Industries We Serve",
+    // Grounded Two-Tier Architecture: 6 Flagship Domains + 7 Supported Domains
+    eyebrow: "Demonstrated Domain Depth",
+    heading: "Industries We Know Through the Work",
+    subtitle:
+      "Our deepest expertise comes from architecting and deploying real production software. Explore the core sectors where we have built battle-tested systems, alongside the broader domains we actively engineer.",
+    flagshipDomains: [
+      {
+        id: "01",
+        name: "Automotive & Mobility",
+        tagline: "Dealership & Workshop OS",
+        caseProof: "AI-Based Software for Luxury Car Dealers",
+        subItems: ["Automated Vehicle Valuation AI", "Instant Multi-Bank EMI Engines", "Dealership Operations OS", "Workshop Bay Scheduling", "Fleet Refurbishment Tracking"],
+      },
+      {
+        id: "02",
+        name: "Legal Tech & Compliance",
+        tagline: "Investigative Case Management",
+        caseProof: "Investigative Case Management Software",
+        subItems: ["AI-Powered Evidence Tools", "Encrypted Document Vaults", "Automated Case Workflows", "Subscription Auto-Billing", "Audit Log Compliance"],
+      },
+      {
+        id: "03",
+        name: "Intelligent E-Commerce",
+        tagline: "Marketplaces & Unified Commerce",
+        caseProof: "AI-Powered Luxury eCommerce Platform",
+        subItems: ["Multi-Vendor Marketplaces", "AI Personalization & Try-Ons", "Dynamic Auction Engines", "Custom Drag-and-Drop CMS", "Multi-Currency Checkout"],
+      },
+      {
+        id: "04",
+        name: "Logistics & Fleet Automation",
+        tagline: "On-Demand Dispatch & Telematics",
+        caseProof: "Multi-Shopper On-Demand Delivery & Dispatch",
+        subItems: ["Dynamic Courier Dispatch", "Real-Time GPS Telematics", "Automated Route Optimization", "Multi-Store Batching", "Fulfillment Inventory Sync"],
+      },
+      {
+        id: "05",
+        name: "Financial AI & Banking",
+        tagline: "Lending Analysis & Payment Rails",
+        caseProof: "Global Payment Transfer Platform",
+        subItems: ["AI Financial Statement Parsing", "Bank-Ready CMA Report Generation", "Cross-Border Payment Rails", "Automated KYC/AML Screening", "Balance Sheet Stress Testing"],
+      },
+      {
+        id: "06",
+        name: "Generative AI & Media",
+        tagline: "Script-to-Visual Storyboarding",
+        caseProof: "AI Storyboard Creation Engine for Films",
+        subItems: ["Script-to-Image Generation", "Character Model Consistency", "Cinematic Framing Tools", "Director Production Packages", "Prompt-to-Scene Sequencing"],
+      },
+    ],
+    secondaryDomains: [
+      {
+        id: "07",
+        name: "Healthcare & Wellbeing",
+        tagline: "Community & Senior Support",
+        subItems: ["Senior Care Engagement Platforms", "Coaching & Counseling Portals", "Caregiver Dashboards", "Community Engagement Tools"],
+      },
+      {
+        id: "08",
+        name: "Education & EdTech",
+        tagline: "Digital Learning & LMS",
+        subItems: ["Learning Management Systems (LMS)", "Video Course Delivery", "Automated Grading Engines", "Certification Generation"],
+      },
+      {
+        id: "09",
+        name: "HR Tech & Talent",
+        tagline: "Recruitment & Matching AI",
+        subItems: ["Semantic Resume Parsing", "Candidate Matching Engines", "Interview Scheduling Automation", "Hiring Pipeline Analytics"],
+      },
+      {
+        id: "10",
+        name: "Enterprise SaaS & Workflows",
+        tagline: "Operational Workspaces",
+        subItems: ["Multi-Tenant SaaS Core", "Kanban Task Pipelines", "Geofenced Staff Verification", "Role-Based Document Permissions"],
+      },
+      {
+        id: "11",
+        name: "B2B Commerce & Procurement",
+        tagline: "Corporate Gifting & Wholesale",
+        subItems: ["Bulk Order Management", "Corporate Account Portals", "Procurement Workflows", "Multi-Company Invoicing"],
+      },
+      {
+        id: "12",
+        name: "Food & Delivery Operations",
+        tagline: "Multi-Store Delivery Apps",
+        subItems: ["Customer Mobile Ordering", "Multi-Store Catalog Sync", "Shopper Picking Workflows", "Courier Dispatch Integration"],
+      },
+      {
+        id: "13",
+        name: "Retail Storefronts & POS",
+        tagline: "Omnichannel Operations",
+        subItems: ["Omnichannel POS Sync", "Inventory Reconciliation", "Loyalty Program Engines", "Checkout Optimization"],
+      },
+    ],
     items: [
-      { name: "Healthcare", subItems: ["Telemedicine Platforms", "Electronic Health Records (EHR)", "Patient Management Systems", "Appointment Scheduling Software", "Healthcare Analytics Platforms", "Wellness Tracking Applications", "Medical Device Integration", "Hospital Management Systems"] },
-      { name: "Fintech", subItems: ["Digital Payment Platforms", "Mobile Banking Applications", "Cryptocurrency Wallets", "Peer-to-Peer Payment Systems", "Lending Management Software", "Credit Scoring Systems", "Financial Analytics Tools", "Blockchain Payment Solutions", "Trading Platform Development"] },
-      { name: "Logistics", subItems: ["Delivery Management Systems", "Shipping Logistics Management", "Fleet Management Software", "Inventory Management Software", "Telematics Software Development", "Warehouse Management Systems", "Route Optimization Platforms", "Supply Chain Visibility Tools", "Last-Mile Delivery Solutions"] },
-      { name: "Retail", subItems: ["Point-of-Sale (POS) Systems", "Inventory Management Platforms", "Customer Loyalty Programs", "Staff Management Software", "Omnichannel Retail Solutions", "Price Management Systems", "Retail Analytics Dashboards", "Store Operations Management", "Customer Relationship Management"] },
-      { name: "Ecommerce", subItems: ["Multi-Vendor Marketplaces", "B2B Ecommerce Platforms", "B2C Online Stores", "Shopping Cart Development", "Payment Gateway Integration", "Product Recommendation Engines", "Order Management Systems", "Customer Review Platforms", "Auction & Bidding Systems"] },
-      { name: "Education", subItems: ["Learning Management Systems (LMS)", "Online Course Platforms", "Virtual Classroom Software", "Student Information Systems", "Assessment & Testing Platforms", "Educational Content Management", "VR Learning Applications", "AI-Powered Tutoring Systems", "Certification Management"] },
-      { name: "BFSI Solutions", subItems: ["Core Banking Systems", "Insurance Management Platforms", "Loan Origination Systems", "Credit Monitoring Software", "Regulatory Compliance Tools", "Risk Management Systems", "Customer Onboarding Solutions", "Anti-Money Laundering (AML) Tools", "Investment Portfolio Management"] },
-      { name: "Sports & Gaming", subItems: ["Fantasy Sports Platforms", "Gaming Applications", "Tournament Management Systems", "Live Streaming Applications", "Sports Analytics Platforms", "Community Gaming Solutions", "Leaderboard Systems", "In-Game Payment Solutions", "Sports Betting Platforms"] },
-      { name: "Energy & Utility", subItems: ["Smart Grid Management", "Energy Monitoring Systems", "Utility Billing Platforms", "Renewable Energy Management", "Consumption Analytics Tools", "IoT Sensor Integration", "Energy Trading Platforms", "Grid Optimization Software", "Meter Data Management"] },
-      { name: "Real Estate", subItems: ["Property Management Systems", "Virtual Tour Platforms", "Real Estate CRM Solutions", "Rental Management Applications", "Property Listing Websites", "Automated Valuation Models", "Property Investment Platforms", "Facility Management Software", "Real Estate Analytics Tools"] },
-      { name: "Media & Entertainment", subItems: ["Content Management Systems", "Streaming Platforms", "Digital Asset Management", "Social Media Applications", "Video Processing Tools", "AI Content Creation Platforms", "Live Broadcasting Solutions", "Creative Collaboration Tools", "Subscription Management Systems"] },
-      { name: "SaaS Products", subItems: ["Multi-Tenant Applications", "Subscription Management Systems", "Cloud-Native Platforms", "API Development & Integration", "Analytics Dashboard Solutions", "Customer Success Platforms", "Workflow Automation Tools", "Data Management Systems", "Enterprise Software Solutions"] },
-      { name: "Automotive", subItems: ["Dealership Management Systems", "Vehicle Valuation Tools", "Service Scheduling Platforms", "Car Rental Management", "Fleet Tracking Systems", "Automotive CRM Solutions", "Parts Inventory Management", "Customer Engagement Platforms", "Vehicle Financing Calculators"] },
-      { name: "Food & Beverage", subItems: ["Food Delivery Platforms", "Restaurant Management Systems", "Kitchen Display Systems", "Menu Management Software", "Food Safety Compliance Tools", "Inventory Tracking Systems", "Customer Ordering Apps", "Multi-Vendor Food Marketplaces", "Recipe Management Systems"] },
-      { name: "Legal & Professional Services", subItems: ["Case Management Systems", "Document Automation Tools", "Legal Practice Management", "Time & Billing Software", "Client Portal Systems", "Contract Management Solutions", "Compliance Tracking Tools", "Legal Research Platforms", "Court Filing Systems"] },
-      { name: "Human Resources", subItems: ["Applicant Tracking Systems", "Employee Onboarding Platforms", "Performance Management Tools", "Payroll Management Systems", "Workforce Analytics Solutions", "Employee Self-Service Portals", "Talent Acquisition Platforms", "HR Compliance Software", "Learning & Development Systems"] },
-      { name: "Insurance", subItems: ["Policy Management Systems", "Claims Processing Automation", "Insurance CRM Solutions", "Premium Calculation Tools", "Underwriting Software", "Customer Self-Service Portals", "Insurance Mobile Applications", "Risk Assessment Tools", "Regulatory Reporting Systems"] },
-      { name: "Social Commerce", subItems: ["Social Media Platforms", "Peer-to-Peer Marketplaces", "Community Management Systems", "Social Shopping Applications", "Influencer Marketing Platforms", "User-Generated Content Systems", "Social Analytics Tools", "Crypto Wallet Integration", "Social Gaming Features"] },
-      { name: "Manufacturing & B2B", subItems: ["Supply Chain Management", "Vendor Management Platforms", "Procurement Automation Systems", "Manufacturing Execution Systems", "Quality Management Software", "Business Intelligence Dashboards", "B2B Marketplace Development", "Production Planning Tools", "Equipment Maintenance Systems"] },
+      { name: "Automotive & Mobility", subItems: ["Automated Vehicle Valuation AI", "Instant Multi-Bank EMI Engines", "Dealership Operations OS", "Workshop Bay Scheduling", "Fleet Refurbishment Tracking"] },
+      { name: "Legal Tech & Compliance", subItems: ["AI-Powered Evidence Tools", "Encrypted Document Vaults", "Automated Case Workflows", "Subscription Auto-Billing", "Audit Log Compliance"] },
+      { name: "Intelligent E-Commerce", subItems: ["Multi-Vendor Marketplaces", "AI Personalization & Try-Ons", "Dynamic Auction Engines", "Custom Drag-and-Drop CMS", "Multi-Currency Checkout"] },
+      { name: "Logistics & Fleet Automation", subItems: ["Dynamic Courier Dispatch", "Real-Time GPS Telematics", "Automated Route Optimization", "Multi-Store Batching", "Fulfillment Inventory Sync"] },
+      { name: "Financial AI & Banking", subItems: ["AI Financial Statement Parsing", "Bank-Ready CMA Report Generation", "Cross-Border Payment Rails", "Automated KYC/AML Screening", "Balance Sheet Stress Testing"] },
+      { name: "Generative AI & Media", subItems: ["Script-to-Image Generation", "Character Model Consistency", "Cinematic Framing Tools", "Director Production Packages", "Prompt-to-Scene Sequencing"] },
+      { name: "Healthcare & Wellbeing", subItems: ["Senior Care Engagement Platforms", "Coaching & Counseling Portals", "Caregiver Dashboards", "Community Engagement Tools"] },
+      { name: "Education & EdTech", subItems: ["Learning Management Systems (LMS)", "Video Course Delivery", "Automated Grading Engines", "Certification Generation"] },
+      { name: "HR Tech & Talent", subItems: ["Semantic Resume Parsing", "Candidate Matching Engines", "Interview Scheduling Automation", "Hiring Pipeline Analytics"] },
+      { name: "Enterprise SaaS & Workflows", subItems: ["Multi-Tenant SaaS Core", "Kanban Task Pipelines", "Geofenced Staff Verification", "Role-Based Document Permissions"] },
+      { name: "B2B Commerce & Procurement", subItems: ["Bulk Order Management", "Corporate Account Portals", "Procurement Workflows", "Multi-Company Invoicing"] },
+      { name: "Food & Delivery Operations", subItems: ["Customer Mobile Ordering", "Multi-Store Catalog Sync", "Shopper Picking Workflows", "Courier Dispatch Integration"] },
+      { name: "Retail Storefronts & POS", subItems: ["Omnichannel POS Sync", "Inventory Reconciliation", "Loyalty Program Engines", "Checkout Optimization"] },
     ],
   },
   whyDemaze: {
@@ -299,32 +563,32 @@ window.DEMAZE_CONTENT = {
     // From demazetech.com homepage "FAQS: Questions? Answers!"
     eyebrow: "FAQS",
     heading: "Questions? Answers!",
-    subheading: "Helpful answers for a smoother experience",
+    subheading: "Direct answers about our engineering process, timelines, code ownership, and engagement model.",
     items: [
       {
         question: "What makes Demaze different from other development companies?",
         answer:
-          "We're an AI-first technology partner, not just a development service provider. Unlike traditional companies that focus on coding, we specialize in intelligent solutions that leverage cutting-edge AI, machine learning, and automation. We work as an extension of your team, focusing on long-term partnerships and measurable business outcomes rather than just project delivery.",
+          "We work as an embedded engineering partner rather than a transactional vendor. Every project is staffed by senior technologists who write clean, production-grade code, participate directly in technical reviews, and collaborate openly with your team. You retain 100% code ownership from day one.",
       },
       {
         question: "How long does it typically take to develop a custom solution?",
         answer:
-          "Project timelines vary based on complexity and requirements, but most custom solutions take 3-6 months from concept to deployment. Simple applications may take 6-12 weeks, while complex AI-powered platforms or enterprise solutions can take 6-12 months. We provide detailed project timelines during our initial consultation and maintain transparent communication throughout the development process.",
+          "Project timelines depend on the scope of the solution. Focused applications typically launch in 6 to 12 weeks, while most custom software takes 3 to 6 months. For large enterprise systems, development can span 6 to 12 months. During technical discovery, we establish a sprint roadmap with 2–3 week deliverables so your team always knows what is shipping next.",
       },
       {
         question: "Do you work with startups or only established enterprises?",
         answer:
-          "We work with both startups and established enterprises across various industries. Our scalable approach allows us to support early-stage companies with MVP development and growth-stage businesses with comprehensive digital transformation. We tailor our solutions and engagement models to match your business size, budget, and growth objectives.",
+          "We work with both early-stage startups and established companies. For startups, we build fast, modular MVPs designed to scale cleanly. For established businesses, we architect custom software, modernize legacy infrastructure, and automate internal workflows. In all cases, our engagement model adapts to your milestones and team structure.",
       },
       {
         question: "What ongoing support do you provide after project completion?",
         answer:
-          "We offer comprehensive post-launch support including maintenance, updates, performance monitoring, and technical assistance. Our support packages range from basic maintenance to full managed services with dedicated support teams. We also provide training for your team and can scale our support based on your evolving needs as your business grows.",
+          "We provide dedicated post-launch support, including maintenance, system updates, performance monitoring, and technical assistance. We also provide training for your team, or continue working as your ongoing engineering partner for new feature rollouts.",
       },
       {
         question: "How do you ensure the security and confidentiality of our project?",
         answer:
-          "Security and confidentiality are paramount in everything we do. We implement industry-standard security protocols, sign comprehensive NDAs before any project discussion, follow secure development practices, and ensure data protection compliance (GDPR, CCPA, etc.). All our team members are bound by strict confidentiality agreements, and we use secure development environments and encrypted communication channels.",
+          "We execute comprehensive non-disclosure agreements (NDAs) before discussing project specifics. All code is developed in secure environments and transmitted over encrypted communication channels. Our engineering team follows secure development practices, ensures regulatory compliance (including GDPR and CCPA), and enforces strict confidentiality across every project.",
       },
     ],
   },
@@ -335,7 +599,7 @@ window.DEMAZE_CONTENT = {
   },
   finalCTA: {
     // From demazetech.com homepage
-    heading: "Let's connect and build smarter, faster, and stronger - together.",
+    heading: "Discuss your product roadmap, technical architecture, or engineering requirements with our senior team.",
     primaryCTA: { text: "Let's Connect", href: "./contact" },
   },
   contact: {
@@ -347,14 +611,14 @@ window.DEMAZE_CONTENT = {
         type: "email",
         label: "Email Us",
         title: "contact@demazetech.com",
-        desc: "Feel free to email us if you have any questions or need more details!",
+        desc: "Send us your project brief or technical requirements directly.",
         link: "mailto:contact@demazetech.com",
       },
       {
         type: "call",
         label: "Book A Call",
         title: "Book with Calendly",
-        desc: "Feel free to book a call if that’s more convenient and easier for you.",
+        desc: "Schedule an introductory architecture discussion.",
         link: "./contact",
       },
       {
@@ -378,7 +642,7 @@ window.DEMAZE_CONTENT = {
   },
   branding: {
     name: "Demaze Technologies",
-    tagline: "Empowering AI Innovation Worldwide",
+    tagline: "Strategic AI & Software Engineering",
     navLinks: [
       { text: "Projects", href: "./projects" },
       { text: "Services", href: "./services" },
@@ -387,7 +651,7 @@ window.DEMAZE_CONTENT = {
     ],
     ctaButton: { text: "Book A Call", href: "./contact" },
     footerTagline:
-      "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
+      "Demaze Technologies partners with ambitious companies to build scalable digital products, AI systems, and cloud infrastructure with dedicated senior engineering teams.",
     footerLinks: [
       { text: "Projects", href: "./projects" },
       { text: "Services", href: "./services" },

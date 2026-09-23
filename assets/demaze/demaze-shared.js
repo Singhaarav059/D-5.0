@@ -372,7 +372,29 @@
       });
     }
 
-    window.addEventListener('scroll', onTimelineScroll, { passive: true });
+    var isTimelineVisible = false;
+    if ('IntersectionObserver' in window) {
+      var tObs = new IntersectionObserver(function (entries) {
+        isTimelineVisible = entries[0].isIntersecting;
+      }, { rootMargin: '100px 0px 100px 0px' });
+      tObs.observe(timeline);
+    } else {
+      isTimelineVisible = true;
+    }
+
+    var timelineTicking = false;
+    function requestTimelineScroll() {
+      if (!isTimelineVisible) return;
+      if (!timelineTicking) {
+        timelineTicking = true;
+        requestAnimationFrame(function () {
+          onTimelineScroll();
+          timelineTicking = false;
+        });
+      }
+    }
+
+    window.addEventListener('scroll', requestTimelineScroll, { passive: true });
     onTimelineScroll();
   }
 
@@ -457,7 +479,29 @@
         }
       }
 
-      window.addEventListener('scroll', handleScrollSwitch, { passive: true });
+      var isStageVisible = false;
+      if ('IntersectionObserver' in window) {
+        var sObs = new IntersectionObserver(function (entries) {
+          isStageVisible = entries[0].isIntersecting;
+        }, { rootMargin: '100px 0px 100px 0px' });
+        sObs.observe(stage);
+      } else {
+        isStageVisible = true;
+      }
+
+      var capTicking = false;
+      function requestScrollSwitch() {
+        if (!isStageVisible) return;
+        if (!capTicking) {
+          capTicking = true;
+          requestAnimationFrame(function () {
+            handleScrollSwitch();
+            capTicking = false;
+          });
+        }
+      }
+
+      window.addEventListener('scroll', requestScrollSwitch, { passive: true });
       handleScrollSwitch();
     });
   }
@@ -556,7 +600,29 @@
         });
       }
 
-      window.addEventListener('scroll', updateScrub, { passive: true });
+      var isScrubVisible = false;
+      if ('IntersectionObserver' in window) {
+        var scrubObs = new IntersectionObserver(function (entries) {
+          isScrubVisible = entries[0].isIntersecting;
+        }, { rootMargin: '100px 0px 100px 0px' });
+        scrubObs.observe(el);
+      } else {
+        isScrubVisible = true;
+      }
+
+      var scrubTicking = false;
+      function requestScrub() {
+        if (!isScrubVisible) return;
+        if (!scrubTicking) {
+          scrubTicking = true;
+          requestAnimationFrame(function () {
+            updateScrub();
+            scrubTicking = false;
+          });
+        }
+      }
+
+      window.addEventListener('scroll', requestScrub, { passive: true });
       updateScrub();
     });
   }

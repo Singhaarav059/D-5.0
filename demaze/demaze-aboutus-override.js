@@ -48,10 +48,6 @@
       'section[data-framer-name="Products"] h2{' +
       '  font-size:clamp(34px, 3.8vw, 46px)!important;font-weight:700!important;color:#0B0E17!important;margin:0 0 16px!important;opacity:1!important;transform:none!important;' +
       '}' +
-      '.demaze-about-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:860px;margin:24px auto 32px;}' +
-      '.demaze-about-badge{background:#fff;border:1px solid rgba(44,83,199,0.18);color:#2C53C7;font-size:12.5px;font-weight:600;' +
-      'padding:6px 16px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s ease;}' +
-      '.demaze-about-badge:hover{transform:translateY(-1px);border-color:#2C53C7;box-shadow:0 4px 12px rgba(44,83,199,0.12);}' +
       '.demaze-founder-statement-block{max-width:820px;margin:40px auto 0;text-align:center;padding:40px 24px 20px;border-top:1px solid rgba(0,0,0,0.07);}' +
       '.demaze-founder-mark{font-size:56px;line-height:1;color:#5B4FE9;font-family:Georgia,serif;margin-bottom:6px;}' +
       '.demaze-founder-quote{font-family:"Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;font-size:clamp(20px,2.2vw,28px)!important;line-height:1.55!important;font-weight:500!important;color:#0b0f19!important;margin:0 0 24px!important;}' +
@@ -79,19 +75,6 @@
         'max-width:800px;margin:16px auto 0;text-align:center;font-size:16.5px;line-height:1.68;color:#3F4454;';
       p.textContent = content.paragraphs.join(' ');
       headerText.insertAdjacentElement('afterend', p);
-
-      // Capability badges
-      if (content.badges && content.badges.length > 0 && !section.querySelector('.demaze-about-badges')) {
-        var badgesWrap = document.createElement('div');
-        badgesWrap.className = 'demaze-about-badges';
-        badgesWrap.innerHTML = content.badges
-          .map(function (b) {
-            return '<span class="demaze-about-badge">' + b + '</span>';
-          })
-          .join('');
-        p.insertAdjacentElement('afterend', badgesWrap);
-
-      }
     }
 
     var gallery = section.querySelector('[data-framer-name="Gallary"]');

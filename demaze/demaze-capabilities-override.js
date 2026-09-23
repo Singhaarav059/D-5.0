@@ -11,16 +11,15 @@
 
   var STYLE_ID = 'demaze-capabilities-redesign-style';
 
-  var PILLARS = [
+  var FALLBACK_PILLARS = [
     {
       id: '01',
-      tag: 'AI ENGINE',
+      tag: 'AI SYSTEMS',
       title: 'AI & Machine Learning',
-      desc: 'Enterprise AI architectures, predictive models, and autonomous agent workflows engineered for mission-critical operations.',
+      desc: 'Custom predictive algorithms, domain-tuned LLM agents, and computer vision pipelines engineered for complex enterprise operations.',
       grad: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%)',
       shadow: 'rgba(124, 58, 237, 0.35)',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path><circle cx="12" cy="12" r="4"></circle></svg>',
-      metric: 'Sub-Second Inference',
       chips: [
         'Predictive Analytics & Forecasting',
         'NLP & Large Language Models',
@@ -30,53 +29,61 @@
     },
     {
       id: '02',
-      tag: 'FULL STACK',
+      tag: 'WEB & MOBILE',
       title: 'Web, Mobile App & SaaS',
-      desc: 'Scalable full-stack software, cross-platform mobile apps, and multi-tenant SaaS platforms built for high-throughput performance.',
+      desc: 'Multi-tenant SaaS platforms, cross-platform mobile apps, and high-concurrency web systems with role-based access and API integrations.',
       grad: 'linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)',
       shadow: 'rgba(37, 99, 235, 0.35)',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
-      metric: '60 FPS Fluid UI',
       chips: [
         'Enterprise SaaS Platforms',
         'iOS & Android Mobile Apps',
-        'High-Speed Web Applications',
+        'Custom Web Applications',
         'Automated Workflow Engines'
       ]
     },
     {
       id: '03',
-      tag: 'COMMERCE OS',
+      tag: 'E-COMMERCE',
       title: 'Intelligent E-Commerce',
-      desc: 'Headless commerce architectures, multi-vendor marketplaces, and AI recommendation engines maximizing checkout conversion rates.',
+      desc: 'Multi-vendor marketplace architectures, headless commerce engines, real-time inventory synchronization, and AI product recommendations.',
       grad: 'linear-gradient(135deg, #ea580c 0%, #f59e0b 50%, #e11d48 100%)',
       shadow: 'rgba(234, 88, 12, 0.35)',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>',
-      metric: '99.99% Checkout SLA',
       chips: [
         'Headless & D2C Marketplaces',
         'AI Personalization & Search',
-        'Global Payments & Fraud Shield',
+        'Payment Gateway & Fraud Integration',
         'Subscription & Billing Engines'
       ]
     },
     {
       id: '04',
-      tag: 'DEVOPS & SRE',
+      tag: 'CLOUD & DEVOPS',
       title: 'Cloud Infrastructure',
-      desc: 'Cloud-native multi-cloud systems, Kubernetes orchestration, and automated zero-downtime CI/CD delivery pipelines.',
+      desc: 'Resilient AWS cloud architectures, containerized Kubernetes microservices, automated CI/CD pipelines, and encrypted data infrastructure.',
       grad: 'linear-gradient(135deg, #0284c7 0%, #10b981 100%)',
       shadow: 'rgba(2, 132, 199, 0.35)',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>',
-      metric: 'Zero-Downtime SLAs',
       chips: [
-        'AWS & Multi-Cloud Systems',
+        'AWS & Cloud Architecture',
         'Kubernetes & Microservices',
-        'Zero-Trust Security & SRE',
+        'Infrastructure Security & Monitoring',
         'Automated CI/CD Delivery'
       ]
     }
   ];
+
+  function getCapabilitiesData() {
+    var raw = (window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.coreCapabilities) || {};
+    return {
+      eyebrow: raw.eyebrow || 'CORE CAPABILITIES',
+      heading: raw.heading || 'Full-Lifecycle AI & Software Engineering',
+      subtitle: raw.subtitle || 'From initial architecture to production deployment, built and maintained by senior engineers.',
+      cardHref: raw.cardHref || './services',
+      items: (raw.items && raw.items.length) ? raw.items : FALLBACK_PILLARS
+    };
+  }
 
   function ensureStyles() {
     if (document.getElementById(STYLE_ID)) return;
@@ -167,7 +174,7 @@
       '}' +
       '.demaze-cap-desc{' +
       '  font-size: 13px; line-height: 1.45; color: #475569; margin: 0 0 14px;' +
-      '  height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;' +
+      '  min-height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;' +
       '}' +
 
       /* 2x2 Feature Chips Grid - Compact & Uniform */
@@ -188,19 +195,13 @@
 
       /* Card Footer */
       '.demaze-cap-footer{' +
-      '  display: flex; align-items: center; justify-content: space-between;' +
+      '  display: flex; align-items: center; justify-content: flex-end;' +
       '  margin-top: auto; padding-top: 12px; border-top: 1px solid #f1f5f9;' +
       '}' +
-      '.demaze-cap-live{' +
-      '  display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: #10b981;' +
-      '}' +
-      '.demaze-cap-live-dot{' +
-      '  width: 5.5px; height: 5.5px; border-radius: 50%; background: #10b981;' +
-      '  box-shadow: 0 0 8px #10b981;' +
-      '}' +
       '.demaze-cap-link{' +
-      '  display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;' +
+      '  display: inline-flex !important; align-items: center !important; gap: 5px; font-size: 12px; font-weight: 600;' +
       '  color: #2563eb; text-decoration: none !important; transition: gap 0.2s ease, color 0.2s ease;' +
+      '  min-height: 48px !important; height: 48px !important; padding: 0 10px !important; box-sizing: border-box !important;' +
       '}' +
       '.demaze-cap-link:hover{ color: #1d4ed8; gap: 8px; }' +
       '.demaze-cap-link svg{ width: 13px; height: 13px; }' +
@@ -209,7 +210,7 @@
       '@media (max-width: 1024px){' +
       '  .demaze-cap-wrapper{ padding: 0 16px; }' +
       '  .demaze-cap-grid{ grid-template-columns: 1fr; gap: 14px; }' +
-      '  .demaze-cap-desc{ height: auto; -webkit-line-clamp: 3; }' +
+      '  .demaze-cap-desc{ height: auto; min-height: auto; -webkit-line-clamp: unset; display: block; }' +
       '}' +
       '@media (max-width: 640px){' +
       '  section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"]){ padding: 44px 0 !important; }' +
@@ -358,28 +359,32 @@
     var wrapper = document.createElement('div');
     wrapper.className = 'demaze-cap-wrapper';
 
+    var data = getCapabilitiesData();
+
     // Section header - Compact & Refined
     var header = document.createElement('div');
     header.className = 'demaze-cap-header';
     header.innerHTML =
       '<span class="demaze-cap-eyebrow">' +
       '  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
-      '  Core Capabilities' +
+      '  ' + data.eyebrow +
       '</span>' +
-      '<h2 class="demaze-cap-heading">Engineered for Exponential Scale</h2>' +
-      '<p class="demaze-cap-sub">Comprehensive technical architectures designed, engineered, and deployed by Demaze\'s senior engineering team.</p>';
+      '<h2 class="demaze-cap-heading">' + data.heading + '</h2>' +
+      '<p class="demaze-cap-sub">' + data.subtitle + '</p>';
     wrapper.appendChild(header);
 
     // 2x2 Grid
     var grid = document.createElement('div');
     grid.className = 'demaze-cap-grid';
 
-    PILLARS.forEach(function (item, idx) {
+    var items = data.items || FALLBACK_PILLARS;
+    items.forEach(function (item, idx) {
       var outer = document.createElement('div');
       outer.className = 'demaze-cap-card-outer';
       outer.dataset.cardIndex = idx;
 
-      var chipsHTML = item.chips.map(function (c) {
+      var chips = item.chips || item.subItems || [];
+      var chipsHTML = chips.slice(0, 4).map(function (c) {
         return (
           '<div class="demaze-cap-chip">' +
           '  <span class="demaze-cap-chip-icon">' +
@@ -390,25 +395,29 @@
         );
       }).join('');
 
+      var id = item.id || ('0' + (idx + 1));
+      var tag = item.tag || (idx === 0 ? 'AI SYSTEMS' : idx === 1 ? 'WEB & MOBILE' : idx === 2 ? 'E-COMMERCE' : 'CLOUD & DEVOPS');
+      var grad = item.grad || 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)';
+      var shadow = item.shadow || 'rgba(124, 58, 237, 0.35)';
+      var desc = item.description || item.desc || '';
+      var href = item.href || data.cardHref || './services';
+      var icon = item.icon || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle></svg>';
+
       outer.innerHTML =
         '<div class="demaze-cap-card-inner">' +
         '  <div class="demaze-cap-card-top">' +
-        '    <div class="demaze-cap-badge" style="background:' + item.grad + ';box-shadow:0 6px 16px -2px ' + item.shadow + '">' +
-        item.icon +
+        '    <div class="demaze-cap-badge" style="background:' + grad + ';box-shadow:0 6px 16px -2px ' + shadow + '">' +
+        icon +
         '    </div>' +
         '    <div class="demaze-cap-meta">' +
-        '      <span class="demaze-cap-index">' + item.id + ' · ' + item.tag + '</span>' +
+        '      <span class="demaze-cap-index">' + id + ' · ' + tag + '</span>' +
         '    </div>' +
         '  </div>' +
         '  <h3 class="demaze-cap-title">' + item.title + '</h3>' +
-        '  <p class="demaze-cap-desc">' + item.desc + '</p>' +
+        '  <p class="demaze-cap-desc">' + desc + '</p>' +
         '  <div class="demaze-cap-chips">' + chipsHTML + '</div>' +
         '  <div class="demaze-cap-footer">' +
-        '    <div class="demaze-cap-live">' +
-        '      <span class="demaze-cap-live-dot"></span>' +
-        '      <span>' + item.metric + '</span>' +
-        '    </div>' +
-        '    <a href="./services" class="demaze-cap-link">' +
+        '    <a href="' + href + '" class="demaze-cap-link">' +
         '      <span>Explore Services</span>' +
         '      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.33 8h9.34M8 3.33 12.67 8 8 12.67"/></svg>' +
         '    </a>' +

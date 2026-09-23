@@ -110,8 +110,13 @@ html {
   color: var(--ink);
   font-family: var(--font-sans);
   scroll-behavior: auto !important;
+  scroll-padding-top: 100px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+section, [id] {
+  scroll-margin-top: 100px;
 }
 
 /* Cloud style soft sky blue background for subpages and secondary views */
@@ -360,6 +365,9 @@ h4, .demaze-h4 {
   display: flex;
   align-items: center;
   text-decoration: none;
+  min-height: 44px;
+  min-width: 44px;
+  box-sizing: border-box;
 }
 
 .demaze-nav-logo img {
@@ -382,9 +390,12 @@ h4, .demaze-h4 {
   font-weight: 500;
   text-decoration: none;
   padding: 8px 16px;
+  min-height: 44px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
   border-radius: var(--radius-pill);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-block;
   white-space: nowrap;
 }
 
@@ -411,6 +422,8 @@ h4, .demaze-h4 {
   justify-content: center;
   gap: 8px;
   padding: 10px 22px;
+  min-height: 44px;
+  box-sizing: border-box;
   background: #000000;
   color: #ffffff;
   font-size: 13.5px;
@@ -1748,6 +1761,11 @@ h4, .demaze-h4 {
   border: none;
   cursor: pointer;
   padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
   flex-direction: column;
   gap: 5px;
   align-items: center;
@@ -1797,6 +1815,25 @@ h4, .demaze-h4 {
 
 .demaze-subpage-drawer.active {
   display: flex !important;
+}
+
+.demaze-subpage-drawer .drawer-menu {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.demaze-subpage-drawer .drawer-menu li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.demaze-subpage-drawer .drawer-menu a {
+  display: block !important;
 }
 
 .demaze-subpage-drawer a {
@@ -2759,22 +2796,7 @@ body {
 }
 
 .valist-pill-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #000000;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 15px;
-  transition: all 0.3s ease;
-}
-
-.valist-case-card:hover .valist-pill-btn {
-  background: var(--valist-purple);
-  transform: scale(1.08) rotate(-45deg);
+  display: none !important;
 }
 
 /* Unfolding Content Drawer Beneath */
@@ -4259,6 +4281,8 @@ section[data-framer-name="Hero"],
   align-items: center !important;
   justify-content: center !important;
   padding: 10px 24px !important;
+  min-height: 44px !important;
+  box-sizing: border-box !important;
   background: #0b0e17 !important;
   color: #ffffff !important;
   border-radius: 999px !important;

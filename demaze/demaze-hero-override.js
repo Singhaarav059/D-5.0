@@ -575,552 +575,6 @@
     });
   }
 
-  function initHeroLiquidHover(hero) {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var bgContainer = hero.querySelector('.framer-1tc22uo');
-    if (!bgContainer) return;
-    if (bgContainer.querySelector('.demaze-liquid-canvas')) return;
-
-    var bgImg = bgContainer.querySelector('img');
-    var imgSrc = (bgImg && bgImg.src && !bgImg.src.includes('undefined'))
-      ? bgImg.src
-      : './assets/demaze/subpage-clouds-wide.jpg';
-
-    var canvas = document.createElement('canvas');
-    canvas.className = 'demaze-liquid-canvas';
-    canvas.style.cssText = 'position:absolute;top:-10%;left:-10%;width:120%;height:120%;display:block;pointer-events:none;z-index:1;opacity:0;transition:opacity 0.3s ease-out;';
-    bgContainer.appendChild(canvas);
-
-    var gl = canvas.getContext('webgl', { alpha: true, depth: false, antialias: false });
-    if (!gl) return;
-
-    gl.getExtension('OES_texture_float');
-    gl.getExtension('OES_texture_float_linear');
-    gl.clearColor(0, 0, 0, 0);
-
-    // Fluid simulation parameters matching fuel.framer.website
-    var cursorSize = 0.5;
-    var cursorPower = 1.0;
-    var distortionPower = 0.75;
-    var resolution = 5;
-
-    var m = {
-      cursorSize: 0.5 + (cursorSize - 0.1) * 4.5 / 0.9,
-      cursorPower: 5 + (cursorPower - 0.1) * 45 / 0.9,
-      distortionPower: distortionPower
-    };
-    var overscan = 1.2;
-    var mouse = {
-      x: 0.5 * bgContainer.clientWidth,
-      y: 0.4 * bgContainer.clientHeight,
-      dx: 0,
-      dy: 0,
-      moved: false
-    };
-    var gridDim = { w: 0, h: 0 };
-    var velDouble, presDouble, divFbo, outDouble, imgTex = null, imgAspect = 1;
-    var isSimVisible = true;
-    var animFrameId = null;
-
-    var baseVertShader =
-      'precision highp float;\n' +
-      'varying vec2 vUv;\n' +
-      'attribute vec2 a_position;\n' +
-      'varying vec2 vL;\n' +
-      'varying vec2 vR;\n' +
-      'varying vec2 vT;\n' +
-      'varying vec2 vB;\n' +
-      'uniform vec2 u_texel;\n' +
-      'void main () {\n' +
-      '  vUv = .5 * (a_position + 1.);\n' +
-      '  vL = vUv - vec2(u_texel.x, 0.);\n' +
-      '  vR = vUv + vec2(u_texel.x, 0.);\n' +
-      '  vT = vUv + vec2(0., u_texel.y);\n' +
-      '  vB = vUv - vec2(0., u_texel.y);\n' +
-      '  gl_Position = vec4(a_position, 0., 1.);\n' +
-      '}';
-
-    function compileShader(src, type) {
-      var sh = gl.createShader(type);
-      gl.shaderSource(sh, src);
-      gl.compileShader(sh);
-      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-        var err = gl.getShaderInfoLog(sh);
-        gl.deleteShader(sh);
-        throw new Error(err);
-      }
-      return sh;
-    }
-
-    function createProgram(vertSrc, fragSrc) {
-      var prog = gl.createProgram();
-      gl.attachShader(prog, compileShader(vertSrc, gl.VERTEX_SHADER));
-      gl.attachShader(prog, compileShader(fragSrc, gl.FRAGMENT_SHADER));
-      gl.bindAttribLocation(prog, 0, 'a_position');
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        throw new Error(gl.getProgramInfoLog(prog) || 'Program link error');
-      }
-      var uniforms = {};
-      var count = gl.getProgramParameter(prog, gl.ACTIVE_UNIFORMS);
-      for (var i = 0; i < count; i++) {
-        var u = gl.getActiveUniform(prog, i);
-        if (u) uniforms[u.name] = gl.getUniformLocation(prog, u.name);
-      }
-      return { program: prog, uniforms: uniforms };
-    }
-
-    function renderQuad(fbo) {
-      var vBuf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, vBuf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
-      var iBuf = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuf);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(0);
-
-      if (fbo == null) {
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      } else {
-        gl.viewport(0, 0, fbo.width, fbo.height);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo.fbo);
-      }
-      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-      gl.deleteBuffer(vBuf);
-      gl.deleteBuffer(iBuf);
-    }
-
-    function createFBO(w, h) {
-      gl.activeTexture(gl.TEXTURE0);
-      var tex = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, w, h, 0, gl.RGB, gl.FLOAT, null);
-      var fbo = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      gl.viewport(0, 0, w, h);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      return {
-        fbo: fbo,
-        width: w,
-        height: h,
-        attach: function (slot) {
-          gl.activeTexture(gl.TEXTURE0 + slot);
-          gl.bindTexture(gl.TEXTURE_2D, tex);
-          return slot;
-        }
-      };
-    }
-
-    function createDoubleFBO(w, h) {
-      var f1 = createFBO(w, h);
-      var f2 = createFBO(w, h);
-      return {
-        width: w,
-        height: h,
-        texelSizeX: 1 / w,
-        texelSizeY: 1 / h,
-        read: function () { return f1; },
-        write: function () { return f2; },
-        swap: function () { var tmp = f1; f1 = f2; f2 = tmp; }
-      };
-    }
-
-    var progSplat = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying vec2 vUv;\n' +
-      'uniform sampler2D u_input_texture;\n' +
-      'uniform float u_ratio;\n' +
-      'uniform float u_img_ratio;\n' +
-      'uniform vec3 u_point_value;\n' +
-      'uniform vec2 u_point;\n' +
-      'uniform float u_point_size;\n' +
-      'void main () {\n' +
-      '  vec2 p = vUv - u_point.xy;\n' +
-      '  p.x *= u_ratio;\n' +
-      '  vec3 splat = .6 * pow(2., -dot(p, p) / u_point_size) * u_point_value;\n' +
-      '  vec3 base = texture2D(u_input_texture, vUv).xyz;\n' +
-      '  gl_FragColor = vec4(base + splat, 1.);\n' +
-      '}'
-    );
-
-    var progDivergence = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying highp vec2 vUv;\n' +
-      'varying highp vec2 vL;\n' +
-      'varying highp vec2 vR;\n' +
-      'varying highp vec2 vT;\n' +
-      'varying highp vec2 vB;\n' +
-      'uniform sampler2D u_velocity_texture;\n' +
-      'void main () {\n' +
-      '  float L = texture2D(u_velocity_texture, vL).x;\n' +
-      '  float R = texture2D(u_velocity_texture, vR).x;\n' +
-      '  float T = texture2D(u_velocity_texture, vT).y;\n' +
-      '  float B = texture2D(u_velocity_texture, vB).y;\n' +
-      '  float div = .25 * (R - L + T - B);\n' +
-      '  gl_FragColor = vec4(div, 0., 0., 1.);\n' +
-      '}'
-    );
-
-    var progPressure = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying highp vec2 vUv;\n' +
-      'varying highp vec2 vL;\n' +
-      'varying highp vec2 vR;\n' +
-      'varying highp vec2 vT;\n' +
-      'varying highp vec2 vB;\n' +
-      'uniform sampler2D u_pressure_texture;\n' +
-      'uniform sampler2D u_divergence_texture;\n' +
-      'void main () {\n' +
-      '  float L = texture2D(u_pressure_texture, vL).x;\n' +
-      '  float R = texture2D(u_pressure_texture, vR).x;\n' +
-      '  float T = texture2D(u_pressure_texture, vT).x;\n' +
-      '  float B = texture2D(u_pressure_texture, vB).x;\n' +
-      '  float divergence = texture2D(u_divergence_texture, vUv).x;\n' +
-      '  float pressure = (L + R + B + T - divergence) * .25;\n' +
-      '  gl_FragColor = vec4(pressure, 0., 0., 1.);\n' +
-      '}'
-    );
-
-    var progGradient = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying highp vec2 vUv;\n' +
-      'varying highp vec2 vL;\n' +
-      'varying highp vec2 vR;\n' +
-      'varying highp vec2 vT;\n' +
-      'varying highp vec2 vB;\n' +
-      'uniform sampler2D u_pressure_texture;\n' +
-      'uniform sampler2D u_velocity_texture;\n' +
-      'void main () {\n' +
-      '  float L = texture2D(u_pressure_texture, vL).x;\n' +
-      '  float R = texture2D(u_pressure_texture, vR).x;\n' +
-      '  float T = texture2D(u_pressure_texture, vT).x;\n' +
-      '  float B = texture2D(u_pressure_texture, vB).x;\n' +
-      '  vec2 velocity = texture2D(u_velocity_texture, vUv).xy;\n' +
-      '  velocity.xy -= vec2(R - L, T - B);\n' +
-      '  gl_FragColor = vec4(velocity, 0., 1.);\n' +
-      '}'
-    );
-
-    var progAdvection = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying vec2 vUv;\n' +
-      'uniform sampler2D u_velocity_texture;\n' +
-      'uniform sampler2D u_input_texture;\n' +
-      'uniform vec2 u_texel;\n' +
-      'uniform vec2 u_output_textel;\n' +
-      'uniform float u_dt;\n' +
-      'uniform float u_dissipation;\n' +
-      'vec4 bilerp (sampler2D sam, vec2 uv, vec2 tsize) {\n' +
-      '  vec2 st = uv / tsize - 0.5;\n' +
-      '  vec2 iuv = floor(st);\n' +
-      '  vec2 fuv = fract(st);\n' +
-      '  vec4 a = texture2D(sam, (iuv + vec2(0.5, 0.5)) * tsize);\n' +
-      '  vec4 b = texture2D(sam, (iuv + vec2(1.5, 0.5)) * tsize);\n' +
-      '  vec4 c = texture2D(sam, (iuv + vec2(0.5, 1.5)) * tsize);\n' +
-      '  vec4 d = texture2D(sam, (iuv + vec2(1.5, 1.5)) * tsize);\n' +
-      '  return mix(mix(a, b, fuv.x), mix(c, d, fuv.x), fuv.y);\n' +
-      '}\n' +
-      'void main () {\n' +
-      '  vec2 coord = vUv - u_dt * bilerp(u_velocity_texture, vUv, u_texel).xy * u_texel;\n' +
-      '  vec4 velocity = bilerp(u_input_texture, coord, u_output_textel);\n' +
-      '  gl_FragColor = u_dissipation * velocity;\n' +
-      '}'
-    );
-
-    var progDisplay = createProgram(baseVertShader,
-      'precision highp float;\n' +
-      'precision highp sampler2D;\n' +
-      'varying vec2 vUv;\n' +
-      'uniform float u_ratio;\n' +
-      'uniform float u_img_ratio;\n' +
-      'uniform float u_disturb_power;\n' +
-      'uniform sampler2D u_output_texture;\n' +
-      'uniform sampler2D u_velocity_texture;\n' +
-      'uniform sampler2D u_text_texture;\n' +
-      'uniform vec2 u_point;\n' +
-      'uniform float u_canvas_scale;\n' +
-      'uniform float u_inner_scale;\n' +
-      'vec2 get_img_uv() {\n' +
-      '  vec2 uv = vUv - 0.5;\n' +
-      '  uv *= u_canvas_scale;\n' +
-      '  uv /= u_inner_scale;\n' +
-      '  float containerAspect = u_ratio;\n' +
-      '  float imageAspect = u_img_ratio;\n' +
-      '  vec2 scale = vec2(1.0);\n' +
-      '  if (containerAspect > imageAspect) {\n' +
-      '    scale.y = imageAspect / containerAspect;\n' +
-      '  } else {\n' +
-      '    scale.x = containerAspect / imageAspect;\n' +
-      '  }\n' +
-      '  uv *= scale;\n' +
-      '  return uv + 0.5;\n' +
-      '}\n' +
-      'vec2 get_frame_uv() {\n' +
-      '  vec2 uv = vUv - 0.5;\n' +
-      '  uv *= u_canvas_scale;\n' +
-      '  uv /= u_inner_scale;\n' +
-      '  return uv + 0.5;\n' +
-      '}\n' +
-      'float get_img_frame_alpha(vec2 uv, float img_frame_width) {\n' +
-      '  float alpha = smoothstep(0., img_frame_width, uv.x) * smoothstep(1., 1. - img_frame_width, uv.x);\n' +
-      '  alpha *= smoothstep(0., img_frame_width, uv.y) * smoothstep(1., 1. - img_frame_width, uv.y);\n' +
-      '  return alpha;\n' +
-      '}\n' +
-      'vec3 sample_image_smooth(vec2 uv) {\n' +
-      '  vec2 uvc = clamp(uv, 0.0, 1.0);\n' +
-      '  vec3 base = texture2D(u_text_texture, vec2(uvc.x, 1.0 - uvc.y)).rgb;\n' +
-      '  float yBelow = step(uv.y, 0.0);\n' +
-      '  float yAbove = step(1.0, uv.y);\n' +
-      '  float xLeft = step(uv.x, 0.0);\n' +
-      '  float xRight = step(1.0, uv.x);\n' +
-      '  float outOfBounds = max(max(yBelow, yAbove), max(xLeft, xRight));\n' +
-      '  if (outOfBounds > 0.0) {\n' +
-      '    float d = 0.002;\n' +
-      '    vec3 sum = vec3(0.0);\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x - d, 0.0, 1.0), 1.0 - clamp(uvc.y - d, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x, 0.0, 1.0), 1.0 - clamp(uvc.y - d, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x + d, 0.0, 1.0), 1.0 - clamp(uvc.y - d, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x - d, 0.0, 1.0), 1.0 - clamp(uvc.y, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x, 0.0, 1.0), 1.0 - clamp(uvc.y, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x + d, 0.0, 1.0), 1.0 - clamp(uvc.y, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x - d, 0.0, 1.0), 1.0 - clamp(uvc.y + d, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x, 0.0, 1.0), 1.0 - clamp(uvc.y + d, 0.0, 1.0))).rgb;\n' +
-      '    sum += texture2D(u_text_texture, vec2(clamp(uvc.x + d, 0.0, 1.0), 1.0 - clamp(uvc.y + d, 0.0, 1.0))).rgb;\n' +
-      '    base = sum / 9.0;\n' +
-      '  }\n' +
-      '  return base;\n' +
-      '}\n' +
-      'void main () {\n' +
-      '  float offset = texture2D(u_output_texture, vUv).r;\n' +
-      '  vec2 velocity = texture2D(u_velocity_texture, vUv).xy;\n' +
-      '  velocity += .001;\n' +
-      '  vec2 img_uv = get_img_uv();\n' +
-      '  img_uv -= u_disturb_power * normalize(velocity) * offset;\n' +
-      '  img_uv -= u_disturb_power * normalize(velocity) * offset;\n' +
-      '  vec2 frame_uv = get_frame_uv();\n' +
-      '  frame_uv -= u_disturb_power * normalize(velocity) * offset;\n' +
-      '  vec3 img = sample_image_smooth(img_uv);\n' +
-      '  float opacity = get_img_frame_alpha(frame_uv, .002);\n' +
-      '  gl_FragColor = vec4(img * opacity, opacity);\n' +
-      '}'
-    );
-
-    function initFBOs() {
-      velDouble = createDoubleFBO(gridDim.w, gridDim.h);
-      presDouble = createDoubleFBO(gridDim.w, gridDim.h);
-      divFbo = createFBO(gridDim.w, gridDim.h);
-      outDouble = createDoubleFBO(gridDim.w, gridDim.h);
-    }
-
-    function resizeCanvas() {
-      var w = bgContainer.clientWidth || 1440;
-      var h = bgContainer.clientHeight || 900;
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(2, Math.round(w * overscan * dpr));
-      canvas.height = Math.max(2, Math.round(h * overscan * dpr));
-      var dispW = w * overscan;
-      var dispH = h * overscan;
-      canvas.style.width = dispW + 'px';
-      canvas.style.height = dispH + 'px';
-      var aspect = dispW / dispH;
-      var l = 128 + (resolution - 1) * 384 / 9;
-      gridDim.w = Math.round(l * aspect);
-      gridDim.h = Math.round(l);
-    }
-
-    function getNormalizedPointer() {
-      var w = bgContainer.clientWidth * overscan;
-      var h = bgContainer.clientHeight * overscan;
-      var rx = 0.5 * (w - bgContainer.clientWidth);
-      var ry = 0.5 * (h - bgContainer.clientHeight);
-      return {
-        u: (mouse.x + rx) / w,
-        v: 1 - (mouse.y + ry) / h
-      };
-    }
-
-    function recordPointer(clientX, clientY) {
-      mouse.moved = true;
-      mouse.dx = 6 * (clientX - mouse.x);
-      mouse.dy = 6 * (clientY - mouse.y);
-      mouse.x = clientX;
-      mouse.y = clientY;
-    }
-
-    function loadTexture(src) {
-      var img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = src;
-      img.onload = function () {
-        imgAspect = img.naturalWidth / Math.max(1, img.naturalHeight);
-        imgTex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, imgTex);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, imgTex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        canvas.style.opacity = '1';
-      };
-    }
-
-    var isLiquidScrolling = false;
-    var liquidScrollTimer = null;
-    window.addEventListener('scroll', function () {
-      isLiquidScrolling = true;
-      clearTimeout(liquidScrollTimer);
-      liquidScrollTimer = setTimeout(function () {
-        isLiquidScrolling = false;
-      }, 100);
-    }, { passive: true });
-
-    function renderFrame() {
-      if (!isSimVisible) {
-        animFrameId = null;
-        return;
-      }
-      if (isLiquidScrolling) {
-        animFrameId = requestAnimationFrame(renderFrame);
-        return;
-      }
-      if (!imgTex) {
-        animFrameId = requestAnimationFrame(renderFrame);
-        return;
-      }
-
-      var dt = 1 / 60;
-      if (mouse.moved) {
-        mouse.moved = false;
-        gl.useProgram(progSplat.program);
-        gl.uniform1i(progSplat.uniforms.u_input_texture, velDouble.read().attach(1));
-        gl.uniform1f(progSplat.uniforms.u_ratio, bgContainer.clientWidth / Math.max(1, bgContainer.clientHeight));
-        var pt = getNormalizedPointer();
-        gl.uniform2f(progSplat.uniforms.u_point, pt.u, pt.v);
-        gl.uniform3f(progSplat.uniforms.u_point_value, mouse.dx, -mouse.dy, 0);
-        gl.uniform1f(progSplat.uniforms.u_point_size, m.cursorSize * 0.001);
-        renderQuad(velDouble.write());
-        velDouble.swap();
-
-        gl.uniform1i(progSplat.uniforms.u_input_texture, outDouble.read().attach(1));
-        gl.uniform3f(progSplat.uniforms.u_point_value, m.cursorPower * 0.001, 0, 0);
-        renderQuad(outDouble.write());
-        outDouble.swap();
-      }
-
-      gl.useProgram(progDivergence.program);
-      gl.uniform2f(progDivergence.uniforms.u_texel, velDouble.texelSizeX, velDouble.texelSizeY);
-      gl.uniform1i(progDivergence.uniforms.u_velocity_texture, velDouble.read().attach(1));
-      renderQuad(divFbo);
-
-      gl.useProgram(progPressure.program);
-      gl.uniform2f(progPressure.uniforms.u_texel, velDouble.texelSizeX, velDouble.texelSizeY);
-      gl.uniform1i(progPressure.uniforms.u_divergence_texture, divFbo.attach(1));
-      for (var step = 0; step < 16; step++) {
-        gl.uniform1i(progPressure.uniforms.u_pressure_texture, presDouble.read().attach(2));
-        renderQuad(presDouble.write());
-        presDouble.swap();
-      }
-
-      gl.useProgram(progGradient.program);
-      gl.uniform2f(progGradient.uniforms.u_texel, velDouble.texelSizeX, velDouble.texelSizeY);
-      gl.uniform1i(progGradient.uniforms.u_pressure_texture, presDouble.read().attach(1));
-      gl.uniform1i(progGradient.uniforms.u_velocity_texture, velDouble.read().attach(2));
-      renderQuad(velDouble.write());
-      velDouble.swap();
-
-      gl.useProgram(progAdvection.program);
-      gl.uniform2f(progAdvection.uniforms.u_texel, velDouble.texelSizeX, velDouble.texelSizeY);
-      gl.uniform2f(progAdvection.uniforms.u_output_textel, velDouble.texelSizeX, velDouble.texelSizeY);
-      gl.uniform1i(progAdvection.uniforms.u_velocity_texture, velDouble.read().attach(1));
-      gl.uniform1i(progAdvection.uniforms.u_input_texture, velDouble.read().attach(1));
-      gl.uniform1f(progAdvection.uniforms.u_dt, dt);
-      gl.uniform1f(progAdvection.uniforms.u_dissipation, 0.97);
-      renderQuad(velDouble.write());
-      velDouble.swap();
-
-      gl.useProgram(progAdvection.program);
-      gl.uniform2f(progAdvection.uniforms.u_output_textel, outDouble.texelSizeX, outDouble.texelSizeY);
-      gl.uniform1i(progAdvection.uniforms.u_input_texture, outDouble.read().attach(2));
-      gl.uniform1f(progAdvection.uniforms.u_dt, 8 * dt);
-      gl.uniform1f(progAdvection.uniforms.u_dissipation, 0.98);
-      renderQuad(outDouble.write());
-      outDouble.swap();
-
-      gl.useProgram(progDisplay.program);
-      var ptF = getNormalizedPointer();
-      gl.uniform2f(progDisplay.uniforms.u_point, ptF.u, ptF.v);
-      gl.uniform1i(progDisplay.uniforms.u_velocity_texture, velDouble.read().attach(2));
-      gl.uniform1f(progDisplay.uniforms.u_ratio, bgContainer.clientWidth / Math.max(1, bgContainer.clientHeight));
-      gl.uniform1f(progDisplay.uniforms.u_img_ratio, imgAspect);
-      gl.uniform1f(progDisplay.uniforms.u_disturb_power, m.distortionPower);
-      gl.uniform1i(progDisplay.uniforms.u_output_texture, outDouble.read().attach(1));
-      gl.uniform1f(progDisplay.uniforms.u_canvas_scale, 1);
-      gl.uniform1f(progDisplay.uniforms.u_inner_scale, 0.8333333333333334);
-      if (imgTex) {
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, imgTex);
-        gl.uniform1i(progDisplay.uniforms.u_text_texture, 0);
-        renderQuad(null);
-      }
-
-      animFrameId = requestAnimationFrame(renderFrame);
-    }
-
-    resizeCanvas();
-    initFBOs();
-    loadTexture(imgSrc);
-
-    // Track mouse & touch movements across the hero section
-    hero.addEventListener('mousemove', function (e) {
-      var rect = bgContainer.getBoundingClientRect();
-      recordPointer(e.clientX - rect.left, e.clientY - rect.top);
-    });
-
-    hero.addEventListener('touchmove', function (e) {
-      if (e.targetTouches && e.targetTouches[0]) {
-        var t = e.targetTouches[0];
-        var rect = bgContainer.getBoundingClientRect();
-        recordPointer(t.clientX - rect.left, t.clientY - rect.top);
-      }
-    }, { passive: true });
-
-    window.addEventListener('resize', function () {
-      resizeCanvas();
-      initFBOs();
-      if (imgTex) gl.bindTexture(gl.TEXTURE_2D, imgTex);
-    }, { passive: true });
-
-    // IntersectionObserver to pause loop when scrolled away
-    if ('IntersectionObserver' in window) {
-      var heroObs = new IntersectionObserver(function (entries) {
-        isSimVisible = entries[0].isIntersecting;
-        if (isSimVisible && !animFrameId) {
-          animFrameId = requestAnimationFrame(renderFrame);
-        } else if (!isSimVisible && animFrameId) {
-          cancelAnimationFrame(animFrameId);
-          animFrameId = null;
-        }
-      }, { rootMargin: '100px 0px 100px 0px' });
-      heroObs.observe(hero);
-    }
-
-    animFrameId = requestAnimationFrame(renderFrame);
-  }
 
   function getHero() {
     return document.querySelector('section[data-framer-name="Hero"]');
@@ -1155,14 +609,42 @@
     if (pricePill) pricePill.style.display = 'none';
 
     // 2. Headline
+    var headlineWrapper = hero.querySelector('[data-framer-name="Headline"]');
     var h1 = hero.querySelector('h1');
     if (h1) {
-      h1.innerHTML = 'Your Strategic Partner in Building <span class="demaze-highlight-gradient">Scalable AI Products</span>';
+      if (!h1.textContent.includes('Scalable AI Products')) {
+        h1.innerHTML = 'Your Strategic Partner in Building <span class="demaze-highlight-gradient">Scalable AI Products</span>';
+      }
+      if (!h1.__demazeH1Obs) {
+        h1.__demazeH1Obs = true;
+        var h1Observer = new MutationObserver(function () {
+          if (h1 && !h1.textContent.includes('Scalable AI Products')) {
+            h1.innerHTML = 'Your Strategic Partner in Building <span class="demaze-highlight-gradient">Scalable AI Products</span>';
+          }
+        });
+        h1Observer.observe(h1, { childList: true, characterData: true, subtree: true });
+      }
+    }
+    if (headlineWrapper && !headlineWrapper.__demazeH1ParentObs) {
+      headlineWrapper.__demazeH1ParentObs = true;
+      var parentObserver = new MutationObserver(function () {
+        var curH1 = headlineWrapper.querySelector('h1');
+        if (curH1 && !curH1.textContent.includes('Scalable AI Products')) {
+          curH1.innerHTML = 'Your Strategic Partner in Building <span class="demaze-highlight-gradient">Scalable AI Products</span>';
+        }
+      });
+      parentObserver.observe(headlineWrapper, { childList: true });
     }
 
-    // 3. Description
+    // 3. Description (singleton guarantee)
     var headlineWrapper = hero.querySelector('[data-framer-name="Headline"]');
-    if (headlineWrapper && !hero.querySelector('.demaze-hero-desc')) {
+    var existingDescs = hero.querySelectorAll('.demaze-hero-desc');
+    if (existingDescs.length > 1) {
+      for (var di = 1; di < existingDescs.length; di++) {
+        existingDescs[di].remove();
+      }
+    }
+    if (existingDescs.length === 0 && headlineWrapper) {
       var desc = document.createElement('div');
       desc.className = 'demaze-hero-desc';
       var p = document.createElement('p');
@@ -1171,6 +653,11 @@
       p.textContent = content.description;
       desc.appendChild(p);
       headlineWrapper.insertAdjacentElement('afterend', desc);
+    } else if (existingDescs.length > 0) {
+      var existingP = existingDescs[0].querySelector('p');
+      if (existingP && existingP.textContent !== content.description) {
+        existingP.textContent = content.description;
+      }
     }
 
     // 4. Primary CTA ("Let's Connect")
@@ -1209,6 +696,7 @@
     }
 
     // Ensure background image and liquid canvas stay locked post-hydration
+    // Ensure background image stays locked post-hydration
     var bgContainer = hero.querySelector('.framer-1tc22uo');
     if (bgContainer && !bgContainer.__demazeEnforced) {
       bgContainer.__demazeEnforced = true;
@@ -1218,15 +706,14 @@
           img.src = './assets/demaze/subpage-clouds-wide.jpg';
           img.srcset = './assets/demaze/subpage-clouds-wide.jpg 1x';
         }
-        if (!bgContainer.querySelector('.demaze-liquid-canvas')) {
-          initHeroLiquidHover(hero);
-        }
+        var oldCanvas = bgContainer.querySelector('.demaze-liquid-canvas');
+        if (oldCanvas) oldCanvas.remove();
       });
       bgObserver.observe(bgContainer, { childList: true, subtree: true, attributes: true, attributeFilter: ['src', 'srcset'] });
     }
 
-    // Fuel-style Liquid Water Floating Ripple Effect
-    initHeroLiquidHover(hero);
+    var oldCanvas = hero.querySelector('.demaze-liquid-canvas');
+    if (oldCanvas) oldCanvas.remove();
 
     // 7. Tabbed Browser Mockup Card + 3D Sphere Integration
     var tabCardEl = hero.querySelector('.framer-1ib2jhf, [data-framer-appear-id="1ib2jhf"]');
@@ -1238,7 +725,14 @@
         img.style.setProperty('display', 'none', 'important');
       });
 
-      if (!tabCardEl.querySelector('.demaze-browser-card')) {
+      var existingCards = tabCardEl.querySelectorAll('.demaze-browser-card');
+      if (existingCards.length > 1) {
+        for (var ci = 1; ci < existingCards.length; ci++) {
+          existingCards[ci].remove();
+        }
+      }
+
+      if (existingCards.length === 0) {
         var card = document.createElement('div');
         card.className = 'demaze-browser-card';
         card.innerHTML =
@@ -1254,31 +748,10 @@
           '      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' +
           '    </svg>' +
           '    <span class="demaze-tab-url">demazetech.com</span>' +
-          '    <span class="demaze-tab-badge">Neural AI Engine v4.0</span>' +
-          '  </div>' +
-          '  <div class="demaze-browser-actions">' +
-          '    <span class="demaze-live-pulse"></span>' +
-          '    <span class="demaze-live-text">Live Interactive Core</span>' +
           '  </div>' +
           '</div>' +
           '<div class="demaze-sphere-stage">' +
           '  <div id="hero-sphere-container"></div>' +
-          '  <div class="demaze-telemetry-card demaze-telemetry-left">' +
-          '    <div class="demaze-telemetry-hdr">' +
-          '      <span class="demaze-pill-dot green"></span>' +
-          '      <span>NEURAL ENGINE</span>' +
-          '    </div>' +
-          '    <div class="demaze-telemetry-metric">99.4%</div>' +
-          '    <div class="demaze-telemetry-sub">Inference Precision · Autonomous AI</div>' +
-          '  </div>' +
-          '  <div class="demaze-telemetry-card demaze-telemetry-right">' +
-          '    <div class="demaze-telemetry-hdr">' +
-          '      <span class="demaze-pill-dot cyan"></span>' +
-          '      <span>DEPLOYMENTS</span>' +
-          '    </div>' +
-          '    <div class="demaze-telemetry-metric">45+ Systems</div>' +
-          '    <div class="demaze-telemetry-sub">Enterprise AI Deployments Active</div>' +
-          '  </div>' +
           '</div>';
 
         tabCardEl.appendChild(card);
@@ -1292,94 +765,134 @@
       var hStyle = document.createElement('style');
       hStyle.id = 'demaze-hero-style';
       hStyle.textContent =
+        /* === P1.5 HERO REFINEMENT MASTER STYLES === */
         'section[data-framer-name="Hero"], .framer-xj5vkr{' +
         '  position:relative!important;overflow:visible!important;' +
-        '  height:1420px!important;max-height:1520px!important;aspect-ratio:auto!important;' +
-        '  padding:160px 0 0!important;margin-bottom:0px!important;' +
-        '}' +
-        '@media (max-width: 1199px) {' +
-        '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
-        '    height:1360px!important;max-height:1440px!important;' +
-        '  }' +
-        '}' +
-        '@media (max-width: 809px) {' +
-        '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
-        '    height:1380px!important;max-height:1480px!important;padding:150px 0 0!important;' +
-        '  }' +
+        '  height:auto!important;min-height:auto!important;max-height:none!important;aspect-ratio:auto!important;' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
+        '  padding:136px 0 64px!important;margin-bottom:0px!important;box-sizing:border-box!important;' +
         '}' +
         'section[data-framer-name="Badge"]{' +
         '  margin-top:0px!important;position:relative!important;z-index:2!important;' +
         '}' +
-        /* MOVIQ Native Background Image Wrapper Styling */
+        /* Single Full-Bleed Edge-to-Edge Sky Background */
+        '.framer-1tc22uo, .framer-1tc22uo *, .framer-ycxj79{' +
+        '  border-radius:0!important;padding:0!important;margin:0!important;' +
+        '}' +
         '.framer-1tc22uo{' +
-        '  position:absolute!important;top:0!important;left:50%!important;transform:translate(-50%)!important;' +
-        '  width:100%!important;border-radius:32px!important;overflow:clip!important;z-index:0!important;' +
+        '  position:absolute!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;' +
+        '  transform:none!important;width:100%!important;max-width:100%!important;height:100%!important;' +
+        '  display:block!important;overflow:hidden!important;z-index:0!important;padding:0!important;' +
+        '}' +
+        '.framer-ycxj79,' +
+        '.framer-1tc22uo .framer-ycxj79,' +
+        '.framer-1tc22uo [data-framer-background-image-wrapper="true"],' +
+        '.framer-1tc22uo [data-framer-background-image-wrapper="true"] > div {' +
+        '  position:absolute!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;' +
+        '  width:100%!important;height:100%!important;display:block!important;' +
         '}' +
         '.framer-1tc22uo img{' +
-        '  display:block!important;width:100%!important;height:100%!important;border-radius:inherit!important;' +
-        '  object-position:center!important;object-fit:cover!important;' +
+        '  position:absolute!important;top:0!important;left:0!important;' +
+        '  display:block!important;width:100%!important;height:100%!important;border-radius:0!important;' +
+        '  object-position:center top!important;object-fit:cover!important;' +
         '}' +
+        '.framer-1bdrozj{' +
+        '  position:absolute!important;inset:0!important;top:0!important;left:0!important;' +
+        '  width:100%!important;height:100%!important;display:block!important;' +
+        '}' +
+        '.demaze-liquid-canvas{display:none!important;}' +
+        /* Subtle Scrim for Editorial Typography Contrast */
+        '.framer-1tc22uo::after{' +
+        '  content:""!important;position:absolute!important;inset:0!important;' +
+        '  background:linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.04) 35%, rgba(255,255,255,0.55) 75%, #ffffff 100%)!important;' +
+        '  pointer-events:none!important;z-index:1!important;' +
+        '}' +
+        /* Hero Text Container */
         'section[data-framer-name="Hero"] [data-framer-name="Container"], .framer-384jw6{' +
-        '  position:relative!important;z-index:4!important;height:auto!important;min-height:auto!important;padding:0 24px!important;' +
+        '  position:relative!important;z-index:4!important;height:auto!important;min-height:auto!important;' +
+        '  padding:0 24px!important;max-width:980px!important;width:100%!important;' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
+        '  text-align:center!important;gap:0!important;box-sizing:border-box!important;' +
         '}' +
+        '.framer-1l3hmys{' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;gap:0!important;' +
+        '}' +
+        /* Eyebrow Badge Pill */
         'section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
-        '  position:relative;z-index:4;opacity:1!important;transform:none!important;' +
-        '  background-color:rgba(255, 255, 255, 0.3)!important;border-radius:100px!important;padding:8px 14px!important;' +
-        '  border:1px solid rgba(255, 255, 255, 0.25)!important;backdrop-filter:blur(8px)!important;' +
+        '  display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
+        '  position:relative!important;z-index:4!important;opacity:1!important;transform:none!important;' +
+        '  background:rgba(255, 255, 255, 0.75)!important;border-radius:999px!important;padding:6px 18px!important;' +
+        '  border:1px solid rgba(226, 232, 240, 0.9)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;' +
+        '  box-shadow:0 2px 8px rgba(15, 23, 42, 0.04)!important;margin-bottom:20px!important;width:auto!important;max-width:none!important;' +
         '}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Tag"] p{' +
+        '  font-size:12.5px!important;font-weight:600!important;letter-spacing:0.05em!important;text-transform:uppercase!important;' +
+        '  color:#0f172a!important;margin:0!important;font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
+        '}' +
+        /* Headline: Balanced, authoritative ink tone, tight tracking */
         'section[data-framer-name="Hero"] h1{' +
         '  position:relative;z-index:4;text-wrap:balance;opacity:1!important;transform:none!important;' +
-        '  font-size:clamp(34px, 4.5vw, 68px)!important;line-height:1.15!important;margin:16px auto 0!important;' +
-        '  color:#0b0e17!important;-webkit-text-fill-color:#0b0e17!important;text-shadow:0 1px 2px rgba(255,255,255,0.9)!important;text-align:center!important;' +
+        '  font-size:clamp(34px, 4.2vw, 62px)!important;line-height:1.12!important;letter-spacing:-0.035em!important;' +
+        '  color:#090d16!important;-webkit-text-fill-color:#090d16!important;text-align:center!important;' +
+        '  max-width:900px!important;margin:0 auto!important;font-weight:700!important;' +
+        '  font-family:"Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
+        '  text-shadow:0 1px 2px rgba(255,255,255,0.7)!important;' +
         '}' +
+        /* Dignified brand accent on Scalable AI Products */
         'section[data-framer-name="Hero"] h1 .demaze-highlight-gradient{' +
-        '  background:linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)!important;' +
+        '  background:linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)!important;' +
         '  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;' +
-        '  text-shadow:none!important;-webkit-text-stroke:0px!important;' +
-        '  filter:drop-shadow(0 4px 12px rgba(2, 132, 199, 0.28))!important;' +
+        '  filter:none!important;text-shadow:none!important;font-weight:700!important;' +
         '}' +
+        /* Supporting Copy: Unboxed, natural editorial typography */
         'section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '  position:relative;z-index:4;max-width:760px!important;margin:20px auto 0!important;text-align:center!important;' +
+        '  position:relative;z-index:4;max-width:650px!important;margin:18px auto 0!important;text-align:center!important;' +
         '  opacity:1!important;transform:none!important;' +
-        '  background:rgba(255, 255, 255, 0.65)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;' +
-        '  border:1px solid rgba(255, 255, 255, 0.85)!important;border-radius:20px!important;padding:12px 24px!important;' +
-        '  box-shadow:0 10px 30px rgba(2, 132, 199, 0.06)!important;' +
+        '  background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;' +
+        '  border:none!important;box-shadow:none!important;padding:0!important;' +
         '}' +
         'section[data-framer-name="Hero"] .demaze-hero-desc p{' +
-        '  text-align:center!important;font-size:clamp(15px,1.25vw,17.5px)!important;line-height:1.65!important;' +
-        '  color:#1e293b!important;-webkit-text-fill-color:#1e293b!important;text-shadow:none!important;font-weight:500!important;margin:0!important;' +
+        '  text-align:center!important;font-size:clamp(15.5px, 1.25vw, 17.5px)!important;line-height:1.62!important;' +
+        '  color:#334155!important;-webkit-text-fill-color:#334155!important;font-weight:450!important;' +
+        '  letter-spacing:-0.01em!important;text-wrap:pretty!important;margin:0!important;' +
+        '  font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
         '}' +
-        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"]{' +
-        '  position:relative;z-index:4;gap:16px!important;margin-top:20px!important;opacity:1!important;transform:none!important;' +
+        /* Action Buttons: Clean row layout with generous tap targets */
+        'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"], .framer-1ykg4pj{' +
+        '  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;' +
+        '  position:relative;z-index:4;gap:14px!important;margin-top:26px!important;opacity:1!important;transform:none!important;' +
         '}' +
-        /* Primary CTA ("Let's Connect") Styling & Hover */
+        /* Primary CTA ("Let's Connect") */
         'section[data-framer-name="Hero"] a[href*="contact"]{' +
         '  width:auto!important;min-width:160px!important;height:48px!important;' +
-        '  background:rgb(33, 37, 41)!important;' +
-        '  border:1px solid rgba(255, 255, 255, 0.2)!important;border-radius:50px!important;' +
-        '  box-shadow:0 4px 16px rgba(0,0,0,0.3)!important;text-decoration:none!important;' +
-        '  transition:all 0.25s cubic-bezier(.22,1,.36,1)!important;' +
-        '  overflow:hidden!important;' +
+        '  background:#090d16!important;' +
+        '  border:1px solid rgba(255, 255, 255, 0.15)!important;border-radius:999px!important;' +
+        '  box-shadow:0 4px 16px rgba(9, 13, 22, 0.25)!important;text-decoration:none!important;' +
+        '  transition:all 0.25s cubic-bezier(.16,1,.3,1)!important;' +
+        '  overflow:hidden!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
         '}' +
         'section[data-framer-name="Hero"] a[href*="contact"]:hover, section[data-framer-name="Hero"] a[href*="contact"].hover{' +
-        '  border-color:rgba(255, 255, 255, 0.4)!important;' +
-        '  transform:translateY(-2px)!important;box-shadow:0 8px 24px rgba(0,0,0,0.4)!important;' +
+        '  border-color:rgba(255, 255, 255, 0.35)!important;' +
+        '  transform:translateY(-2px)!important;box-shadow:0 8px 24px rgba(9, 13, 22, 0.35)!important;' +
+        '  background:#020617!important;' +
         '}' +
-        /* Default white text on dark button */
+        /* Primary button text color */
         'section[data-framer-name="Hero"] a[href*="contact"] .framer-1s9c08m p,' +
         'section[data-framer-name="Hero"] a[href*="contact"] .framer-1s9c08m span,' +
-        'section[data-framer-name="Hero"] a[href*="contact"] .framer-1s9c08m .framer-text{' +
-        '  color:#ffffff!important;--framer-text-color:#ffffff!important;font-weight:500!important;' +
-        '}' +
-        /* High-contrast dark text when white hover bubble expands */
+        'section[data-framer-name="Hero"] a[href*="contact"] .framer-1s9c08m .framer-text,' +
         'section[data-framer-name="Hero"] a[href*="contact"] .framer-ef3qfq p,' +
         'section[data-framer-name="Hero"] a[href*="contact"] .framer-ef3qfq span,' +
-        'section[data-framer-name="Hero"] a[href*="contact"] .framer-ef3qfq .framer-text,' +
+        'section[data-framer-name="Hero"] a[href*="contact"] .framer-ef3qfq .framer-text{' +
+        '  color:#ffffff!important;--framer-text-color:#ffffff!important;font-weight:500!important;' +
+        '}' +
         'section[data-framer-name="Hero"] a[href*="contact"]:hover .framer-ef3qfq p,' +
-        'section[data-framer-name="Hero"] a[href*="contact"].hover .framer-ef3qfq p{' +
+        'section[data-framer-name="Hero"] a[href*="contact"]:hover .framer-ef3qfq span,' +
+        'section[data-framer-name="Hero"] a[href*="contact"]:hover .framer-ef3qfq .framer-text,' +
+        'section[data-framer-name="Hero"] a[href*="contact"].hover .framer-ef3qfq p,' +
+        'section[data-framer-name="Hero"] a[href*="contact"].hover .framer-ef3qfq span,' +
+        'section[data-framer-name="Hero"] a[href*="contact"].hover .framer-ef3qfq .framer-text{' +
         '  color:#0f172a!important;--framer-text-color:#0f172a!important;font-weight:600!important;' +
         '}' +
-        /* Clean arrow button circle */
         'section[data-framer-name="Hero"] a[href*="contact"] .framer-smbc9u{' +
         '  background-color:#ffffff!important;border-radius:100px!important;' +
         '}' +
@@ -1387,42 +900,33 @@
         '  display:block!important;width:100%!important;height:100%!important;' +
         '  filter:brightness(0)!important;' +
         '}' +
-        /* Secondary CTA ("Explore Services") Styling */
+        /* Secondary CTA ("Explore Services") */
         'section[data-framer-name="Hero"] a[href*="services"], section[data-framer-name="Hero"] a[href*="integration"]{' +
-        '  background:#ffffff!important;border:1px solid #ffffff!important;' +
-        '  box-shadow:0 4px 18px rgba(0,0,0,0.25)!important;border-radius:100px!important;transition:all 0.25s ease!important;' +
-        '  color:#0f172a!important;text-decoration:none!important;width:auto!important;min-width:152px!important;padding:0 26px!important;height:48px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
+        '  background:#ffffff!important;border:1px solid rgba(203, 213, 225, 0.8)!important;' +
+        '  box-shadow:0 2px 10px rgba(15, 23, 42, 0.06)!important;border-radius:999px!important;' +
+        '  transition:all 0.25s cubic-bezier(.16,1,.3,1)!important;' +
+        '  color:#0f172a!important;text-decoration:none!important;width:auto!important;min-width:154px!important;padding:0 24px!important;height:48px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
         '}' +
         'section[data-framer-name="Hero"] a[href*="services"]:hover, section[data-framer-name="Hero"] a[href*="integration"]:hover{' +
-        '  background:#f8fafc!important;transform:translateY(-2px)!important;box-shadow:0 8px 24px rgba(0,0,0,0.3)!important;' +
+        '  background:#f8fafc!important;border-color:rgba(148, 163, 184, 0.9)!important;transform:translateY(-2px)!important;box-shadow:0 6px 18px rgba(15, 23, 42, 0.1)!important;' +
         '}' +
         'section[data-framer-name="Hero"] a[href*="services"] *, section[data-framer-name="Hero"] a[href*="integration"] *{' +
         '  color:#0f172a!important;font-weight:600!important;text-shadow:none!important;text-decoration:none!important;white-space:nowrap!important;' +
         '}' +
-        /* Tabbed Browser Mockup Container & Light Frosted Glass 3D Card */
+        /* In-Flow Browser Mockup Card */
         '.framer-1ib2jhf{' +
-        '  display:block!important;position:absolute!important;top:650px!important;left:50%!important;' +
-        '  transform:translateX(-50%)!important;opacity:1!important;visibility:visible!important;' +
-        '  width:75%!important;max-width:1280px!important;aspect-ratio:1.4382 / 1!important;z-index:2!important;' +
-        '  border-radius:20px!important;overflow:visible!important;' +
+        '  position:relative!important;top:auto!important;left:auto!important;transform:none!important;' +
+        '  margin:40px auto 0!important;width:100%!important;max-width:1120px!important;aspect-ratio:16 / 9.8!important;' +
+        '  z-index:2!important;border-radius:20px!important;overflow:visible!important;' +
         '  transform-style:preserve-3d!important;will-change:transform!important;' +
-        '}' +
-        '@media (max-width: 1199px) {' +
-        '  .framer-1ib2jhf{width:88%!important;top:640px!important;}' +
-        '}' +
-        '@media (max-width: 809px) {' +
-        '  .framer-1ib2jhf{width:94%!important;top:690px!important;}' +
-        '}' +
-        '@media (max-width: 640px) {' +
-        '  section[data-framer-name="Hero"] .demaze-hero-desc{margin:10px auto 0!important;}' +
-        '  section[data-framer-name="Hero"] .demaze-hero-desc p{font-size:14.5px!important;line-height:1.5!important;}' +
-        '  section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"]{margin-top:16px!important;gap:12px!important;}' +
+        '  display:block!important;opacity:1!important;visibility:visible!important;' +
+        '  box-sizing:border-box!important;' +
         '}' +
         '.demaze-browser-card{' +
         '  width:100%;height:100%;border-radius:20px;' +
         '  background:rgba(255, 255, 255, 0.70);' +
         '  border:1px solid rgba(255, 255, 255, 0.75);' +
-        '  box-shadow:0 30px 80px -20px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.9);' +
+        '  box-shadow:0 28px 70px -16px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.9);' +
         '  overflow:hidden;position:relative;display:flex;flex-direction:column;' +
         '}' +
         '.demaze-browser-bar{' +
@@ -1471,31 +975,50 @@
         '#hero-sphere-container canvas{' +
         '  position:absolute;top:0;left:0;width:100%!important;height:100%!important;display:block;' +
         '}' +
-        '.demaze-telemetry-card{' +
-        '  position:absolute;z-index:5;' +
-        '  background:rgba(255, 255, 255, 0.90);' +
-        '  border:1px solid rgba(255, 255, 255, 0.95);border-radius:12px;padding:10px 14px;' +
-        '  box-shadow:0 12px 32px rgba(0, 0, 0, 0.16);pointer-events:auto;' +
-        '  transition:transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;' +
+        /* Tablet Breakpoint (max-width: 809px) */
+        '@media (max-width: 809px) {' +
+        '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
+        '    padding:120px 0 56px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] h1{' +
+        '    font-size:44px!important;line-height:1.15!important;max-width:660px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] .demaze-hero-desc{' +
+        '    max-width:580px!important;margin-top:16px!important;' +
+        '  }' +
+        '  .framer-1ib2jhf{' +
+        '    margin-top:36px!important;max-width:100%!important;aspect-ratio:16 / 10.5!important;padding:0 24px!important;' +
+        '  }' +
         '}' +
-        '.demaze-telemetry-card:hover{transform:translateY(-3px);border-color:rgba(37, 99, 235, 0.3);box-shadow:0 14px 32px rgba(0,0,0,0.12);}' +
-        '.demaze-telemetry-left{top:16px;left:20px;max-width:220px;}' +
-        '.demaze-telemetry-right{bottom:16px;right:20px;max-width:230px;}' +
-        '.demaze-telemetry-hdr{' +
-        '  display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;' +
-        '  letter-spacing:0.08em;color:#64748b;margin-bottom:2px;' +
-        '}' +
-        '.demaze-pill-dot{width:6px;height:6px;border-radius:50%;}' +
-        '.demaze-pill-dot.green{background:#10b981;box-shadow:0 0 6px #10b981;}' +
-        '.demaze-pill-dot.cyan{background:#0284c7;box-shadow:0 0 6px #0284c7;}' +
-        '.demaze-telemetry-metric{' +
-        '  font-size:17px;font-weight:700;color:#0f172a;' +
-        '  font-family:"Stack Sans Headline", -apple-system, sans-serif;line-height:1.2;' +
-        '}' +
-        '.demaze-telemetry-sub{font-size:10.5px;color:#64748b;margin-top:2px;line-height:1.3;}' +
-        '@media (max-width: 640px){' +
-        '  .demaze-telemetry-card{display:none;}' +
-        '  .demaze-browser-actions, .demaze-tab-badge{display:none!important;}' +
+        /* Mobile Breakpoint (max-width: 600px) */
+        '@media (max-width: 600px) {' +
+        '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
+        '    padding:96px 0 44px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
+        '    margin-bottom:16px!important;padding:5px 14px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] [data-framer-name="Tag"] p{' +
+        '    font-size:11.5px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] h1{' +
+        '    font-size:32px!important;line-height:1.18!important;letter-spacing:-0.025em!important;max-width:340px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] .demaze-hero-desc{' +
+        '    max-width:340px!important;margin-top:14px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] .demaze-hero-desc p{' +
+        '    font-size:14.5px!important;line-height:1.55!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"], .framer-1ykg4pj{' +
+        '    flex-direction:column!important;width:100%!important;gap:10px!important;margin-top:20px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] a[href*="contact"], section[data-framer-name="Hero"] a[href*="services"]{' +
+        '    width:100%!important;max-width:270px!important;height:46px!important;' +
+        '  }' +
+        '  .framer-1ib2jhf{' +
+        '    margin-top:24px!important;aspect-ratio:16 / 12!important;padding:0 16px!important;' +
+        '  }' +
         '  .demaze-browser-bar{padding:0 12px!important;height:36px!important;}' +
         '  .demaze-browser-tab{padding:3px 10px!important;font-size:11.5px!important;}' +
         '  .demaze-window-dots{gap:5px!important;}' +

@@ -114,10 +114,6 @@
       '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
       '  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important; text-align: center !important;' +
       '}' +
-      '.demaze-fora-stars {' +
-      '  display: flex; align-items: center; justify-content: center; gap: 6px; color: #f59e0b !important; font-size: 20px !important;' +
-      '  letter-spacing: 2px; margin-top: 16px; margin-bottom: 0; line-height: 1;' +
-      '  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);' +
       '}' +
 
       /* Right Column: Content + Stats */
@@ -155,7 +151,7 @@
 
       /* Scroll Highlight Words (Right Side Only) */
       '.demaze-scroll-word {' +
-      '  color: #A1A1AA;' +
+      '  color: #64748B;' +
       '  transition: color 0.18s cubic-bezier(0.16, 1, 0.3, 1);' +
       '  will-change: color;' +
       '  display: inline;' +
@@ -257,7 +253,8 @@
       "We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive, and we're with you, executing every step of the way.";
     var authorName = (testimonial && testimonial.name) || "Krupal Chaudhary";
     var authorRole = (testimonial && testimonial.title ? testimonial.title + ", Demaze Technologies" : "Founder & CEO, Demaze Technologies");
-    var authorAvatar = (testimonial && testimonial.avatar) || "https://framerusercontent.com/images/e57nypBBfPrAXfYYyYgNJBgJBo.jpeg?width=895&height=980";
+    var fallbackAvatar = (testimonial && testimonial.avatar) || "https://framerusercontent.com/images/e57nypBBfPrAXfYYyYgNJBgJBo.jpeg?width=895&height=980";
+    var authorAvatar = "./assets/demaze/krupal_chaudhary.jpg";
 
     var wrapper = document.createElement('div');
     wrapper.className = WRAPPER_CLASS;
@@ -266,35 +263,34 @@
     var leftCard = document.createElement('div');
     leftCard.className = 'demaze-fora-left';
     leftCard.innerHTML =
-      '<img class="demaze-fora-left-bg" src="./assets/demaze/subpage-clouds-wide.jpg" alt="Why Demaze" />' +
+      '<img class="demaze-fora-left-bg" src="./assets/demaze/subpage-clouds-wide.jpg" alt="Why Demaze" loading="lazy" decoding="async" />' +
       '<div class="demaze-fora-left-gradient"></div>' +
       '<div class="demaze-fora-left-blur"></div>' +
       '<div class="demaze-fora-left-content">' +
       '  <div class="demaze-fora-author-header">' +
-      '    <img class="demaze-fora-avatar" src="' + authorAvatar + '" alt="' + authorName + '" />' +
+      '    <img class="demaze-fora-avatar" src="' + authorAvatar + '" onerror="this.onerror=null;this.src=\'' + fallbackAvatar + '\'" alt="' + authorName + '" loading="eager" decoding="async" />' +
       '    <div class="demaze-fora-user">' +
       '      <div class="demaze-fora-user-name">' + authorName + '</div>' +
       '      <div class="demaze-fora-user-role">' + authorRole + '</div>' +
       '    </div>' +
       '  </div>' +
       '  <p class="demaze-fora-quote">"' + quoteText + '"</p>' +
-      '  <div class="demaze-fora-stars">★★★★★</div>' +
       '</div>';
 
-    // Right Column paragraphs without em-dashes
-    var p1 = "Demaze was built for ambitious companies that can't afford to lose velocity. Whether you're architecting enterprise AI, scaling custom cloud systems, or automating core operations, Demaze steps in and gets it done.";
-    var p2 = "We analyze your workflows, eliminate technical bottlenecks, and build production-ready solutions that integrate directly into how your teams operate.";
-    var p3 = "Within the first deployment cycle, our partners consistently experience accelerated delivery, reduced overhead, and measurable business growth.";
+    // Right Column paragraphs combining Who We Are + Why Choose Us + What Drives Us differentiators
+    var p1 = "Demaze Technologies is an engineering team of 35+ technologists and developers. We partner with growing companies to turn complex ideas into robust, production-ready digital products.";
+    var p2 = "We work directly alongside your internal team to design architecture, develop core features, and integrate scalable software into your daily operations.";
+    var p3 = "Every engagement is led directly by senior engineers. You retain 100% code ownership from day one, with complete visibility into every deliverable.";
 
-    // Build Right Column: Eyebrow + Dual-Tone Title + 3 Paragraphs with Word Highlight Spans + 2 Glass Stat Cards
+    // Build Right Column: Eyebrow + Dual-Tone Title + 3 Paragraphs with Word Highlight Spans + 2 Differentiator Cards
     var rightCol = document.createElement('div');
     rightCol.className = 'demaze-fora-right';
     rightCol.innerHTML =
       '<div class="demaze-fora-right-top">' +
-      '  <div class="demaze-fora-eyebrow">Why choose us?</div>' +
+      '  <div class="demaze-fora-eyebrow">About Demaze</div>' +
       '  <h2 class="demaze-fora-heading">' +
       '    Built to deliver <span class="demaze-fora-dim">results,</span><br class="demaze-fora-br">' +
-      '    Not just <span class="demaze-fora-dim">Promises</span>' +
+      '    Not just <span class="demaze-fora-dim">promises</span>' +
       '  </h2>' +
       '  <div class="demaze-fora-text">' +
       '    <p>' + wrapWordsInSpans(p1) + '</p>' +
@@ -304,17 +300,17 @@
       '</div>' +
       '<div class="demaze-fora-stats">' +
       '  <div class="demaze-fora-stat-card">' +
-      '    <div class="demaze-fora-stat-value">3X</div>' +
+      '    <div class="demaze-fora-stat-value">35+</div>' +
       '    <div class="demaze-fora-stat-content">' +
-      '      <div class="demaze-fora-stat-title">Faster Delivery</div>' +
-      '      <div class="demaze-fora-stat-sub">in the first deployment cycle</div>' +
+      '      <div class="demaze-fora-stat-title">Technologists & Engineers</div>' +
+      '      <div class="demaze-fora-stat-sub">Led directly by senior architects</div>' +
       '    </div>' +
       '  </div>' +
       '  <div class="demaze-fora-stat-card">' +
-      '    <div class="demaze-fora-stat-value">$10M+</div>' +
+      '    <div class="demaze-fora-stat-value">100%</div>' +
       '    <div class="demaze-fora-stat-content">' +
-      '      <div class="demaze-fora-stat-title">Client Value Generated</div>' +
-      '      <div class="demaze-fora-stat-sub">across 45+ completed projects</div>' +
+      '      <div class="demaze-fora-stat-title">Code Ownership</div>' +
+      '      <div class="demaze-fora-stat-sub">Direct IP transfer from day one</div>' +
       '    </div>' +
       '  </div>' +
       '</div>';

@@ -110,7 +110,7 @@
     wrap.className = 'demaze-contact-wrap';
 
     var cardsHTML = content.cards.map(cardHTML).join('');
-    var taglineText = (finalCTA && finalCTA.heading) ? finalCTA.heading : "Let's connect and build smarter, faster, and stronger - together.";
+    var taglineText = (finalCTA && finalCTA.heading) ? finalCTA.heading : "Discuss your product roadmap, technical architecture, or engineering requirements with our senior team.";
 
     wrap.innerHTML =
       '<div class="demaze-contact-header">' +

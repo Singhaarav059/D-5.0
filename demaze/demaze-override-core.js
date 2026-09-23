@@ -130,29 +130,33 @@ window.DemazeOverride = {
     '}' +
     '/* 1. Hero */' +
     '[data-framer-name="Main"] > section[data-framer-name="Hero"] { order: 1 !important; }' +
-    '/* 2. Technology Stack / Trust */' +
+    '/* 2. Technology Stack */' +
     '[data-framer-name="Main"] > section[data-framer-name="Badge"] { order: 2 !important; }' +
-    '/* 3. Our Process */' +
-    '[data-framer-name="Main"] > section[data-framer-name="Videos making Step"] { order: 3 !important; }' +
-    '/* 4. Featured Projects */' +
-    '[data-framer-name="Main"] > section[data-framer-name="Sricpt"] { order: 4 !important; }' +
-    '/* 5. Core Capabilities */' +
+    '/* 3. Featured Work (TASK 1: Moved directly after Tech Stack) */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Sricpt"] { order: 3 !important; }' +
+    '/* 4. Core Capabilities (TASK 2: Placed after Featured Work) */' +
     '[data-framer-name="Main"] > section.framer-1e6ypd3,' +
-    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Grid"]) { order: 5 !important; }' +
-    '/* 6. Who We Are + Founder */' +
-    '[data-framer-name="Main"] > section[data-framer-name="Products"] { order: 6 !important; }' +
-    '/* 7. Industries We Serve */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Grid"]) { order: 4 !important; }' +
+    '/* 5. How We Work (TASK 3: Placed after Core Capabilities) */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Videos making Step"] { order: 5 !important; }' +
+    '/* 6. Industries We Serve (TASK 6: Interactive sector mechanism) */' +
     '[data-framer-name="Main"] > section.framer-1p5myw3,' +
-    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) { order: 7 !important; }' +
-    '/* 8. What Drives Us */' +
-    '[data-framer-name="Main"] > section[data-framer-name="Ai Powered"] { order: 8 !important; }' +
-    '/* 9. Why Demaze + Metrics */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) { order: 6 !important; }' +
+    '/* 7. About / Why Demaze (TASK 4 & 5: Consolidated Who We Are + Why Choose Us + What Drives Us differentiators) */' +
     '[data-framer-name="Main"] > section[data-framer-name="Why Demaze vs Traditional"],' +
-    '[data-framer-name="Main"] > section[data-framer-name="Moviq vs Traditional Video"] { order: 9 !important; }' +
-    '/* 10. Final CTA */' +
-    '[data-framer-name="Main"] > section[data-framer-name="CTA"] { order: 10 !important; }' +
-    '/* 11. FAQ */' +
-    '[data-framer-name="Main"] > section[data-framer-name="Faq"] { order: 11 !important; }';
+    '[data-framer-name="Main"] > section[data-framer-name="Moviq vs Traditional Video"] { order: 7 !important; }' +
+    '/* 8. FAQ (TASK 7: FAQ placed before Contact) */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Faq"] { order: 8 !important; }' +
+    '/* 9. Contact (TASK 7: Placed after FAQ) */' +
+    '[data-framer-name="Main"] > section.framer-1uf6wvw,' +
+    '[data-framer-name="Main"] > section[data-framer-name="CTA"]:has(#demaze-contact-block) { order: 9 !important; }' +
+    '/* Hide consolidated / redundant standalone sections */' +
+    '[data-framer-name="Main"] > section[data-framer-name="Products"],' +
+    '[data-framer-name="Main"] > section[data-framer-name="Ai Powered"],' +
+    '[data-framer-name="Main"] > section[data-framer-name="CTA"]:not(:has(#demaze-contact-block)),' +
+    '[data-framer-name="Main"] > section[data-framer-name="Pricing"] {' +
+    '  display: none !important;' +
+    '}';
   if (document.head) {
     document.head.appendChild(style);
   } else {

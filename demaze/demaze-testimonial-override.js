@@ -63,7 +63,7 @@
     wrap.id = SECTION_ID;
     wrap.className = 'demaze-testimonial-wrap';
     var avatarHTML = content.avatar
-      ? '<img src="' + content.avatar + '" class="demaze-testimonial-avatar" alt="' + content.name + '">'
+      ? '<img src="' + content.avatar + '" class="demaze-testimonial-avatar" alt="' + content.name + '" loading="lazy" decoding="async">'
       : '';
     wrap.innerHTML =
       '<div class="demaze-testimonial">' +

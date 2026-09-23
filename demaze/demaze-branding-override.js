@@ -142,13 +142,15 @@
       '  min-width: max-content !important;' +
       '  white-space: nowrap !important;' +
       '}' +
-      'footer [data-framer-name="Menu"] a {' +
+      'footer [data-framer-name="Menu"] a, .demaze-footer-col a {' +
       '  transition: all 0.2s cubic-bezier(.22, 1, .36, 1) !important;' +
       '  display: inline-flex !important;' +
       '  align-items: center !important;' +
-      '  margin-bottom: 8px !important;' +
+      '  min-height: 44px !important;' +
+      '  padding: 4px 0 !important;' +
+      '  box-sizing: border-box !important;' +
       '}' +
-      'footer [data-framer-name="Menu"] a:hover {' +
+      'footer [data-framer-name="Menu"] a:hover, .demaze-footer-col a:hover {' +
       '  transform: translateX(4px) !important;' +
       '}' +
       'footer [data-framer-name="Menu"] a:hover p, footer [data-framer-name="Menu"] a.hover p,' +
@@ -185,11 +187,13 @@
       '  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }' +
       '  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }' +
       '}' +
-      '.demaze-footer-action-btn {' +
+      '.demaze-footer-action-btn, .demaze-footer-cta-pill {' +
       '  display: inline-flex !important;' +
       '  align-items: center !important;' +
       '  gap: 6px !important;' +
-      '  padding: 8px 18px !important;' +
+      '  padding: 10px 22px !important;' +
+      '  min-height: 44px !important;' +
+      '  box-sizing: border-box !important;' +
       '  background: #0B0E17 !important;' +
       '  color: #ffffff !important;' +
       '  border-radius: 999px !important;' +
@@ -200,7 +204,7 @@
       '  margin-top: 6px !important;' +
       '  transition: all 0.2s ease !important;' +
       '}' +
-      '.demaze-footer-action-btn:hover {' +
+      '.demaze-footer-action-btn:hover, .demaze-footer-cta-pill:hover {' +
       '  background: #2563eb !important;' +
       '  transform: translateY(-1px) !important;' +
       '}' +
@@ -253,14 +257,14 @@
       '<footer class="demaze-footer valist-unfold-section is-unfolded">' +
       '  <div class="demaze-footer-inner">' +
       '    <div class="demaze-footer-brand">' +
-      '      <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=1024" alt="Demaze Technologies">' +
+      '      <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=512" alt="Demaze Technologies" loading="lazy" decoding="async" style="height:32px;width:auto;">' +
       '      <div class="demaze-footer-status-pill">' +
-      '        <span class="demaze-status-dot-pulse"></span> Available for Enterprise AI Engagements' +
+      '        <span class="demaze-status-dot-pulse"></span> Accepting New Engineering Engagements' +
       '      </div>' +
       '      <div class="footer-tagline">Demaze Technologies</div>' +
-      '      <div class="footer-mission">Empowering AI Innovation Worldwide</div>' +
+      '      <div class="footer-mission">Strategic AI &amp; Software Engineering</div>' +
       '      <p>' +
-      '        We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.' +
+      '        Demaze Technologies partners with ambitious companies to build scalable digital products, AI systems, and cloud infrastructure with dedicated senior engineering teams.' +
       '      </p>' +
       '      <a href="/contact" class="demaze-footer-cta-pill">Schedule Strategy Call <span class="arrow">→</span></a>' +
       '    </div>' +

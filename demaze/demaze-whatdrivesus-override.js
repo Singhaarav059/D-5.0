@@ -35,9 +35,9 @@
       eyebrow: '02 · HIGH-THROUGHPUT CLOUD',
       title: 'Extreme Scalability.<br>Zero Downtime.',
       description: 'From distributed multi-region Kubernetes clusters to sub-millisecond edge data planes, our architectures are hardened for peak enterprise loads, ensuring uninterrupted SLAs when concurrent traffic spikes 100x.',
-      chips: ['Multi-Region Mesh', 'Auto-Scaling Pods', '99.999% SLA'],
+      chips: ['Multi-Region Mesh', 'Auto-Scaling Pods', 'Enterprise Resilience'],
       accentColor: '#0284c7',
-      badgeText: '99.999% SLA',
+      badgeText: 'Enterprise Resilience',
       fileName: 'cluster_mesh.k8s',
       mockupType: 'scale'
     },
@@ -139,11 +139,12 @@
       '}' +
       '.demaze-drives-tab {' +
       '  display: flex; align-items: center; gap: 10px; padding: 12px 14px;' +
+      '  min-height: 44px; box-sizing: border-box;' +
       '  border-radius: 12px; border: 1px solid transparent;' +
       '  background: transparent; color: #64748b;' +
       '  font-size: 13px; font-weight: 500; text-align: left;' +
       '  cursor: pointer; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);' +
-      '  width: 100%; box-sizing: border-box; outline: none; font-family: inherit;' +
+      '  width: 100%; outline: none; font-family: inherit;' +
       '}' +
       '.demaze-drives-tab:hover {' +
       '  color: #0f172a; background: rgba(255, 255, 255, 0.8);' +
@@ -403,7 +404,7 @@
       '  }' +
       '  .demaze-drives-nav::-webkit-scrollbar { display: none; }' +
       '  .demaze-drives-tab {' +
-      '    flex: 0 0 auto !important; width: auto !important; padding: 9px 15px; font-size: 12px;' +
+      '    flex: 0 0 auto !important; width: auto !important; padding: 10px 16px !important; min-height: 44px !important; display: inline-flex !important; align-items: center !important; font-size: 12px;' +
       '  }' +
       '  .demaze-drives-cta { display: none; }' +
       '  .demaze-drives-card {' +
@@ -669,7 +670,7 @@
         isSectionVisible = entries[0].isIntersecting;
         if (isSectionVisible) updateActiveTab();
       }, { rootMargin: '150px 0px 150px 0px' });
-      sectionObs.observe(section);
+      sectionObs.observe(wrapper);
     } else {
       isSectionVisible = true;
     }
