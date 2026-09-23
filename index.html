@@ -312,19 +312,18 @@
 			opacity: 1 !important;
 			transform: none !important;
 		}
+		/* Must match demaze-global-layout-order in demaze-override-core.js. */
 		[data-framer-name="Main"] > section[data-framer-name="Hero"] { order: 1 !important; }
 		[data-framer-name="Main"] > section[data-framer-name="Badge"] { order: 2 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Videos making Step"] { order: 3 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Sricpt"] { order: 4 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Sricpt"] { order: 3 !important; }
 		[data-framer-name="Main"] > section.framer-1e6ypd3,
-		[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Grid"]) { order: 5 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Products"] { order: 6 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Grid"]) { order: 4 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Videos making Step"] { order: 5 !important; }
 		[data-framer-name="Main"] > section.framer-1p5myw3,
-		[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) { order: 7 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Ai Powered"] { order: 8 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Why Demaze vs Traditional"] { order: 9 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="CTA"] { order: 10 !important; }
-		[data-framer-name="Main"] > section[data-framer-name="Faq"] { order: 11 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Tools"]:has([data-framer-name="Tab"]) { order: 6 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Moviq vs Traditional Video"] { order: 7 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="Faq"] { order: 8 !important; }
+		[data-framer-name="Main"] > section[data-framer-name="CTA"] { order: 9 !important; }
 
 		/* Reach Us At Anytime contact tabs visibility */
 		#demaze-contact-block .demaze-contact-grid,
@@ -339,7 +338,7 @@
 		section.framer-1jj1uu2,
 		section.framer-glfp2y,
 		section.framer-yc1mky,
-		section[data-framer-name="Videos making Step"] > :not(.demaze-process-fora-block),
+		section[data-framer-name="Videos making Step"] > :not(.dz-process),
 		footer:not(.demaze-footer),
 		footer.framer-076M4,
 		footer[data-framer-name="Desktop"],
@@ -701,6 +700,7 @@ html.lenis body {
     <script src="./demaze/demaze-branding-override.js"></script>
     <script src="./assets/demaze/lenis.min.js"></script>
     <script src="./assets/demaze/demaze-shared.js"></script>
+    <link rel="stylesheet" href="./demaze/demaze-system.css">
     <!-- End of bodyEnd -->
 </body>
 </html>

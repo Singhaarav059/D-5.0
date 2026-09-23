@@ -191,33 +191,21 @@ body:not(:has(#main)) {
 /* ==========================================================================
    TYPOGRAPHY FOUNDATION
    ========================================================================== */
-h1, h2, h3, h4, h5, h6,
-.demaze-h1, .demaze-h2, .demaze-h3, .demaze-h4,
-.demaze-hero-h1, .demaze-section-h2,
-.service-row-title, .project-title, .about-bento-title,
-.industry-content-title, .why-benefit-title,
-.demaze-footer-col h4, .footer-tagline, .demaze-cta-heading {
-  font-family: var(--font-heading) !important;
-}
-
-body, p, span, li, a, input, textarea, button, select, blockquote,
-.service-checklist-item, .project-desc, .about-bento-desc {
-  font-family: var(--font-sans) !important;
-}
+/* Font families are assigned site-wide in demaze/demaze-system.css. */
 
 h1, .demaze-h1 {
   font-size: clamp(38px, 4.8vw, 68px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 
 h2, .demaze-h2 {
-  font-size: clamp(30px, 3.8vw, 48px);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 
@@ -4152,24 +4140,6 @@ section[data-framer-name="Hero"] .framer-zeccam,
   display: inline-block !important;
 }
 
-h1, h2, h3, h4, h5, h6,
-.valist-showcase-heading,
-.demaze-ind-heading,
-.service-row-title,
-.demaze-section-title {
-  color: #0b0e17 !important;
-  font-weight: 700 !important;
-}
-
-p, li,
-.valist-showcase-desc,
-.demaze-ind-sub,
-.service-row-desc,
-.demaze-section-subtitle,
-.demaze-cap-sub {
-  color: #334155 !important;
-  line-height: 1.65 !important;
-}
 
 /* High-contrast Terminal & Dark Tab / Code Window Typography */
 .demaze-terminal {

@@ -40,8 +40,8 @@ window.DEMAZE_CONTENT = {
   },
   engineeringSystems: {
     // Conceptual flow of Demaze's connected technology ecosystem
-    eyebrow: "ENGINEERING SYSTEMS",
-    heading: "Connected Intelligence, Built for Production",
+    eyebrow: "Engineering stack",
+    heading: "Connected intelligence, built for production",
     subtitle:
       "How Demaze connects foundation AI models, orchestration frameworks, and real-time data infrastructure into resilient production software.",
     conceptualFlow: [
@@ -60,7 +60,6 @@ window.DEMAZE_CONTENT = {
         orbit: "inner",
         angle: 0,
         icon: "https://framerusercontent.com/images/XkdawulL9cthX7AFF1LI4bXv0o.png",
-        desc: "Proprietary foundation LLMs for complex reasoning, multi-turn dialogue, and structured JSON output.",
       },
       {
         id: "langchain",
@@ -70,7 +69,6 @@ window.DEMAZE_CONTENT = {
         orbit: "inner",
         angle: 90,
         icon: "https://framerusercontent.com/images/6yzPxfL2zbqicuK8rRc9eMVRIkM.png",
-        desc: "Multi-agent routing, dynamic tool invocation, and retrieval-augmented context management.",
       },
       {
         id: "python",
@@ -80,7 +78,6 @@ window.DEMAZE_CONTENT = {
         orbit: "inner",
         angle: 180,
         icon: "https://framerusercontent.com/images/m9s52nA5urnyuoWxNt414Ghwo.png",
-        desc: "High-concurrency backend services, model execution pipelines, and enterprise API gateways.",
       },
       {
         id: "tensorflow",
@@ -90,7 +87,6 @@ window.DEMAZE_CONTENT = {
         orbit: "inner",
         angle: 270,
         icon: "https://framerusercontent.com/images/ZDKJY420KwTFElm5cbE51nd1uI.png",
-        desc: "Custom predictive algorithms, vehicle appraisal valuations, and financial risk stress-testing.",
       },
       {
         id: "huggingface",
@@ -100,7 +96,6 @@ window.DEMAZE_CONTENT = {
         orbit: "outer",
         angle: 45,
         icon: "https://framerusercontent.com/images/MtA8cVDkuxvUGdyeyvSKiGb7qA.png",
-        desc: "Open-weight transformers, domain-adapted embedding models, and specialized local inference.",
       },
       {
         id: "pinecone",
@@ -110,7 +105,6 @@ window.DEMAZE_CONTENT = {
         orbit: "outer",
         angle: 135,
         icon: "https://framerusercontent.com/images/nlfwFe7bR5JQliZS9i8AghDDzBg.png",
-        desc: "Sub-second vector similarity search, long-term semantic memory, and scalable hybrid retrieval.",
       },
       {
         id: "kafka",
@@ -120,7 +114,6 @@ window.DEMAZE_CONTENT = {
         orbit: "outer",
         angle: 225,
         icon: "https://framerusercontent.com/images/E38BAlxLDaA0pVazXApaqDRmLA.png",
-        desc: "Distributed event streaming, real-time FX rate feeds, and asynchronous transaction pipelines.",
       },
       {
         id: "elasticsearch",
@@ -130,72 +123,58 @@ window.DEMAZE_CONTENT = {
         orbit: "outer",
         angle: 315,
         icon: "https://framerusercontent.com/images/CEWChIc50KX3RlDIkbgZZdxje4M.png",
-        desc: "Full-text evidence indexing, faceted search, and multi-tenant audit trail query execution.",
       },
     ],
   },
   process: {
     // From demazetech.com homepage "HOW WE WORK: Our Process" (4 verified steps)
-    eyebrow: "HOW WE WORK",
-    heading: "How We Deliver: From Discovery to Scale",
+    eyebrow: "How we work",
+    heading: "From discovery to scale, in 2–3 week sprints",
     subtitle:
-      "A sprint-driven workflow designed to deliver working software on schedule with full architectural transparency.",
+      "A sprint-driven workflow designed to deliver working software on schedule, with full architectural transparency.",
     steps: [
       {
         id: "01",
         title: "Discover & Define",
         description:
           "We analyze your requirements, audit existing systems, and define technical blueprints and data models before writing code.",
-        milestones: [
-          {
-            num: "01",
-            title: "Workflow & System Audits",
-            desc: "Deep-dive architecture analysis and discovery workshops.",
-          },
-          {
-            num: "02",
-            title: "Technical Blueprint",
-            desc: "AI model scoping, database schemas & API contracts.",
-          },
-          {
-            num: "03",
-            title: "Security & Governance",
-            desc: "Data privacy, compliance standards, and architecture review.",
-          },
+        deliverables: [
+          "Workflow & system audits",
+          "Technical blueprint & API contracts",
+          "Security & governance review",
         ],
       },
       {
         id: "02",
         title: "Design & Prototype",
         description:
-          "Interactive prototypes to validate user flows and verify requirements with real feedback.",
+          "Interactive prototypes validate user flows and verify requirements with real feedback.",
         deliverables: [
-          "Clickable Wireframes & UX Flows",
-          "High-Fidelity Design System",
-          "Stakeholder Alignment & Review",
+          "Clickable wireframes & UX flows",
+          "High-fidelity design system",
+          "Stakeholder alignment & review",
         ],
       },
       {
         id: "03",
         title: "Build & Integrate",
         description:
-          "Sprint-based engineering, continuous automated testing, and production code deployed in close collaboration with your team.",
+          "Sprint-based engineering and continuous automated testing, in close collaboration with your team.",
         deliverables: [
-          "2–3 Week Sprints & Progress Reviews",
-          "Automated CI/CD & Unit Tests",
-          "Staging Validation & Code Reviews",
+          "2–3 week sprints & progress reviews",
+          "Automated CI/CD & unit tests",
+          "Staging validation & code reviews",
         ],
       },
       {
         id: "04",
         title: "Launch & Scale",
         description:
-          "Production cutover, automated performance monitoring, team training, and continuous scaling support.",
+          "Production cutover, performance monitoring, team training, and continued scaling support.",
         deliverables: [
-          "Staging Validation & Production Cutover",
-          "Real-Time Observability & Monitoring",
-          "100% Code Ownership & Documentation Handover",
-          "Post-Launch SLAs & Feature Iteration",
+          "Production cutover & monitoring",
+          "Full code ownership & documentation",
+          "Post-launch support & iteration",
         ],
       },
     ],

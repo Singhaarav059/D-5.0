@@ -1,172 +1,143 @@
 /**
- * Post-hydration content override for the Technology Stack / Engineering Proof section
- * (MOVIQ's "Badge" section: Engineering Stack / Tools & Technologies + Architectural Proof Marquee).
- * Matched 1:1 with Demaze design system and ground-truth capabilities.
+ * Engineering Stack (MOVIQ "Badge" section).
+ * One composition: the verified 8-technology stack as a grouped list, beside an
+ * abstract orbital map of the same technologies. Hovering either side highlights
+ * the matching item on the other. The orbit is decorative (aria-hidden); the list
+ * is the accessible content.
  */
 (function () {
-  var content = window.DEMAZE_CONTENT && window.DEMAZE_CONTENT.technologyStack;
-  if (!content || !window.DemazeOverride) return;
+  var C = window.DEMAZE_CONTENT || {};
+  var sys = C.engineeringSystems;
+  if (!sys || !window.DemazeOverride) return;
 
-  function getSection() {
-    return document.querySelector('section[data-framer-name="Badge"]');
+  var BLOCK = 'dz-stack';
+  var GROUPS = ['AI Models', 'Orchestration', 'Data & ML', 'Streaming & Search'];
+  var LOGO = 'https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=512';
+
+  function ensureStyle() {
+    if (document.getElementById('demaze-techstack-style')) return;
+    var s = document.createElement('style');
+    s.id = 'demaze-techstack-style';
+    s.textContent = [
+      'section[data-framer-name="Badge"]{height:auto!important;min-height:0!important;padding:var(--dz-section-y) 0!important;margin:0!important;background:var(--dz-paper)!important;border-radius:0!important;box-shadow:none!important;position:relative!important;z-index:1!important;}',
+      'section[data-framer-name="Badge"] [data-framer-name="Container"]{display:block!important;width:100%!important;max-width:none!important;height:auto!important;padding:0!important;margin:0!important;}',
+      'section[data-framer-name="Badge"] [data-framer-name="Container"] > :not(.' + BLOCK + '){display:none!important;}',
+
+      '.' + BLOCK + '{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(40px,6vw,96px);align-items:center;}',
+      '.dz-stack-groups{margin:40px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:28px 32px;}',
+      '.dz-stack-group h3{margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--dz-line);font:500 12px/1.2 var(--dz-font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--dz-ink-3);}',
+      '.dz-stack-group ul{margin:0;padding:0;list-style:none;}',
+      '.dz-stack-item{display:grid;grid-template-columns:24px 1fr;column-gap:12px;align-items:center;padding:8px 0;border-radius:8px;transition:opacity var(--dz-fast) ease;}',
+      '.dz-stack-item img{width:22px;height:22px;object-fit:contain;grid-row:span 2;}',
+      '.dz-stack-name{font:500 15px/1.3 var(--dz-font-text);color:var(--dz-ink);}',
+      '.dz-stack-role{font:400 13px/1.35 var(--dz-font-text);color:var(--dz-ink-3);}',
+      '.dz-stack.has-focus .dz-stack-item:not(.is-active){opacity:.4;}',
+
+      '.dz-orbit{position:relative;width:100%;max-width:520px;aspect-ratio:1;margin:0 auto;}',
+      '.dz-orbit::before{content:"";position:absolute;inset:-12%;background:radial-gradient(closest-side,var(--dz-sky),rgba(234,242,251,0) 72%);z-index:0;}',
+      '.dz-orbit-ring{position:absolute;left:50%;top:50%;border-radius:50%;border:1px solid var(--dz-line);transform:translate(-50%,-50%);}',
+      '.dz-orbit-ring--inner{width:56%;height:56%;}',
+      '.dz-orbit-ring--outer{width:92%;height:92%;border-style:dashed;border-color:#d9dee7;}',
+      '.dz-orbit-track{position:absolute;inset:0;animation:dzSpin 140s linear infinite;}',
+      '.dz-orbit-track--outer{animation-duration:190s;animation-direction:reverse;}',
+      '.dz-orbit-node{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--dz-paper);border:1px solid var(--dz-line);box-shadow:var(--dz-shadow);display:grid;place-items:center;transition:transform var(--dz-base) var(--dz-ease-out),border-color var(--dz-fast) ease,opacity var(--dz-fast) ease;}',
+      '.dz-orbit-node span{display:grid;place-items:center;width:100%;height:100%;animation:dzSpin 140s linear infinite reverse;}',
+      '.dz-orbit-track--outer .dz-orbit-node span{animation:dzSpin 190s linear infinite;}',
+      '.dz-orbit-node img{width:26px;height:26px;object-fit:contain;}',
+      '.dz-stack.has-focus .dz-orbit-node:not(.is-active){opacity:.35;}',
+      '.dz-orbit-node.is-active{border-color:var(--dz-accent);transform:scale(1.12);}',
+      '.dz-orbit-core{position:absolute;left:50%;top:50%;width:112px;height:112px;transform:translate(-50%,-50%);border-radius:50%;background:var(--dz-paper);border:1px solid var(--dz-line);box-shadow:var(--dz-shadow);display:grid;place-items:center;z-index:2;}',
+      '.dz-orbit-core img{width:78px;height:auto;}',
+      '.dz-stack.is-paused .dz-orbit-track,.dz-stack.is-paused .dz-orbit-node span,.dz-stack.has-focus .dz-orbit-track,.dz-stack.has-focus .dz-orbit-node span{animation-play-state:paused;}',
+      '@keyframes dzSpin{to{transform:rotate(360deg);}}',
+      '@media (prefers-reduced-motion: reduce){.dz-orbit-track,.dz-orbit-node span{animation:none!important;}}',
+
+      '@media (max-width: 960px){',
+      '  .' + BLOCK + '{grid-template-columns:1fr;gap:48px;}',
+      '  .dz-orbit{max-width:400px;order:2;}',
+      '}',
+      '@media (max-width: 540px){',
+      '  .dz-stack-groups{grid-template-columns:1fr 1fr;gap:24px 20px;}',
+      '  .dz-orbit{max-width:320px;}',
+      '  .dz-orbit-node{width:42px;height:42px;margin:-21px 0 0 -21px;}',
+      '  .dz-orbit-node img{width:21px;height:21px;}',
+      '  .dz-orbit-core{width:84px;height:84px;}',
+      '  .dz-orbit-core img{width:58px;}',
+      '}'
+    ].join('');
+    document.head.appendChild(s);
   }
 
-  function isHydrated(section) {
-    return !!(section && (section.querySelector('[data-framer-name="Container"]') || section.children.length > 0));
+  function nodeHTML(t, i, count, radiusPct) {
+    var a = (-90 + (360 / count) * i + (radiusPct > 40 ? 45 : 0)) * Math.PI / 180;
+    var left = (50 + Math.cos(a) * radiusPct).toFixed(2);
+    var top = (50 + Math.sin(a) * radiusPct).toFixed(2);
+    return '<div class="dz-orbit-node" data-tech="' + t.id + '" style="left:' + left + '%;top:' + top + '%"><span><img src="' + t.icon + '" alt="" loading="lazy" decoding="async" width="26" height="26"></span></div>';
   }
 
-  function applyOverride(section) {
-    if (!document.getElementById('demaze-techstack-style')) {
-      var tStyle = document.createElement('style');
-      tStyle.id = 'demaze-techstack-style';
-      tStyle.textContent =
-        'section[data-framer-name="Badge"]{' +
-        '  border-radius:28px 28px 0 0!important;background:linear-gradient(180deg, #f0f9ff 0%, #ffffff 54px, #ffffff 100%)!important;position:relative!important;z-index:2!important;' +
-        '  margin-top:-28px!important;padding:46px 0 26px!important;height:auto!important;min-height:auto!important;box-shadow:0 -10px 40px rgba(2,132,199,0.04)!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] [data-framer-name="Container"]{' +
-        '  height:auto!important;min-height:auto!important;padding:0!important;margin:0 auto!important;' +
-        '  display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;max-width:100%!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] [data-framer-name="Trusted by description"]{' +
-        '  display:none!important;' +
-        '}' +
-        '.demaze-techstack-header{' +
-        '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
-        '  text-align:center!important;margin:0 auto 28px!important;padding:0 20px!important;position:relative!important;z-index:5!important;' +
-        '}' +
-        '.demaze-techstack-eyebrow{' +
-        '  display:inline-flex!important;align-items:center!important;padding:4px 14px!important;' +
-        '  border-radius:999px!important;background:rgba(124, 58, 237, 0.08)!important;' +
-        '  border:1px solid rgba(124, 58, 237, 0.20)!important;color:#7C3AED!important;' +
-        '  font-size:11.5px!important;font-weight:700!important;letter-spacing:0.08em!important;' +
-        '  text-transform:uppercase!important;margin-bottom:12px!important;' +
-        '}' +
-        '.demaze-techstack-title{' +
-        '  font-size:clamp(26px, 3vw, 36px)!important;font-weight:700!important;color:#0F172A!important;' +
-        '  letter-spacing:-0.025em!important;margin:0 auto 10px!important;line-height:1.2!important;' +
-        '  font-family:"Inter", -apple-system, sans-serif!important;' +
-        '}' +
-        '.demaze-techstack-sub{' +
-        '  font-size:15px!important;color:#64748B!important;margin:0 auto!important;' +
-        '  max-width:620px!important;line-height:1.55!important;text-align:center!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] [data-framer-name="Logo Ticker"],' +
-        'section[data-framer-name="Badge"] .framer-ticker,' +
-        'section[data-framer-name="Badge"] [class*="ticker"]{' +
-        '  display:none!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .demaze-subpage-marquee{' +
-        '  display:flex!important;overflow:hidden!important;width:100%!important;' +
-        '  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)!important;' +
-        '  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)!important;' +
-        '  padding:6px 0 8px!important;margin:0!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .demaze-subpage-marquee-track{' +
-        '  display:flex!important;align-items:center!important;gap:14px!important;' +
-        '  width:max-content!important;flex-shrink:0!important;' +
-        '  animation:demazeMarquee 38s linear infinite!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .demaze-subpage-marquee:hover .demaze-subpage-marquee-track{' +
-        '  animation-play-state:paused!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .marquee-brand-chip.demaze-proof-chip{' +
-        '  display:inline-flex!important;align-items:center!important;gap:10px!important;' +
-        '  padding:8px 16px!important;border-radius:12px!important;' +
-        '  background:#ffffff!important;border:1px solid #E2E8F0!important;' +
-        '  box-shadow:0 2px 6px rgba(15,23,42,0.03)!important;' +
-        '  transition:all 0.25s ease!important;flex-shrink:0!important;cursor:default!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .marquee-brand-chip.demaze-proof-chip:hover{' +
-        '  border-color:rgba(124, 58, 237, 0.4)!important;background:#ffffff!important;' +
-        '  transform:translateY(-2px)!important;box-shadow:0 8px 20px rgba(124, 58, 237, 0.10)!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .marquee-brand-chip img{' +
-        '  width:22px!important;height:22px!important;object-fit:contain!important;flex-shrink:0!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .demaze-chip-title{' +
-        '  font-size:13.5px!important;font-weight:600!important;color:#0F172A!important;white-space:nowrap!important;' +
-        '}' +
-        'section[data-framer-name="Badge"] .demaze-chip-role{' +
-        '  font-size:11px!important;font-weight:500!important;color:#6366F1!important;' +
-        '  background:rgba(99,102,241,0.08)!important;border:1px solid rgba(99,102,241,0.18)!important;' +
-        '  padding:2px 7px!important;border-radius:6px!important;white-space:nowrap!important;' +
-        '}' +
-        '@media (max-width:768px){' +
-        '  section[data-framer-name="Badge"]{padding:38px 0 20px!important;}' +
-        '  .demaze-techstack-header{margin-bottom:20px!important;}' +
-        '  .demaze-techstack-sub{font-size:14px!important;}' +
-        '  section[data-framer-name="Badge"] .marquee-brand-chip.demaze-proof-chip{padding:7px 13px!important;gap:8px!important;}' +
-        '  section[data-framer-name="Badge"] .demaze-chip-title{font-size:13px!important;}' +
-        '  section[data-framer-name="Badge"] .demaze-chip-role{font-size:10.5px!important;padding:2px 6px!important;}' +
-        '}';
-      document.head.appendChild(tStyle);
-    }
+  function build() {
+    var techs = sys.technologies;
+    var inner = techs.filter(function (t) { return t.orbit === 'inner'; });
+    var outer = techs.filter(function (t) { return t.orbit === 'outer'; });
 
-    // Build or update the dedicated Tech Stack Header (Eyebrow + Title + Subtitle)
-    var container = section.querySelector('[data-framer-name="Container"]') || section;
-    var existingHdr = section.querySelector('.demaze-techstack-header');
-    var subtitleText = content.subtitle || 'AI frameworks, vector databases, and real-time streaming infrastructure powering our systems.';
-
-    if (!existingHdr) {
-      var hdr = document.createElement('div');
-      hdr.className = 'demaze-techstack-header';
-      hdr.innerHTML =
-        '<div class="demaze-techstack-eyebrow">' + (content.eyebrow || 'Engineering Stack') + '</div>' +
-        '<h2 class="demaze-techstack-title">' + (content.heading || 'Tools & Technologies') + '</h2>' +
-        '<p class="demaze-techstack-sub">' + subtitleText + '</p>';
-      container.insertBefore(hdr, container.firstChild);
-    } else {
-      var eyeEl = existingHdr.querySelector('.demaze-techstack-eyebrow');
-      if (eyeEl) eyeEl.textContent = content.eyebrow || 'Engineering Stack';
-      var titleEl = existingHdr.querySelector('.demaze-techstack-title');
-      if (titleEl) titleEl.textContent = content.heading || 'Tools & Technologies';
-      var subEl = existingHdr.querySelector('.demaze-techstack-sub');
-      if (subEl) subEl.textContent = subtitleText;
-    }
-
-    // Build or update the architectural proof marquee
-    var marquee = section.querySelector('.demaze-subpage-marquee');
-    var items = content.items || [];
-    var setsHTML = [items, items].map(function (set) {
-      return set.map(function (item) {
-        var roleBadge = item.role ? '<span class="demaze-chip-role">' + item.role + '</span>' : '';
-        return (
-          '<div class="marquee-brand-chip demaze-proof-chip">' +
-          '<img src="' + item.icon + '" alt="' + item.name + '" loading="eager" decoding="async">' +
-          '<span class="demaze-chip-title">' + item.name + '</span>' +
-          roleBadge +
-          '</div>'
-        );
+    var groups = GROUPS.map(function (g) {
+      var items = techs.filter(function (t) { return t.layer === g; }).map(function (t) {
+        return '<li class="dz-stack-item" data-tech="' + t.id + '"><img src="' + t.icon + '" alt="" loading="lazy" decoding="async" width="22" height="22"><span class="dz-stack-name">' + t.name + '</span><span class="dz-stack-role">' + t.role + '</span></li>';
       }).join('');
+      return '<li class="dz-stack-group"><h3 data-dz-font>' + g + '</h3><ul>' + items + '</ul></li>';
     }).join('');
 
-    if (!marquee) {
-      marquee = document.createElement('div');
-      marquee.className = 'demaze-subpage-marquee';
-      marquee.innerHTML = '<div class="demaze-subpage-marquee-track">' + setsHTML + '</div>';
-      container.appendChild(marquee);
-    } else {
-      var track = marquee.querySelector('.demaze-subpage-marquee-track');
-      if (track && track.innerHTML !== setsHTML) {
-        track.innerHTML = setsHTML;
-      }
+    var el = document.createElement('div');
+    el.className = BLOCK + ' dz-container';
+    el.innerHTML =
+      '<div class="dz-stack-copy">' +
+      '  <span class="dz-eyebrow">' + sys.eyebrow + '</span>' +
+      '  <h2 class="dz-h2">' + sys.heading + '</h2>' +
+      '  <p class="dz-lead">' + sys.subtitle + '</p>' +
+      '  <ul class="dz-stack-groups">' + groups + '</ul>' +
+      '</div>' +
+      '<div class="dz-orbit" aria-hidden="true">' +
+      '  <div class="dz-orbit-ring dz-orbit-ring--outer"></div>' +
+      '  <div class="dz-orbit-ring dz-orbit-ring--inner"></div>' +
+      '  <div class="dz-orbit-track">' + inner.map(function (t, i) { return nodeHTML(t, i, inner.length, 28); }).join('') + '</div>' +
+      '  <div class="dz-orbit-track dz-orbit-track--outer">' + outer.map(function (t, i) { return nodeHTML(t, i, outer.length, 46); }).join('') + '</div>' +
+      '  <div class="dz-orbit-core"><img src="' + LOGO + '" alt="" width="78" height="24"></div>' +
+      '</div>';
+    return el;
+  }
+
+  function wire(el) {
+    var parts = el.querySelectorAll('[data-tech]');
+    function focus(id) {
+      el.classList.toggle('has-focus', !!id);
+      parts.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-tech') === id); });
+    }
+    parts.forEach(function (p) {
+      p.addEventListener('pointerenter', function () { focus(p.getAttribute('data-tech')); });
+      p.addEventListener('pointerleave', function () { focus(null); });
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) {
+        el.classList.toggle('is-paused', !e[0].isIntersecting);
+      }).observe(el);
     }
   }
 
-  function verifyStuck(section) {
-    var hdr = section && section.querySelector('.demaze-techstack-header');
-    var eye = hdr && hdr.querySelector('.demaze-techstack-eyebrow');
-    var isEyebrowCorrect = eye && eye.textContent.trim().toUpperCase() === 'ENGINEERING STACK';
-    var marquee = section && section.querySelector('.demaze-subpage-marquee');
-    var roles = marquee ? marquee.querySelectorAll('.demaze-chip-role') : [];
-    return !!(hdr && isEyebrowCorrect && roles.length >= 16);
+  function getSection() { return document.querySelector('section[data-framer-name="Badge"]'); }
+
+  function apply(section) {
+    ensureStyle();
+    var container = section.querySelector('[data-framer-name="Container"]') || section;
+    if (container.querySelector('.' + BLOCK)) return;
+    var el = build();
+    container.appendChild(el);
+    wire(el);
   }
 
   window.DemazeOverride.run({
     getRoot: getSection,
-    isHydrated: isHydrated,
-    apply: applyOverride,
-    verify: verifyStuck,
+    isHydrated: function (s) { return !!(s && s.querySelector('[data-framer-name="Container"]')); },
+    apply: apply,
+    verify: function (s) { return !!(s && s.querySelectorAll('.dz-stack-item').length === 8); }
   });
 })();

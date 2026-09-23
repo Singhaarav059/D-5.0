@@ -1,0 +1,126 @@
+/*
+ * Demaze design system.
+ * Linked at the very end of <body> on every page, so it sits after every <style>
+ * the section overrides inject into <head> and wins cascade ties.
+ */
+
+:root {
+  /* Color roles: paper + ink, one accent. */
+  --dz-ink: #0b0e17;
+  --dz-ink-2: #3b4250;
+  --dz-ink-3: #5f6776;
+  --dz-line: #e4e7ed;
+  --dz-line-soft: #eef0f4;
+  --dz-paper: #ffffff;
+  --dz-paper-2: #f6f8fb;
+  --dz-sky: #eaf2fb;
+  --dz-accent: #2563eb;
+  --dz-accent-ink: #1d4ed8;
+  --dz-accent-soft: rgba(37, 99, 235, 0.08);
+
+  /* Type */
+  --dz-font-display: "Stack Sans Headline", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --dz-font-text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --dz-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  --dz-h1: clamp(40px, 5vw, 66px);
+  --dz-h2: clamp(30px, 3.4vw, 46px);
+  --dz-h3: clamp(19px, 1.5vw, 21px);
+  --dz-lead: clamp(16px, 1.25vw, 18px);
+  --dz-body: 16px;
+  --dz-small: 14px;
+  --dz-label: 12px;
+
+  /* Layout */
+  --dz-container: 1200px;
+  --dz-gutter: clamp(20px, 4vw, 40px);
+  --dz-section-y: clamp(80px, 9vw, 128px);
+  --dz-head-gap: clamp(40px, 4.5vw, 64px);
+
+  /* Surfaces */
+  --dz-radius-lg: 24px;
+  --dz-radius: 16px;
+  --dz-radius-sm: 10px;
+  --dz-shadow: 0 1px 2px rgba(11, 14, 23, 0.04), 0 12px 32px -18px rgba(11, 14, 23, 0.16);
+
+  /* Motion */
+  --dz-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dz-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dz-fast: 160ms;
+  --dz-base: 240ms;
+}
+
+/* ---------- Site-wide type assignment ---------- */
+/* !important is needed to beat Framer's compiled text presets. */
+:is(h1, h2, h3, h4, h5, h6):not([data-dz-font]) {
+  font-family: var(--dz-font-display) !important;
+  font-optical-sizing: auto;
+}
+body, p, li, a, input, textarea, button, select, blockquote {
+  font-family: var(--dz-font-text) !important;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(a, span, strong, em) {
+  font-family: inherit !important;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Shared building blocks for Demaze-built sections ---------- */
+
+.dz-container {
+  width: 100%;
+  max-width: calc(var(--dz-container) + 2 * var(--dz-gutter));
+  margin: 0 auto;
+  padding: 0 var(--dz-gutter);
+  box-sizing: border-box;
+}
+
+.dz-eyebrow {
+  display: block;
+  margin: 0 0 16px;
+  font: 600 var(--dz-label)/1.2 var(--dz-font-text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dz-accent);
+}
+
+.dz-h2 {
+  margin: 0;
+  font: 600 var(--dz-h2)/1.08 var(--dz-font-display);
+  /* Stack Sans is tightly fitted already; typical -0.02em display tracking crowds it. */
+  letter-spacing: -0.01em;
+  color: var(--dz-ink);
+  text-wrap: balance;
+}
+
+.dz-lead {
+  margin: 16px 0 0;
+  max-width: 58ch;
+  font: 400 var(--dz-lead)/1.6 var(--dz-font-text);
+  color: var(--dz-ink-2);
+  text-wrap: pretty;
+}
+
+.dz-mono {
+  font-family: var(--dz-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--dz-ink-3);
+}
+
+/* Reveal: one-shot, opacity + short rise. Applied by JS only when motion is allowed. */
+.dz-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 600ms var(--dz-ease-out), transform 600ms var(--dz-ease-out);
+  transition-delay: var(--dz-delay, 0ms);
+}
+.dz-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dz-reveal { opacity: 1; transform: none; transition: none; }
+}

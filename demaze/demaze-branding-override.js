@@ -60,26 +60,6 @@
     // Nav styles are now cleanly provided by demaze-subpages.css
   }
 
-  var TYPOGRAPHY_STYLE_ID = 'demaze-typography-style';
-  function ensureTypography() {
-    if (document.getElementById(TYPOGRAPHY_STYLE_ID)) return;
-    var style = document.createElement('style');
-    style.id = TYPOGRAPHY_STYLE_ID;
-    style.textContent =
-      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc4zIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 300; }' +
-      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5tIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 400; }' +
-      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc5fIgFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 500; }' +
-      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6zJQFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 600; }' +
-      '@font-face { font-family: "Stack Sans Headline"; src: url("https://fonts.gstatic.com/s/stacksansheadline/v1/1PtFg9jZXvmMnkLnuURbaukKZJTyrDV326uH6mSinjBIwc6KJQFCqgUA3ZCX.woff2"); font-display: swap; font-style: normal; font-weight: 700; }' +
-      'h1, h2, h3, h4, h5, h6, [data-framer-name="Headline"], [data-framer-name="Title"], [data-framer-name="Section Title"], [data-framer-name="Tagline"], [data-framer-name="Hero Title"] {' +
-      '  font-family: "Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;' +
-      '}' +
-      'body, p, span, li, a, input, textarea, button, select, blockquote, [data-framer-name="Desc"], [data-framer-name="Description"], [data-framer-name="Subtitle"], .demaze-testimonial-quote {' +
-      '  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;' +
-      '}';
-    document.head.appendChild(style);
-  }
-
   function applyNav(nav) {
     // Static demaze-nav-wrapper is active. No React DOM tampering needed!
   }
@@ -319,7 +299,6 @@
 
   function applyOverride() {
     document.title = "Demaze Technologies - Your Strategic Partner in Building Scalable AI Products";
-    ensureTypography();
     applyFooter();
     document.querySelectorAll('img:not([alt])').forEach(function (img) {
       img.setAttribute('alt', '');

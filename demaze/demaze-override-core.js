@@ -76,6 +76,25 @@ window.DemazeOverride = {
 
   tasks: [],
 
+  // One-shot entrance for [data-dz-reveal] children of root; never re-hides on scroll back.
+  reveal: function (root) {
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var items = root.querySelectorAll('[data-dz-reveal]');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    items.forEach(function (el) {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.style.setProperty('--dz-delay', (el.getAttribute('data-dz-reveal') || 0) + 'ms');
+      el.classList.add('dz-reveal');
+      io.observe(el);
+    });
+  },
+
   checkReadiness: function () {
     if (document.documentElement.classList.contains('demaze-ready')) return;
 
