@@ -546,3 +546,7 @@ body.demaze-subpage { background: var(--dz-paper) !important; color: var(--dz-in
 .dz-form-error { margin: 0; font: 500 14px/1.4 var(--dz-font-text); color: #b42318; }
 .dz-form .dz-btn { justify-self: start; min-height: 48px; padding: 0 24px; }
 @media (max-width: 900px) { .dz-contact-page { grid-template-columns: 1fr; } .dz-form .dz-btn { justify-self: stretch; } }
+
+/* Touch targets: text links keep their look but get a 44px hit area. */
+.dz-link { min-height: 44px; }
+.dz-contact-details a { display: inline-flex; align-items: center; min-height: 44px; }
