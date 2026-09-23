@@ -7,7 +7,14 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["moviq", "framer", "clone"],
+  "keywords": [
+    "moviq",
+    "framer",
+    "clone"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer-core": "^25.11.0"
+  }
 }

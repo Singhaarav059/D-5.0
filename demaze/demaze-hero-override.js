@@ -223,11 +223,12 @@
       satelliteOrbs.forEach(function (orb) { orbitGroup.add(orb.mesh); });
 
       // Sizing & Camera setup
-      var boxW = activeContainer.clientWidth || 1080;
-      var boxH = activeContainer.clientHeight || 670;
+      var boxW = activeContainer.clientWidth || 980;
+      var boxH = activeContainer.clientHeight || 560;
 
       var camera = new THREE.PerspectiveCamera(45, boxW / boxH, 0.1, 1000);
-      camera.position.z = 2.95;
+      var targetZ = boxW < 600 ? 2.35 : (boxW < 900 ? 2.15 : 1.95);
+      camera.position.z = targetZ;
 
       var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setSize(boxW, boxH);
@@ -566,6 +567,8 @@
         var cw = activeContainer.clientWidth || 540;
         var ch = activeContainer.clientHeight || 540;
         camera.aspect = cw / ch;
+        var rz = cw < 600 ? 2.35 : (cw < 900 ? 2.15 : 1.95);
+        camera.position.z = rz;
         camera.updateProjectionMatrix();
         renderer.setSize(cw, ch);
       });
@@ -719,11 +722,19 @@
     var tabCardEl = hero.querySelector('.framer-1ib2jhf, [data-framer-appear-id="1ib2jhf"]');
     if (tabCardEl) {
       tabCardEl.style.setProperty('display', 'block', 'important');
+      tabCardEl.style.setProperty('background', 'transparent', 'important');
+      tabCardEl.style.setProperty('box-shadow', 'none', 'important');
+      tabCardEl.style.setProperty('border', 'none', 'important');
+
       // Hide old MOVIQ screenshot inside
-      var oldImgs = tabCardEl.querySelectorAll('img');
+      var oldImgs = tabCardEl.querySelectorAll('img, picture, [data-framer-background-image-wrapper], [data-framer-name="Screenshot"]');
       oldImgs.forEach(function (img) {
         img.style.setProperty('display', 'none', 'important');
       });
+
+      // Actively purge any legacy telemetry or badge elements
+      var strayTele = tabCardEl.querySelectorAll('.demaze-telemetry-card, .demaze-tab-badge, .demaze-browser-actions');
+      strayTele.forEach(function (el) { el.remove(); });
 
       var existingCards = tabCardEl.querySelectorAll('.demaze-browser-card');
       if (existingCards.length > 1) {
@@ -755,9 +766,25 @@
           '</div>';
 
         tabCardEl.appendChild(card);
+      } else {
+        var existingCard = existingCards[0];
+        var innerTele = existingCard.querySelectorAll('.demaze-telemetry-card, .demaze-tab-badge, .demaze-browser-actions');
+        innerTele.forEach(function (el) { el.remove(); });
+        if (!existingCard.querySelector('#hero-sphere-container')) {
+          var stage = existingCard.querySelector('.demaze-sphere-stage');
+          if (!stage) {
+            stage = document.createElement('div');
+            stage.className = 'demaze-sphere-stage';
+            existingCard.appendChild(stage);
+          }
+          if (!stage.querySelector('#hero-sphere-container')) {
+            var sc = document.createElement('div');
+            sc.id = 'hero-sphere-container';
+            stage.appendChild(sc);
+          }
+        }
       }
       initHeroSphere(document.getElementById('hero-sphere-container'));
-
     }
 
     // 8. Inject Master Hero Styles
@@ -770,7 +797,7 @@
         '  position:relative!important;overflow:visible!important;' +
         '  height:auto!important;min-height:auto!important;max-height:none!important;aspect-ratio:auto!important;' +
         '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
-        '  padding:136px 0 64px!important;margin-bottom:0px!important;box-sizing:border-box!important;' +
+        '  padding:104px 0 36px!important;margin-bottom:0px!important;box-sizing:border-box!important;' +
         '}' +
         'section[data-framer-name="Badge"]{' +
         '  margin-top:0px!important;position:relative!important;z-index:2!important;' +
@@ -781,24 +808,25 @@
         '}' +
         '.framer-1tc22uo{' +
         '  position:absolute!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;' +
-        '  transform:none!important;width:100%!important;max-width:100%!important;height:100%!important;' +
-        '  display:block!important;overflow:hidden!important;z-index:0!important;padding:0!important;' +
+        '  width:100%!important;max-width:100%!important;height:100%!important;pointer-events:none!important;z-index:0!important;overflow:hidden!important;' +
+        '  transform:none!important;' +
         '}' +
-        '.framer-ycxj79,' +
-        '.framer-1tc22uo .framer-ycxj79,' +
-        '.framer-1tc22uo [data-framer-background-image-wrapper="true"],' +
+        '.framer-1tc22uo [data-framer-background-image-wrapper="true"] {' +
+        '  position:absolute!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;' +
+        '  width:100%!important;height:100%!important;display:block!important;transform:none!important;' +
+        '}' +
         '.framer-1tc22uo [data-framer-background-image-wrapper="true"] > div {' +
         '  position:absolute!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;' +
-        '  width:100%!important;height:100%!important;display:block!important;' +
+        '  width:100%!important;height:100%!important;display:block!important;transform:none!important;' +
         '}' +
         '.framer-1tc22uo img{' +
         '  position:absolute!important;top:0!important;left:0!important;' +
         '  display:block!important;width:100%!important;height:100%!important;border-radius:0!important;' +
-        '  object-position:center top!important;object-fit:cover!important;' +
+        '  object-position:center top!important;object-fit:cover!important;transform:none!important;' +
         '}' +
-        '.framer-1bdrozj{' +
+        '.framer-1bdrozj, .framer-ycxj79{' +
         '  position:absolute!important;inset:0!important;top:0!important;left:0!important;' +
-        '  width:100%!important;height:100%!important;display:block!important;' +
+        '  width:100%!important;height:100%!important;display:block!important;transform:none!important;' +
         '}' +
         '.demaze-liquid-canvas{display:none!important;}' +
         /* Subtle Scrim for Editorial Typography Contrast */
@@ -812,27 +840,33 @@
         '  position:relative!important;z-index:4!important;height:auto!important;min-height:auto!important;' +
         '  padding:0 24px!important;max-width:980px!important;width:100%!important;' +
         '  display:flex!important;flex-direction:column!important;align-items:center!important;' +
-        '  text-align:center!important;gap:0!important;box-sizing:border-box!important;' +
+        '  text-align:center!important;gap:0!important;box-sizing:border-box!important;transform:none!important;' +
+        '  margin:0 auto 36px!important;' +
         '}' +
-        '.framer-1l3hmys{' +
+        '.framer-1l3hmys, section[data-framer-name="Hero"] [data-framer-name="Top"]{' +
         '  display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;gap:0!important;' +
+        '  transform:none!important;opacity:1!important;visibility:visible!important;' +
+        '}' +
+        'section[data-framer-name="Hero"] [data-framer-name="Headline"], section[data-framer-name="Hero"] .framer-14qrg1e{' +
+        '  display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;' +
+        '  transform:none!important;opacity:1!important;visibility:visible!important;height:auto!important;' +
         '}' +
         /* Eyebrow Badge Pill */
-        'section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
+        'section[data-framer-name="Hero"] [data-framer-name="Tag"], section[data-framer-name="Hero"] .framer-1izpjbo{' +
         '  display:inline-flex!important;align-items:center!important;justify-content:center!important;' +
         '  position:relative!important;z-index:4!important;opacity:1!important;transform:none!important;' +
-        '  background:rgba(255, 255, 255, 0.75)!important;border-radius:999px!important;padding:6px 18px!important;' +
+        '  background:rgba(255, 255, 255, 0.85)!important;border-radius:999px!important;padding:5px 16px!important;' +
         '  border:1px solid rgba(226, 232, 240, 0.9)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;' +
-        '  box-shadow:0 2px 8px rgba(15, 23, 42, 0.04)!important;margin-bottom:20px!important;width:auto!important;max-width:none!important;' +
+        '  box-shadow:0 2px 8px rgba(15, 23, 42, 0.04)!important;margin-bottom:14px!important;width:auto!important;max-width:none!important;' +
         '}' +
         'section[data-framer-name="Hero"] [data-framer-name="Tag"] p{' +
-        '  font-size:12.5px!important;font-weight:600!important;letter-spacing:0.05em!important;text-transform:uppercase!important;' +
+        '  font-size:12px!important;font-weight:600!important;letter-spacing:0.05em!important;text-transform:uppercase!important;' +
         '  color:#0f172a!important;margin:0!important;font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
         '}' +
         /* Headline: Balanced, authoritative ink tone, tight tracking */
         'section[data-framer-name="Hero"] h1{' +
         '  position:relative;z-index:4;text-wrap:balance;opacity:1!important;transform:none!important;' +
-        '  font-size:clamp(34px, 4.2vw, 62px)!important;line-height:1.12!important;letter-spacing:-0.035em!important;' +
+        '  font-size:clamp(32px, 3.8vw, 54px)!important;line-height:1.14!important;letter-spacing:-0.035em!important;' +
         '  color:#090d16!important;-webkit-text-fill-color:#090d16!important;text-align:center!important;' +
         '  max-width:900px!important;margin:0 auto!important;font-weight:700!important;' +
         '  font-family:"Stack Sans Headline", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
@@ -846,13 +880,13 @@
         '}' +
         /* Supporting Copy: Unboxed, natural editorial typography */
         'section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '  position:relative;z-index:4;max-width:650px!important;margin:18px auto 0!important;text-align:center!important;' +
+        '  position:relative;z-index:4;max-width:650px!important;margin:16px auto 0!important;text-align:center!important;' +
         '  opacity:1!important;transform:none!important;' +
         '  background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;' +
         '  border:none!important;box-shadow:none!important;padding:0!important;' +
         '}' +
         'section[data-framer-name="Hero"] .demaze-hero-desc p{' +
-        '  text-align:center!important;font-size:clamp(15.5px, 1.25vw, 17.5px)!important;line-height:1.62!important;' +
+        '  text-align:center!important;font-size:clamp(15px, 1.2vw, 17px)!important;line-height:1.6!important;' +
         '  color:#334155!important;-webkit-text-fill-color:#334155!important;font-weight:450!important;' +
         '  letter-spacing:-0.01em!important;text-wrap:pretty!important;margin:0!important;' +
         '  font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif!important;' +
@@ -860,7 +894,7 @@
         /* Action Buttons: Clean row layout with generous tap targets */
         'section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"], .framer-1ykg4pj{' +
         '  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;' +
-        '  position:relative;z-index:4;gap:14px!important;margin-top:26px!important;opacity:1!important;transform:none!important;' +
+        '  position:relative;z-index:4;gap:14px!important;margin-top:20px!important;opacity:1!important;transform:none!important;' +
         '}' +
         /* Primary CTA ("Let's Connect") */
         'section[data-framer-name="Hero"] a[href*="contact"]{' +
@@ -916,108 +950,104 @@
         /* In-Flow Browser Mockup Card */
         '.framer-1ib2jhf{' +
         '  position:relative!important;top:auto!important;left:auto!important;transform:none!important;' +
-        '  margin:40px auto 0!important;width:100%!important;max-width:1120px!important;aspect-ratio:16 / 9.8!important;' +
+        '  margin:0 auto!important;width:100%!important;max-width:980px!important;aspect-ratio:16 / 9.2!important;' +
         '  z-index:2!important;border-radius:20px!important;overflow:visible!important;' +
         '  transform-style:preserve-3d!important;will-change:transform!important;' +
         '  display:block!important;opacity:1!important;visibility:visible!important;' +
+        '  background:transparent!important;box-shadow:none!important;border:none!important;' +
         '  box-sizing:border-box!important;' +
         '}' +
         '.demaze-browser-card{' +
-        '  width:100%;height:100%;border-radius:20px;' +
-        '  background:rgba(255, 255, 255, 0.70);' +
-        '  border:1px solid rgba(255, 255, 255, 0.75);' +
-        '  box-shadow:0 28px 70px -16px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.9);' +
-        '  overflow:hidden;position:relative;display:flex;flex-direction:column;' +
+        '  width:100%!important;height:100%!important;border-radius:20px!important;' +
+        '  background:rgba(255, 255, 255, 0.50)!important;' +
+        '  border:1px solid rgba(255, 255, 255, 0.85)!important;' +
+        '  box-shadow:0 20px 50px -12px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.95)!important;' +
+        '  backdrop-filter:blur(24px) saturate(180%)!important;' +
+        '  -webkit-backdrop-filter:blur(24px) saturate(180%)!important;' +
+        '  overflow:hidden!important;position:relative!important;display:flex!important;flex-direction:column!important;' +
         '}' +
         '.demaze-browser-bar{' +
-        '  height:38px;background:rgba(255, 255, 255, 0.85);' +
-        '  border-bottom:1px solid rgba(255, 255, 255, 0.45);' +
-        '  display:flex;align-items:center;justify-content:space-between;' +
-        '  padding:0 16px;user-select:none;z-index:4;' +
+        '  height:38px!important;min-height:38px!important;background:rgba(255, 255, 255, 0.70)!important;' +
+        '  border-bottom:1px solid rgba(255, 255, 255, 0.55)!important;' +
+        '  display:flex!important;align-items:center!important;justify-content:space-between!important;' +
+        '  padding:0 16px!important;user-select:none!important;z-index:4!important;' +
         '}' +
-        '.demaze-window-dots{display:flex;gap:7px;align-items:center;}' +
-        '.demaze-window-dots .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}' +
-        '.demaze-window-dots .dot.close{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.4);}' +
-        '.demaze-window-dots .dot.min{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.4);}' +
-        '.demaze-window-dots .dot.expand{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.4);}' +
+        '.demaze-window-dots{display:flex!important;gap:7px!important;align-items:center!important;}' +
+        '.demaze-window-dots .dot{width:9px!important;height:9px!important;border-radius:50%!important;display:inline-block!important;}' +
+        '.demaze-window-dots .dot.close{background:#ef4444!important;box-shadow:0 0 6px rgba(239,68,68,0.4)!important;}' +
+        '.demaze-window-dots .dot.min{background:#f59e0b!important;box-shadow:0 0 6px rgba(245,158,11,0.4)!important;}' +
+        '.demaze-window-dots .dot.expand{background:#10b981!important;box-shadow:0 0 6px rgba(16,185,129,0.4)!important;}' +
         '.demaze-browser-tab{' +
-        '  background:rgba(255, 255, 255, 0.90);border:1px solid rgba(255, 255, 255, 0.95);' +
-        '  box-shadow:0 2px 8px rgba(0, 0, 0, 0.04);' +
-        '  border-radius:8px;padding:3px 12px;display:flex;align-items:center;gap:8px;' +
-        '  color:#0f172a;font-size:12px;' +
+        '  background:rgba(255, 255, 255, 0.90)!important;border:1px solid rgba(255, 255, 255, 0.95)!important;' +
+        '  box-shadow:0 2px 8px rgba(0, 0, 0, 0.04)!important;' +
+        '  border-radius:8px!important;padding:3px 12px!important;display:flex!important;align-items:center!important;gap:8px!important;' +
+        '  color:#0f172a!important;font-size:12px!important;' +
         '}' +
-        '.demaze-tab-url{font-weight:600;letter-spacing:0.01em;color:#0f172a;}' +
-        '.demaze-tab-badge{' +
-        '  background:rgba(37, 99, 235, 0.10);color:#2563eb;font-size:10.5px;' +
-        '  padding:1.5px 7px;border-radius:6px;font-weight:600;border:1px solid rgba(37, 99, 235, 0.22);' +
+        '.demaze-tab-url{font-weight:600!important;letter-spacing:0.01em!important;color:#0f172a!important;}' +
+        '.demaze-tab-badge, .demaze-browser-actions, .demaze-telemetry-card{' +
+        '  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;' +
         '}' +
-        '.demaze-browser-actions{display:flex;align-items:center;gap:7px;}' +
-        '.demaze-live-pulse{' +
-        '  width:7px;height:7px;border-radius:50%;background:#10b981;' +
-        '  box-shadow:0 0 8px #10b981;animation:demazePulse 2s ease-in-out infinite;' +
-        '}' +
-        '.demaze-live-text{font-size:11px;color:#475569;font-weight:600;}' +
-        '@keyframes demazePulse{0%,100%{opacity:0.6;transform:scale(0.9);}50%{opacity:1;transform:scale(1.15);box-shadow:0 0 12px #10b981;}}' +
         '.demaze-sphere-stage{' +
-        '  flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;' +
-        '  background-image:radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0.40) 0%, rgba(10, 15, 30, 0.75) 100%), url("/assets/demaze/subpage-clouds-wide.jpg");' +
-        '  background-size:cover;background-position:center;background-repeat:no-repeat;' +
-        '}' +
-        '.demaze-sphere-stage::before{' +
-        '  content:"";position:absolute;inset:0;' +
-        '  background:radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%);' +
-        '  pointer-events:none;z-index:1;' +
+        '  flex:1!important;position:relative!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important;' +
+        '  background:transparent!important;' +
+        '  background-image:radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.10) 0%, rgba(34, 197, 94, 0.04) 40%, transparent 70%)!important;' +
         '}' +
         '#hero-sphere-container{' +
-        '  position:absolute;inset:0;width:100%;height:100%;' +
-        '  pointer-events:auto;cursor:grab;user-select:none;z-index:2;' +
+        '  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;' +
+        '  pointer-events:auto!important;cursor:grab!important;user-select:none!important;z-index:2!important;' +
         '}' +
         '#hero-sphere-container canvas{' +
-        '  position:absolute;top:0;left:0;width:100%!important;height:100%!important;display:block;' +
+        '  position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;display:block!important;' +
         '}' +
         /* Tablet Breakpoint (max-width: 809px) */
         '@media (max-width: 809px) {' +
         '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
-        '    padding:120px 0 56px!important;' +
+        '    padding:92px 0 32px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] [data-framer-name="Container"], .framer-384jw6{' +
+        '    margin:0 auto 28px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] h1{' +
-        '    font-size:44px!important;line-height:1.15!important;max-width:660px!important;' +
+        '    font-size:42px!important;line-height:1.15!important;max-width:660px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '    max-width:580px!important;margin-top:16px!important;' +
+        '    max-width:580px!important;margin-top:14px!important;' +
         '  }' +
         '  .framer-1ib2jhf{' +
-        '    margin-top:36px!important;max-width:100%!important;aspect-ratio:16 / 10.5!important;padding:0 24px!important;' +
+        '    margin:0 auto!important;max-width:720px!important;aspect-ratio:16 / 10.5!important;padding:0!important;' +
         '  }' +
         '}' +
         /* Mobile Breakpoint (max-width: 600px) */
         '@media (max-width: 600px) {' +
         '  section[data-framer-name="Hero"], .framer-xj5vkr{' +
-        '    padding:96px 0 44px!important;' +
+        '    padding:80px 0 24px!important;' +
+        '  }' +
+        '  section[data-framer-name="Hero"] [data-framer-name="Container"], .framer-384jw6{' +
+        '    margin:0 auto 24px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] [data-framer-name="Tag"]{' +
-        '    margin-bottom:16px!important;padding:5px 14px!important;' +
+        '    margin-bottom:12px!important;padding:5px 14px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] [data-framer-name="Tag"] p{' +
         '    font-size:11.5px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] h1{' +
-        '    font-size:32px!important;line-height:1.18!important;letter-spacing:-0.025em!important;max-width:340px!important;' +
+        '    font-size:30px!important;line-height:1.18!important;letter-spacing:-0.025em!important;max-width:340px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] .demaze-hero-desc{' +
-        '    max-width:340px!important;margin-top:14px!important;' +
+        '    max-width:340px!important;margin-top:12px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] .demaze-hero-desc p{' +
-        '    font-size:14.5px!important;line-height:1.55!important;' +
+        '    font-size:14px!important;line-height:1.55!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] [data-framer-name="Call to Action"], section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"], .framer-1ykg4pj{' +
-        '    flex-direction:column!important;width:100%!important;gap:10px!important;margin-top:20px!important;' +
+        '    flex-direction:column!important;width:100%!important;gap:10px!important;margin-top:16px!important;' +
         '  }' +
         '  section[data-framer-name="Hero"] a[href*="contact"], section[data-framer-name="Hero"] a[href*="services"]{' +
         '    width:100%!important;max-width:270px!important;height:46px!important;' +
         '  }' +
         '  .framer-1ib2jhf{' +
-        '    margin-top:24px!important;aspect-ratio:16 / 12!important;padding:0 16px!important;' +
+        '    margin:0 auto!important;aspect-ratio:16 / 12!important;padding:0!important;' +
         '  }' +
         '  .demaze-browser-bar{padding:0 12px!important;height:36px!important;}' +
         '  .demaze-browser-tab{padding:3px 10px!important;font-size:11.5px!important;}' +
