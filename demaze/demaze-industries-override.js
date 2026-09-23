@@ -104,6 +104,7 @@
       '  .dz-ind-body{grid-template-columns:1fr;}',
       '  .dz-ind-panel{position:static;padding:24px 20px;margin:0 0 16px;border-radius:var(--dz-radius);}',
       '  .dz-ind-list li .dz-ind-panel{margin-top:4px;}',
+      '  .dz-ind-list .dz-ind-panel h3{display:none;}',
       '  .dz-ind-btn[aria-expanded="true"]::after{transform:rotate(135deg);}',
       '}',
       '@media (max-width: 540px){.dz-ind-caps{grid-template-columns:1fr;}}'

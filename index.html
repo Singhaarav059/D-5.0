@@ -10,6 +10,17 @@
 			history.scrollRestoration = 'manual';
 		}
 		window.scrollTo(0, 0);
+		// Framer re-applies history.state.scrollPosition ~1.5s after hydration; on reload that
+		// reads as the page jumping by itself. Drop it unless this is a back/forward navigation.
+		try {
+			var nav = performance.getEntriesByType('navigation')[0];
+			var st = history.state;
+			if (nav && nav.type !== 'back_forward' && st && st.scrollPosition) {
+				var clean = Object.assign({}, st);
+				delete clean.scrollPosition;
+				history.replaceState(clean, '');
+			}
+		} catch (_) {}
 		window.__framer_disable_appear_effects_optimization__ = true;
 
 		// 1. Title Protection: Never allow Framer to flash "MOVIQ"
@@ -248,6 +259,7 @@
 			letter-spacing: 0.1em !important; text-transform: uppercase !important; color: #3b4250 !important;
 		}
 		.framer-zeccam, [data-framer-name="tag"].framer-zeccam { display: none !important; }
+		section[data-framer-name="Hero"] [data-framer-name="Tag"]::before, section[data-framer-name="Hero"] [data-framer-name="Tag"]::after { display: none !important; }
 
 		section[data-framer-name="Hero"] h1 {
 			margin: 0 auto !important; max-width: 1000px !important; text-align: center !important; text-wrap: balance;
@@ -342,7 +354,7 @@
 			section[data-framer-name="Hero"] .demaze-hero-desc p { font-size: 16px !important; }
 			section[data-framer-name="Hero"] [data-framer-name="Call to Action"],
 			section[data-framer-name="Hero"] [data-framer-name="CTA Buttons"], .framer-1ykg4pj { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; margin-top: 28px !important; }
-			.framer-ueib9z-container { width: 100% !important; }
+			.framer-ueib9z-container, .framer-1o83trs-container { width: 100% !important; }
 			section[data-framer-name="Hero"] a[href*="contact"], section[data-framer-name="Hero"] a[href*="services"] { width: 100% !important; }
 			.framer-1ib2jhf { aspect-ratio: 1 / 1 !important; }
 		}
@@ -565,40 +577,16 @@
 	<script async src="https://events.framer.com/script?v=2" data-fid="c478744e061f88a92e3549af01c987ce3d4e8d8a1ea70d2cab98c3d730ad2a5d" data-no-nt></script>
 	<!-- Start of bodyStart -->
   <div class="demaze-nav-wrapper">
-    <nav class="demaze-nav-bar">
-      <a href="/" class="demaze-nav-logo">
-        <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=1024" alt="Demaze Technologies">
-      </a>
-      <ul class="demaze-nav-menu">
-        <li class="demaze-nav-item"><a href="/projects">Projects</a></li>
-        <li class="demaze-nav-item"><a href="/services">Services</a></li>
-        <li class="demaze-nav-item"><a href="/about-us">About Us</a></li>
-        <li class="demaze-nav-item"><a href="/contact">Contact Us</a></li>
-      </ul>
-      <div class="demaze-nav-cta">
-        <a href="/contact" class="demaze-nav-btn">Book A Call</a>
-      </div>
-      <button class="demaze-mobile-toggle" id="demaze-mobile-btn" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <nav class="demaze-nav-bar" aria-label="Primary">
+      <a href="/" class="demaze-nav-logo" aria-label="Demaze Technologies home"><img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=512" alt="" width="84" height="26"></a>
+      <ul class="demaze-nav-menu"><li class="demaze-nav-item"><a href="/projects">Projects</a></li><li class="demaze-nav-item"><a href="/services">Services</a></li><li class="demaze-nav-item"><a href="/about-us">About us</a></li></ul>
+      <div class="demaze-nav-cta"><a href="/contact" class="demaze-nav-btn">Book a call</a></div>
+      <button type="button" class="demaze-mobile-toggle" id="demaze-mobile-btn" aria-label="Menu" aria-expanded="false" aria-controls="demaze-subpage-drawer"><span></span><span></span><span></span></button>
     </nav>
   </div>
-
-  <div class="demaze-subpage-drawer" id="demaze-subpage-drawer" role="dialog" aria-label="Mobile Navigation">
-    <div class="drawer-header">
-      <a href="/" class="demaze-nav-logo">
-        <img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=1024" alt="Demaze Technologies">
-      </a>
-    </div>
-    <ul class="drawer-menu">
-      <li><a href="/projects">Projects</a></li>
-      <li><a href="/services">Services</a></li>
-      <li><a href="/about-us">About Us</a></li>
-      <li><a href="/contact">Contact Us</a></li>
-    </ul>
-    <a href="/contact" class="drawer-cta-btn">Book A Call</a>
+  <div class="demaze-subpage-drawer" id="demaze-subpage-drawer">
+    <ul class="drawer-menu"><li><a href="/projects">Projects</a></li><li><a href="/services">Services</a></li><li><a href="/about-us">About us</a></li></ul>
+    <a href="/contact" class="demaze-drawer-cta">Book a call</a>
   </div>
   <!-- End of bodyStart -->
 	
@@ -699,6 +687,7 @@ html.lenis body {
 	<!-- Start of bodyEnd -->
     <script src="./demaze/demaze-content.js"></script>
     <script src="./demaze/demaze-override-core.js"></script>
+    <script src="./demaze/demaze-blocks.js"></script>
     <script src="./demaze/demaze-hero-override.js"></script>
     <script src="./demaze/demaze-techstack-override.js"></script>
     <script src="./demaze/demaze-process-override.js"></script>

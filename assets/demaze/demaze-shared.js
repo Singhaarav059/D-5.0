@@ -114,21 +114,6 @@
 
     window.addEventListener('scroll', requestScroll, { passive: true });
     onScroll();
-
-    // Moviq-style hover highlight indicator
-    var navMenu = document.querySelector('.demaze-nav-menu');
-    if (navMenu && !navMenu.__hoverPillBound) {
-      navMenu.__hoverPillBound = true;
-      var links = navMenu.querySelectorAll('.demaze-nav-item a');
-      links.forEach(function (link) {
-        link.addEventListener('mouseenter', function () {
-          link.style.transform = 'translateY(-1px)';
-        });
-        link.addEventListener('mouseleave', function () {
-          link.style.transform = '';
-        });
-      });
-    }
   }
 
   // 4. Mobile Navigation Drawer
@@ -143,13 +128,17 @@
       toggleBtn.setAttribute('aria-expanded', 'true');
       drawer.classList.add('active');
       document.body.style.overflow = 'hidden';
+      var first = drawer.querySelector('a');
+      if (first) first.focus({ preventScroll: true });
     }
 
     function closeDrawer() {
+      var hadFocus = drawer.contains(document.activeElement);
       toggleBtn.classList.remove('active');
       toggleBtn.setAttribute('aria-expanded', 'false');
       drawer.classList.remove('active');
       document.body.style.overflow = '';
+      if (hadFocus) toggleBtn.focus({ preventScroll: true });
     }
 
     function toggleDrawer(e) {
@@ -233,128 +222,22 @@
     });
   }
 
-  // 6. Reversible Smooth Scroll Storytelling Engine (Slow Appearance & Disappearance)
-  function initUnfolding() {
-    // Skip homepage: Framer's React engine manages section appearances and transforms on the homepage.
-    // Applying .demaze-scroll-flow with CSS transform transitions creates severe layer thrashing with Framer Motion.
-    if (document.querySelector('[data-framer-name="Main"]') || document.querySelector('section[data-framer-name="Hero"]')) {
-      return;
-    }
-
-    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function getTargets() {
-      return document.querySelectorAll(
-        '.demaze-subpage-section, .valist-unfold-section, .valist-capabilities-stage, .valist-process-stage, .demaze-industries-stage, .about-bento-grid, .values-grid, .valist-projects-grid, .contact-main-grid, .demaze-contact-grid, .valist-faq-container, .demaze-cta-banner, .valist-showcase-card, .valist-timeline-container'
-      );
-    }
-
-    if (prefersReduced) {
-      getTargets().forEach(function (el) {
-        el.classList.add('is-scroll-revealed');
+  // 6. One-shot section reveal on subpages (the homepage uses DemazeOverride.reveal).
+  function initReveal() {
+    if (document.querySelector('[data-framer-name="Main"]')) return;
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
       });
-      return;
-    }
-
-    function setupChildren(target) {
-      if (target.__demazeStaggerSetup) return;
-      target.__demazeStaggerSetup = true;
-
-      // Stagger headings
-      var headings = target.querySelectorAll('h2, h3, .demaze-section-title, .demaze-ind-heading, .valist-showcase-heading');
-      headings.forEach(function (h) {
-        h.classList.add('demaze-stagger-item', 'demaze-stagger-1');
-      });
-
-      // Stagger subtitles & paragraphs
-      var subs = target.querySelectorAll('.demaze-section-subtitle, .demaze-ind-sub, .valist-showcase-desc, .service-row-desc');
-      subs.forEach(function (p) {
-        p.classList.add('demaze-stagger-item', 'demaze-stagger-2');
-      });
-
-      // Stagger cards & items
-      var cards = target.querySelectorAll(
-        '.valist-stagger-card, .valist-case-card, .project-case-card, .valist-process-card, .valist-metric-counter-card, .value-card, .about-bento-card, .valist-faq-card, .demaze-contact-card, .contact-form-shell, .calendly-embed-box, .service-feature-row, .demaze-ind-row, .partner-logo-item, .framer-1a3b5v'
-      );
-      cards.forEach(function (card, idx) {
-        card.classList.add('demaze-stagger-item');
-        card.classList.add('demaze-stagger-' + (Math.min(5, 3 + (idx % 3))));
-      });
-    }
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          var el = entry.target;
-          setupChildren(el);
-
-          if (entry.isIntersecting) {
-            // Slow, graceful entrance when scrolling into section
-            el.classList.add('is-scroll-revealed');
-            el.classList.add('is-unfolded');
-            el.classList.remove('is-scroll-exited');
-
-            // Also illuminate any accent highlights
-            var highlights = el.querySelectorAll('.demaze-scroll-highlight, .valist-highlight-text');
-            highlights.forEach(function (hl) {
-              hl.classList.add('is-illuminated');
-            });
-          } else {
-            // Smooth, slow exit when scrolling backwards past element (exiting towards bottom of viewport)
-            if (entry.boundingClientRect.top > 0) {
-              el.classList.remove('is-scroll-revealed');
-              el.classList.add('is-scroll-exited');
-            }
-          }
-        });
-      },
-      { threshold: [0, 0.08, 0.2], rootMargin: '0px 0px -40px 0px' }
-    );
-
-    function attach() {
-      var currentTargets = getTargets();
-      var winH = window.innerHeight || 800;
-
-      currentTargets.forEach(function (el) {
-        // Skip Hero section (must always remain visible at the top)
-        if (el.closest('[data-framer-name="Hero"]') || el.classList.contains('demaze-hero-exempt') || el.classList.contains('demaze-subpage-hero')) {
-          el.classList.add('is-scroll-revealed');
-          return;
-        }
-
-        var rect = el.getBoundingClientRect();
-        if (rect.width === 0 && rect.height === 0) return;
-
-        el.classList.add('demaze-scroll-flow');
-        setupChildren(el);
-
-        // If already visible in current viewport, reveal
-        if (rect.top < winH * 0.88 && rect.bottom > 0) {
-          el.classList.add('is-scroll-revealed');
-          el.classList.remove('is-scroll-exited');
-        }
-
-        if (!el.__demazeFlowObserved) {
-          el.__demazeFlowObserved = true;
-          observer.observe(el);
-        }
-      });
-    }
-
-    attach();
-
-    // Recheck after DOM mutations or post-hydration
-    var pollCount = 0;
-    var attachInterval = setInterval(function () {
-      pollCount++;
-      attach();
-      if (pollCount >= 5) {
-        clearInterval(attachInterval);
-      }
-    }, 300);
-
-    // Only re-check on resize or DOM layout changes - IntersectionObserver handles scroll reveals off the main thread
-    window.addEventListener('resize', attach, { passive: true });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('body > section, main > section, .demaze-cta-banner').forEach(function (el) {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.classList.add('dz-reveal');
+      io.observe(el);
+    });
   }
 
   // 6b. Dynamic Mission Timeline Progress Drawing
@@ -428,15 +311,8 @@
 
       if (!navItems.length || !panes.length) return;
 
-      var currentIndex = 0;
-      var manualOverrideUntil = 0;
-
       function setActivePillar(targetIndex, isManual) {
         if (targetIndex < 0 || targetIndex >= navItems.length) return;
-        currentIndex = targetIndex;
-        if (isManual) {
-          manualOverrideUntil = Date.now() + 4000;
-        }
 
         navItems.forEach(function (btn, idx) {
           var isActive = idx === targetIndex;
@@ -454,76 +330,8 @@
         btn.addEventListener('click', function () {
           setActivePillar(idx, true);
         });
-
-        btn.addEventListener('mouseenter', function () {
-          if (!btn.classList.contains('active')) {
-            var titleEl = btn.querySelector('.nav-item-title');
-            if (titleEl) titleEl.style.transform = 'translateX(2px)';
-          }
-        });
-
-        btn.addEventListener('mouseleave', function () {
-          if (!btn.classList.contains('active')) {
-            var titleEl = btn.querySelector('.nav-item-title');
-            if (titleEl) titleEl.style.transform = '';
-          }
-        });
       });
 
-      // Scroll-driven auto-switching through the 4 capability pillars
-      function handleScrollSwitch() {
-        if (window.innerWidth < 992) return;
-        if (Date.now() < manualOverrideUntil) return;
-
-        var rect = stage.getBoundingClientRect();
-        var totalDist = stage.offsetHeight - window.innerHeight;
-        if (totalDist <= 0) return;
-
-        var pinTop = 120;
-        var scrollPassed = pinTop - rect.top;
-        var progress = scrollPassed / totalDist;
-        progress = Math.max(0, Math.min(1, progress));
-
-        var targetIndex = 0;
-        if (progress < 0.25) {
-          targetIndex = 0;
-        } else if (progress < 0.50) {
-          targetIndex = 1;
-        } else if (progress < 0.75) {
-          targetIndex = 2;
-        } else {
-          targetIndex = 3;
-        }
-
-        if (targetIndex !== currentIndex) {
-          setActivePillar(targetIndex, false);
-        }
-      }
-
-      var isStageVisible = false;
-      if ('IntersectionObserver' in window) {
-        var sObs = new IntersectionObserver(function (entries) {
-          isStageVisible = entries[0].isIntersecting;
-        }, { rootMargin: '100px 0px 100px 0px' });
-        sObs.observe(stage);
-      } else {
-        isStageVisible = true;
-      }
-
-      var capTicking = false;
-      function requestScrollSwitch() {
-        if (!isStageVisible) return;
-        if (!capTicking) {
-          capTicking = true;
-          requestAnimationFrame(function () {
-            handleScrollSwitch();
-            capTicking = false;
-          });
-        }
-      }
-
-      window.addEventListener('scroll', requestScrollSwitch, { passive: true });
-      handleScrollSwitch();
     });
   }
 
@@ -590,64 +398,6 @@
     });
   }
 
-  // 10. Valist Scroll-Scrubbed Text Reveal
-  function initValistScrollScrub() {
-    var scrubContainers = document.querySelectorAll('.valist-scroll-scrub-text');
-    scrubContainers.forEach(function (el) {
-      if (el.__valistScrubInit) return;
-      el.__valistScrubInit = true;
-
-      var text = el.textContent.trim();
-      var words = text.split(/\s+/);
-      el.innerHTML = words.map(function (w) {
-        return '<span class="word">' + w + '</span>';
-      }).join(' ');
-
-      var wordSpans = el.querySelectorAll('.word');
-
-      function updateScrub() {
-        var rect = el.getBoundingClientRect();
-        var winH = window.innerHeight;
-        // Progress through the viewport
-        var startY = winH * 0.85;
-        var endY = winH * 0.25;
-        var totalDist = startY - endY;
-        var current = startY - rect.top;
-        var progress = Math.max(0, Math.min(1, current / totalDist));
-
-        var litCount = Math.floor(progress * wordSpans.length);
-        wordSpans.forEach(function (span, i) {
-          span.classList.toggle('is-lit', i <= litCount);
-        });
-      }
-
-      var isScrubVisible = false;
-      if ('IntersectionObserver' in window) {
-        var scrubObs = new IntersectionObserver(function (entries) {
-          isScrubVisible = entries[0].isIntersecting;
-        }, { rootMargin: '100px 0px 100px 0px' });
-        scrubObs.observe(el);
-      } else {
-        isScrubVisible = true;
-      }
-
-      var scrubTicking = false;
-      function requestScrub() {
-        if (!isScrubVisible) return;
-        if (!scrubTicking) {
-          scrubTicking = true;
-          requestAnimationFrame(function () {
-            updateScrub();
-            scrubTicking = false;
-          });
-        }
-      }
-
-      window.addEventListener('scroll', requestScrub, { passive: true });
-      updateScrub();
-    });
-  }
-
   // 11. Valist Reveal Animations
   function initValistReveals() {
     var revealItems = document.querySelectorAll('.valist-reveal, .valist-case-card, .valist-process-card, .valist-metric-counter-card');
@@ -676,12 +426,11 @@
     initNav();
     initMobileNav();
     initAccordions();
-    initUnfolding();
+    initReveal();
     initTimelineProgress();
     initValistCapabilities();
     initValistFAQ();
     initValistCounters();
-    initValistScrollScrub();
     initValistReveals();
   }
 
