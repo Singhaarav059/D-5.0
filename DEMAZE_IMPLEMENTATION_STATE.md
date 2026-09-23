@@ -34,7 +34,7 @@ Files:
 
 | # | MOVIQ section (`data-framer-name`) | Demaze section | Status |
 |---|---|---|---|
-| 1 | `Hero` | Hero | ✅ Done — Real H1, subcopy, CTAs, Krupal Chaudhary Testimonial; floating 3D graphic removed. |
+| 1 | `Hero` | Hero | ✅ Done — Real H1, subcopy, CTAs, Krupal Chaudhary Testimonial; floating 3D graphic removed. P1.5 sphere stage refinement done: telemetry overlay removed, browser card with sphere uses aspect-ratio layout (no fixed height), responsive breakpoints at 809px + 600px. |
 | 2 | `Badge` | Technology Stack | ✅ Done — Infinite marquee ticker populated with 8 official AI & ML platform partner logos from demazetech.com. |
 | 3 | `Videos making Step` | Our Process | ✅ Done — Mounted in native section: 4-step card grid (`Discover & Define`, `Design & Prototype`, `Build & Integrate`, `Launch & Scale`). Zero overlap. |
 | 4 | `Sricpt` | Featured Projects | ✅ Done — Compact 2-column project cards with 2-column features list, fitted perfectly to single-screen view without cutoff. |
