@@ -6,6 +6,24 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
       "port": 3000
+    },
+    {
+      "name": "demaze-revamp",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/singh/Claude/Projects/Framer/site/serve.js"],
+      "port": 3100
+    },
+    {
+      "name": "demaze-old",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "process.env.PORT=3200;require('C:/Users/singh/Claude/Projects/Framer/server.js')"],
+      "port": 3200
+    },
+    {
+      "name": "demaze-framer",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/singh/Claude/Projects/Framer/server.js"],
+      "port": 3000
     }
   ]
 }
