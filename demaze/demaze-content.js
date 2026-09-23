@@ -365,7 +365,7 @@ window.DEMAZE_CONTENT = {
       badges: [],
     },
     whatDrivesUs: {
-      heading: "What Drives Us",
+      heading: "What drives us",
       items: [
         {
           title: "Innovation at Our Core",
