@@ -1,12 +1,7 @@
 /**
- * Demaze Technologies - Shared Interactive Behaviors (MOVIQ Aligned Backend)
- * Handles:
- * - Lenis smooth inertia scrolling
- * - Moviq-style floating frosted glass navbar pill with smooth hover indicator
- * - Dynamic scroll-linked section unfolding & staggered entrance reveals
- * - Accessible mobile navigation drawer
- * - Interactive single-open accordions
- * - Dynamic copyright year
+ * Shared behaviour for every page: Lenis on subpages (the homepage uses
+ * Framer's), the canonical footer, nav scroll state, the mobile drawer and a
+ * one-shot section reveal on subpages.
  */
 
 (function () {
@@ -174,54 +169,6 @@
     });
   }
 
-  // 5. Accessible Single-Open Accordions
-  function initAccordions() {
-    var accordions = document.querySelectorAll('.demaze-accordion, .faq-accordion-container');
-    accordions.forEach(function (acc) {
-      var items = acc.querySelectorAll('.demaze-accordion-item, .faq-accordion-item');
-
-      items.forEach(function (item) {
-        var header = item.querySelector('.demaze-accordion-header, .faq-accordion-header');
-        if (!header) return;
-
-        header.setAttribute('role', 'button');
-        header.setAttribute('tabindex', '0');
-        var isOpen = item.classList.contains('active') || item.classList.contains('open');
-        header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-
-        function toggleItem() {
-          var isCurrentlyOpen = item.classList.contains('active') || item.classList.contains('open');
-
-          // Close other items in the same container (single-open behavior)
-          items.forEach(function (other) {
-            if (other !== item) {
-              other.classList.remove('active', 'open');
-              var otherHeader = other.querySelector('.demaze-accordion-header, .faq-accordion-header');
-              if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
-            }
-          });
-
-          // Toggle current
-          if (isCurrentlyOpen) {
-            item.classList.remove('active', 'open');
-            header.setAttribute('aria-expanded', 'false');
-          } else {
-            item.classList.add('active', 'open');
-            header.setAttribute('aria-expanded', 'true');
-          }
-        }
-
-        header.addEventListener('click', toggleItem);
-        header.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleItem();
-          }
-        });
-      });
-    });
-  }
-
   // 6. One-shot section reveal on subpages (the homepage uses DemazeOverride.reveal).
   function initReveal() {
     if (document.querySelector('[data-framer-name="Main"]')) return;
@@ -240,198 +187,13 @@
     });
   }
 
-  // 6b. Dynamic Mission Timeline Progress Drawing
-  function initTimelineProgress() {
-    var timeline = document.querySelector('.valist-timeline-container');
-    if (!timeline || timeline.__valistTimelineInit) return;
-    timeline.__valistTimelineInit = true;
-
-    // Ensure progress bar element exists
-    var bar = timeline.querySelector('.valist-timeline-progress-bar');
-    if (!bar) {
-      bar = document.createElement('div');
-      bar.className = 'valist-timeline-progress-bar';
-      timeline.prepend(bar);
-    }
-
-    var nodes = timeline.querySelectorAll('.valist-timeline-node');
-
-    function onTimelineScroll() {
-      var rect = timeline.getBoundingClientRect();
-      var winH = window.innerHeight;
-      var triggerPoint = winH * 0.65;
-      var totalH = rect.height;
-      var current = triggerPoint - rect.top;
-      var progress = Math.max(0, Math.min(1, current / totalH));
-
-      bar.style.transform = 'scaleY(' + progress + ')';
-
-      nodes.forEach(function (node) {
-        var nodeRect = node.getBoundingClientRect();
-        if (nodeRect.top <= triggerPoint) {
-          node.classList.add('is-passed');
-        } else {
-          node.classList.remove('is-passed');
-        }
-      });
-    }
-
-    var isTimelineVisible = false;
-    if ('IntersectionObserver' in window) {
-      var tObs = new IntersectionObserver(function (entries) {
-        isTimelineVisible = entries[0].isIntersecting;
-      }, { rootMargin: '100px 0px 100px 0px' });
-      tObs.observe(timeline);
-    } else {
-      isTimelineVisible = true;
-    }
-
-    var timelineTicking = false;
-    function requestTimelineScroll() {
-      if (!isTimelineVisible) return;
-      if (!timelineTicking) {
-        timelineTicking = true;
-        requestAnimationFrame(function () {
-          onTimelineScroll();
-          timelineTicking = false;
-        });
-      }
-    }
-
-    window.addEventListener('scroll', requestTimelineScroll, { passive: true });
-    onTimelineScroll();
-  }
-
-  // 7. Valist Capabilities Unfolding Stage (Services)
-  function initValistCapabilities() {
-    var stages = document.querySelectorAll('.valist-capabilities-stage');
-    stages.forEach(function (stage) {
-      var navItems = stage.querySelectorAll('.valist-capability-nav-item');
-      var panes = stage.querySelectorAll('.valist-showcase-pane');
-
-      if (!navItems.length || !panes.length) return;
-
-      function setActivePillar(targetIndex, isManual) {
-        if (targetIndex < 0 || targetIndex >= navItems.length) return;
-
-        navItems.forEach(function (btn, idx) {
-          var isActive = idx === targetIndex;
-          btn.classList.toggle('active', isActive);
-          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
-
-        panes.forEach(function (pane, idx) {
-          var isActive = idx === targetIndex;
-          pane.classList.toggle('active', isActive);
-        });
-      }
-
-      navItems.forEach(function (btn, idx) {
-        btn.addEventListener('click', function () {
-          setActivePillar(idx, true);
-        });
-      });
-
-    });
-  }
-
-  // 8. Valist FAQ Accordion (Clean Rounded Cards with Purple Circle Toggle)
-  function initValistFAQ() {
-    var faqCards = document.querySelectorAll('.valist-faq-card');
-    faqCards.forEach(function (card) {
-      var header = card.querySelector('.valist-faq-header');
-      if (!header || header.__valistBound) return;
-      header.__valistBound = true;
-
-      header.addEventListener('click', function () {
-        var isOpen = card.classList.contains('open');
-
-        // Single open: close siblings
-        faqCards.forEach(function (other) {
-          if (other !== card) {
-            other.classList.remove('open');
-          }
-        });
-
-        card.classList.toggle('open', !isOpen);
-      });
-    });
-  }
-
-  // 9. Valist Metric Counters Animation
-  function initValistCounters() {
-    var counterEls = document.querySelectorAll('.valist-counter-number[data-target]');
-    if (!counterEls.length) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          var el = entry.target;
-          var targetVal = parseInt(el.getAttribute('data-target'), 10);
-          var prefix = el.getAttribute('data-prefix') || '';
-          var suffix = el.getAttribute('data-suffix') || '';
-          var duration = 1600;
-          var start = 0;
-          var startTime = null;
-
-          function animateCounter(timestamp) {
-            if (!startTime) startTime = timestamp;
-            var progress = Math.min((timestamp - startTime) / duration, 1);
-            // Ease-out expo
-            var currentVal = Math.floor((1 - Math.pow(2, -10 * progress)) * targetVal);
-            el.textContent = prefix + currentVal + suffix;
-            if (progress < 1) {
-              requestAnimationFrame(animateCounter);
-            } else {
-              el.textContent = prefix + targetVal + suffix;
-            }
-          }
-
-          requestAnimationFrame(animateCounter);
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.2 });
-
-    counterEls.forEach(function (el) {
-      observer.observe(el);
-    });
-  }
-
-  // 11. Valist Reveal Animations
-  function initValistReveals() {
-    var revealItems = document.querySelectorAll('.valist-reveal, .valist-case-card, .valist-process-card, .valist-metric-counter-card');
-    if (!revealItems.length) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-
-    revealItems.forEach(function (item, idx) {
-      var stagger = (idx % 2) * 0.1;
-      item.style.transitionDelay = stagger + 's';
-      observer.observe(item);
-    });
-  }
-
   // Run on DOM ready
   function initAll() {
     initLenis();
     initFooter();
     initNav();
     initMobileNav();
-    initAccordions();
     initReveal();
-    initTimelineProgress();
-    initValistCapabilities();
-    initValistFAQ();
-    initValistCounters();
-    initValistReveals();
   }
 
   if (document.readyState === 'loading') {
