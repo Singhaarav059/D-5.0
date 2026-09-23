@@ -13,8 +13,7 @@
     var s = document.createElement('style');
     s.id = 'demaze-process-style';
     s.textContent = [
-      'section[data-framer-name="Videos making Step"]{display:block!important;height:auto!important;min-height:0!important;padding:var(--dz-section-y) 0!important;margin:0!important;background:var(--dz-paper-2)!important;overflow:visible!important;}',
-      'section[data-framer-name="Videos making Step"] > :not(.' + BLOCK + '){display:none!important;}',
+      '.dz-process-band{background:var(--dz-paper-2);padding:var(--dz-section-y) 0;}',
       '.dz-process-head{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px 64px;align-items:end;margin-bottom:var(--dz-head-gap);}',
       '.dz-process-head .dz-lead{margin:0;}',
       '.dz-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:32px;row-gap:0;}',
@@ -34,8 +33,8 @@
 
   function build() {
     var el = document.createElement('div');
-    el.className = BLOCK + ' dz-container';
-    el.innerHTML =
+    el.className = BLOCK + ' dz-process-band';
+    el.innerHTML = '<div class="dz-container">' +
       '<div class="dz-process-head">' +
       '  <div><span class="dz-eyebrow">' + data.eyebrow + '</span><h2 class="dz-h2">' + data.heading + '</h2></div>' +
       '  <p class="dz-lead">' + data.subtitle + '</p>' +
@@ -49,11 +48,12 @@
           '<ul>' + st.deliverables.map(function (d) { return '<li>' + d + '</li>'; }).join('') + '</ul>' +
           '</li>';
       }).join('') +
-      '</ol>';
+      '</ol></div>';
     return el;
   }
 
-  function getSection() { return document.querySelector('section[data-framer-name="Videos making Step"]'); }
+  // Mounted inside the Core Capabilities section so DOM order matches visual order.
+  function getSection() { return document.querySelector('section.framer-1e6ypd3, section[data-framer-name="Tools"]:has([data-framer-name="Grid"])'); }
 
   function apply(section) {
     ensureStyle();

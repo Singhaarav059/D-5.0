@@ -33,7 +33,7 @@
   /* Layout */
   --dz-container: 1200px;
   --dz-gutter: clamp(20px, 4vw, 40px);
-  --dz-section-y: clamp(80px, 9vw, 128px);
+  --dz-section-y: clamp(72px, 8vw, 112px);
   --dz-head-gap: clamp(40px, 4.5vw, 64px);
 
   /* Surfaces */
@@ -65,6 +65,192 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* ---------- Navigation: one translucent layer; it firms up on scroll, never inverts ---------- */
+.demaze-nav-wrapper {
+  position: fixed;
+  top: 16px;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--dz-gutter);
+  pointer-events: none;
+}
+.demaze-nav-bar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--dz-container);
+  height: 60px;
+  padding: 0 10px 0 20px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(11, 14, 23, 0.06);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(11, 14, 23, 0.04), 0 10px 30px -18px rgba(11, 14, 23, 0.25);
+  transition: background-color var(--dz-base) ease, border-color var(--dz-base) ease;
+}
+.demaze-nav-bar.demaze-nav-scrolled {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(11, 14, 23, 0.08);
+}
+.demaze-nav-logo {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+.demaze-nav-logo img { display: block; height: 26px; width: auto; }
+.demaze-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.demaze-nav-item a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dz-ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dz-fast) ease, color var(--dz-fast) ease;
+}
+.demaze-nav-item a.active,
+.demaze-nav-item a[aria-current="page"] {
+  color: var(--dz-ink);
+  background: rgba(11, 14, 23, 0.05);
+}
+.demaze-nav-cta, .demaze-nav-action { display: flex; align-items: center; }
+
+/* ---------- Buttons ---------- */
+.dz-btn,
+.demaze-nav-btn,
+.demaze-nav-action .demaze-btn-primary,
+.demaze-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--dz-ink);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font: 500 14px/1 var(--dz-font-text);
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform var(--dz-fast) var(--dz-ease-out), background-color 200ms ease, border-color 200ms ease;
+}
+.demaze-nav-btn, .demaze-nav-action .demaze-btn-primary { min-height: 40px; padding: 0 18px; }
+.dz-btn--secondary {
+  background: var(--dz-paper);
+  color: var(--dz-ink);
+  -webkit-text-fill-color: var(--dz-ink);
+  border-color: var(--dz-line);
+}
+.dz-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 500 15px/1.3 var(--dz-font-text);
+  color: var(--dz-ink);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.dz-link::after { content: "→"; transition: transform var(--dz-fast) var(--dz-ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .demaze-nav-item a:hover { color: var(--dz-ink); background: rgba(11, 14, 23, 0.05); }
+  .dz-btn:hover, .demaze-nav-btn:hover, .demaze-btn-primary:hover { background: #262c3a; }
+  .dz-btn--secondary:hover { background: var(--dz-paper-2); border-color: #cfd5de; }
+  .dz-link:hover { text-decoration: underline; }
+  .dz-link:hover::after { transform: translateX(3px); }
+}
+.dz-btn:active, .demaze-nav-btn:active, .demaze-btn-primary:active { transform: scale(0.97); }
+
+:focus-visible {
+  outline: 2px solid var(--dz-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 809px) {
+  .demaze-nav-menu, .demaze-nav-cta, .demaze-nav-action { display: none; }
+  .demaze-mobile-toggle { display: flex; }
+  .demaze-nav-bar { height: 56px; padding: 0 6px 0 18px; }
+}
+
+/* ---------- Footer (markup: assets/demaze/demaze-shared.js) ---------- */
+.demaze-footer {
+  display: block !important;
+  width: 100%;
+  margin-top: auto;
+  padding: clamp(56px, 7vw, 88px) 0 32px;
+  background: var(--dz-paper);
+  border-top: 1px solid var(--dz-line);
+  color: var(--dz-ink-2);
+}
+.dz-footer-top {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 48px clamp(40px, 6vw, 96px);
+}
+.dz-footer-logo { display: inline-flex; min-height: 44px; align-items: center; }
+.dz-footer-logo img { height: 30px; width: auto; display: block; }
+.dz-footer-brand p { margin: 16px 0 0; max-width: 40ch; font: 400 15px/1.6 var(--dz-font-text); color: var(--dz-ink-3); }
+.dz-footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.dz-footer-cols h2 {
+  margin: 0 0 14px;
+  font: 500 12px/1.2 var(--dz-font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dz-ink-3);
+}
+.dz-footer-cols ul { margin: 0; padding: 0; list-style: none; }
+.dz-footer-cols li { margin: 0; }
+.dz-footer-cols a, .dz-footer-cols address {
+  display: inline-block;
+  padding: 6px 0;
+  font: 400 15px/1.5 var(--dz-font-text);
+  font-style: normal;
+  color: var(--dz-ink-2);
+  text-decoration: none;
+  transition: color var(--dz-fast) ease;
+}
+.dz-footer-cols address { color: var(--dz-ink-3); max-width: 28ch; }
+@media (hover: hover) and (pointer: fine) {
+  .dz-footer-cols a:hover { color: var(--dz-ink); text-decoration: underline; text-underline-offset: 4px; }
+}
+.dz-footer-bottom {
+  margin-top: clamp(40px, 5vw, 64px);
+  padding-top: 24px;
+  border-top: 1px solid var(--dz-line-soft);
+  font: 400 13px/1.5 var(--dz-font-text);
+  color: var(--dz-ink-3);
+}
+@media (max-width: 900px) {
+  .dz-footer-top { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .dz-footer-cols { grid-template-columns: 1fr 1fr; }
+  .dz-footer-cols > div:last-child { grid-column: 1 / -1; }
 }
 
 /* ---------- Shared building blocks for Demaze-built sections ---------- */

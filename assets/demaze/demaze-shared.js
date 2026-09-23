@@ -53,13 +53,34 @@
     }
   }
 
-  // 2. Dynamic Footer Year
-  function initFooterYear() {
-    var yearEls = document.querySelectorAll('.demaze-footer-year, #footerYear');
-    var currentYear = new Date().getFullYear();
-    yearEls.forEach(function (el) {
-      el.textContent = currentYear;
-    });
+  // 2. Site footer: one canonical markup for every page.
+  var FOOTER_HTML =
+    '<div class="dz-container">' +
+    '  <div class="dz-footer-top">' +
+    '    <div class="dz-footer-brand">' +
+    '      <a href="/" class="dz-footer-logo"><img src="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png?scale-down-to=512" alt="Demaze Technologies" width="112" height="35" loading="lazy" decoding="async"></a>' +
+    '      <p>Demaze Technologies partners with ambitious companies to build scalable digital products, AI systems, and cloud infrastructure with dedicated senior engineering teams.</p>' +
+    '    </div>' +
+    '    <nav class="dz-footer-cols" aria-label="Footer">' +
+    '      <div><h2 data-dz-font>Company</h2><ul><li><a href="/projects">Projects</a></li><li><a href="/services">Services</a></li><li><a href="/about-us">About us</a></li><li><a href="/contact">Contact</a></li></ul></div>' +
+    '      <div><h2 data-dz-font>Services</h2><ul><li><a href="/services">AI &amp; Machine Learning</a></li><li><a href="/services">Web, Mobile App &amp; SaaS</a></li><li><a href="/services">Intelligent E-Commerce</a></li><li><a href="/services">Cloud Infrastructure</a></li></ul></div>' +
+    '      <div><h2 data-dz-font>Contact</h2><ul><li><a href="mailto:contact@demazetech.com">contact@demazetech.com</a></li><li><a href="/contact">Book a call</a></li><li><address>A 804, Ganesh Glory 11, Jagatpur Road, Near S.G. Highway, Gota, Ahmedabad, India</address></li></ul></div>' +
+    '    </nav>' +
+    '  </div>' +
+    '  <div class="dz-footer-bottom">© ' + new Date().getFullYear() + ' Demaze Technologies. All rights reserved.</div>' +
+    '</div>';
+
+  function initFooter() {
+    var footer = document.querySelector('footer.demaze-footer');
+    if (!footer) {
+      // Homepage: mount after Framer's hydration root, outside React's tree.
+      var root = document.getElementById('main');
+      if (!root) return;
+      footer = document.createElement('footer');
+      footer.className = 'demaze-footer';
+      root.insertAdjacentElement('afterend', footer);
+    }
+    footer.innerHTML = FOOTER_HTML;
   }
 
   // 3. Navigation Scroll State & Hover Pill
@@ -651,7 +672,7 @@
   // Run on DOM ready
   function initAll() {
     initLenis();
-    initFooterYear();
+    initFooter();
     initNav();
     initMobileNav();
     initAccordions();

@@ -5,7 +5,7 @@
  */
 window.DEMAZE_CONTENT = {
   hero: {
-    badge: "Expertise | Innovation | Partnership",
+    badge: "Expertise · Innovation · Partnership",
     headline: "Your Strategic Partner in Building Scalable AI Products",
     description:
       "We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.",
@@ -181,12 +181,12 @@ window.DEMAZE_CONTENT = {
   },
   visualShowcase: {
     // From demazetech.com homepage "OUR WORK: Featured Projects"
-    heading: "Featured Projects",
-    eyebrow: "OUR WORK",
+    heading: "Featured projects",
+    eyebrow: "Our work",
     viewAllCTA: { text: "View all work", href: "./projects" },
     projects: [
       {
-        title: "AI-Based software for luxury car dealers",
+        title: "AI-based software for luxury car dealers",
         domainTag: "Automotive & Mobility",
         image: "https://framerusercontent.com/images/bVi4OWXFwyZEQNbjP5qntMAjM.png?width=3924&height=3500",
         description:
@@ -200,7 +200,7 @@ window.DEMAZE_CONTENT = {
         href: "./projects",
       },
       {
-        title: "Investigative Case Management Software",
+        title: "Investigative case management software",
         domainTag: "Legal Tech & Compliance",
         image: "https://framerusercontent.com/images/jHPfuoOX9UNd8Es5s5F3M8wzzo.png?width=4872&height=2740",
         description:
@@ -214,7 +214,7 @@ window.DEMAZE_CONTENT = {
         href: "./projects",
       },
       {
-        title: "AI-Powered luxury eCommerce Platform",
+        title: "AI-powered luxury eCommerce platform",
         domainTag: "Intelligent E-Commerce",
         image: "https://framerusercontent.com/images/K9H6ej2APXMnI3TZXYvyYkXZtJQ.png?width=1962&height=1750",
         description:
@@ -228,7 +228,7 @@ window.DEMAZE_CONTENT = {
         href: "./projects",
       },
       {
-        title: "Global Payment Transfer Platform",
+        title: "Global payment transfer platform",
         domainTag: "Financial AI & Banking",
         image: "https://framerusercontent.com/images/kyC8zhxd43towb5gNsnL6f6dFv8.png?width=3840&height=2160",
         description:
@@ -245,8 +245,8 @@ window.DEMAZE_CONTENT = {
   },
   coreCapabilities: {
     // Demaze Core Capabilities & Engineering Offerings
-    eyebrow: "CORE CAPABILITIES",
-    heading: "Full-Lifecycle AI & Software Engineering",
+    eyebrow: "Core capabilities",
+    heading: "Full-lifecycle AI and software engineering",
     subtitle: "From initial architecture to production deployment, built and maintained by senior engineers.",
     cardHref: "./services",
     items: [
@@ -396,10 +396,10 @@ window.DEMAZE_CONTENT = {
   },
   industries: {
     // Grounded Two-Tier Architecture: 6 Flagship Domains + 7 Supported Domains
-    eyebrow: "Demonstrated Domain Depth",
-    heading: "Industries We Know Through the Work",
+    eyebrow: "Industries",
+    heading: "Industries we know through the work",
     subtitle:
-      "Our deepest expertise comes from architecting and deploying real production software. Explore the core sectors where we have built battle-tested systems, alongside the broader domains we actively engineer.",
+      "Our deepest expertise comes from building and shipping production software. Choose a domain to see the project behind it.",
     flagshipDomains: [
       {
         id: "01",
@@ -532,16 +532,16 @@ window.DEMAZE_CONTENT = {
   metrics: {
     // From demazetech.com homepage, directly under "BENEFITS: Why Choose Us".
     items: [
-      { value: "45+", label: "Projects Delivered" },
-      { value: "$10M+", label: "Client Value Generated" },
-      { value: "35+", label: "Expert Team Members" },
-      { value: "6+", label: "Years of Excellence" },
+      { value: "45+", label: "Projects delivered" },
+      { value: "$10M+", label: "Client value generated" },
+      { value: "35+", label: "Technologists on the team" },
+      { value: "6+", label: "Years in operation" },
     ],
   },
   faq: {
     // From demazetech.com homepage "FAQS: Questions? Answers!"
-    eyebrow: "FAQS",
-    heading: "Questions? Answers!",
+    eyebrow: "FAQ",
+    heading: "Questions, answered",
     subheading: "Direct answers about our engineering process, timelines, code ownership, and engagement model.",
     items: [
       {
@@ -579,12 +579,12 @@ window.DEMAZE_CONTENT = {
   finalCTA: {
     // From demazetech.com homepage
     heading: "Discuss your product roadmap, technical architecture, or engineering requirements with our senior team.",
-    primaryCTA: { text: "Let's Connect", href: "./contact" },
+    primaryCTA: { text: "Book a call", href: "./contact" },
   },
   contact: {
     // From demazetech.com homepage "Contact: Reach Us At Anytime"
     eyebrow: "Contact",
-    heading: "Reach Us At Anytime",
+    heading: "Talk to the engineers who will build it",
     cards: [
       {
         type: "email",
