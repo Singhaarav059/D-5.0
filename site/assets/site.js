@@ -159,35 +159,79 @@
   // Services click works without motion; with motion it scrolls to the pinned step (below).
   svcBtns.forEach((b, i) => b.addEventListener('click', () => setSvc(i)));
 
-  // Engineering stack: the orbit mirrors the active tab; hovering a list item or node highlights its twin.
-  // orbitNodes() matches the server-side version in build.js (inner ring = half, max 7).
-  const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const orbitNodes = (items) => {
-    const inner = Math.min(7, Math.ceil(items.length / 2));
-    return items.map((t, i) => {
-      const ring = i < inner ? 1 : 0;
-      const count = ring ? inner : items.length - inner;
-      const k = ring ? i : i - inner;
-      const a = ((-90 + (360 / count) * k + (ring ? 0 : 180 / count)) * Math.PI) / 180;
-      const r = ring ? 28 : 46;
-      const mark = t.logo ? `<img src="${t.logo}" alt="" width="26" height="26">` : `<b>${esc(t.name.slice(0, 2))}</b>`;
-      return `<div class="orbit__node${ring ? '' : ' is-outer'}" data-tech="${esc(t.name)}" style="left:${(50 + Math.cos(a) * r).toFixed(2)}%;top:${(50 + Math.sin(a) * r).toFixed(2)}%"><span>${mark}</span></div>`;
-    }).join('');
-  };
-  $$('[data-stackx]').forEach((box) => {
-    const track = $('[data-orbit]', box);
-    const focus = (id) => {
-      box.classList.toggle('has-focus', !!id);
-      $$('[data-tech]', box).forEach((p) => p.classList.toggle('is-active', p.dataset.tech === id));
+  // Knowledge map: wires from the Demaze sphere to every discipline card, and a fan from the active card
+  // to each of its tools. Hovering a card (fine pointers) selects it like a click; the tab code above
+  // swaps the panel and fires 'tabchange', after which the fan is redrawn and drawn in.
+  $$('[data-kmap-stage]').forEach((stage) => {
+    const svg = $('[data-kmap-wires]', stage);
+    const core = $('.kmap__sphere', stage);
+    const cats = $$('[data-kmap-cat]', stage);
+    const NS = 'http://www.w3.org/2000/svg';
+    const wide = matchMedia('(min-width: 961px)');
+    const wire = (x1, y1, x2, y2, cls) => {
+      const p = document.createElementNS(NS, 'path');
+      const dx = (x2 - x1) * 0.55;
+      p.setAttribute('d', `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`);
+      p.setAttribute('class', cls);
+      p.setAttribute('pathLength', '1');
+      return p;
     };
-    // Delegated so rebuilt nodes keep working.
-    box.addEventListener('pointerover', (e) => { const p = e.target.closest('[data-tech]'); focus(p && p.dataset.tech); });
-    box.addEventListener('pointerleave', () => focus(null));
-    box.addEventListener('tabchange', (e) => {
-      const items = $$('.stackx__item', e.detail).map((li) => ({ name: li.dataset.tech, logo: li.querySelector('img') && li.querySelector('img').src }));
-      track.innerHTML = orbitNodes(items);
-      if (window.gsap && motion) gsap.fromTo(track.children, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.025, ease: 'back.out(1.6)' });
+    const draw = (animate) => {
+      if (!wide.matches) { svg.replaceChildren(); return; }
+      const box = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+      const at = (el, side) => { const r = el.getBoundingClientRect(); return [(side === 'l' ? r.left : side === 'r' ? r.right : r.left + r.width / 2) - box.left, r.top + r.height / 2 - box.top]; };
+      const [cx, cy] = at(core, 'c');
+      const cr = core.getBoundingClientRect().width / 2;
+      const active = cats.find((c) => c.getAttribute('aria-selected') === 'true');
+      const paths = cats.map((c) => { const [x, y] = at(c, 'l'); return wire(cx + cr * 0.92, cy, x, y, 'kmap__wire' + (c === active ? ' is-on' : '')); });
+      const panel = active && document.getElementById(active.getAttribute('aria-controls'));
+      if (panel) {
+        const [ax, ay] = at(active, 'r');
+        $$('[data-kmap-dot]', panel).forEach((d, i) => {
+          const [x, y] = at(d, 'c');
+          const p = wire(ax, ay, x, y, 'kmap__fan' + (animate ? ' is-drawing' : ''));
+          p.style.animationDelay = i * 22 + 'ms';
+          paths.push(p);
+        });
+      }
+      svg.replaceChildren(...paths);
+    };
+    stage.addEventListener('tabchange', () => requestAnimationFrame(() => draw(true)));
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      let t = 0;
+      cats.forEach((c) => c.addEventListener('pointerenter', () => { clearTimeout(t); t = setTimeout(() => c.getAttribute('aria-selected') !== 'true' && c.click(), 90); }));
+      stage.addEventListener('pointerleave', () => clearTimeout(t));
+    }
+    new ResizeObserver(() => draw(false)).observe(stage);
+    wide.addEventListener('change', () => draw(false));
+    if (document.fonts) document.fonts.ready.then(() => draw(false));
+
+    // The sphere: a few hundred dots on a slowly turning ball, drawn in 2D (no WebGL needed here).
+    const ctx = core.getContext('2d');
+    const DOTS = 420;
+    const pts = Array.from({ length: DOTS }, (_, i) => {
+      const y = 1 - (i + 0.5) / DOTS * 2, r = Math.sqrt(1 - y * y), th = i * 2.399963;
+      return [Math.cos(th) * r, y, Math.sin(th) * r];
     });
+    let spin = 0.6, raf = 0, seen = false;
+    const paint = () => {
+      const S = core.width, R = S * 0.4, c = Math.cos(spin), s = Math.sin(spin);
+      ctx.clearRect(0, 0, S, S);
+      for (const [x, y, z] of pts) {
+        const X = x * c + z * s, Z = -x * s + z * c;
+        const Y = y * 0.96 + Z * 0.28, Z2 = Z * 0.96 - y * 0.28; // slight tilt toward the viewer
+        const f = (Z2 + 1) / 2;
+        ctx.globalAlpha = 0.08 + f * f * 0.85;
+        ctx.fillStyle = '#a9b8ff';
+        ctx.beginPath(); ctx.arc(S / 2 + X * R, S / 2 - Y * R, 1.4 + f * 2.6, 0, 6.283); ctx.fill();
+      }
+    };
+    const loop = () => { spin += 0.004; paint(); raf = seen ? requestAnimationFrame(loop) : 0; };
+    paint();
+    if (motion && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(loop); }).observe(core);
+    }
   });
 
   // Card spotlight: feed the pointer position to CSS (delegated, fine pointers only).

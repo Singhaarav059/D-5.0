@@ -125,38 +125,45 @@ const stackTabs = () => C.tools.map((t, i) => ({
     ? C.stack.items.map((s) => ({ name: s.name, role: s.role, group: s.group, logo: framerIcon(s.icon) }))
     : t.items.map(([name, slug]) => ({ name, logo: techIcon(slug) })),
 }));
-// Same split as orbitNodes() in site.js: inner ring takes half (max 7), outer ring the rest.
-const orbitNodes = (items) => {
-  const inner = Math.min(7, Math.ceil(items.length / 2));
-  return items.map((t, i) => {
-    const ring = i < inner ? 0 : 1;
-    const count = ring ? items.length - inner : inner;
-    const k = ring ? i - inner : i;
-    const a = ((-90 + (360 / count) * k + (ring ? 180 / count : 0)) * Math.PI) / 180;
-    const r = ring ? 46 : 28;
-    const mark = t.logo ? `<img src="${t.logo}" alt="" width="26" height="26" loading="lazy">` : `<b>${esc(t.name.slice(0, 2))}</b>`;
-    return `<div class="orbit__node${ring ? ' is-outer' : ''}" data-tech="${esc(t.name)}" style="left:${(50 + Math.cos(a) * r).toFixed(2)}%;top:${(50 + Math.sin(a) * r).toFixed(2)}%"><span>${mark}</span></div>`;
-  }).join('');
+// Knowledge map (after a "knowledge index" UI): the Demaze sphere wires into six discipline cards, and the
+// active card fans out to its tools. All six lists ship in the HTML as tab panels; site.js draws the wires.
+const KMAP_ICONS = {
+  'AI & ML': '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1"/><circle cx="12" cy="12" r="3"/>',
+  Web: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+  'Mobile App': '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  'UI/UX': '<path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/>',
+  eCommerce: '<path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8z"/><path d="M9 8V6.5a3 3 0 016 0V8"/>',
+  Cloud: '<path d="M7 18h10.5a4 4 0 00.6-7.96A6 6 0 006.3 9.5 4.3 4.3 0 007 18z"/>',
 };
-const stackItem = (t) => `<li class="stackx__item" data-tech="${esc(t.name)}">${t.logo ? `<img src="${t.logo}" alt="" width="22" height="22" loading="lazy">` : `<b class="stackx__mono">${esc(t.name.slice(0, 2))}</b>`}<span><b>${esc(t.name)}</b>${t.role ? `<small>${esc(t.role)}</small>` : ''}</span></li>`;
+const kmapIcon = (tab) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${KMAP_ICONS[tab] || KMAP_ICONS.Web}</svg>`;
+const kmapItem = (t) => `<li class="kmap__item"><i class="kmap__dot" data-kmap-dot></i>${t.logo ? `<img src="${t.logo}" alt="" width="22" height="22" loading="lazy">` : `<b class="kmap__mono">${esc(t.name.slice(0, 2))}</b>`}<span>${esc(t.name)}</span>${t.role ? `<small>${esc(t.role)}</small>` : ''}</li>`;
 
 const techStack = () => {
   const tabs = stackTabs();
-  return `<section class="section stackx" id="tools" data-stackx>
-  <div class="wrap stackx__grid">
-    <div class="stackx__copy" data-tabs>
+  const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
+  return `<section class="section kmap" id="tools" data-kmap>
+  <div class="wrap">
+    <div class="section-head">
       ${eyebrow('Platforms & partners')}
       <h2 class="h2" data-split>Tools &amp; technologies</h2>
       <p class="lead" data-reveal>${esc(C.stack.lead)}</p>
-      <div class="seg" role="tablist" aria-label="Technology categories" data-reveal>${tabs.map((t, i) => `<button role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(t.tab)}</button>`).join('')}</div>
-      ${tabs.map((t, i) => `<div class="stackx__panel" role="tabpanel" id="stk-panel-${i}" aria-labelledby="stk-tab-${i}"${i ? ' hidden' : ''}>${i === 0
-        ? `<ul class="stackx__groups">${C.stack.groups.map((g) => `<li><h3>${esc(g)}</h3><ul>${t.items.filter((x) => x.group === g).map(stackItem).join('')}</ul></li>`).join('')}</ul>`
-        : `<ul class="stackx__flat">${t.items.map(stackItem).join('')}</ul>`}</div>`).join('')}
     </div>
-    <div class="orbit" aria-hidden="true" data-reveal>
-      <i class="orbit__ring orbit__ring--outer"></i><i class="orbit__ring orbit__ring--inner"></i>
-      <div class="orbit__track" data-orbit>${orbitNodes(tabs[0].items)}</div>
-      <div class="orbit__core"><img src="${C.logoMark}" alt="" width="40" height="40"><span>Demaze</span></div>
+    <div class="kmap__stage" data-tabs data-kmap-stage data-reveal>
+      <svg class="kmap__wires" aria-hidden="true" data-kmap-wires></svg>
+      <div class="kmap__core" aria-hidden="true">
+        <p class="kmap__title">Demaze stack</p>
+        <p class="kmap__sub"><b>${tabs.length}</b> disciplines · <b>${total}</b> tools</p>
+        <canvas class="kmap__sphere" width="440" height="440" data-kmap-sphere></canvas>
+        <p class="kmap__live"><i></i>Stack index</p>
+      </div>
+      <div class="kmap__cats" role="tablist" aria-label="Technology categories" aria-orientation="vertical">${tabs.map((t, i) => `
+        <button class="kmap__cat" role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-kmap-cat>
+          <span class="kmap__icon">${kmapIcon(t.tab)}</span><span class="kmap__name">${esc(t.tab)}</span><span class="kmap__count"><b>${t.items.length}</b> tools</span>
+        </button>`).join('')}
+      </div>
+      <div class="kmap__lists">${tabs.map((t, i) => `
+        <div class="kmap__panel" role="tabpanel" id="stk-panel-${i}" aria-labelledby="stk-tab-${i}"${i ? ' hidden' : ''}><ul class="kmap__list">${t.items.map(kmapItem).join('')}</ul></div>`).join('')}
+      </div>
     </div>
   </div>
 </section>`;
