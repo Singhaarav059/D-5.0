@@ -210,7 +210,8 @@ html.menu-open { overflow: hidden; }
 /* ---------- home hero: exactly one screen ---------- */
 .hero__panel { height: calc(100svh - 20px); min-height: 620px; max-height: 1000px; display: flex; flex-direction: column; }
 /* signal flow strip (drawn by flow.js) with the Demaze core tile at its centre */
-.hero__flow { position: relative; flex: none; width: min(1160px, calc(100% - 40px)); margin: clamp(76px, 10.5vh, 104px) auto 0; height: clamp(130px, 23vh, 240px); }
+/* sits between the actions and the proof bar, filling whatever height is left */
+.hero__flow { position: relative; flex: 1 1 auto; width: min(1160px, calc(100% - 40px)); margin: 0 auto; min-height: 120px; max-height: 250px; }
 .hero__flow canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* a soft dusk band behind the stream so it reads against the bright sky */
 .hero__flow::before { content: ''; position: absolute; inset: -30% 0; background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(14, 18, 64, 0.42), transparent 75%); pointer-events: none; }
@@ -225,8 +226,8 @@ html.menu-open { overflow: hidden; }
 .hero__core img { width: 46%; filter: brightness(0) invert(1) drop-shadow(0 4px 14px rgba(40, 60, 200, 0.55)); }
 @keyframes corefloat { 50% { transform: perspective(600px) rotateY(-9deg) translateY(-6px); } }
 /* headline left, supporting copy and actions right */
-/* one centred column under the core tile: headline, lead, actions */
-.hero__content { flex: 1; width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: clamp(4px, 1.4vh, 16px) 0 clamp(20px, 3vh, 32px); display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; text-align: center; }
+/* one centred column above the flow core: headline, lead, actions */
+.hero__content { flex: none; width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: clamp(100px, 15vh, 150px) 0 0; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; text-align: center; }
 .hero__aside { display: grid; justify-items: center; }
 .hero__eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); font: 500 0.72rem/1 var(--body); letter-spacing: 0.12em; text-transform: uppercase; color: #fff; }
 .hero__eyebrow i { width: 4px; height: 4px; border-radius: 50%; background: var(--lime); }
@@ -751,9 +752,9 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 
   /* hero: content-sized instead of a forced full screen, so no dead band on tall tablets */
   .hero__panel { height: auto; min-height: min(calc(100svh - 20px), 820px); max-height: none; }
-  .hero__flow { height: clamp(130px, 20vh, 190px); margin-top: 86px; }
+  .hero__flow { flex: none; height: clamp(150px, 22vh, 210px); margin-block: 8px; }
   .hero__core { --core: 92px; }
-  .hero__content { padding: 4px 0 32px; }
+  .hero__content { padding: 120px 0 0; }
   .hero__title { font-size: clamp(2.3rem, 7vw, 3.6rem); max-width: 16ch; }
   .hero__lead { font-size: 1rem; }
   .hero__bg::after { background: radial-gradient(ellipse 90% 45% at 50% 42%, rgba(22, 20, 90, 0.6), transparent 75%), linear-gradient(160deg, rgba(61, 90, 254, 0.45) 0%, rgba(122, 77, 255, 0.3) 45%, rgba(20, 24, 70, 0.82) 100%); }
@@ -827,9 +828,9 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 @media (max-width: 560px) {
   .section { padding-block: 48px; }
   .hero__panel { min-height: calc(100svh - 20px); }
-  .hero__flow { height: 130px; margin-top: 78px; }
+  .hero__flow { height: 140px; margin-block: 4px; }
   .hero__core { --core: 64px; }
-  .hero__content { width: calc(100% - 40px); padding: 0 0 24px; }
+  .hero__content { width: calc(100% - 40px); padding: 104px 0 0; }
   .hero__title { font-size: clamp(2.1rem, 10vw, 2.6rem); }
   .hero__lead { font-size: 0.97rem; }
   .hero__proof { width: calc(100% - 20px); margin-bottom: 10px; padding: 6px; }

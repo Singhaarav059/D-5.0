@@ -152,17 +152,17 @@ const techStack = () => {
 const hero = () => `<section class="hero" data-hero>
   <div class="hero__panel">
     ${sky}
-    <!-- signal flow: scattered data streams into the Demaze core and leaves as clean, structured lines (flow.js) -->
-    <div class="hero__flow" aria-hidden="true" data-flow>
-      <canvas></canvas>
-      <div class="hero__core"><img src="${C.logoMark}" alt="" width="56" height="56"></div>
-    </div>
     <div class="hero__content">
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
       <div class="hero__aside">
         <p class="hero__lead" data-hero-fade>${esc(C.tagline)}</p>
         <div class="hero__ctas" data-hero-fade>${btn("Let's Connect", './contact', 'btn--blue')}${btn('Explore Services', './services', 'btn--white')}</div>
       </div>
+    </div>
+    <!-- signal flow: scattered data streams into the Demaze core and leaves as clean, structured lines (flow.js) -->
+    <div class="hero__flow" aria-hidden="true" data-flow>
+      <canvas></canvas>
+      <div class="hero__core"><img src="${C.logoMark}" alt="" width="56" height="56"></div>
     </div>
     <div class="hero__proof" data-hero-proof>
       <a class="hero__note" href="#founder">
