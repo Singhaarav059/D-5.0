@@ -48,7 +48,7 @@ function layout({ title, description, slug, body }) {
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script defer src="./assets/liquid.js"></script>
+<script defer src="./assets/liquid.js"></script>${slug ? '' : '<script defer src="./assets/horizon.js"></script>'}
 <script defer src="./assets/site.js"></script>
 </head>
 <body class="page-${slug || 'home'}">
@@ -152,6 +152,7 @@ const techStack = () => {
 const hero = () => `<section class="hero" data-hero>
   <div class="hero__panel">
     ${sky}
+    <canvas class="hero__grid" aria-hidden="true" data-grid></canvas>
     <div class="hero__content">
       <p class="hero__eyebrow" data-hero-fade>${C.hero.eyebrow.map((t) => `<span>${t}</span>`).join('<i></i>')}</p>
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
