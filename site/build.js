@@ -149,9 +149,11 @@ const techStack = () => {
 </section>`;
 };
 
+// Home hero only: glass bubbles rise through the liquid sky (built and driven by site.js).
 const hero = () => `<section class="hero" data-hero>
   <div class="hero__panel">
     ${sky}
+    <div class="hero__bubbles" aria-hidden="true" data-bubbles></div>
     <div class="hero__content">
       <p class="hero__eyebrow" data-hero-fade>${C.hero.eyebrow.map((t) => `<span>${t}</span>`).join('<i></i>')}</p>
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
