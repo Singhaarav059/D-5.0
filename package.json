@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node site/serve.js",
     "dev": "node site/serve.js",
+    "test": "node --test",
     "old": "node server.js"
   },
   "keywords": [
