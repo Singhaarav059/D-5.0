@@ -185,7 +185,13 @@
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }
 
-  if (!motion) return;
+  if (!motion) {
+    // Still show the signal flow (fully drawn) without the intro or scroll effects.
+    const f = $('[data-flow]');
+    const flow = f && window.initFlow && window.initFlow(f);
+    if (flow) flow.reveal = 1;
+    return;
+  }
 
   // ---------- motion ----------
   gsap.registerPlugin(ScrollTrigger);
@@ -239,6 +245,11 @@
       gsap.fromTo(skyImg.parentElement, { scale: 1.08 }, { scale: 1, duration: 2.2, ease: 'expo.out' });
       if (window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
     }
+    // Signal flow: the core tile lands first, then the data stream fades up around it.
+    const flowBox = $('[data-flow]', hero);
+    const flow = flowBox && window.initFlow && window.initFlow(flowBox);
+    if (flowBox) tl.from($('.hero__core', flowBox), { opacity: 0, filter: 'blur(12px)', duration: 1.2, ease: 'power3.out', clearProps: 'filter' }, 0.15);
+    if (flow) tl.fromTo(flow, { reveal: 0 }, { reveal: 1, duration: 1.6, ease: 'power2.out' }, 0.5);
     gsap.to($('.hero__content, .phero__content', hero), {
       yPercent: -18, opacity: 0.2, ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },

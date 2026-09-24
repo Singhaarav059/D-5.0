@@ -208,18 +208,37 @@ html.menu-open { overflow: hidden; }
 }
 
 /* ---------- home hero: exactly one screen ---------- */
-.hero__panel { height: calc(100svh - 20px); min-height: 580px; max-height: 1000px; display: flex; flex-direction: column; }
-.hero__content { flex: 1; width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding-top: 64px; text-align: center; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: center; }
+.hero__panel { height: calc(100svh - 20px); min-height: 620px; max-height: 1000px; display: flex; flex-direction: column; }
+/* signal flow strip (drawn by flow.js) with the Demaze core tile at its centre */
+.hero__flow { position: relative; flex: none; height: clamp(150px, 28vh, 280px); margin-top: clamp(78px, 11vh, 108px); }
+.hero__flow canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* a soft dusk band behind the stream so it reads against the bright sky */
+.hero__flow::before { content: ''; position: absolute; inset: -30% 0; background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(14, 18, 64, 0.42), transparent 75%); pointer-events: none; }
+.hero__core {
+  --core: clamp(84px, 12vh, 118px);
+  position: absolute; left: 50%; top: 50%; width: var(--core); aspect-ratio: 1; margin: calc(var(--core) / -2) 0 0 calc(var(--core) / -2);
+  display: grid; place-items: center; border-radius: 28%;
+  background: rgba(61, 90, 254, 0.28); backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 26px 50px -18px rgba(16, 24, 110, 0.7), 0 0 70px rgba(110, 140, 255, 0.45);
+  transform: perspective(600px) rotateY(-16deg); animation: corefloat 6s ease-in-out infinite;
+}
+.hero__core img { width: 46%; filter: brightness(0) invert(1) drop-shadow(0 4px 14px rgba(40, 60, 200, 0.55)); }
+@keyframes corefloat { 50% { transform: perspective(600px) rotateY(-9deg) translateY(-6px); } }
+/* headline left, supporting copy and actions right */
+.hero__content { flex: 1; width: min(1160px, calc(100% - 64px)); margin: 0 auto; padding: clamp(8px, 2vh, 24px) 0 clamp(20px, 3vh, 32px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px clamp(32px, 5vw, 80px); align-items: end; align-content: center; text-align: left; }
+.hero__aside { padding-bottom: 0.35em; }
+.hero .hero__lead { margin-top: 0; max-width: 44ch; }
+.hero .hero__ctas { justify-content: flex-start; }
 .hero__eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); font: 500 0.72rem/1 var(--body); letter-spacing: 0.12em; text-transform: uppercase; color: #fff; }
 .hero__eyebrow i { width: 4px; height: 4px; border-radius: 50%; background: var(--lime); }
-.hero__title { margin-top: clamp(14px, 2.2vh, 22px); font-size: clamp(2.2rem, min(5vw, 7.4vh), 4.15rem); line-height: 1.04; letter-spacing: -0.035em; max-width: 17ch; font-weight: 600; text-wrap: balance; }
+.hero__title { font-size: clamp(2.3rem, min(4.9vw, 7.4vh), 4.5rem); line-height: 1.02; letter-spacing: -0.035em; max-width: 15ch; font-weight: 600; text-wrap: balance; }
 .hero__title:not(:has(.w)), .phero__title:not(:has(.w)) { text-shadow: 0 2px 30px rgba(10, 14, 60, 0.45); }
 .hero__title em, .phero__title em { font-style: normal; color: #b9c6ff; }
 .hero__lead { margin-top: clamp(12px, 2vh, 18px); max-width: 58ch; font-size: clamp(0.95rem, min(1.1vw, 1.9vh), 1.06rem); color: #eef1ff; }
 .hero__ctas { margin-top: clamp(18px, 3.2vh, 28px); display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 
 /* the emphasised phrase gets a lime stroke drawn under it once the words land (spans wrapped lines) */
-.hero__title em { background: linear-gradient(90deg, var(--lime), #9ff2c8) no-repeat 0 92% / 100% 0.07em; padding-bottom: 0.04em; }
+.hero__title em { background: linear-gradient(var(--lime), var(--lime)) no-repeat 0 92% / 100% 0.07em; padding-bottom: 0.04em; }
 html.motion.js .hero__title em { background-size: 0% 0.07em; }
 
 /* Liquid sky: WebGL canvas drawn over the static photo, fades in once the texture is ready. */
@@ -733,8 +752,9 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 
   /* hero: content-sized instead of a forced full screen, so no dead band on tall tablets */
   .hero__panel { height: auto; min-height: min(calc(100svh - 20px), 820px); max-height: none; }
-  .hero__content { padding: 120px 0 36px; }
-  .hero__title { font-size: clamp(2.3rem, 7vw, 3.6rem); }
+  .hero__flow { height: clamp(140px, 22vh, 200px); margin-top: 86px; }
+  .hero__content { padding: 8px 0 32px; grid-template-columns: minmax(0, 1fr); align-content: start; }
+  .hero__title { font-size: clamp(2.3rem, 7vw, 3.6rem); max-width: 16ch; }
   .hero__lead { font-size: 1rem; }
   .hero__bg::after { background: radial-gradient(ellipse 90% 45% at 50% 42%, rgba(22, 20, 90, 0.6), transparent 75%), linear-gradient(160deg, rgba(61, 90, 254, 0.45) 0%, rgba(122, 77, 255, 0.3) 45%, rgba(20, 24, 70, 0.82) 100%); }
   .phero__panel { min-height: 0; }
@@ -807,7 +827,9 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 @media (max-width: 560px) {
   .section { padding-block: 48px; }
   .hero__panel { min-height: calc(100svh - 20px); }
-  .hero__content { padding: 104px 0 28px; }
+  .hero__flow { height: 130px; margin-top: 78px; }
+  .hero__core { --core: 64px; }
+  .hero__content { width: calc(100% - 40px); padding: 4px 0 24px; gap: 16px; }
   .hero__title { font-size: clamp(2.1rem, 10vw, 2.6rem); }
   .hero__lead { font-size: 0.97rem; }
   .hero__proof { width: calc(100% - 20px); margin-bottom: 10px; padding: 6px; }

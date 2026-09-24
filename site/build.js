@@ -48,7 +48,7 @@ function layout({ title, description, slug, body }) {
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script defer src="./assets/liquid.js"></script>
+<script defer src="./assets/liquid.js"></script>${slug ? '' : '<script defer src="./assets/flow.js"></script>'}
 <script defer src="./assets/site.js"></script>
 </head>
 <body class="page-${slug || 'home'}">
@@ -152,11 +152,17 @@ const techStack = () => {
 const hero = () => `<section class="hero" data-hero>
   <div class="hero__panel">
     ${sky}
+    <!-- signal flow: scattered data streams into the Demaze core and leaves as clean, structured lines (flow.js) -->
+    <div class="hero__flow" aria-hidden="true" data-flow>
+      <canvas></canvas>
+      <div class="hero__core"><img src="${C.logoMark}" alt="" width="56" height="56"></div>
+    </div>
     <div class="hero__content">
-      <p class="hero__eyebrow" data-hero-fade>${C.hero.eyebrow.map((t) => `<span>${t}</span>`).join('<i></i>')}</p>
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
-      <p class="hero__lead" data-hero-fade>${esc(C.tagline)}</p>
-      <div class="hero__ctas" data-hero-fade>${btn("Let's Connect", './contact', 'btn--blue')}${btn('Explore Services', './services', 'btn--white')}</div>
+      <div class="hero__aside">
+        <p class="hero__lead" data-hero-fade>${esc(C.tagline)}</p>
+        <div class="hero__ctas" data-hero-fade>${btn("Let's Connect", './contact', 'btn--blue')}${btn('Explore Services', './services', 'btn--white')}</div>
+      </div>
     </div>
     <div class="hero__proof" data-hero-proof>
       <a class="hero__note" href="#founder">
