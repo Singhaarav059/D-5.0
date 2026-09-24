@@ -94,7 +94,7 @@ function footer() {
         <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book with Calendly</a><a href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
       </div>
     </div>
-    <p class="footer__word" aria-hidden="true">Demaze</p>
+    <p class="footer__word" aria-hidden="true" data-word>${[...'Demaze'].map((c) => `<span>${c}</span>`).join('')}</p>
     <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><a href="#main" data-top>Back to top ↑</a></div>
   </div>
 </footer>`;

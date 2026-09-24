@@ -292,6 +292,11 @@
     });
   });
 
+  // Footer wordmark: letters rise out of the baseline in sequence when the footer arrives.
+  $$('[data-word]').forEach((w) => gsap.from(w.children, {
+    yPercent: 100, duration: 1.2, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: w, start: 'top 95%', once: true },
+  }));
+
   // Keyword strip: rows loop on their own; scrolling boosts them (and flips direction when scrolling up).
   $$('[data-words]').forEach((strip) => {
     strip.classList.add('is-driven');
