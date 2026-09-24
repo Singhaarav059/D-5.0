@@ -233,22 +233,6 @@
     // Underline draws under the emphasised phrase after its words land.
     const em = $('.hero__title em', hero);
     if (em) tl.to(em, { backgroundSize: '100% 0.07em', duration: 1.1, ease: 'power3.inOut' }, 0.9);
-    // Floaters: pop in, then drift with the pointer (by depth) and slide apart as the hero scrolls away.
-    const floaters = $$('[data-floater]', hero);
-    if (floaters.length) {
-      tl.fromTo(floaters, { opacity: 0, scale: 0.8, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 1.2, stagger: 0.12, ease: 'back.out(1.4)' }, 0.8);
-      floaters.forEach((f, i) => gsap.to(f, {
-        yPercent: -120 * f.dataset.floater, xPercent: (i < 2 ? -30 : 30) * f.dataset.floater, ease: 'none',
-        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-      }));
-      if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        const q = floaters.map((f) => [gsap.quickTo(f, 'x', { duration: 1.2, ease: 'power3.out' }), gsap.quickTo(f, 'y', { duration: 1.2, ease: 'power3.out' })]);
-        hero.addEventListener('pointermove', (e) => {
-          const nx = e.clientX / innerWidth - 0.5, ny = e.clientY / innerHeight - 0.5;
-          floaters.forEach((f, i) => { q[i][0](nx * -36 * f.dataset.floater); q[i][1](ny * -28 * f.dataset.floater); });
-        });
-      }
-    }
     // Sky: settles in from a slight zoom, then the liquid simulation takes over on pointer move.
     const skyImg = $('[data-sky]', hero);
     if (skyImg) {
