@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "d5-site",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "process.env.PORT=3102;require('./site/serve.js')"],
+      "port": 3102
+    },
+    {
       "name": "D-5.0",
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
@@ -12,6 +18,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["C:/Users/singh/Claude/Projects/Framer/site/serve.js"],
       "port": 3100
+    },
+    {
+      "name": "demaze-clean",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "process.env.PORT=3101;require('C:/Users/singh/Claude/Projects/D-5.0-clean/server.js')"],
+      "port": 3101
     },
     {
       "name": "demaze-old",
