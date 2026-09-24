@@ -35,7 +35,7 @@ function layout({ title, description, slug, body }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="theme-color" content="#121634">
+<meta name="theme-color" content="#0f1330">
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
