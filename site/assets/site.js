@@ -239,15 +239,6 @@
       gsap.fromTo(skyImg.parentElement, { scale: 1.08 }, { scale: 1, duration: 2.2, ease: 'expo.out' });
       if (window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
     }
-    // Blueprint horizon: grid rows rise from the bottom with the intro, then light pulses start running.
-    const gridEl = $('[data-grid]', hero);
-    const ctas = $('.hero__ctas', hero);
-    const horizon = gridEl && window.initHorizon && window.initHorizon(gridEl, {
-      // the calls to action stand on the floor: horizon runs through their middle
-      // (offsetTop ignores the intro/parallax transforms)
-      horizon: () => ctas.offsetParent.offsetTop + ctas.offsetTop + ctas.offsetHeight / 2,
-    });
-    if (horizon) tl.fromTo(horizon, { reveal: 0 }, { reveal: 1, duration: 2, ease: 'power2.inOut' }, 0.3);
     gsap.to($('.hero__content, .phero__content', hero), {
       yPercent: -18, opacity: 0.2, ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
