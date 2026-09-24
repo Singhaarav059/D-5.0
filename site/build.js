@@ -114,8 +114,11 @@ const sky = `<div class="hero__bg" aria-hidden="true"><img class="hero__sky" src
 // the grouped list with roles; every tab drives the orbit (rebuilt client-side on tab change).
 const framerIcon = (id) => `https://framerusercontent.com/images/${id}?width=96`;
 // Brand marks are vendored from simpleicons into assets/img/tech (the CSP only allows self-hosted images);
-// a slug with no local file falls back to the two-letter monogram.
-const techIcon = (slug) => (slug && fs.existsSync(path.join(__dirname, 'assets/img/tech', `${slug}.svg`)) ? `./assets/img/tech/${slug}.svg` : null);
+// a slug with no local file (.svg preferred, .png for marks only published as bitmaps) falls back to the monogram.
+const techIcon = (slug) => {
+  const file = slug && [`${slug}.svg`, `${slug}.png`].find((f) => fs.existsSync(path.join(__dirname, 'assets/img/tech', f)));
+  return file ? `./assets/img/tech/${file}` : null;
+};
 const stackTabs = () => C.tools.map((t, i) => ({
   tab: t.tab,
   items: i === 0
