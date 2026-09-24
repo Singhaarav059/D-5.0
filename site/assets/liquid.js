@@ -119,9 +119,22 @@ void main(){
   };
   img.src = src;
 
-  const frame = () => {
+  // Idle drift: when no real pointer has moved for a moment (always, on touch screens), a slow
+  // virtual cursor wanders a Lissajous path so the water keeps rippling on its own.
+  let lastReal = -1e9, drifting = false;
+  const drift = (now) => {
+    if (now - lastReal < 2200) { drifting = false; return; }
+    const t = now / 1000, w = box.clientWidth, h = box.clientHeight;
+    const x = w * (0.5 + 0.34 * Math.sin(t * 0.37)), y = h * (0.46 + 0.2 * Math.sin(t * 0.61 + 1.3));
+    if (!drifting) { drifting = true; mouse.x = x; mouse.y = y; return; } // no splash on the hand-off
+    const r = box.getBoundingClientRect();
+    move(r.left + x, r.top + y);
+  };
+
+  const frame = (now) => {
     raf = null;
     if (!visible || document.hidden) return;
+    drift(now);
     const dt = 1 / 60;
     if (mouse.moved) {
       mouse.moved = false;
@@ -182,7 +195,7 @@ void main(){
     mouse.dx = 6 * (x - mouse.x); mouse.dy = 6 * (y - mouse.y);
     mouse.x = x; mouse.y = y; mouse.moved = true;
   };
-  host.addEventListener('pointermove', (e) => move(e.clientX, e.clientY), { passive: true });
+  host.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') lastReal = performance.now(); move(e.clientX, e.clientY); }, { passive: true });
   addEventListener('resize', () => { resize(); }, { passive: true });
   document.addEventListener('visibilitychange', start);
   new IntersectionObserver((e) => { visible = e[0].isIntersecting; start(); }).observe(host);
