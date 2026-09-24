@@ -22,7 +22,7 @@ The production website is the static site in `site/`. Railway serves that applic
 | `site/build.js` | Generates the active HTML pages |
 | `site/assets/site.css` | Active site styles |
 | `site/assets/site.js` | Active interactions and motion |
-| `site/assets/boot.js`, `flow.js`, `liquid.js` | Active visual/runtime helpers |
+| `site/assets/boot.js`, `liquid.js` | Active visual/runtime helpers |
 | `site/serve.js` | Local/production static server |
 | `contact-api.js` | Contact delivery endpoint |
 | `static-server.js` | Hardened static-server implementation used by the site server |

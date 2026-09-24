@@ -55,7 +55,7 @@ function layout({ title, description, slug, body }) {
 <script defer src="./assets/vendor/gsap.min.js"></script>
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
-<script defer src="./assets/liquid.js"></script>${slug ? '' : '<script defer src="./assets/flow.js"></script>'}
+<script defer src="./assets/liquid.js"></script>
 <script defer src="./assets/site.js"></script>
 </head>
 <body class="page-${slug || 'home'}">
@@ -171,11 +171,6 @@ const hero = () => `<section class="hero" data-hero>
         <p class="hero__lead" data-hero-fade>${esc(C.tagline)}</p>
         <div class="hero__ctas" data-hero-fade>${btn("Let's Connect", './contact', 'btn--blue')}${btn('Explore Services', './services', 'btn--white')}</div>
       </div>
-    </div>
-    <!-- signal flow: scattered data streams into the Demaze core and leaves as clean, structured lines (flow.js) -->
-    <div class="hero__flow" aria-hidden="true" data-flow>
-      <canvas></canvas>
-      <div class="hero__core"><img src="${C.logoMark}" alt="" width="56" height="56"></div>
     </div>
     <div class="hero__proof" data-hero-proof>
       <a class="hero__note" href="#founder">
