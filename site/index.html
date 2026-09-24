@@ -25,6 +25,7 @@
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/liquid.js"></script>
 <script defer src="./assets/site.js"></script>
+<script type="module" src="./assets/cine.js"></script>
 </head>
 <body class="page-home">
 <a class="skip" href="#main">Skip to content</a>
@@ -46,9 +47,16 @@
   </div>
 </header>
 <main id="main">
-<section class="hero" data-hero>
+<section class="hero hero--cine" data-hero>
   <div class="hero__panel">
-    <div class="hero__bg" aria-hidden="true"><img class="hero__sky" src="./assets/img/clouds.jpg" alt="" width="1376" height="768" fetchpriority="high" decoding="async" data-sky><i class="orb orb--a"></i><i class="orb orb--b"></i><i class="orb orb--c"></i><i class="hero__glow" data-glow></i></div>
+    <div class="cine" aria-hidden="true" data-cine>
+      <i class="cine__glow"></i>
+      <div class="cine__globe" data-globe></div>
+      <svg class="cine__net" data-net></svg>
+      <div class="cine__tokens" data-tokens></div>
+      <p class="cine__label"><i></i>Demaze Technologies</p>
+      <p class="cine__caption" data-caption></p>
+    </div>
     <div class="hero__content">
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
       <div class="hero__aside">

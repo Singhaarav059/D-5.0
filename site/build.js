@@ -56,7 +56,7 @@ function layout({ title, description, slug, body }) {
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/liquid.js"></script>
-<script defer src="./assets/site.js"></script>
+<script defer src="./assets/site.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}
 </head>
 <body class="page-${slug || 'home'}">
 <a class="skip" href="#main">Skip to content</a>
@@ -162,9 +162,18 @@ const techStack = () => {
 </section>`;
 };
 
-const hero = () => `<section class="hero" data-hero>
+// Home hero: a short code-drawn opening (cine.js) — a spark grows into a network of connections that folds
+// into a dotted globe — then the globe settles as a horizon under the headline. Without JS it is just the copy.
+const hero = () => `<section class="hero hero--cine" data-hero>
   <div class="hero__panel">
-    ${sky}
+    <div class="cine" aria-hidden="true" data-cine>
+      <i class="cine__glow"></i>
+      <div class="cine__globe" data-globe></div>
+      <svg class="cine__net" data-net></svg>
+      <div class="cine__tokens" data-tokens></div>
+      <p class="cine__label"><i></i>Demaze Technologies</p>
+      <p class="cine__caption" data-caption></p>
+    </div>
     <div class="hero__content">
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
       <div class="hero__aside">

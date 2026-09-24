@@ -215,6 +215,16 @@
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }
 
+  // Home hero opening (cine.js reads the decision): it plays once per session and only with motion on.
+  const cine = $('[data-cine]');
+  let introDelay = 0;
+  if (cine) {
+    let seen = true;
+    try { seen = sessionStorage.getItem('demaze-intro') === '1'; sessionStorage.setItem('demaze-intro', '1'); } catch (e) { /* storage blocked: skip the intro */ }
+    cine.dataset.intro = motion && !seen ? 'play' : 'rest';
+    if (cine.dataset.intro === 'play') introDelay = 4.4;
+  }
+
   if (!motion) return;
 
   // ---------- motion ----------
@@ -254,8 +264,8 @@
   const hero = $('[data-hero]');
   if (hero) {
     const words = split($('[data-split=hero]', hero), 'w');
-    const tl = gsap.timeline({ defaults: { ease: EASE } });
-    tl.from(words, { yPercent: 115, rotate: 4, duration: 1.3, stagger: 0.055 }, 0.1)
+    const tl = gsap.timeline({ defaults: { ease: EASE }, paused: !!introDelay });
+    tl.from(words, { yPercent: 140, rotate: 4, duration: 1.3, stagger: 0.055 }, 0.1)
       .to($$('[data-hero-fade]', hero), { opacity: 1, duration: 1 }, 0.35)
       .from($$('[data-hero-fade]', hero), { y: 24, duration: 1.2, stagger: 0.08 }, 0.35);
     const proof = $('[data-hero-proof]', hero);
@@ -263,6 +273,14 @@
     // Underline draws under the emphasised phrase after its words land.
     const em = $('.hero__title em', hero);
     if (em) tl.to(em, { backgroundSize: '100% 0.07em', duration: 1.1, ease: 'power3.inOut' }, 0.9);
+    // During the opening the copy waits in its hidden start state, then plays as the globe settles.
+    if (introDelay) {
+      tl.progress(0);
+      let started = false;
+      const go = () => { if (!started) { started = true; tl.play(); } };
+      cine.addEventListener('cine:rest', go, { once: true });
+      gsap.delayedCall(introDelay + 3, go); // safety net if the opening never reports in
+    }
     // Sky: settles in from a slight zoom, then the liquid simulation takes over on pointer move.
     const skyImg = $('[data-sky]', hero);
     if (skyImg) {
