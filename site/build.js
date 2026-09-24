@@ -37,7 +37,7 @@ function layout({ title, description, slug, body }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="theme-color" content="#0f1330">
+<meta name="theme-color" content="#07080f">
 <link rel="canonical" href="${canonical}">
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">
@@ -55,7 +55,6 @@ function layout({ title, description, slug, body }) {
 <script defer src="./assets/vendor/gsap.min.js"></script>
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
-<script defer src="./assets/liquid.js"></script>
 <script defer src="./assets/site.js"></script>
 <script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}
 </head>
@@ -109,7 +108,8 @@ function footer() {
 }
 
 // ---------- sections ----------
-const sky = `<div class="hero__bg" aria-hidden="true"><img class="hero__sky" src="./assets/img/clouds.jpg" alt="" width="1376" height="768" fetchpriority="high" decoding="async" data-sky><i class="orb orb--a"></i><i class="orb orb--b"></i><i class="orb orb--c"></i><i class="hero__glow" data-glow></i></div>`;
+// Subpage heroes share the home stage: near-black with one blue light (no photo).
+const sky = `<div class="hero__bg" aria-hidden="true"><i class="hero__glow" data-glow></i></div>`;
 
 // Engineering stack: the six "Tools & Technologies" tabs from the live site. The AI & ML tab keeps
 // the grouped list with roles; every tab drives the orbit (rebuilt client-side on tab change).

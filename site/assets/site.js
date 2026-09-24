@@ -325,12 +325,6 @@
       cine.addEventListener('cine:rest', go, { once: true });
       gsap.delayedCall(introDelay + 3, go); // safety net if the opening never reports in
     }
-    // Sky: settles in from a slight zoom, then the liquid simulation takes over on pointer move.
-    const skyImg = $('[data-sky]', hero);
-    if (skyImg) {
-      gsap.fromTo(skyImg.parentElement, { scale: 1.08 }, { scale: 1, duration: 2.2, ease: 'expo.out' });
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
-    }
     gsap.to($('.hero__content, .phero__content', hero), {
       yPercent: -18, opacity: 0.2, ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
