@@ -182,6 +182,7 @@
       lastY = y;
     },
   });
+  nav.classList.toggle('is-scrolled', scrollY > 40); // reload mid-page
 
   // Hero intro: title words rise out of their clip, then supporting copy, then the card fan.
   const hero = $('[data-hero]');
