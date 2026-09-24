@@ -210,7 +210,7 @@ html.menu-open { overflow: hidden; }
 /* ---------- home hero: exactly one screen ---------- */
 .hero__panel { height: calc(100svh - 20px); min-height: 620px; max-height: 1000px; display: flex; flex-direction: column; }
 /* signal flow strip (drawn by flow.js) with the Demaze core tile at its centre */
-.hero__flow { position: relative; flex: none; height: clamp(150px, 28vh, 280px); margin-top: clamp(78px, 11vh, 108px); }
+.hero__flow { position: relative; flex: none; width: min(1160px, calc(100% - 40px)); margin: clamp(76px, 10.5vh, 104px) auto 0; height: clamp(130px, 23vh, 240px); }
 .hero__flow canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* a soft dusk band behind the stream so it reads against the bright sky */
 .hero__flow::before { content: ''; position: absolute; inset: -30% 0; background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(14, 18, 64, 0.42), transparent 75%); pointer-events: none; }
@@ -225,13 +225,12 @@ html.menu-open { overflow: hidden; }
 .hero__core img { width: 46%; filter: brightness(0) invert(1) drop-shadow(0 4px 14px rgba(40, 60, 200, 0.55)); }
 @keyframes corefloat { 50% { transform: perspective(600px) rotateY(-9deg) translateY(-6px); } }
 /* headline left, supporting copy and actions right */
-.hero__content { flex: 1; width: min(1160px, calc(100% - 64px)); margin: 0 auto; padding: clamp(8px, 2vh, 24px) 0 clamp(20px, 3vh, 32px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px clamp(32px, 5vw, 80px); align-items: end; align-content: center; text-align: left; }
-.hero__aside { padding-bottom: 0.35em; }
-.hero .hero__lead { margin-top: 0; max-width: 44ch; }
-.hero .hero__ctas { justify-content: flex-start; }
+/* one centred column under the core tile: headline, lead, actions */
+.hero__content { flex: 1; width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: clamp(4px, 1.4vh, 16px) 0 clamp(20px, 3vh, 32px); display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; text-align: center; }
+.hero__aside { display: grid; justify-items: center; }
 .hero__eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); font: 500 0.72rem/1 var(--body); letter-spacing: 0.12em; text-transform: uppercase; color: #fff; }
 .hero__eyebrow i { width: 4px; height: 4px; border-radius: 50%; background: var(--lime); }
-.hero__title { font-size: clamp(2.3rem, min(4.9vw, 7.4vh), 4.5rem); line-height: 1.02; letter-spacing: -0.035em; max-width: 15ch; font-weight: 600; text-wrap: balance; }
+.hero__title { font-size: clamp(2.2rem, min(4.8vw, 6.8vh), 4.25rem); line-height: 1.03; letter-spacing: -0.035em; max-width: 17ch; font-weight: 600; text-wrap: balance; }
 .hero__title:not(:has(.w)), .phero__title:not(:has(.w)) { text-shadow: 0 2px 30px rgba(10, 14, 60, 0.45); }
 .hero__title em, .phero__title em { font-style: normal; color: #b9c6ff; }
 .hero__lead { margin-top: clamp(12px, 2vh, 18px); max-width: 58ch; font-size: clamp(0.95rem, min(1.1vw, 1.9vh), 1.06rem); color: #eef1ff; }
@@ -752,8 +751,9 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 
   /* hero: content-sized instead of a forced full screen, so no dead band on tall tablets */
   .hero__panel { height: auto; min-height: min(calc(100svh - 20px), 820px); max-height: none; }
-  .hero__flow { height: clamp(140px, 22vh, 200px); margin-top: 86px; }
-  .hero__content { padding: 8px 0 32px; grid-template-columns: minmax(0, 1fr); align-content: start; }
+  .hero__flow { height: clamp(130px, 20vh, 190px); margin-top: 86px; }
+  .hero__core { --core: 92px; }
+  .hero__content { padding: 4px 0 32px; }
   .hero__title { font-size: clamp(2.3rem, 7vw, 3.6rem); max-width: 16ch; }
   .hero__lead { font-size: 1rem; }
   .hero__bg::after { background: radial-gradient(ellipse 90% 45% at 50% 42%, rgba(22, 20, 90, 0.6), transparent 75%), linear-gradient(160deg, rgba(61, 90, 254, 0.45) 0%, rgba(122, 77, 255, 0.3) 45%, rgba(20, 24, 70, 0.82) 100%); }
@@ -829,7 +829,7 @@ html.motion.js [data-hero-proof] { opacity: 0; }
   .hero__panel { min-height: calc(100svh - 20px); }
   .hero__flow { height: 130px; margin-top: 78px; }
   .hero__core { --core: 64px; }
-  .hero__content { width: calc(100% - 40px); padding: 4px 0 24px; gap: 16px; }
+  .hero__content { width: calc(100% - 40px); padding: 0 0 24px; }
   .hero__title { font-size: clamp(2.1rem, 10vw, 2.6rem); }
   .hero__lead { font-size: 0.97rem; }
   .hero__proof { width: calc(100% - 20px); margin-bottom: 10px; padding: 6px; }
