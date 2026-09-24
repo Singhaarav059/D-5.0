@@ -56,13 +56,18 @@ function layout({ title, description, slug, body }) {
 <header class="nav" data-nav>
   <div class="nav__bar">
     ${logo}
-    <nav class="nav__links" aria-label="Primary">${links}</nav>
+    <nav class="nav__links" aria-label="Primary" data-nav-links><i class="nav__pill" aria-hidden="true"></i>${links}</nav>
     <a class="btn btn--blue btn--sm nav__cta" ${cal}><span>Book A Call</span></a>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span></button>
+    <i class="nav__progress" aria-hidden="true"></i>
   </div>
+  <div class="nav__scrim" data-nav-scrim hidden></div>
   <div class="nav__menu" id="menu" hidden>
-    ${NAV.map(([t, h]) => `<a href="${h}">${t}</a>`).join('')}
-    <a class="btn btn--blue" ${cal}><span>Book A Call</span></a>
+    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${h === './' + slug ? ' aria-current="page"' : ''}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
+    <div class="nav__menu-foot" style="--i:${NAV.length}">
+      <a class="btn btn--blue" ${cal}><span>Book A Call</span><i class="btn__icon">${icon.arrow}</i></a>
+      <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>
+    </div>
   </div>
 </header>
 <main id="main">

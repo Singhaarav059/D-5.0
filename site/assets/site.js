@@ -10,14 +10,39 @@
   const nav = $('[data-nav]');
   const toggle = $('.nav__toggle');
   const menu = $('#menu');
+  const scrim = $('[data-nav-scrim]');
+  let lenis = null;
   const setMenu = (open) => {
     toggle.setAttribute('aria-expanded', open);
     toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    menu.hidden = !open;
+    menu.hidden = scrim.hidden = !open;
+    root.classList.toggle('menu-open', open);
+    if (lenis) open ? lenis.stop() : lenis.start();
   };
   toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  scrim.addEventListener('click', () => setMenu(false));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); toggle.focus(); } });
   matchMedia('(min-width: 861px)').addEventListener('change', (e) => e.matches && setMenu(false));
+
+  // Desktop links: a single pill glides to the hovered/focused link and rests on the current page.
+  const links = $('[data-nav-links]');
+  if (links) {
+    const pill = $('.nav__pill', links);
+    const current = $('a[aria-current]', links);
+    const moveTo = (a) => {
+      links.classList.toggle('has-pill', !!a);
+      $$('a', links).forEach((l) => l.classList.toggle('is-pill', l === a));
+      if (a) { pill.style.setProperty('--x', a.offsetLeft + 'px'); pill.style.setProperty('--w', a.offsetWidth + 'px'); }
+    };
+    links.addEventListener('pointerover', (e) => { const a = e.target.closest('a'); if (a) moveTo(a); });
+    links.addEventListener('focusin', (e) => moveTo(e.target.closest('a')));
+    links.addEventListener('pointerleave', () => moveTo(current));
+    links.addEventListener('focusout', () => moveTo(current));
+    // Place it without animating on load, once the web font has set link widths.
+    const place = () => { pill.style.transition = 'none'; moveTo(current); pill.offsetWidth; pill.style.transition = ''; };
+    place();
+    document.fonts && document.fonts.ready.then(place);
+  }
 
   // Tabs (industries, tools): roving tabindex + arrow keys.
   $$('[data-tabs]').forEach((box) => {
@@ -153,7 +178,7 @@
 
   // ---------- motion ----------
   gsap.registerPlugin(ScrollTrigger);
-  const lenis = window.Lenis ? new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }) : null;
+  lenis = window.Lenis ? new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }) : null;
   if (lenis) {
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
