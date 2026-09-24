@@ -115,7 +115,7 @@
         note.textContent = 'Too many attempts. Please wait a few minutes and try again.';
         return;
       }
-      if (response.status !== 503 && response.status !== 502) throw new Error('contact delivery failed');
+      throw new Error('contact delivery failed');
     } catch (error) {
       // A local preview or an unconfigured deployment can still open the visitor's mail app.
       location.href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(d.subject + ' | ' + d.name)}&body=${encodeURIComponent(body)}`;

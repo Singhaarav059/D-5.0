@@ -1,21 +1,22 @@
 {
-  "name": "moviq-framer-clone",
+  "name": "demaze-technologies",
   "version": "1.0.0",
-  "description": "Complete 1:1 exact clone of MOVIQ Framer website with full layouts, styles, themes, and animations",
-  "main": "server.js",
+  "description": "Demaze Technologies website",
+  "main": "site/serve.js",
   "scripts": {
     "start": "node site/serve.js",
     "dev": "node site/serve.js",
     "build": "node site/build.js",
     "test": "node --test",
     "test:html": "node test/html.test.js",
-    "test:all": "npm run build && npm test && npm run test:html",
-    "old": "node server.js"
+    "test:all": "npm run build && npm test && npm run test:html"
   },
   "keywords": [
-    "moviq",
-    "framer",
-    "clone"
+    "demaze",
+    "technologies",
+    "ai",
+    "software",
+    "engineering"
   ],
   "author": "",
   "license": "ISC",

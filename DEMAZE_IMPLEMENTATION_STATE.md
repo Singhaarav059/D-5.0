@@ -1,58 +1,55 @@
-# Demaze Implementation State
+# Demaze Technologies implementation state
 
-Read this first in a new session, then check the code — the code wins if they disagree.
+## Active architecture
 
-## Architecture
+The production website is the static site in `site/`. Railway serves that application through `site/serve.js`; the old Framer/MOVIQ export at the repository root is historical and is not part of the active runtime.
 
-- `index.html` is a Framer React export. React hydrates on load and discards server HTML
-  that doesn't match its compiled (MOVIQ) tree, so Demaze content is applied **after**
-  hydration by small override scripts in `demaze/`, via `DemazeOverride.run()` in
-  `demaze/demaze-override-core.js` (bounded polling + rechecks, no unbounded loops).
-- Overrides never reorder or delete React-owned sections (that crashes the reconciler).
-  They append Demaze blocks inside existing sections and hide the MOVIQ children with CSS.
-- Subpages (`services`, `projects`, `about-us`, `contact`) are plain static HTML.
+### Active routes
 
-### Files
-| File | Role |
+- `/`
+- `/projects`
+- `/services`
+- `/about-us`
+- `/contact`
+- `/robots.txt`
+- `/sitemap.xml`
+
+### Active files
+
+| Path | Role |
 |---|---|
-| `demaze/demaze-content.js` | Verified content (single source). Never invent facts. |
-| `demaze/demaze-system.css` | Design system: tokens, type, nav, buttons, footer, drawer, FAQ/contact, subpage components. Linked at the **end of `<body>`** on every page so it wins cascade ties with injected `<style>` tags. |
-| `assets/demaze/demaze-subpages.css` | Foundation only (fonts, reset, Lenis, mobile toggle, skip link, reduced motion). |
-| `assets/demaze/demaze-shared.js` | Every page: canonical footer markup, nav scroll state, mobile drawer, subpage reveal, Lenis on subpages. |
-| `demaze/demaze-blocks.js` | Shared FAQ + closing contact band (homepage override and `data-dz-block` slots on subpages). |
-| `index.html` `<head>` `demaze-prepaint-gate` | Hero styles and section order/visibility. Hero CSS lives here (not JS) so the hydrated layout never shifts. |
+| `site/content.js` | Website content source |
+| `site/build.js` | Generates the active HTML pages |
+| `site/assets/site.css` | Active site styles |
+| `site/assets/site.js` | Active interactions and motion |
+| `site/assets/boot.js`, `flow.js`, `liquid.js` | Active visual/runtime helpers |
+| `site/serve.js` | Local/production static server |
+| `contact-api.js` | Contact delivery endpoint |
+| `static-server.js` | Hardened static-server implementation used by the site server |
+| `test/` | Regression and security tests |
 
-### Homepage section → MOVIQ slot
-| Visual order | Demaze section | Mounted in |
-|---|---|---|
-| 1 | Hero (sphere in sky) | `Hero` (`demaze-hero-override.js`) |
-| 2 | Engineering Stack (list + orbit) | `Badge` (`demaze-techstack-override.js`) |
-| 3 | Featured projects (sticky stack) | `Sricpt` (`demaze-showcase-override.js`) |
-| 4 | Core capabilities, then How We Work | first `Tools` (`capabilities` + `process` overrides) |
-| 5 | Industries (disclosure list + panel) | second `Tools` (`demaze-industries-override.js`) |
-| 6 | About (copy, metrics, founder) | `Moviq vs Traditional Video` (`demaze-whydemaze-override.js`) |
-| 7 | FAQ, then contact band | `Faq` (`demaze-faq-override.js`) |
-Hidden: `Videos making Step`, `Products`, `Ai Powered`, every `CTA`, `Pricing`, Framer header/footer.
-Blocks are mounted so DOM order equals visual order (screen readers, keyboard).
+## Contact delivery
 
-## Design rules
-- One accent (`--dz-accent` #2563eb) on paper/ink. No gradient text, no rainbow palettes,
-  no glass-on-glass, no pills for eyebrows (plain uppercase labels).
-- Headings: Stack Sans Headline 600, tracking −0.01em (the face is tightly fitted).
-  Body: Inter. Headings needing another font use `data-dz-font`.
-- Motion: one-shot reveals only (`DemazeOverride.reveal` / subpage `initReveal`), never
-  re-hide on scroll back; no scroll-driven layout effects; press feedback `scale(.97)`;
-  everything respects `prefers-reduced-motion`.
+The contact form submits to `/api/contact`. The server validates requests and can forward them to `CONTACT_WEBHOOK_URL`. If delivery is unavailable, the browser falls back to opening a prefilled email.
 
-## Known limitations
-- React hydration warnings (#418/#425/#422) exist since before this work: the pre-hydration
-  script rewrites MOVIQ text to avoid a flash of template copy, which the compiled bundle then
-  sees as a mismatch. Real fix: republish the Framer project with Demaze content.
-- Hidden MOVIQ copy still exists in the homepage HTML source (Framer SSR).
-- No real booking link exists; "Book a call" leads to `/contact`, where the call option is an email.
-  The contact form composes an email in the visitor's mail client (there is no backend).
+## Verification
 
-## Do not reintroduce
-Legacy telemetry (NEURAL ENGINE, 99.4%, Inference Precision, …), fake performance claims,
-"response within 24 hours" guarantees, invented mission/vision copy, MOVIQ content, the
-fake browser window around the hero sphere, legal links to pages that don't exist.
+Run:
+
+```bash
+npm ci
+npm run test:all
+npm audit --omit=dev --audit-level=moderate
+```
+
+The current CI workflow runs the test suite for pushes to `main` and `new`, and for pull requests.
+
+## Legacy source
+
+The repository still contains historical Framer/MOVIQ source, assets, and audit material from the redesign process. They are intentionally not served by the active `site/` runtime. Do not treat those files as the production architecture.
+
+The active design system lives under `site/assets/site.css`. Do not make visual/design changes as part of infrastructure or hygiene fixes unless explicitly requested.
+
+## Agent guidance
+
+When modifying the production site, start in `site/`. Inspect `site/build.js` and `site/content.js` before changing generated HTML. Do not revive or modify the historical root Framer/MOVIQ implementation unless the task explicitly concerns migration/history.
