@@ -517,7 +517,11 @@ html.motion.js .floater { opacity: 0; }
 /* ---------- contact ---------- */
 .contact { padding-block: clamp(16px, 2vw, 28px); }
 .contact__panel { position: relative; overflow: hidden; isolation: isolate; margin: 0 10px; border-radius: var(--r-xl); background: linear-gradient(160deg, #2c43dc 0%, #2f45cf 45%, #1d2891 100%); color: #fff; }
-.contact__orb { position: absolute; z-index: -1; width: 700px; height: 700px; right: -200px; top: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 255, 58, 0.3), transparent 60%); }
+.contact__orb { position: absolute; z-index: -1; width: 700px; height: 700px; right: -200px; top: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 255, 58, 0.24), transparent 60%); animation: drift 24s ease-in-out infinite alternate-reverse; }
+/* faint dot lattice, masked so it only surfaces near the glow */
+.contact__panel::before, .quote__panel::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1.5px); background-size: 22px 22px; mask-image: radial-gradient(ellipse 55% 70% at 88% 12%, #000, transparent 70%); }
+.quote__panel { isolation: isolate; }
+.quote__panel::before { mask-image: radial-gradient(ellipse 45% 60% at 6% 94%, #000, transparent 70%); }
 .contact__grid { width: var(--wrap); margin: 0 auto; padding-block: clamp(40px, 8vh, 80px); display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 80px); align-items: start; }
 .contact__title { font-size: clamp(1.8rem, 3.2vw, 2.7rem); color: #fff; }
 .contact__ways { margin-top: clamp(18px, 3.4vh, 28px); display: grid; gap: 8px; }

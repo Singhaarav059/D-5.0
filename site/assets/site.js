@@ -292,6 +292,9 @@
     });
   });
 
+  // Founder photo drifts against the quote as it passes (depth, not decoration on every image).
+  $$('.quote__photo').forEach((img) => gsap.fromTo(img, { yPercent: 8 }, { yPercent: -8, ease: 'none', scrollTrigger: { trigger: img.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } }));
+
   // Footer wordmark: letters rise out of the baseline in sequence when the footer arrives.
   $$('[data-word]').forEach((w) => gsap.from(w.children, {
     yPercent: 100, duration: 1.2, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: w, start: 'top 95%', once: true },
