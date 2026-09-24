@@ -286,7 +286,9 @@
     const end = +el.dataset.count;
     const o = { v: 0 };
     el.textContent = '0';
-    gsap.to(o, { v: end, duration: 2, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
+    // Hero stats sit at the very bottom of the first screen, so they count up with the intro instead.
+    const inHero = el.closest('[data-hero]');
+    gsap.to(o, { v: end, duration: 2, delay: inHero ? 0.8 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
   });
 
   // Industries: while in view, cycle through the tabs. The chip's CSS progress fill sets the pace;
