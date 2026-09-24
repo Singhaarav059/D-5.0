@@ -25,6 +25,7 @@
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/liquid.js"></script>
 <script defer src="./assets/site.js"></script>
+<script defer src="./assets/ink.js"></script>
 </head>
 <body class="page-about-us">
 <a class="skip" href="#main">Skip to content</a>
@@ -98,16 +99,24 @@
     </figure>
   </div>
 </section>
-<section class="section process" data-process>
-  <div class="wrap">
-    <div class="section-head section-head--split">
-      <div><p class="eyebrow"><span class="eyebrow__dot"></span>How we work</p><h2 class="h2" data-split>Our process</h2><p class="lead" data-reveal>Four clear stages, from the first workshop to long-term growth.</p></div>
-      <div data-reveal><a class="btn btn--blue" href="https://calendly.com/krupal-demazetech/30min" target="_blank" rel="noopener"><span>Book a call</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a></div>
+<section class="section process ink" data-process data-ink>
+  <div class="ink__track">
+    <div class="ink__sticky">
+      <div class="ink__paper">
+        <i class="grain" aria-hidden="true"></i>
+        <div class="ink__head">
+          <div><p class="eyebrow eyebrow--dark"><span class="eyebrow__dot"></span>How we work</p><h2 class="h2 ink__title">From a first idea to a product at scale</h2></div>
+          <div><a class="btn btn--ink" href="https://calendly.com/krupal-demazetech/30min" target="_blank" rel="noopener"><span>Book a call</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a></div>
+        </div>
+        <div class="ink__stage"><canvas class="ink__canvas" aria-hidden="true" data-ink-canvas></canvas></div>
+        <ol class="ink__steps">
+          <li class="ink__step" data-ink-step><span class="ink__num">01 / 04</span><h3>Discover &amp; Define</h3><p>We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.</p></li>
+          <li class="ink__step" data-ink-step><span class="ink__num">02 / 04</span><h3>Design &amp; Prototype</h3><p>Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.</p></li>
+          <li class="ink__step" data-ink-step><span class="ink__num">03 / 04</span><h3>Build &amp; Integrate</h3><p>Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.</p></li>
+          <li class="ink__step" data-ink-step><span class="ink__num">04 / 04</span><h3>Launch &amp; Scale</h3><p>Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.</p></li>
+        </ol>
+      </div>
     </div>
-    <ol class="steps">
-      <i class="steps__line" aria-hidden="true"><i data-process-line></i></i>
-      <li class="step" data-step><span class="step__num">01<small>/04</small></span><h3>Discover &amp; Define</h3><p>We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.</p></li><li class="step" data-step><span class="step__num">02<small>/04</small></span><h3>Design &amp; Prototype</h3><p>Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.</p></li><li class="step" data-step><span class="step__num">03<small>/04</small></span><h3>Build &amp; Integrate</h3><p>Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.</p></li><li class="step" data-step><span class="step__num">04<small>/04</small></span><h3>Launch &amp; Scale</h3><p>Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.</p></li>
-    </ol>
   </div>
 </section>
 <section class="section contact" id="contact">

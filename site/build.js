@@ -56,7 +56,8 @@ function layout({ title, description, slug, body }) {
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/liquid.js"></script>
-<script defer src="./assets/site.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}
+<script defer src="./assets/site.js"></script>
+<script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}
 </head>
 <body class="page-${slug || 'home'}">
 <a class="skip" href="#main">Skip to content</a>
@@ -295,16 +296,23 @@ const industries = () => `<section class="section industries" id="industries">
   </div>
 </section>`;
 
-const processSection = () => `<section class="section process" data-process>
-  <div class="wrap">
-    <div class="section-head section-head--split">
-      <div>${eyebrow('How we work')}<h2 class="h2" data-split>Our process</h2><p class="lead" data-reveal>Four clear stages, from the first workshop to long-term growth.</p></div>
-      <div data-reveal>${btn('Book a call', C.calendly, 'btn--blue', 'target="_blank" rel="noopener"')}</div>
+// "How we work", told on paper: an ink character walks through the four stages while the page scrolls
+// (ink.js draws it; the stage text below is the real content and reads fine without the drawing).
+const processSection = () => `<section class="section process ink" data-process data-ink>
+  <div class="ink__track">
+    <div class="ink__sticky">
+      <div class="ink__paper">
+        <i class="grain" aria-hidden="true"></i>
+        <div class="ink__head">
+          <div>${eyebrow('How we work', true)}<h2 class="h2 ink__title">From a first idea to a product at scale</h2></div>
+          <div>${btn('Book a call', C.calendly, 'btn--ink', 'target="_blank" rel="noopener"')}</div>
+        </div>
+        <div class="ink__stage"><canvas class="ink__canvas" aria-hidden="true" data-ink-canvas></canvas></div>
+        <ol class="ink__steps">${C.process.map((s, i) => `
+          <li class="ink__step" data-ink-step><span class="ink__num">${pad(i + 1)} / ${pad(C.process.length)}</span><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p></li>`).join('')}
+        </ol>
+      </div>
     </div>
-    <ol class="steps">
-      <i class="steps__line" aria-hidden="true"><i data-process-line></i></i>
-      ${C.process.map((s, i) => `<li class="step" data-step><span class="step__num">${pad(i + 1)}<small>/${pad(C.process.length)}</small></span><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p></li>`).join('')}
-    </ol>
   </div>
 </section>`;
 

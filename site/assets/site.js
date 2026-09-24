@@ -479,14 +479,6 @@
     });
   }
 
-  // Process: progress line fills with scroll, steps light up as they cross the middle.
-  const proc = $('[data-process]');
-  if (proc) {
-    gsap.to($('[data-process-line]', proc), { scaleX: 1, ease: 'none', scrollTrigger: { trigger: $('.steps', proc), start: 'top 85%', end: 'bottom 55%', scrub: true } });
-    $$('[data-step]', proc).forEach((s) => ScrollTrigger.create({ trigger: s, start: 'top 60%', end: 'max', toggleClass: 'is-on' }));
-    gsap.fromTo($$('[data-step]', proc), { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 1, stagger: 0.12, ease: EASE, scrollTrigger: { trigger: proc, start: 'top 75%', once: true } });
-  }
-
   // Pins (projects deck, services) add scroll distance; triggers below them must be measured after them.
   ScrollTrigger.sort();
   ScrollTrigger.refresh();

@@ -497,6 +497,46 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .step h3 { margin-top: 8px; font-size: 1.22rem; letter-spacing: -0.02em; }
 .step p { margin-top: 6px; color: var(--muted); font-size: 0.95rem; }
 
+/* ---------- "How we work" on paper (ink.js) ----------
+   With motion the track is tall and the paper sticks while the story plays; otherwise it is one static panel. */
+.section.ink { padding-block: clamp(40px, 7vw, 80px); }
+.ink__track { position: relative; }
+.ink.is-scroll .ink__track { height: 340vh; }
+.ink__sticky { padding-inline: 10px; }
+.ink.is-scroll .ink__sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
+.ink.is-scroll .ink__paper { height: calc(100svh - 20px); }
+.ink__paper {
+  position: relative; overflow: hidden; width: 100%; isolation: isolate;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: clamp(12px, 2.4vh, 22px);
+  min-height: min(760px, calc(100svh - 20px)); padding: clamp(22px, 3.6vw, 48px);
+  max-height: calc(100svh - 20px);
+  border-radius: var(--r-xl); color: #15161c;
+  background: radial-gradient(ellipse 80% 70% at 45% 35%, #f5f0e4, #ebe3d1 75%, #e2d8c3);
+  box-shadow: inset 0 0 120px rgba(120, 100, 60, 0.12);
+}
+.ink__paper .grain { opacity: 0.5; mix-blend-mode: multiply; z-index: -1; }
+.ink__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.ink .eyebrow { color: #4a4b55; }
+.ink .eyebrow__dot { background: #3d5afe; box-shadow: none; }
+.ink__title { margin-top: 10px; font-family: var(--serif); font-weight: 400; color: #15161c; font-size: clamp(2rem, min(4vw, 6vh), 3.4rem); line-height: 1.02; letter-spacing: -0.01em; max-width: 18ch; }
+.btn--ink { background: #15161c; color: #f5f0e4; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); }
+.btn--ink .btn__icon { background: #3d5afe; color: #fff; }
+.ink__stage { position: relative; min-height: 200px; }
+.ink__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.ink__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2.4vw, 32px); margin: 0; padding: clamp(12px, 2vh, 18px) 0 0; list-style: none; border-top: 1px solid rgba(21, 22, 28, 0.16); }
+.ink__step { opacity: 0.34; transition: opacity 400ms ease; }
+.ink__step.is-done { opacity: 0.62; }
+.ink__step.is-active { opacity: 1; }
+.ink__num { font: 500 0.68rem/1 var(--mono); letter-spacing: 0.14em; color: #3d5afe; }
+.ink__step h3 { margin: 8px 0 6px; font: 400 clamp(1.25rem, 1.8vw, 1.55rem)/1.1 var(--serif); color: #15161c; letter-spacing: 0; }
+.ink__step p { font-size: 0.86rem; line-height: 1.5; color: #4a4b55; }
+@media (max-width: 760px) {
+  .ink__steps { grid-template-columns: 1fr; }
+  .ink.is-scroll .ink__step { grid-area: 1 / 1; opacity: 0; }
+  .ink.is-scroll .ink__step.is-active { opacity: 1; }
+  .ink__head .btn { display: none; }
+}
+
 /* ---------- industries tabs ---------- */
 .ind { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 56px); align-items: stretch; }
 .ind__side { display: flex; flex-direction: column; }
