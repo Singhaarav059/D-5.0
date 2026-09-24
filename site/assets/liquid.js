@@ -1,5 +1,5 @@
 // Liquid hover: a small fluid simulation that ripples the hero sky image under the pointer.
-// Ported from the previous Demaze hero (commit 9b9675d). Returns false when unsupported,
+// Ported from the previous Demaze hero (commit 9b9675d). Returns { splash(x, y) }, or false when unsupported,
 // in which case the static <img> underneath simply stays visible.
 window.initLiquid = function (box, src) {
   if (!box || box.querySelector('canvas')) return false;
@@ -102,10 +102,11 @@ void main(){
     vel = double(grid.w, grid.h); pres = double(grid.w, grid.h); div = fbo(grid.w, grid.h); out = double(grid.w, grid.h);
   };
   const ratio = () => box.clientWidth / Math.max(1, box.clientHeight);
-  const pointer = () => {
+  const pointer = (x, y) => {
     const w = box.clientWidth * OVERSCAN, h = box.clientHeight * OVERSCAN;
-    return [(mouse.x + (w - box.clientWidth) / 2) / w, 1 - (mouse.y + (h - box.clientHeight) / 2) / h];
+    return [(x + (w - box.clientWidth) / 2) / w, 1 - (y + (h - box.clientHeight) / 2) / h];
   };
+  const queue = []; // extra splats from outside (splash)
 
   const img = new Image();
   img.onload = () => {
@@ -136,20 +137,21 @@ void main(){
     if (!visible || document.hidden) return;
     drift(now);
     const dt = 1 / 60;
-    if (mouse.moved) {
-      mouse.moved = false;
-      const [u, v] = pointer();
+    const splat = (x, y, dx, dy, size, power) => {
+      const [u, v] = pointer(x, y);
       gl.useProgram(P.splat.p);
       gl.uniform1f(P.splat.u.u_ratio, ratio());
       gl.uniform2f(P.splat.u.u_point, u, v);
-      gl.uniform1f(P.splat.u.u_point_size, CURSOR_SIZE * 0.001);
+      gl.uniform1f(P.splat.u.u_point_size, size * 0.001);
       gl.uniform1i(P.splat.u.u_input_texture, vel.read().attach(1));
-      gl.uniform3f(P.splat.u.u_point_value, mouse.dx, -mouse.dy, 0);
+      gl.uniform3f(P.splat.u.u_point_value, dx, -dy, 0);
       draw(vel.write()); vel.swap();
       gl.uniform1i(P.splat.u.u_input_texture, out.read().attach(1));
-      gl.uniform3f(P.splat.u.u_point_value, CURSOR_POWER * 0.001, 0, 0);
+      gl.uniform3f(P.splat.u.u_point_value, power * 0.001, 0, 0);
       draw(out.write()); out.swap();
-    }
+    };
+    if (mouse.moved) { mouse.moved = false; splat(mouse.x, mouse.y, mouse.dx, mouse.dy, CURSOR_SIZE, CURSOR_POWER); }
+    while (queue.length) splat(...queue.shift());
     gl.useProgram(P.div.p);
     gl.uniform2f(P.div.u.u_texel, vel.tx, vel.ty);
     gl.uniform1i(P.div.u.u_velocity_texture, vel.read().attach(1));
@@ -203,5 +205,14 @@ void main(){
   resize();
   mouse.x = box.clientWidth / 2; mouse.y = box.clientHeight * 0.4;
   start();
-  return true;
+  // Splash: a ring of outward pushes at a client point (used when a hero bubble pops).
+  const splash = (cx, cy, strength = 1) => {
+    const r = box.getBoundingClientRect(), x = cx - r.left, y = cy - r.top;
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2;
+      queue.push([x + Math.cos(a) * 6, y + Math.sin(a) * 6, Math.cos(a) * 90 * strength, Math.sin(a) * 90 * strength, 1.6, 22 * strength]);
+    }
+    start();
+  };
+  return { splash };
 };
