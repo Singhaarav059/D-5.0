@@ -149,9 +149,17 @@ const techStack = () => {
 </section>`;
 };
 
+// Hero floaters: four real stack items drift around the headline on wide screens (decorative).
+const floaters = () => {
+  const pick = ['OpenAI', 'LangChain', 'Python', 'TensorFlow'];
+  const items = pick.map((n) => C.stack.items.find((s) => s.name === n));
+  return `<div class="hero__floaters" aria-hidden="true">${items.map((s, i) => `<span class="floater floater--${i}" data-floater="${[0.6, 1, 0.8, 1.2][i]}"><span class="floater__in"><img src="${framerIcon(s.icon)}" alt="" width="30" height="30"><span><b>${esc(s.name)}</b><small>${esc(s.role)}</small></span></span></span>`).join('')}</div>`;
+};
+
 const hero = () => `<section class="hero" data-hero>
   <div class="hero__panel">
     ${sky}
+    ${floaters()}
     <div class="hero__content">
       <p class="hero__eyebrow" data-hero-fade>${C.hero.eyebrow.map((t) => `<span>${t}</span>`).join('<i></i>')}</p>
       <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
