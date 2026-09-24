@@ -177,9 +177,17 @@ const hero = () => `<section class="hero" data-hero>
 </section>`;
 
 // The 10 keywords from the live "About us" block, as a moving strip.
+// Two rows run in opposite directions (the second outlined); scroll speed pushes them along (site.js).
 const keywords = () => {
-  const row = C.about.keywords.map((k) => `<li>${esc(k)}</li>`).join('');
-  return `<section class="strip strip--words" aria-label="What we stand for"><div class="marquee"><ul class="marquee__track">${row}</ul><ul class="marquee__track" aria-hidden="true">${row}</ul></div></section>`;
+  const k = C.about.keywords;
+  const row = (list) => list.map((t) => `<li>${esc(t)}</li>`).join('');
+  const half = Math.ceil(k.length / 2);
+  const a = row([...k.slice(0, half), ...k.slice(0, half)]), b = row([...k.slice(half), ...k.slice(half)]);
+  return `<section class="strip strip--words" aria-label="What we stand for" data-words>
+  <p class="sr-only">${k.map(esc).join(', ')}</p>
+  <div class="marquee" aria-hidden="true"><ul class="marquee__track">${a}</ul><ul class="marquee__track">${a}</ul></div>
+  <div class="marquee marquee--rev marquee--outline" aria-hidden="true"><ul class="marquee__track">${b}</ul><ul class="marquee__track">${b}</ul></div>
+</section>`;
 };
 
 // "About us": Who We Are beside the four What Drives Us values (both from the live homepage).

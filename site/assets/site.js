@@ -281,6 +281,30 @@
     });
   });
 
+  // Keyword strip: rows loop on their own; scrolling boosts them (and flips direction when scrolling up).
+  $$('[data-words]').forEach((strip) => {
+    strip.classList.add('is-driven');
+    const loops = $$('.marquee', strip).map((m, i) => {
+      const tracks = $$('.marquee__track', m);
+      return i % 2 ? gsap.fromTo(tracks, { xPercent: -100 }, { xPercent: 0, duration: 46, ease: 'none', repeat: -1 })
+        : gsap.to(tracks, { xPercent: -100, duration: 40, ease: 'none', repeat: -1 });
+    });
+    const skew = gsap.quickTo($$('.marquee__track', strip), 'skewX', { duration: 0.6, ease: 'power3.out' });
+    let dir = 1;
+    ScrollTrigger.create({
+      trigger: strip, start: 'top bottom', end: 'bottom top',
+      onToggle: (st) => loops.forEach((l) => (st.isActive ? l.resume() : l.pause())),
+      onUpdate: (st) => {
+        const v = st.getVelocity();
+        dir = st.direction;
+        const boost = dir * (1 + Math.min(Math.abs(v) / 250, 5));
+        loops.forEach((l) => gsap.to(l, { timeScale: boost, duration: 0.25, overwrite: true, onComplete: () => gsap.to(l, { timeScale: dir, duration: 1.2, ease: 'power2.out' }) }));
+        skew(gsap.utils.clamp(-6, 6, v / -400));
+        clearTimeout(strip._t); strip._t = setTimeout(() => skew(0), 120);
+      },
+    });
+  });
+
   // Count-up metrics.
   $$('[data-count]').forEach((el) => {
     const end = +el.dataset.count;
