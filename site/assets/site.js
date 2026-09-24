@@ -161,6 +161,17 @@
     });
   });
 
+  // Card spotlight: feed the pointer position to CSS (delegated, fine pointers only).
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.addEventListener('pointermove', (e) => {
+      const c = e.target.closest && e.target.closest('.why-card, .drive, .step, .pcard');
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', e.clientX - r.left + 'px');
+      c.style.setProperty('--my', e.clientY - r.top + 'px');
+    }, { passive: true });
+  }
+
   // Projects page: card opens a modal with the full case study (native <dialog>: Esc, focus trap, top layer).
   const dlg = $('[data-pdlg]');
   if (dlg) {

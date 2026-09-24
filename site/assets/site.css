@@ -627,6 +627,19 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .footer__bottom { margin-top: 24px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: rgba(255, 255, 255, 0.64); font-size: 0.85rem; }
 .footer__bottom a:hover { color: #fff; }
 
+/* ---------- pointer spotlight on cards (fine pointers only, set by site.js) ---------- */
+.why-card, .drive, .step, .pcard { position: relative; }
+.why-card::after, .drive::after, .step::after, .pcard::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 400ms ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(142, 164, 255, 0.13), transparent 45%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .why-card:hover::after, .drive:hover::after, .step:hover::after, .pcard:hover::after { opacity: 1; }
+  /* `translate` (not transform) so it composes with GSAP's inline entrance transforms */
+  .drive, .step { transition: translate 500ms var(--ease-out), box-shadow 500ms var(--ease-out); }
+  .drive:hover, .step:hover { translate: 0 -4px; box-shadow: var(--shadow-2); }
+}
+
 /* ---------- initial states (only when motion is allowed and JS is running) ---------- */
 html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js [data-hero-fade] { opacity: 0; }
 html.motion.js [data-hero-proof] { opacity: 0; }
