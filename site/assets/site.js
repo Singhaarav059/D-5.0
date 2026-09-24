@@ -235,13 +235,10 @@
     if (em) tl.to(em, { backgroundSize: '100% 0.07em', duration: 1.1, ease: 'power3.inOut' }, 0.9);
     // Sky: settles in from a slight zoom, then the liquid simulation takes over on pointer move.
     const skyImg = $('[data-sky]', hero);
-    let liquid = null;
     if (skyImg) {
       gsap.fromTo(skyImg.parentElement, { scale: 1.08 }, { scale: 1, duration: 2.2, ease: 'expo.out' });
-      if (window.initLiquid) liquid = window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
+      if (window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
     }
-    const bubbleBox = $('[data-bubbles]', hero);
-    if (bubbleBox) bubbles(bubbleBox, liquid);
     gsap.to($('.hero__content, .phero__content', hero), {
       yPercent: -18, opacity: 0.2, ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
@@ -254,81 +251,6 @@
       const qy = gsap.quickTo(glow, 'y', { duration: 0.9, ease: 'power3.out' });
       panel.addEventListener('pointermove', (e) => { const r = panel.getBoundingClientRect(); qx(e.clientX - r.left); qy(e.clientY - r.top); });
     }
-  }
-
-  // Hero bubbles: glass spheres rise and sway through the water, shy away from the pointer, and pop
-  // (with a splash in the liquid sky) on click or tap. Runs only while the hero is on screen.
-  function bubbles(box, liquid) {
-    const panel = box.parentElement;
-    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const rand = (a, b) => a + Math.random() * (b - a);
-    let W = panel.clientWidth, H = panel.clientHeight;
-    const ptr = { x: -1e4, y: -1e4 };
-    const make = (initial) => {
-      const s = Math.random() < 0.18 ? rand(56, 88) : rand(14, 42);
-      return { s, x: rand(0.04, 0.96) * W, y: initial ? rand(0.25, 1.1) * H : H + s + rand(0, H * 0.3), vy: rand(22, 40) * (1.25 - s / 110), amp: rand(6, 22), f: rand(0.4, 0.9), ph: rand(0, 6.28), px: 0, py: 0, vx: 0, vpy: 0, pop: -1 };
-    };
-    const list = Array.from({ length: W < 700 ? 7 : 12 }, () => {
-      const b = make(true);
-      b.el = document.createElement('i');
-      b.el.className = 'bubble';
-      b.el.style.setProperty('--s', b.s.toFixed(0) + 'px');
-      box.append(b.el);
-      return b;
-    });
-    const reset = (b) => { Object.assign(b, make(false), { el: b.el }); b.el.style.setProperty('--s', b.s.toFixed(0) + 'px'); };
-    const pos = (b, t) => [b.x + Math.sin(t * b.f + b.ph) * b.amp + b.px, b.y + b.py];
-
-    const tick = (time, dt) => {
-      const d = Math.min(dt, 50) / 1000;
-      let near = false;
-      list.forEach((b) => {
-        if (b.pop >= 0) {
-          b.pop += d / 0.26;
-          if (b.pop >= 1) reset(b);
-          else { const [x, y] = pos(b, time); b.el.style.transform = `translate(${x}px, ${y}px) scale(${1 + b.pop * 0.5})`; b.el.style.opacity = 1 - b.pop; return; }
-        }
-        b.y -= b.vy * d;
-        const [x, y] = pos(b, time);
-        // Pointer repel: a soft spring that pushes the bubble aside, then lets it settle back.
-        const dx = x - ptr.x, dy = y - ptr.y, dist = Math.hypot(dx, dy), R = 110 + b.s;
-        if (dist < R && dist > 0.1) { const k = (1 - dist / R) * 900 * d; b.vx += (dx / dist) * k; b.vpy += (dy / dist) * k; }
-        if (dist < b.s / 2 + 8) near = true;
-        b.vx -= b.px * 2.2 * d; b.vpy -= b.py * 2.2 * d; b.vx *= 0.92; b.vpy *= 0.92;
-        b.px += b.vx * d * 10; b.py += b.vpy * d * 10;
-        if (y < -b.s) return reset(b);
-        // fade in from the bottom edge and out before the nav
-        b.el.style.opacity = Math.max(0, Math.min(1, (y + b.s) / (H * 0.22), (H + b.s - y) / (H * 0.15)));
-        b.el.style.transform = `translate(${x}px, ${y}px)`;
-      });
-      if (fine) panel.style.cursor = near ? 'pointer' : '';
-    };
-
-    const burst = (x, y, s) => {
-      for (let k = 0; k < 7; k++) {
-        const drop = document.createElement('i');
-        drop.className = 'bubble__drop';
-        box.append(drop);
-        const a = (k / 7) * Math.PI * 2 + rand(-0.3, 0.3), r = s * 0.5 + rand(12, 30);
-        gsap.fromTo(drop, { x, y, scale: rand(0.6, 1.3), opacity: 1 }, { x: x + Math.cos(a) * r, y: y + Math.sin(a) * r + 10, opacity: 0, scale: 0.3, duration: rand(0.45, 0.7), ease: 'power3.out', onComplete: () => drop.remove() });
-      }
-    };
-    panel.addEventListener('pointermove', (e) => { const r = panel.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; }, { passive: true });
-    panel.addEventListener('pointerleave', () => { ptr.x = ptr.y = -1e4; });
-    panel.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('a, button')) return;
-      const r = panel.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, t = gsap.ticker.time;
-      const hit = list.find((b) => b.pop < 0 && Math.hypot(pos(b, t)[0] - mx, pos(b, t)[1] - my) < b.s / 2 + (e.pointerType === 'mouse' ? 8 : 18));
-      if (!hit) return;
-      const [x, y] = pos(hit, t);
-      hit.pop = 0;
-      burst(x, y, hit.s);
-      if (liquid && liquid.splash) liquid.splash(r.left + x, r.top + y, hit.s / 45);
-      if (!fine) ptr.x = ptr.y = -1e4; // touch: don't leave a phantom repel point
-    });
-    addEventListener('resize', () => { W = panel.clientWidth; H = panel.clientHeight; }, { passive: true });
-    ScrollTrigger.create({ trigger: panel, start: 'top bottom', end: 'bottom top', onToggle: (st) => (st.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)) });
-    gsap.fromTo(box, { opacity: 0 }, { opacity: 1, duration: 1.6, delay: 0.6 });
   }
 
   // Section headings: word rise on enter.
