@@ -3,6 +3,7 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const zlib = require('zlib');
 
 const MIME_TYPES = Object.freeze({
   '.html': 'text/html; charset=utf-8',
@@ -29,11 +30,17 @@ const MIME_TYPES = Object.freeze({
 
 const SAFE_METHODS = new Set(['GET', 'HEAD']);
 const MAX_URL_LENGTH = 8 * 1024;
+const BLOCKED_PATH = /(?:^|\/)(?:\.git|\.github|\.claude)(?:\/|$)|(?:^|\/)(?:\.env(?:\.[^/]*)?|package(?:-lock)?\.json|.*\.(?:key|pem|log))(?:$|\/)/i;
+const COMPRESSIBLE_TYPES = new Set(['text/html', 'text/css', 'application/javascript', 'application/json', 'application/xml', 'text/plain', 'image/svg+xml']);
 const SECURITY_HEADERS = Object.freeze({
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+  'Content-Security-Policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://framerusercontent.com https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'",
+  'Content-Security-Policy-Report-Only': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://framerusercontent.com https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'"
 });
 
 function isWithinRoot(root, candidate) {
@@ -50,7 +57,7 @@ function sendText(res, statusCode, body, headers = {}) {
   res.end(body);
 }
 
-function createStaticServer({ root, fallback = null, logger = console }) {
+function createStaticServer({ root, fallback = null, logger = console, onRequest = null }) {
   const rootPath = path.resolve(root);
   const fallbackPath = fallback ? path.resolve(root, fallback) : null;
 
@@ -64,6 +71,7 @@ function createStaticServer({ root, fallback = null, logger = console }) {
     headersTimeout: 10_000,
     keepAliveTimeout: 5_000
   }, async (req, res) => {
+    if (onRequest && await onRequest(req, res)) return;
     if (req.url && req.url.length > MAX_URL_LENGTH) {
       sendText(res, 414, 'URI Too Long\n');
       return;
@@ -86,6 +94,11 @@ function createStaticServer({ root, fallback = null, logger = console }) {
 
     if (requestedPath.includes('\0')) {
       sendText(res, 400, 'Bad Request\n');
+      return;
+    }
+
+    if (BLOCKED_PATH.test(requestedPath)) {
+      sendText(res, 404, 'Not Found\n');
       return;
     }
 
@@ -162,10 +175,29 @@ function createStaticServer({ root, fallback = null, logger = console }) {
       ...SECURITY_HEADERS,
       'Content-Type': MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream',
       'Content-Length': stat.size,
+      'ETag': `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`,
+      'Last-Modified': stat.mtime.toUTCString(),
       'Cache-Control': path.extname(filePath).toLowerCase() === '.html'
         ? 'no-cache'
         : 'public, max-age=3600'
     };
+
+    if (req.headers['if-none-match'] === headers.ETag || req.headers['if-modified-since'] === headers['Last-Modified']) {
+      res.writeHead(304, { ...SECURITY_HEADERS, ETag: headers.ETag, 'Cache-Control': headers['Cache-Control'] });
+      res.end();
+      return;
+    }
+
+    const contentType = headers['Content-Type'].split(';', 1)[0];
+    const accepts = String(req.headers['accept-encoding'] || '');
+    const encoding = COMPRESSIBLE_TYPES.has(contentType) && /\bbr\b/.test(accepts)
+      ? 'br'
+      : COMPRESSIBLE_TYPES.has(contentType) && /\bgzip\b/.test(accepts) ? 'gzip' : null;
+    if (encoding) {
+      delete headers['Content-Length'];
+      headers['Content-Encoding'] = encoding;
+      headers.Vary = 'Accept-Encoding';
+    }
 
     res.writeHead(200, headers);
     if (req.method === 'HEAD') {
@@ -179,11 +211,13 @@ function createStaticServer({ root, fallback = null, logger = console }) {
       if (!res.headersSent) res.writeHead(500, SECURITY_HEADERS);
       res.end();
     });
-    stream.pipe(res);
+    if (encoding === 'br') stream.pipe(zlib.createBrotliCompress()).pipe(res);
+    else if (encoding === 'gzip') stream.pipe(zlib.createGzip()).pipe(res);
+    else stream.pipe(res);
   });
 }
 
-function listen(server, port, host = '127.0.0.1', logger = console) {
+function listen(server, port, host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1', logger = console) {
   return server.listen(port, host, () => {
     logger.log(`Static server listening on http://${host}:${port}`);
   });

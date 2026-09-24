@@ -12,7 +12,7 @@ module.exports = {
     { name: 'X', href: 'https://x.com/growwithkrupal', icon: 'x' },
     { name: 'Instagram', href: 'https://www.instagram.com/demaze_technologies', icon: 'instagram' },
   ],
-  logoMark: 'https://framerusercontent.com/images/gtUg6e8c5ok6pYFG4fbE5TeXE.png?width=128',
+  logoMark: './assets/img/logo.png',
   tagline: 'We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.',
 
   hero: {

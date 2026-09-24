@@ -78,8 +78,8 @@
     if (window.ScrollTrigger) setTimeout(() => ScrollTrigger.refresh(), 450);
   }));
 
-  // Contact form: no backend exists, so compose the email in the visitor's mail app.
-  $$('[data-form]').forEach((form) => form.addEventListener('submit', (e) => {
+  // Contact form: use the protected API when configured, with mail fallback for local preview.
+  $$('[data-form]').forEach((form) => form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const note = $('[data-form-note]', form);
     let bad = null;
@@ -92,8 +92,37 @@
     if (bad) { note.textContent = 'Please fill in your name, a valid email and a message.'; bad.focus(); return; }
     const d = Object.fromEntries(new FormData(form));
     const body = `${d.message}\n\nFrom ${d.name} (${d.email})`;
-    location.href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(d.subject + ' | ' + d.name)}&body=${encodeURIComponent(body)}`;
-    note.textContent = 'Your email app should open with the message ready to send.';
+    const submit = $('button[type=submit]', form);
+    submit.disabled = true;
+    note.textContent = 'Sending your message…';
+    try {
+      const response = await fetch(form.action || '/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(d),
+        credentials: 'same-origin',
+      });
+      if (response.ok) {
+        form.reset();
+        note.textContent = 'Thanks — your message was sent successfully.';
+        return;
+      }
+      if (response.status === 400) {
+        note.textContent = 'Please check the form fields and try again.';
+        return;
+      }
+      if (response.status === 429) {
+        note.textContent = 'Too many attempts. Please wait a few minutes and try again.';
+        return;
+      }
+      if (response.status !== 503 && response.status !== 502) throw new Error('contact delivery failed');
+    } catch (error) {
+      // A local preview or an unconfigured deployment can still open the visitor's mail app.
+      location.href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(d.subject + ' | ' + d.name)}&body=${encodeURIComponent(body)}`;
+      note.textContent = 'Your email app should open with the message ready to send.';
+    } finally {
+      submit.disabled = false;
+    }
   }));
 
   // Services list buttons (also used when motion is off).
@@ -178,6 +207,7 @@
     const body = $('[data-pdlg-body]', dlg);
     $$('[data-proj]').forEach((b) => b.addEventListener('click', () => {
       body.replaceChildren($(`[data-proj-tpl="${b.dataset.proj}"]`).content.cloneNode(true));
+      dlg.setAttribute('aria-labelledby', `pdlg-title-${b.dataset.proj}`);
       dlg.showModal();
       body.scrollTop = 0;
     }));
@@ -188,7 +218,7 @@
   if (!motion) {
     // Still show the signal flow (fully drawn) without the intro or scroll effects.
     const f = $('[data-flow]');
-    const flow = f && window.initFlow && window.initFlow(f);
+    const flow = !matchMedia('(prefers-reduced-motion: reduce)').matches && f && window.initFlow && window.initFlow(f);
     if (flow) flow.reveal = 1;
     return;
   }
@@ -243,7 +273,7 @@
     const skyImg = $('[data-sky]', hero);
     if (skyImg) {
       gsap.fromTo(skyImg.parentElement, { scale: 1.08 }, { scale: 1, duration: 2.2, ease: 'expo.out' });
-      if (window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && window.initLiquid) window.initLiquid(skyImg.parentElement, skyImg.currentSrc || skyImg.src);
     }
     // Signal flow: the core tile lands first, then the data stream fades up around it.
     const flowBox = $('[data-flow]', hero);

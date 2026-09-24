@@ -537,6 +537,8 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .form select option { background: var(--ink-2); color: #fff; }
 .form [aria-invalid='true'] { box-shadow: inset 0 0 0 2px var(--coral-t); }
 .form .btn { justify-self: start; margin-top: 6px; }
+.form .btn:disabled { cursor: progress; opacity: 0.65; }
+.form__trap { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .form__note { font-size: 0.82rem; color: rgba(235, 239, 255, 0.72); }
 
 /* ---------- projects page ---------- */

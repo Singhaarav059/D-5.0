@@ -6,6 +6,7 @@ const C = require('./content');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const pad = (n) => String(n).padStart(2, '0');
 const cal = `href="${C.calendly}" target="_blank" rel="noopener"`;
+const SITE_URL = (process.env.SITE_URL || 'https://demazetech.com').replace(/\/$/, '');
 
 const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -28,6 +29,7 @@ const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us'
 
 function layout({ title, description, slug, body }) {
   const links = NAV.map(([t, h]) => `<a href="${h}"${h === './' + slug ? ' aria-current="page"' : ''}>${t}</a>`).join('');
+  const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -36,18 +38,23 @@ function layout({ title, description, slug, body }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="theme-color" content="#0f1330">
+<link rel="canonical" href="${canonical}">
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<meta property="og:url" content="${canonical}">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png">
+<link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
-<script>(function(d){var m=!matchMedia('(prefers-reduced-motion: reduce)').matches;d.classList.add(m?'motion':'rm','js');setTimeout(function(){if(!window.gsap)d.classList.remove('js')},4000)})(document.documentElement)</script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script defer src="./assets/boot.js"></script>
+<script defer src="./assets/vendor/gsap.min.js"></script>
+<script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
+<script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/liquid.js"></script>${slug ? '' : '<script defer src="./assets/flow.js"></script>'}
 <script defer src="./assets/site.js"></script>
 </head>
@@ -101,7 +108,7 @@ function footer() {
 }
 
 // ---------- sections ----------
-const sky = `<div class="hero__bg" aria-hidden="true"><img class="hero__sky" src="./assets/img/clouds.jpg" alt="" data-sky><i class="orb orb--a"></i><i class="orb orb--b"></i><i class="orb orb--c"></i><i class="hero__glow" data-glow></i></div>`;
+const sky = `<div class="hero__bg" aria-hidden="true"><img class="hero__sky" src="./assets/img/clouds.jpg" alt="" width="1376" height="768" fetchpriority="high" decoding="async" data-sky><i class="orb orb--a"></i><i class="orb orb--b"></i><i class="orb orb--c"></i><i class="hero__glow" data-glow></i></div>`;
 
 // Engineering stack: the six "Tools & Technologies" tabs from the live site. The AI & ML tab keeps
 // the grouped list with roles; every tab drives the orbit (rebuilt client-side on tab change).
@@ -215,7 +222,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <p>${esc(p.description)}</p>
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
     </div>
-    <figure class="stack-card__media"><img src="${p.image}" alt="${esc(p.title)}, product screens" loading="lazy"></figure>
+    <figure class="stack-card__media"><img src="${p.image}" alt="${esc(p.title)}, product screens" loading="lazy" decoding="async"></figure>
   </div>
 </article>`;
 
@@ -230,7 +237,7 @@ const work = () => `<section class="section work" id="work">
 </section>`;
 
 const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" style="--c:${s.color}" data-svc-panel>
-  <div class="svc-panel__art"><img src="${s.image}" alt="" loading="lazy"></div>
+  <div class="svc-panel__art"><img src="${s.image}" alt="${esc(s.title)} service illustration" loading="lazy" decoding="async"></div>
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.description)}</p>
@@ -254,7 +261,7 @@ const whyUs = () => `<section class="section why">
   <div class="wrap">
     <div class="section-head">${eyebrow('Benefits')}<h2 class="h2" data-split>Why choose us</h2></div>
     <div class="why__grid" data-stagger>
-      ${C.whyUs.map((w, i) => `<article class="why-card why-card--${i}"><div class="why-card__art"><img src="${w.image}" alt="" loading="lazy"></div><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></article>`).join('')}
+      ${C.whyUs.map((w, i) => `<article class="why-card why-card--${i}"><div class="why-card__art"><img src="${w.image}" alt="${esc(w.title)} illustration" loading="lazy" decoding="async"></div><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></article>`).join('')}
     </div>
   </div>
 </section>`;
@@ -271,7 +278,7 @@ const industries = () => `<section class="section industries" id="industries">
   </div>
 </section>`;
 
-const process = () => `<section class="section process" data-process>
+const processSection = () => `<section class="section process" data-process>
   <div class="wrap">
     <div class="section-head section-head--split">
       <div>${eyebrow('How we work')}<h2 class="h2" data-split>Our process</h2><p class="lead" data-reveal>Four clear stages, from the first workshop to long-term growth.</p></div>
@@ -319,14 +326,15 @@ const contact = (id = 'contact') => `<section class="section contact" id="${id}"
           <li><a href="${C.mapUrl}" target="_blank" rel="noopener"><i>${icon.pin}</i><span><small>Office Location</small>${esc(C.address)}</span></a></li>
         </ul>
       </div>
-      <form class="form" data-form data-reveal novalidate>
+      <form class="form" data-form data-reveal action="/api/contact" method="post" novalidate>
         <h3>Reach us at anytime</h3>
-        <div class="form__row"><label>Name<input name="name" autocomplete="name" required></label>
-        <label>Email<input name="email" type="email" autocomplete="email" required></label></div>
+        <div class="form__row"><label>Name<input name="name" autocomplete="name" maxlength="120" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>
         <label>Subject of interest<select name="subject"><option>General enquiry</option>${C.services.map((s) => `<option>${esc(s.title)}</option>`).join('')}</select></label>
-        <label>How may we assist you?<textarea name="message" rows="3" required></textarea></label>
+        <label>How may we assist you?<textarea name="message" rows="3" maxlength="5000" minlength="10" required></textarea></label>
+        <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <button class="btn btn--blue" type="submit"><span>Submit</span><i class="btn__icon">${icon.arrow}</i></button>
-        <p class="form__note" data-form-note aria-live="polite">Opens your email app with the message ready to send.</p>
+        <p class="form__note" data-form-note aria-live="polite">Your details are sent securely when contact delivery is configured; otherwise your email app will be offered as a fallback.</p>
       </form>
     </div>
   </div>
@@ -338,7 +346,7 @@ const statsBar = () => `<ul class="phero__stats" data-hero-fade>${C.metrics.map(
 const projectsGrid = () => `<section class="section projects">
   <div class="wrap">
     <div class="pgrid">${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" style="--tint:${p.tint}" data-reveal>
-      <figure class="pcard__media"><img src="${p.image.replace('width=1600', 'width=1000')}" alt="" loading="lazy"></figure>
+      <figure class="pcard__media"><img src="${p.image.replace('width=1600', 'width=1000')}" alt="${esc(p.title)}, project preview" loading="lazy" decoding="async"></figure>
       <div class="pcard__body">
         <span class="pcard__num">${pad(i + 1)}</span>
         <h2><button type="button" class="pcard__btn" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</button></h2>
@@ -346,10 +354,10 @@ const projectsGrid = () => `<section class="section projects">
         <span class="pcard__more">View project ${icon.arrow}</span>
       </div>
       <template data-proj-tpl="${i}">
-        <figure class="pdlg__media" style="--tint:${p.tint}"><img src="${p.image}" alt="${esc(p.title)}, product screens"></figure>
+        <figure class="pdlg__media" style="--tint:${p.tint}"><img src="${p.image}" alt="${esc(p.title)}, product screens" loading="lazy" decoding="async"></figure>
         <div class="pdlg__body">
           <span class="pcard__num">${pad(i + 1)} / ${pad(C.projects.length)}</span>
-          <h2 id="pdlg-title">${esc(p.title)}</h2>
+          <h2 id="pdlg-title-${i}">${esc(p.title)}</h2>
           ${p.description ? `<p>${esc(p.description)}</p>` : ''}
           <h3>Highlights</h3>
           <ul class="checks checks--ink">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul>
@@ -358,7 +366,7 @@ const projectsGrid = () => `<section class="section projects">
       </template>
     </article>`).join('')}</div>
   </div>
-  <dialog class="pdlg" aria-labelledby="pdlg-title" data-pdlg data-lenis-prevent>
+  <dialog class="pdlg" aria-label="Project details" data-pdlg data-lenis-prevent>
     <button type="button" class="pdlg__close" aria-label="Close" data-pdlg-close>${icon.plus}</button>
     <div class="pdlg__inner" data-pdlg-body></div>
   </dialog>
@@ -396,7 +404,7 @@ const pages = {
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
     // Same order as the live homepage: work, services, tools, industries, why us, about, process, FAQ, contact.
-    body: [hero(), work(), services(), techStack(), industries(), whyUs(), keywords(), about(), process(), founder(), faq(), contact()].join('\n'),
+    body: [hero(), work(), services(), techStack(), industries(), whyUs(), keywords(), about(), processSection(), founder(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
@@ -414,7 +422,7 @@ const pages = {
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     body: [
       pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline),
-      services(false), techStack(), industries(), process(), contact(),
+      services(false), techStack(), industries(), processSection(), contact(),
     ].join('\n'),
   }),
   'about-us': layout({
@@ -423,7 +431,7 @@ const pages = {
     description: C.about.whoWeAre[0],
     body: [
       pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1], statsBar()),
-      keywords(), about({ link: false }), whyUs(), founder(), process(), contact(),
+      keywords(), about({ link: false }), whyUs(), founder(), processSection(), contact(),
     ].join('\n'),
   }),
   contact: layout({

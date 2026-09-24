@@ -1,57 +1,49 @@
-# MOVIQ Framer Complete Clone
+# Demaze Technologies website
 
-1:1 exact clone of [MOVIQ Framer Website](https://moviq.framer.website/) with all themes, layouts, animations, interactions, and pages preserved.
+This repository contains the active Demaze Technologies static website in `site/`. The production runtime serves only that directory; historical source pages and visual QA artifacts are not part of the public serving root.
 
-## Included Pages & Routes
+## Active routes
 
-- **Home / Landing Page (1.0)**: `/`
-- **Home 2.0**: `/home-2.0`
-- **Feature Detail Page**: `/feature-detail-page`
-- **Pricing**: `/price`
-- **Contract Sales**: `/contract-sales`
-- **Enterprise**: `/enterprice`
-- **Contact**: `/contact`
-- **Blog**: `/blog`
-  - `/blog/next-gen-video-creation`
-  - `/blog/next-gen-video-creation-copy-copy-2`
-  - `/blog/a-smarter-way-to-create-videos`
-  - `/blog/turn-static-images-into-stories`
-  - `/blog/give-your-videos-a-natural-voice`
-  - `/blog/bring-ideas-to-life-with-ai-avatars`
-- **Templates**: `/templates`
-  - `/templates/ai-video-templates`
-  - `/templates/ai-powered-video-creation`
-  - `/templates/creative-video-templates`
-  - `/templates/create-videos-with-ai`
-  - `/templates/ai-digital-video-studio`
-  - `/templates/instant-video-creation`
-  - `/templates/smart-ai-video-maker`
-  - `/templates/ai-creative-templates`
-  - `/templates/next-gen-video-creation`
-  - `/templates/generate-videos-faster`
-  - `/templates/professional-ai-videos`
-  - `/templates/video-creation-made-simple`
-- **Reviews**: `/reviews`
-- **Integration**: `/integration`
-- **Integration Details**: `/integration-details`
-- **FAQ**: `/faq`
-- **Privacy Policy**: `/privacy-policy`
-- **Terms & Conditions**: `/terms-conditions`
-- **Sitemap**: `/sitemap.xml`
-- **Robots**: `/robots.txt`
+- `/`
+- `/projects`
+- `/services`
+- `/about-us`
+- `/contact`
+- `/robots.txt`
+- `/sitemap.xml`
 
-## Running Locally
-
-To start the local server:
+## Local development
 
 ```bash
+npm ci
+npm run build
 npm start
 ```
 
-Or:
+The local server listens on `http://127.0.0.1:3100` by default. Set `PORT` to use another port. For container or cloud deployment, set `NODE_ENV=production` and `HOST=0.0.0.0`.
+
+## Contact delivery
+
+The contact form validates input in the browser and on the server. If `CONTACT_WEBHOOK_URL` is configured, validated submissions are delivered as JSON to that HTTPS webhook. The endpoint includes a request-size limit, honeypot field, server-side validation, and in-memory rate limiting. If delivery is not configured or unavailable, the browser offers a `mailto:` fallback for local and low-infrastructure deployments.
+
+Copy `.env.example` to `.env` and configure the runtime values through the deployment platform’s secret/environment settings. Do not commit `.env` files or webhook credentials.
+
+## Verification
 
 ```bash
-node server.js
+npm run test:all
+npm audit --omit=dev --audit-level=moderate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+The test suite covers static-server traversal protection, sensitive-file denial, contact validation, generated-page metadata, canonical URLs, duplicate IDs, and local runtime asset boundaries. GitHub Actions runs the same checks for pushes to `main` and `new` and for pull requests.
+
+## Project structure
+
+| Path | Purpose |
+| --- | --- |
+| `site/` | Active generated website and public assets |
+| `site/build.js` | Generates active HTML pages from `site/content.js` |
+| `static-server.js` | Hardened static server with security headers and path controls |
+| `contact-api.js` | Validated contact webhook adapter |
+| `test/` | Backend and generated-page regression tests |
+| `.github/workflows/ci.yml` | Continuous integration checks |

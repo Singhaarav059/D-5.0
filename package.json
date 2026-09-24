@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node site/serve.js",
     "dev": "node site/serve.js",
+    "build": "node site/build.js",
     "test": "node --test",
+    "test:html": "node test/html.test.js",
+    "test:all": "npm run build && npm test && npm run test:html",
     "old": "node server.js"
   },
   "keywords": [
@@ -16,7 +19,5 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "puppeteer-core": "^25.11.0"
-  }
+  "dependencies": {}
 }

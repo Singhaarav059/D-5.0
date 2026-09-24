@@ -8,10 +8,10 @@ const path = require('node:path');
 const test = require('node:test');
 const { createStaticServer } = require('../static-server');
 
-async function request(server, method, requestPath) {
+async function request(server, method, requestPath, headers = {}) {
   const address = server.address();
   return new Promise((resolve, reject) => {
-    const req = http.request({ hostname: '127.0.0.1', port: address.port, path: requestPath, method }, (res) => {
+    const req = http.request({ hostname: '127.0.0.1', port: address.port, path: requestPath, method, headers }, (res) => {
       const chunks = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString() }));
@@ -26,6 +26,9 @@ test('static server protects the root and serves safe routes', async (t) => {
   await fs.writeFile(path.join(root, 'index.html'), '<h1>ok</h1>');
   await fs.writeFile(path.join(root, 'about.html'), 'about');
   await fs.writeFile(path.join(root, 'private.txt'), 'do not leak');
+  await fs.writeFile(path.join(root, 'package.json'), '{"private":true}');
+  await fs.mkdir(path.join(root, '.git'));
+  await fs.writeFile(path.join(root, '.git', 'config'), '[core]');
   const server = createStaticServer({ root });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   t.after(async () => {
@@ -48,10 +51,22 @@ test('static server protects the root and serves safe routes', async (t) => {
     assert.equal(response.status, 404, traversal);
   }
 
+  for (const sensitive of ['/package.json', '/.git/config']) {
+    const response = await request(server, 'GET', sensitive);
+    assert.equal(response.status, 404, sensitive);
+  }
+
   const head = await request(server, 'HEAD', '/about.html');
   assert.equal(head.status, 200);
   assert.equal(head.body, '');
   assert.equal(head.headers['content-length'], '5');
+
+  const compressed = await request(server, 'GET', '/about.html', { 'Accept-Encoding': 'br' });
+  assert.equal(compressed.status, 200);
+  assert.equal(compressed.headers['content-encoding'], 'br');
+  assert.ok(compressed.headers.etag);
+  const cached = await request(server, 'GET', '/about.html', { 'If-None-Match': compressed.headers.etag });
+  assert.equal(cached.status, 304);
 
   const post = await request(server, 'POST', '/');
   assert.equal(post.status, 405);
