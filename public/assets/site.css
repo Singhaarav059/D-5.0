@@ -4,7 +4,6 @@
   /* surfaces: mid-dark navy page, deeper ink for feature panels, frosted glass for cards */
   --ink: #05060c;
   --ink-2: #0c0e1a;
-  --ink-3: #171a2c;
   --paper: #07080f;
   --text: #f2f1ee;
   --card: rgba(255, 255, 255, 0.035);
@@ -16,10 +15,8 @@
   --violet-t: #a9b8ff; /* one accent family: the old violet/coral/teal/lime slots all map to blue */
   --coral-t: #a9b8ff;
   --teal-t: #a9b8ff;
-  --brand: #5b82f0;
   --blue: #3d5afe;
   --violet: #5b6dff;
-  --peri: #a9bcff;
   --lime: #8fa4ff;
   --coral: #3d5afe;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -29,7 +26,6 @@
   --wrap: min(1200px, calc(100vw - 40px));
   --r-xl: clamp(20px, 2.4vw, 28px);
   --r-lg: 18px;
-  --r-md: 14px;
   --shadow-1: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 30px -18px rgba(0, 0, 0, 0.6);
   --shadow-2: inset 0 0 0 1px rgba(142, 164, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 30px 60px -30px rgba(0, 0, 0, 0.75);
   --glass: blur(16px) saturate(150%);
@@ -321,7 +317,6 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
   
 
 
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* separator: a drawn four-point sparkle, tinted per row */
 /* JS drives the rows when motion is allowed (speed follows scroll) */
 
