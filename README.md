@@ -4,6 +4,10 @@ The marketing site for Demaze Technologies. Pages are plain HTML generated from 
 small Node.js server that also handles the contact form. There is no framework, no bundler and no runtime
 dependency: everything the browser loads is self-hosted in `public/`.
 
+- Live: https://d-50-production.up.railway.app (Railway, deploys automatically from `main`)
+- Repository: https://github.com/Singhaarav059/D-5.0
+- Working on the code: see [CONTRIBUTING.md](CONTRIBUTING.md) for the branch, check and commit conventions.
+
 ## Quick start
 
 Requirements: Node.js 20 or newer.
@@ -49,8 +53,22 @@ public/                Everything a visitor can load (the only folder the server
     img/logo.png, og.png  Brand mark and the social share image (1200x630)
   robots.txt, sitemap.xml
 test/                  Automated checks (node --test)
-.github/workflows/     CI: build, check generated pages are committed, tests, syntax, audit
+.github/workflows/     CI on every push and pull request: build, generated pages committed, syntax, tests, audit
 ```
+
+## Where to change what
+
+| To change… | Edit |
+| --- | --- |
+| Any wording, project, service, FAQ, tool, contact detail or link | `src/content.js` |
+| Which sections a page shows, or a page's title and description | `src/pages.js` |
+| The markup of a section | `src/templates/<page>.js` (shared sections: `shared.js`) |
+| The head, nav or footer on every page | `src/templates/layout.js` |
+| Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
+| Scroll motion and interactions | `public/assets/site.js` |
+| The home hero opening, the "How we work" drawing, the contact map | `public/assets/cine.js`, `ink.js`, `visit3d.js` |
+| Security headers, caching, the 404 | `lib/static-server.js` |
+| The contact form endpoint | `lib/contact-api.js` |
 
 ## Editing the site
 
@@ -95,9 +113,9 @@ Set these as environment variables on the host (see `.env.example`; never commit
 
 ## Deployment (Railway)
 
-The site runs as a single Node service: build command none needed (the generated HTML is committed), start
-command `npm start`. Pushing to `main` redeploys. After the custom domain points at the service, canonical URLs
-and the share image (built for `https://demazetech.com`) resolve correctly.
+The site runs as a single Node service on Railway (project "exciting-flow"): no build command (the generated HTML
+is committed), start command `npm start`. Pushing to `main` redeploys in about two minutes. Canonical URLs and the
+share image are built for `https://demazetech.com`, so they resolve once that domain points at the service.
 
 Caching: HTML is always revalidated; every asset link carries a content fingerprint (`?v=<hash>`, added by the
 build), so assets are cached for a year and a deploy never shows stale styles.
@@ -105,17 +123,32 @@ build), so assets are cached for a year and a deploy never shows stale styles.
 ## Checks
 
 ```bash
-npm run test:all     # build + server/API tests + page checks
+npm run test:all     # build + syntax check + all tests
+npm run check        # syntax check only
+npm test             # tests only
 ```
 
 The tests cover path traversal and sensitive-file denial, the branded 404, cache headers, contact validation,
-page metadata, unique IDs, that pages load **no third-party assets**, and that no source code sits in `public/`.
+page metadata, unique IDs, that every local link, anchor and asset resolves, that pages load **no third-party
+assets**, and that no source code sits in `public/`. CI runs the same checks on every push and pull request.
 
 ## Accessibility and motion
 
 All content is real HTML; the hero opening, globe, tools map wires and ink story are decoration layered on top.
 With "reduce motion" enabled the opening is skipped and scenes render in their final state. The hero opening
 plays once per browser session.
+
+## Open items
+
+Things the code cannot settle on its own:
+
+- **Contact form delivery**: confirm `CONTACT_WEBHOOK_URL` is set on Railway. Without it, submissions are not
+  delivered and visitors are sent to their email app instead.
+- **Custom domain**: `demazetech.com` is not yet pointed at the Railway service (see Deployment).
+- **Office address**: `address` in `src/content.js` says *A 804*, Ganesh Glory 11, but the Google Maps link
+  (`mapUrl`) points to *D-814*. Confirm which is correct.
+- **Missing copy**: the "Educational courses & LMS platform" project has no description yet (marked `TODO` in
+  `src/content.js`); its card shows only the title and highlights.
 
 ## Licensing
 
