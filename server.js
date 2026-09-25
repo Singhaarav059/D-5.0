@@ -1,7 +1,7 @@
 'use strict';
 
 // Production entry point: serves the generated site in public/ and handles the contact form API.
-// Run `npm run build` first after editing src/content.js or src/build.js.
+// Run `npm run build` first after editing anything in src/.
 const path = require('path');
 const { createStaticServer, listen } = require('./lib/static-server');
 const { handleContact } = require('./lib/contact-api');
