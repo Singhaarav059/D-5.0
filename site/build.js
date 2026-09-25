@@ -239,8 +239,33 @@ const work = () => `<section class="section work" id="work">
   </div>
 </section>`;
 
+// Service art, drawn in code (same line-and-dot language as the globe and the knowledge map).
+// .flow strokes carry a moving dash (CSS) so each drawing has one quiet sign of life.
+const SVC_ART = {
+  ai: `<g class="art__edges">${[[40, 40], [40, 70], [40, 100]].flatMap(([x1, y1]) => [[120, 28], [120, 56], [120, 84], [120, 112]].map(([x2, y2]) => `<path d="M${x1} ${y1}L${x2} ${y2}"/>`)).join('')}${[[120, 28], [120, 56], [120, 84], [120, 112]].flatMap(([x1, y1]) => [[200, 52], [200, 88]].map(([x2, y2]) => `<path d="M${x1} ${y1}L${x2} ${y2}"/>`)).join('')}</g>
+    <path class="flow" d="M40 70L120 56L200 88"/>
+    ${[[40, 40], [40, 70], [40, 100], [120, 28], [120, 56], [120, 84], [120, 112], [200, 52], [200, 88]].map(([x, y], i) => `<circle class="art__node${i === 1 || i === 4 || i === 8 ? ' is-hot' : ''}" cx="${x}" cy="${y}" r="6"/>`).join('')}`,
+  web: `<rect class="art__frame" x="22" y="20" width="150" height="100" rx="9"/><path class="art__edges" d="M22 38H172"/>
+    ${[34, 44, 54].map((x) => `<circle class="art__dot" cx="${x}" cy="29" r="2.5"/>`).join('')}
+    <rect class="art__block" x="36" y="50" width="60" height="30" rx="4"/><rect class="art__block" x="104" y="50" width="54" height="12" rx="3"/><rect class="art__block" x="104" y="68" width="40" height="12" rx="3"/>
+    <path class="art__edges" d="M36 92H158M36 104H130"/>
+    <rect class="art__frame is-front" x="160" y="46" width="52" height="88" rx="10"/><path class="art__edges" d="M178 124H194"/>
+    <rect class="art__block is-hot" x="168" y="60" width="36" height="22" rx="4"/>
+    <path class="flow" d="M96 65C124 65 132 71 168 71"/>`,
+  ecom: `<path class="art__frame" d="M36 54H92L86 118H42Z"/><path class="art__edges" d="M50 54V46A14 14 0 0 1 78 46V54"/>
+    <path class="flow" d="M94 86C126 86 130 58 158 58"/>
+    <rect class="art__frame is-front" x="158" y="36" width="52" height="44" rx="6"/><path class="art__edges" d="M158 50H210M184 36V50"/>
+    <rect class="art__frame" x="150" y="94" width="66" height="36" rx="6"/><rect class="art__block is-hot" x="158" y="102" width="18" height="12" rx="2"/><path class="art__edges" d="M182 118H208"/>
+    <path class="flow" d="M184 80V94"/>
+    ${[[64, 84], [58, 100], [72, 100]].map(([x, y]) => `<circle class="art__dot" cx="${x}" cy="${y}" r="2.5"/>`).join('')}`,
+  cloud: `<path class="art__frame" d="M78 70H168A22 22 0 0 0 164 26A32 32 0 0 0 104 30A24 24 0 0 0 78 70Z"/>
+    ${[[62, 118], [122, 122], [182, 118]].map(([x, y]) => `<path class="flow" d="M122 70L${x} ${y - 10}"/><rect class="art__frame is-front" x="${x - 20}" y="${y - 10}" width="40" height="22" rx="5"/><circle class="art__dot is-hot" cx="${x - 10}" cy="${y + 1}" r="2.5"/><path class="art__edges" d="M${x - 2} ${y + 1}H${x + 12}"/>`).join('')}
+    <circle class="art__node is-hot" cx="122" cy="48" r="7"/>`,
+};
+const serviceArt = (id) => `<svg class="svc-art" viewBox="0 0 240 140" aria-hidden="true">${SVC_ART[id] || SVC_ART.web}</svg>`;
+
 const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" style="--c:${s.color}" data-svc-panel>
-  <div class="svc-panel__art"><img src="${s.image}" alt="${esc(s.title)} service illustration" loading="lazy" decoding="async"></div>
+  <div class="svc-panel__art">${serviceArt(s.id)}</div>
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.description)}</p>
@@ -260,12 +285,33 @@ const services = (withHead = true) => `<section class="section services" data-se
   </div>
 </section>`;
 
+const reasons = () => `<ol class="reasons" data-stagger>${C.whyUs.map((w, i) => `<li class="reason"><span class="reason__num">${pad(i + 1)}</span><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></li>`).join('')}</ol>`;
+
 const whyUs = () => `<section class="section why">
   <div class="wrap">
     <div class="section-head"><h2 class="h2" data-split>Why choose us</h2></div>
-    <div class="why__grid" data-stagger>
-      ${C.whyUs.map((w, i) => `<article class="why-card why-card--${i}"><div class="why-card__art"><img src="${w.image}" alt="${esc(w.title)} illustration" loading="lazy" decoding="async"></div><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></article>`).join('')}
+    ${reasons()}
+  </div>
+</section>`;
+
+// Home: one "who we are" section in place of four (about, what drives us, why us, founder quote):
+// the story and the founder's words side by side, then the three reasons as numbered columns.
+const studio = () => `<section class="section studio" id="about">
+  <div class="wrap">
+    <div class="studio__top">
+      <div class="studio__copy">
+        ${eyebrow('About us')}
+        <h2 class="h2" data-split>Who we are</h2>
+        <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
+        <p class="about__sub" data-reveal>${esc(C.about.whoWeAre[1])}</p>
+        <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
+      </div>
+      <figure class="studio__quote" data-reveal>
+        <blockquote>“${esc(C.founder.quote)}”</blockquote>
+        <figcaption><img src="${C.founder.photo}" alt="" width="56" height="56" loading="lazy"><span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
+      </figure>
     </div>
+    ${reasons()}
   </div>
 </section>`;
 
@@ -412,7 +458,7 @@ const pages = {
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
     // Same order as the live homepage: work, services, tools, industries, why us, about, process, FAQ, contact.
-    body: [hero(), work(), services(), techStack(), industries(), whyUs(), about(), processSection(), founder(), faq(), contact()].join('\n'),
+    body: [hero(), work(), services(), techStack(), industries(), studio(), processSection(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
