@@ -31,14 +31,11 @@ jobs:
       - name: Ensure generated pages are committed
         run: git diff --exit-code -- public/*.html
 
-      - name: Run tests
-        run: npm test
-
-      - name: Run HTML and SEO checks
-        run: npm run test:html
-
       - name: Check JavaScript syntax
-        run: node --check server.js && node --check lib/static-server.js && node --check lib/contact-api.js && node --check src/build.js && node --check src/content.js && node --check public/assets/site.js && node --check public/assets/ink.js
+        run: npm run check
+
+      - name: Run tests (server, contact API, pages and links)
+        run: npm test
 
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate

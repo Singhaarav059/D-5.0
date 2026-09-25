@@ -11,9 +11,9 @@
     "build": "node src/build.js",
     "start": "node server.js",
     "dev": "npm run build && node server.js",
+    "check": "node scripts/check-syntax.js",
     "test": "node --test",
-    "test:html": "node test/html.test.js",
-    "test:all": "npm run build && npm test && npm run test:html"
+    "test:all": "npm run build && npm run check && npm test"
   },
   "author": "Demaze Technologies",
   "license": "UNLICENSED",
