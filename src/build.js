@@ -324,7 +324,7 @@ const studio = () => `<section class="section studio" id="about">
         <p class="about__sub" data-reveal>${esc(C.about.whoWeAre[1])}</p>
         <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
       </div>
-      <figure class="studio__quote" data-reveal>
+      <figure class="studio__quote" id="founder" data-reveal>
         <blockquote>“${esc(C.founder.quote)}”</blockquote>
         <figcaption>${pic(C.founder.photo, '', { small: true, sizes: '52px' })}<span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
       </figure>
