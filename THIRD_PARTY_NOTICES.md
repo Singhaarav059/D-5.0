@@ -16,7 +16,6 @@ Everything below is bundled in `public/` and served from the site itself (nothin
 | --- | --- | --- |
 | Bricolage Grotesque | `public/assets/fonts/bricolage-grotesque-latin-var.woff2` | SIL Open Font License 1.1 |
 | Figtree | `public/assets/fonts/figtree-*.ttf` | SIL Open Font License 1.1 |
-| JetBrains Mono | `public/assets/fonts/jetbrains-mono-*.woff2` | SIL Open Font License 1.1 |
 
 ## Technology logos
 

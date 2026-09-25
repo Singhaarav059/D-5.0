@@ -26,7 +26,6 @@
   --ease-io: cubic-bezier(0.77, 0, 0.175, 1);
   --display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif; /* primary: headings and display type */
   --body: 'Figtree', system-ui, sans-serif; /* secondary: running text and UI */
-  --mono: 'JetBrains Mono', ui-monospace, monospace;
   --wrap: min(1200px, calc(100vw - 40px));
   --r-xl: clamp(20px, 2.4vw, 28px);
   --r-lg: 18px;
@@ -257,7 +256,7 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .cine__token {
   position: absolute; left: var(--x); top: var(--y); translate: -50% -50%; scale: 0.85; opacity: 0; filter: blur(6px);
   padding: 0.5em 0.75em; border-radius: 7px; white-space: nowrap;
-  font: 500 0.86rem/1 var(--mono); color: #dfe5ff; background: rgba(10, 12, 28, 0.88);
+  font: 500 0.86rem/1 var(--body); color: #dfe5ff; background: rgba(10, 12, 28, 0.88);
   box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.32), 0 0 24px rgba(61, 90, 254, 0.3);
   transition: opacity 0.6s ease, scale 0.6s var(--ease-out), filter 0.6s ease, left 0.9s var(--ease-io), top 0.9s var(--ease-io);
 }
@@ -338,7 +337,7 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .kmap__fan.is-drawing { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cine-draw 700ms var(--ease-out) forwards; }
 .kmap__core { text-align: center; display: grid; justify-items: center; gap: 4px; }
 .kmap__title { font: 600 1.5rem/1.1 var(--display); letter-spacing: -0.02em; color: #f2f1ee; }
-.kmap__sub { font: 400 0.78rem/1.4 var(--mono); color: var(--muted); }
+.kmap__sub { font: 400 0.78rem/1.4 var(--body); color: var(--muted); }
 .kmap__sub b { color: var(--accent); font-weight: 500; }
 .kmap__sphere { width: min(220px, 100%); aspect-ratio: 1; margin: 14px 0 10px; filter: drop-shadow(0 0 30px rgba(61, 90, 254, 0.35)); }
 .kmap__live { display: inline-flex; align-items: center; gap: 8px; font: 600 0.68rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: #8fa4ff; }
@@ -355,8 +354,8 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .kmap__icon svg { width: 18px; height: 18px; }
 .kmap__cat[aria-selected="true"] .kmap__icon { background: #3d5afe; color: #fff; }
 .kmap__name { font: 500 1rem/1.2 var(--body); }
-.kmap__count { font: 400 0.74rem/1 var(--mono); color: var(--muted); }
-.kmap__count b { font: 500 1.05rem/1 var(--mono); color: #fff; margin-right: 3px; }
+.kmap__count { font: 400 0.74rem/1 var(--body); color: var(--muted); font-variant-numeric: tabular-nums; }
+.kmap__count b { font: 500 1.05rem/1 var(--body); color: #fff; margin-right: 3px; }
 .kmap__list { display: grid; gap: 2px; }
 /* With hover-to-select (mouse/trackpad), all six lists share one grid cell so the column is always as
    tall as the longest list: switching must never move the cards under the pointer. Touch keeps its height. */
@@ -366,8 +365,8 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .kmap__item { display: flex; align-items: center; gap: 10px; min-height: 30px; font-size: 0.9rem; }
 .kmap__dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: #0b0d1a; box-shadow: 0 0 0 1.5px rgba(143, 164, 255, 0.8), 0 0 8px rgba(90, 120, 255, 0.7); margin-right: 2px; }
 .kmap__item img { width: 22px; height: 22px; padding: 2px; border-radius: 6px; background: #fff; object-fit: contain; flex: none; }
-.kmap__mono { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); color: var(--accent); font: 500 0.6rem/1 var(--mono); }
-.kmap__item small { margin-left: auto; padding: 3px 7px; border-radius: 6px; font: 400 0.68rem/1 var(--mono); color: var(--muted); background: rgba(255, 255, 255, 0.05); white-space: nowrap; }
+.kmap__mono { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); color: var(--accent); font: 500 0.6rem/1 var(--body); }
+.kmap__item small { margin-left: auto; padding: 3px 7px; border-radius: 6px; font: 400 0.68rem/1 var(--body); color: var(--muted); background: rgba(255, 255, 255, 0.05); white-space: nowrap; }
 @media (max-width: 960px) {
   .kmap__stage { grid-template-columns: 1fr; gap: 24px; }
   .kmap__wires, .kmap__sphere, .kmap__live { display: none; }
@@ -483,7 +482,7 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .ink__step { opacity: 0.34; transition: opacity 400ms ease; }
 .ink__step.is-done { opacity: 0.62; }
 .ink__step.is-active { opacity: 1; }
-.ink__num { font: 500 0.68rem/1 var(--mono); letter-spacing: 0.14em; color: #3d5afe; }
+.ink__num { font: 600 0.68rem/1 var(--body); letter-spacing: 0.14em; color: #3d5afe; font-variant-numeric: tabular-nums; }
 .ink__step h3 { margin: 8px 0 6px; font: 600 clamp(1.25rem, 1.8vw, 1.55rem)/1.1 var(--display); color: #15161c; letter-spacing: -0.02em; }
 .ink__step p { font-size: 0.86rem; line-height: 1.5; color: #4a4b55; }
 @media (max-width: 760px) {
@@ -668,12 +667,12 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .visit__hwy-line { fill: none; stroke: rgba(10, 13, 32, 0.8); stroke-width: 1; stroke-dasharray: 6 6; }
 .visit__route { fill: none; stroke: #6d86ff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 7; filter: drop-shadow(0 0 5px rgba(109, 134, 255, 0.9)); animation: visit-route 1.4s linear infinite; }
 @keyframes visit-route { to { stroke-dashoffset: -18; } }
-.visit__street-name { font: 500 7.5px/1 var(--mono); letter-spacing: 0.22em; fill: rgba(223, 229, 255, 0.72); paint-order: stroke; stroke: rgba(5, 6, 12, 0.85); stroke-width: 3px; dominant-baseline: middle; }
-.visit__dir { font: 500 7px/1 var(--mono); letter-spacing: 0.18em; fill: rgba(169, 184, 255, 0.55); }
+.visit__street-name { font: 600 7.5px/1 var(--body); letter-spacing: 0.22em; fill: rgba(223, 229, 255, 0.72); paint-order: stroke; stroke: rgba(5, 6, 12, 0.85); stroke-width: 3px; dominant-baseline: middle; }
+.visit__dir { font: 600 7px/1 var(--body); letter-spacing: 0.18em; fill: rgba(169, 184, 255, 0.55); }
 .visit__compass circle { fill: rgba(5, 6, 12, 0.6); stroke: rgba(143, 164, 255, 0.3); }
 .visit__compass path { fill: #6d86ff; }
 .visit__compass path.is-s { fill: rgba(169, 184, 255, 0.35); }
-.visit__compass text { font: 500 7px/1 var(--mono); fill: rgba(223, 229, 255, 0.8); text-anchor: middle; }
+.visit__compass text { font: 500 7px/1 var(--body); fill: rgba(223, 229, 255, 0.8); text-anchor: middle; }
 .visit__bldg { fill: rgba(109, 134, 255, 0.45); stroke: #8fa4ff; stroke-width: 1.2; }
 .visit__ring { fill: none; stroke: rgba(109, 134, 255, 0.55); stroke-width: 1.2; transform-origin: 261px 138px; animation: visit-pulse 3.2s ease-out infinite; }
 .visit__ring.is-2 { animation-delay: 1.6s; }
@@ -691,11 +690,11 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .visit__map.has-3d svg { opacity: 0; }
 .visit__tag { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 600ms ease 300ms; }
 .visit__map.has-3d .visit__tag { opacity: 1; }
-.visit__tag.is-road { margin-top: -6px; padding: 5px 8px; border-radius: 6px; background: rgba(5, 6, 12, 0.6); font: 500 0.58rem/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(223, 229, 255, 0.78); }
+.visit__tag.is-road { margin-top: -6px; padding: 5px 8px; border-radius: 6px; background: rgba(5, 6, 12, 0.6); font: 600 0.58rem/1 var(--body); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(223, 229, 255, 0.78); }
 .visit__tag.is-office { display: grid; gap: 4px; margin-top: -8px; padding: 9px 13px; border-radius: 12px; background: rgba(10, 13, 32, 0.86); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.35), 0 12px 30px -12px rgba(61, 90, 254, 0.7); font: 600 0.82rem/1 var(--display); color: #f2f1ee; }
 .visit__tag.is-office small { font: 400 0.68rem/1 var(--body); color: rgba(223, 229, 255, 0.7); }
 .visit__label { z-index: 2; }
-.visit__label { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(5, 6, 12, 0.7); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.25); font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; color: #dfe5ff; }
+.visit__label { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(5, 6, 12, 0.7); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.25); font: 600 0.72rem/1 var(--body); letter-spacing: 0.08em; color: #dfe5ff; }
 .visit__label i { width: 6px; height: 6px; border-radius: 50%; background: #6d86ff; box-shadow: 0 0 8px #6d86ff; }
 .visit__map:hover .visit__label { background: #3d5afe; }
 @media (prefers-reduced-motion: reduce) { .visit__ring, .visit__route { animation: none; } .visit__ring { opacity: 0.5; } .visit__art { transition: none; } }
@@ -951,11 +950,11 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 .studio__quote img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px rgba(143, 164, 255, 0.35); }
 .studio__quote figcaption span { display: grid; gap: 2px; }
 .studio__quote figcaption a { font-weight: 600; }
-.studio__quote figcaption small { font: 400 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.studio__quote figcaption small { font: 400 0.72rem/1.3 var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .reasons { margin-top: clamp(40px, 7vh, 72px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 .reason { padding: clamp(20px, 3vh, 28px) clamp(18px, 2.4vw, 32px) 0 0; }
 .reason + .reason { padding-left: clamp(18px, 2.4vw, 32px); border-left: 1px solid var(--line); }
-.reason__num { font: 500 0.7rem/1 var(--mono); letter-spacing: 0.16em; color: #8fa4ff; }
+.reason__num { font: 600 0.7rem/1 var(--body); letter-spacing: 0.16em; color: #8fa4ff; font-variant-numeric: tabular-nums; }
 .reason h3 { margin-top: 14px; font: 600 clamp(1.45rem, 2vw, 1.8rem)/1.1 var(--display); letter-spacing: -0.02em; }
 .reason p { margin-top: 10px; color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
 .why .reasons { margin-top: clamp(24px, 4vh, 40px); }
