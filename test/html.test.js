@@ -57,3 +57,32 @@ test('pages load no third-party assets (links to other sites are fine)', () => {
   }
   assert.match(fs.readFileSync(path.join(root, 'public', '404.html'), 'utf8'), /<meta name="robots" content="noindex">/);
 });
+
+test('every local link, anchor and asset on the pages resolves', () => {
+  const publicDir = path.join(root, 'public');
+  const target = (url) => {
+    const clean = url.replace(/[?#].*$/, '').replace(/^\.\//, '');
+    if (clean === '') return 'index.html';
+    return fs.existsSync(path.join(publicDir, clean)) ? clean : `${clean}.html`;
+  };
+  for (const page of [...pages, '404']) {
+    const html = fs.readFileSync(path.join(publicDir, `${page}.html`), 'utf8');
+    const urls = [
+      ...[...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map((m) => m[1]),
+      ...[...html.matchAll(/\bsrcset="([^"]+)"/g)].flatMap((m) => m[1].split(',').map((s) => s.trim().split(/\s+/)[0])),
+    ];
+    for (const url of urls) {
+      if (/^(?:[a-z]+:|\/\/)/i.test(url)) continue; // other sites, mailto:, tel:
+      if (url.startsWith('#')) {
+        if (url.length > 1) assert.ok(html.includes(`id="${url.slice(1)}"`), `${page}: ${url} has no matching id`);
+        continue;
+      }
+      const file = target(url);
+      assert.ok(fs.existsSync(path.join(publicDir, file)), `${page}: ${url} does not resolve to a file in public/`);
+      const hash = url.split('#')[1];
+      if (hash && file.endsWith('.html')) {
+        assert.ok(fs.readFileSync(path.join(publicDir, file), 'utf8').includes(`id="${hash}"`), `${page}: ${url} has no matching id`);
+      }
+    }
+  }
+});
