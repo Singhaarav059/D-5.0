@@ -1,8 +1,10 @@
 'use strict';
 
+// Production entry point: serves the generated site in public/ and handles the contact form API.
+// Run `npm run build` first after editing src/content.js or src/build.js.
 const path = require('path');
-const { createStaticServer, listen } = require('./static-server');
-const { handleContact } = require('./contact-api');
+const { createStaticServer, listen } = require('./lib/static-server');
+const { handleContact } = require('./lib/contact-api');
 
 const port = Number.parseInt(process.env.PORT || '3000', 10);
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -10,7 +12,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const server = createStaticServer({
-  root: path.join(__dirname, 'site'),
+  root: path.join(__dirname, 'public'),
   notFound: '404.html',
   onRequest: (req, res) => handleContact(req, res)
 });

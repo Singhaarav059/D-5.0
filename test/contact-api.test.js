@@ -6,8 +6,8 @@ const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { createStaticServer } = require('../static-server');
-const { handleContact } = require('../contact-api');
+const { createStaticServer } = require('../lib/static-server');
+const { handleContact } = require('../lib/contact-api');
 
 function request(server, method, requestPath, body, headers = {}) {
   const address = server.address();

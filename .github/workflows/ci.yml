@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, new]
+    branches: [main]
   pull_request:
 
 permissions:
@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Ensure generated pages are committed
-        run: git diff --exit-code -- site/*.html
+        run: git diff --exit-code -- public/*.html
 
       - name: Run tests
         run: npm test
@@ -38,7 +38,7 @@ jobs:
         run: npm run test:html
 
       - name: Check JavaScript syntax
-        run: node --check static-server.js && node --check contact-api.js && node --check server.js && node --check site/serve.js && node --check site/build.js && node --check site/assets/site.js
+        run: node --check server.js && node --check lib/static-server.js && node --check lib/contact-api.js && node --check src/build.js && node --check src/content.js && node --check public/assets/site.js && node --check public/assets/ink.js
 
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate

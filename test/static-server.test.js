@@ -6,7 +6,7 @@ const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { createStaticServer } = require('../static-server');
+const { createStaticServer } = require('../lib/static-server');
 
 async function request(server, method, requestPath, headers = {}) {
   const address = server.address();

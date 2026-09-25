@@ -1,24 +1,21 @@
 {
-  "name": "demaze-technologies",
-  "version": "1.0.0",
-  "description": "Demaze Technologies website",
-  "main": "site/serve.js",
+  "name": "demaze-technologies-website",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Demaze Technologies marketing website: static pages generated from src/content.js, served by a small Node server with a contact API.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node site/serve.js",
-    "dev": "node site/serve.js",
-    "build": "node site/build.js",
+    "build": "node src/build.js",
+    "start": "node server.js",
+    "dev": "npm run build && node server.js",
     "test": "node --test",
     "test:html": "node test/html.test.js",
     "test:all": "npm run build && npm test && npm run test:html"
   },
-  "keywords": [
-    "demaze",
-    "technologies",
-    "ai",
-    "software",
-    "engineering"
-  ],
-  "author": "",
-  "license": "ISC",
+  "author": "Demaze Technologies",
+  "license": "UNLICENSED",
   "dependencies": {}
 }
