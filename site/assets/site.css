@@ -383,11 +383,11 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .kmap__count { font: 400 0.74rem/1 var(--mono); color: var(--muted); }
 .kmap__count b { font: 500 1.05rem/1 var(--mono); color: #fff; margin-right: 3px; }
 .kmap__list { display: grid; gap: 2px; }
-/* All six lists share one grid cell, so the column is always as tall as the longest list. Switching
-   categories never changes the layout, which would otherwise move the cards under a hovering pointer. */
+/* With hover-to-select (mouse/trackpad), all six lists share one grid cell so the column is always as
+   tall as the longest list: switching must never move the cards under the pointer. Touch keeps its height. */
 .kmap__lists { display: grid; align-items: center; }
 .kmap__panel { grid-area: 1 / 1; }
-.kmap__panel[hidden] { display: block !important; visibility: hidden; }
+@media (hover: hover) and (pointer: fine) { .kmap__panel[hidden] { display: block !important; visibility: hidden; } }
 .kmap__item { display: flex; align-items: center; gap: 10px; min-height: 30px; font-size: 0.9rem; }
 .kmap__dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: #0b0d1a; box-shadow: 0 0 0 1.5px rgba(143, 164, 255, 0.8), 0 0 8px rgba(90, 120, 255, 0.7); margin-right: 2px; }
 .kmap__item img { width: 22px; height: 22px; padding: 2px; border-radius: 6px; background: #fff; object-fit: contain; flex: none; }
@@ -952,4 +952,72 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 
   .footer__cols { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
   .footer__cols > div:last-child { grid-column: 1 / -1; }
+}
+
+/* ---------- responsive refinements (mobile/tablet audit) ----------
+   Kept last so it wins over the older breakpoint layers above. */
+
+/* Services cards follow the single-accent palette (content.js colours were per service). */
+.svc-panel:nth-child(1) { --c: #3d5afe !important; }
+.svc-panel:nth-child(2) { --c: #3447d6 !important; }
+.svc-panel:nth-child(3) { --c: #2b3bb3 !important; }
+.svc-panel:nth-child(4) { --c: #243193 !important; }
+
+@media (max-width: 1024px) {
+  /* Services: below the pinned desktop layout, the list becomes a row of tabs over one panel at a time
+     (all panels share one grid cell, so switching never changes the section height). */
+  .svc-list { display: flex; gap: 8px; margin: 18px calc(var(--pad, 20px) * -1) 0; padding: 0 var(--pad, 20px) 4px; overflow-x: auto; scrollbar-width: none; }
+  .svc-list::-webkit-scrollbar { display: none; }
+  .svc-list li { flex: none; }
+  .svc-list__btn { width: auto; padding: 10px 16px; border-radius: 999px; font-size: 0.92rem; white-space: nowrap; color: var(--muted); background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+  .svc-list__btn.is-active { color: #fff; background: #3d5afe; box-shadow: none; }
+  .svc-list__num, .svc-list__bar { display: none; }
+  .services__stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 18px 0 0; padding: 0; overflow: visible; }
+  .services__stage > * { flex: none; }
+  .svc-panel { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: none; filter: none; transition: opacity 300ms ease, visibility 0s 300ms; }
+  .svc-panel.is-active { opacity: 1; visibility: visible; transition-delay: 0s; }
+  .svc-panel__art { height: 150px; }
+  .svc-panel .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Tools map: categories become a scrollable row of chips; the tool list sits right under them. */
+  .kmap__stage { gap: 18px; margin-top: 22px; }
+  .kmap__core { display: none; }
+  .kmap__cats { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad, 20px) * -1); padding: 2px var(--pad, 20px) 6px; }
+  .kmap__cats::-webkit-scrollbar { display: none; }
+  .kmap__cat { flex: none; width: auto; grid-template-columns: auto auto auto; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px; }
+  .kmap__icon { width: 28px; height: 28px; border-radius: 50%; }
+  .kmap__icon svg { width: 15px; height: 15px; }
+  .kmap__name { font-size: 0.92rem; }
+  .kmap__count { font-size: 0.7rem; }
+  .kmap__count b { font-size: 0.8rem; }
+  .kmap__lists { align-items: start; }
+  .kmap__list { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px 18px; }
+  .kmap__item small { display: none; } /* role tags crowd the names below desktop width */
+}
+
+@media (max-width: 560px) {
+  /* Services: the illustration and a two-column checklist cost a full screen on phones. */
+  .svc-panel__art { display: none; }
+  .svc-panel__body { padding: 22px 20px 22px; }
+  .svc-panel p { font-size: 0.93rem; line-height: 1.55; }
+  .svc-panel .checks { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 14px; }
+
+  /* Tools map: two short columns; the role tags are desktop detail. */
+  .kmap__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+  .kmap__item { font-size: 0.86rem; gap: 8px; min-height: 28px; }
+  .kmap__item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kmap__item small { display: none; }
+
+  /* Why us: the illustration shrinks to a 64px tile beside the title instead of a band above it. */
+  .why-card { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 14px 18px; }
+  .why-card__art { width: 64px; height: 64px; margin: 0; border-radius: 14px; }
+  .why-card h3 { margin: 0; padding: 0; font-size: 1.12rem; }
+  .why-card p { grid-column: 1 / -1; margin: 0; padding: 0 2px; font-size: 0.92rem; }
+}
+
+/* Ink story: less scroll on small screens (ink.js also pans the scene there so it can be drawn larger). */
+@media (max-width: 1024px) { .ink.is-scroll .ink__track { height: 260vh; } }
+@media (max-width: 760px) {
+  .ink.is-scroll .ink__track { height: 250vh; }
+  .ink__title { font-size: clamp(2rem, 9vw, 2.6rem); }
 }

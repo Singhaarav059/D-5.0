@@ -22,15 +22,18 @@
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
   const jit = (n) => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s) - 0.5; }; // seeded, so lines never flicker
 
-  let W = 0, H = 0, u = 1, G = 0, X = [];
+  let W = 0, H = 0, WW = 0, u = 1, G = 0, X = [];
   const resize = () => {
     const dpr = Math.min(2, devicePixelRatio || 1);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    u = Math.max(0.62, Math.min(1.7, H / 270, W / 820));
+    // Narrow screens: size the drawing by height and lay the stations out on a wider world that the
+    // camera pans across (following the character). The static finale still fits everything on screen.
+    u = animated ? Math.max(0.62, Math.min(1.7, H / 270)) : Math.max(0.62, Math.min(1.7, H / 270, W / 820));
+    WW = animated ? Math.max(W, 780 * u) : W;
     G = H * 0.84;
-    X = [0.14, 0.38, 0.62, 0.86].map((f) => f * W);
+    X = [0.14, 0.38, 0.62, 0.86].map((f) => f * WW);
   };
 
   // ---------- drawing helpers: slightly unsteady lines read as hand-inked ----------
@@ -45,10 +48,10 @@
 
   function landscape() {
     // far hills, then the ground line with hatching underneath
-    stroke(curve((t) => [t * W * 0.7, G - 46 * u - Math.sin(t * 5.2) * 18 * u], 40), 1.1, 0.28, 3);
-    stroke(curve((t) => [W * 0.35 + t * W * 0.65, G - 30 * u - Math.sin(t * 4.1 + 2) * 14 * u], 40), 1.1, 0.28, 9);
-    stroke(curve((t) => [t * W, ground(t * W)], 80), 2.4 * u, 0.95, 21);
-    for (let x = 18; x < W; x += 38 * u) {
+    stroke(curve((t) => [t * WW * 0.7, G - 46 * u - Math.sin(t * 5.2) * 18 * u], 40), 1.1, 0.28, 3);
+    stroke(curve((t) => [WW * 0.35 + t * WW * 0.65, G - 30 * u - Math.sin(t * 4.1 + 2) * 14 * u], 40), 1.1, 0.28, 9);
+    stroke(curve((t) => [t * WW, ground(t * WW)], 80), 2.4 * u, 0.95, 21);
+    for (let x = 18; x < WW; x += 38 * u) {
       const y = ground(x) + 7 * u;
       stroke([[x, y], [x - 7 * u, y + 5 * u]], 1, 0.35, x);
     }
@@ -204,18 +207,22 @@
   // Each quarter of the scroll: walk to the next station (first 35%), then act there (remaining 65%).
   function frame(p, time) {
     ctx.clearRect(0, 0, W, H);
-    landscape();
     const k = Math.min(3, Math.floor(p * 4)), l = p * 4 - k;
     const g = [0, 1, 2, 3].map((i) => (i < k ? 1 : i > k ? 0 : clamp01((l - 0.35) / 0.65)));
     if (p >= 1) g.fill(1);
-    sprout(X[0], g[0]); blueprint(X[1], g[1]); build(X[2], g[2]); launch(X[3], g[3], time);
     const stand = (i) => X[i] - 60 * u;
     const from = k ? stand(k - 1) : -40 * u, to = stand(k);
     const w = p >= 1 ? 1 : clamp01(l / 0.35);
     const cx = lerp(from, to, easeIO(w));
     const walking = w > 0 && w < 1;
+    const cam = Math.max(0, Math.min(WW - W, cx - W * 0.3));
+    ctx.save();
+    ctx.translate(-cam, 0);
+    landscape();
+    sprout(X[0], g[0]); blueprint(X[1], g[1]); build(X[2], g[2]); launch(X[3], g[3], time);
     // distance walked so far drives the legs, so they step in time with the scroll
     character(cx, cx + 40 * u, walking, k === 3 && g[3] > 0.3, Math.sin(time * 2.2));
+    ctx.restore();
     steps.forEach((s, i) => { s.classList.toggle('is-active', i === k && p > 0.01); s.classList.toggle('is-done', i < k); });
   }
 
