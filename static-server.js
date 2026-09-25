@@ -39,8 +39,8 @@ const SECURITY_HEADERS = Object.freeze({
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
-  'Content-Security-Policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://framerusercontent.com https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'",
-  'Content-Security-Policy-Report-Only': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://framerusercontent.com https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'"
+  'Content-Security-Policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'",
+  'Content-Security-Policy-Report-Only': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google.com; font-src 'self'; frame-src https://maps.google.com https://www.google.com; connect-src 'self'"
 });
 
 function isWithinRoot(root, candidate) {
@@ -57,9 +57,18 @@ function sendText(res, statusCode, body, headers = {}) {
   res.end(body);
 }
 
-function createStaticServer({ root, fallback = null, logger = console, onRequest = null }) {
+function createStaticServer({ root, fallback = null, notFound = null, logger = console, onRequest = null }) {
   const rootPath = path.resolve(root);
   const fallbackPath = fallback ? path.resolve(root, fallback) : null;
+  // Optional branded page for unknown URLs (still a real 404 status); plain text if it is missing.
+  const notFoundPath = notFound ? path.resolve(root, notFound) : null;
+  const sendNotFound = (res) => {
+    let body = null;
+    try { if (notFoundPath && isWithinRoot(path.resolve(root), notFoundPath)) body = fs.readFileSync(notFoundPath); } catch { body = null; }
+    if (!body) { sendText(res, 404, 'Not Found\n'); return; }
+    res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': body.length, 'Cache-Control': 'no-cache' });
+    res.end(body);
+  };
 
   if (!isWithinRoot(rootPath, fallbackPath || rootPath)) {
     throw new Error('Fallback must be inside the static root');
@@ -98,13 +107,13 @@ function createStaticServer({ root, fallback = null, logger = console, onRequest
     }
 
     if (BLOCKED_PATH.test(requestedPath)) {
-      sendText(res, 404, 'Not Found\n');
+      sendNotFound(res);
       return;
     }
 
     let filePath = path.resolve(rootPath, `.${requestedPath === '/' ? '/index.html' : requestedPath}`);
     if (!isWithinRoot(rootPath, filePath)) {
-      sendText(res, 404, 'Not Found\n');
+      sendNotFound(res);
       return;
     }
 
@@ -137,7 +146,7 @@ function createStaticServer({ root, fallback = null, logger = console, onRequest
     }
 
     if (!isWithinRoot(rootPath, filePath)) {
-      sendText(res, 404, 'Not Found\n');
+      sendNotFound(res);
       return;
     }
 
@@ -148,7 +157,7 @@ function createStaticServer({ root, fallback = null, logger = console, onRequest
       const realRoot = await fs.promises.realpath(rootPath);
       const realFile = await fs.promises.realpath(filePath);
       if (!isWithinRoot(realRoot, realFile)) {
-        sendText(res, 404, 'Not Found\n');
+        sendNotFound(res);
         return;
       }
     } catch (error) {
@@ -162,11 +171,11 @@ function createStaticServer({ root, fallback = null, logger = console, onRequest
         try {
           stat = await fs.promises.stat(filePath);
         } catch {
-          sendText(res, 404, 'Not Found\n');
+          sendNotFound(res);
           return;
         }
       } else {
-        sendText(res, 404, 'Not Found\n');
+        sendNotFound(res);
         return;
       }
     }

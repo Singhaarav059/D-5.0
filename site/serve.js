@@ -11,6 +11,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 const server = createStaticServer({
   root: __dirname,
+  notFound: '404.html',
   onRequest: (req, res) => handleContact(req, res)
 });
 listen(server, port, process.env.HOST);

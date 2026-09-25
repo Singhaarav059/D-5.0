@@ -20,6 +20,20 @@ const icon = {
   instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></svg>',
 };
 
+// Local images (assets/img/work, generated from the old Framer originals): a <picture> with AVIF at the
+// widths in the manifest and a PNG/JPEG fallback. `small` picks the avatar-sized variants.
+const MANIFEST = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets/img/work/manifest.json'), 'utf8'));
+const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy" decoding="async"', cls = '' } = {}) => {
+  const m = MANIFEST[key];
+  if (!m) throw new Error(`missing image ${key}`);
+  const fit = m.files.filter((f) => (small ? f.w <= 200 : f.w > 200));
+  const avif = fit.filter((f) => f.fmt === 'avif').sort((a, b) => a.w - b.w);
+  const fb = fit.filter((f) => f.fmt !== 'avif').sort((a, b) => b.w - a.w)[0];
+  const u = (f) => `./assets/img/work/${f.file}`;
+  const h = Math.round((fb.w * m.h) / m.w);
+  return `<picture><source type="image/avif" srcset="${avif.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
+};
+
 const btn = (label, href, cls = 'btn--blue', extra = '') =>
   `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
 const eyebrow = (t, dark) => `<p class="eyebrow${dark ? ' eyebrow--dark' : ''}"><span class="eyebrow__dot"></span>${esc(t)}</p>`;
@@ -27,7 +41,7 @@ const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us', './about-us'], ['Contact Us', './contact']];
 
-function layout({ title, description, slug, body }) {
+function layout({ title, description, slug, body, noindex = false }) {
   const links = NAV.map(([t, h]) => `<a href="${h}"${h === './' + slug ? ' aria-current="page"' : ''}>${t}</a>`).join('');
   const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
@@ -38,17 +52,20 @@ function layout({ title, description, slug, body }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="theme-color" content="#07080f">
-<link rel="canonical" href="${canonical}">
+${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:image" content="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png">
+<meta property="og:image" content="${SITE_URL}/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Demaze: your strategic partner in building scalable AI products">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="https://framerusercontent.com/images/g9sZPcgZ3bVZQgiCX8DybKWIy4.png">
+<meta name="twitter:image" content="${SITE_URL}/assets/img/og.png">
 <link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
 <script defer src="./assets/boot.js"></script>
@@ -113,7 +130,7 @@ const sky = `<div class="hero__bg" aria-hidden="true"><i class="hero__glow" data
 
 // Engineering stack: the six "Tools & Technologies" tabs from the live site. The AI & ML tab keeps
 // the grouped list with roles; every tab drives the orbit (rebuilt client-side on tab change).
-const framerIcon = (id) => `https://framerusercontent.com/images/${id}?width=96`;
+const framerIcon = (id) => `./assets/img/tech/ai-${id.replace(/\.\w+$/, '')}.png`; // vendored from Framer at 192px
 // Brand marks are vendored from simpleicons into assets/img/tech (the CSP only allows self-hosted images);
 // a slug with no local file (.svg preferred, .png for marks only published as bitmaps) falls back to the monogram.
 const techIcon = (slug) => {
@@ -190,7 +207,7 @@ const hero = () => `<section class="hero hero--cine" data-hero>
     </div>
     <div class="hero__proof" data-hero-proof>
       <a class="hero__note" href="#founder">
-        <img src="${C.founder.photo}" alt="" width="44" height="44">
+        ${pic(C.founder.photo, '', { small: true, sizes: '44px', attrs: 'decoding="async"' })}
         <span><q>When you thrive, we thrive</q><small>${C.founder.name}, ${C.founder.title}</small></span>
       </a>
       <ul class="hero__stats">${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${m.label}</small></li>`).join('')}</ul>
@@ -225,7 +242,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <p>${esc(p.description)}</p>
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
     </div>
-    <figure class="stack-card__media"><img src="${p.image}" alt="${esc(p.title)}, product screens" loading="lazy" decoding="async"></figure>
+    <figure class="stack-card__media">${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
   </div>
 </article>`;
 
@@ -308,7 +325,7 @@ const studio = () => `<section class="section studio" id="about">
       </div>
       <figure class="studio__quote" data-reveal>
         <blockquote>“${esc(C.founder.quote)}”</blockquote>
-        <figcaption><img src="${C.founder.photo}" alt="" width="56" height="56" loading="lazy"><span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
+        <figcaption>${pic(C.founder.photo, '', { small: true, sizes: '52px' })}<span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
       </figure>
     </div>
     ${reasons()}
@@ -354,7 +371,7 @@ const founder = () => `<section class="section quote" id="founder">
         <blockquote><p data-scrub-words>“${esc(C.founder.quote)}”</p></blockquote>
         <figcaption data-reveal><span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
       </div>
-      <img class="quote__photo" src="${C.founder.photo}" alt="${C.founder.name}, ${C.founder.title}" width="300" height="330" loading="lazy" data-reveal>
+      ${pic(C.founder.photo, `${C.founder.name}, ${C.founder.title}`, { sizes: '300px', cls: 'quote__photo', attrs: 'loading="lazy" data-reveal' })}
     </figure>
   </div>
 </section>`;
@@ -400,7 +417,7 @@ const contact = (id = 'contact') => `<section class="section contact" id="${id}"
 const projectsGrid = () => `<section class="section projects">
   <div class="wrap">
     <div class="pgrid">${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" style="--tint:${p.tint}" data-reveal>
-      <figure class="pcard__media"><img src="${p.image.replace('width=1600', 'width=1000')}" alt="${esc(p.title)}, project preview" loading="lazy" decoding="async"></figure>
+      <figure class="pcard__media">${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
       <div class="pcard__body">
         <span class="pcard__num">${pad(i + 1)}</span>
         <h2><button type="button" class="pcard__btn" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</button></h2>
@@ -408,7 +425,7 @@ const projectsGrid = () => `<section class="section projects">
         <span class="pcard__more">View project ${icon.arrow}</span>
       </div>
       <template data-proj-tpl="${i}">
-        <figure class="pdlg__media" style="--tint:${p.tint}"><img src="${p.image}" alt="${esc(p.title)}, product screens" loading="lazy" decoding="async"></figure>
+        <figure class="pdlg__media" style="--tint:${p.tint}">${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 820px' })}</figure>
         <div class="pdlg__body">
           <span class="pcard__num">${pad(i + 1)} / ${pad(C.projects.length)}</span>
           <h2 id="pdlg-title-${i}">${esc(p.title)}</h2>
@@ -487,6 +504,14 @@ const pages = {
       pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1]),
       about({ link: false }), whyUs(), founder(), processSection(), contact(),
     ].join('\n'),
+  }),
+  404: layout({
+    slug: '404',
+    noindex: true,
+    title: 'Page not found | Demaze Technologies',
+    description: 'This page does not exist. Head back to the Demaze home page or browse our projects.',
+    body: pageHero('Error 404', 'This page <em>drifted off the map</em>', 'The link may be old or mistyped. Everything we build is still one click away.',
+      `<div class="hero__ctas" data-hero-fade>${btn('Back to home', './', 'btn--blue')}${btn('See our work', './projects', 'btn--white')}</div>`),
   }),
   contact: layout({
     slug: 'contact',

@@ -92,3 +92,23 @@ test('fingerprinted assets are cached for a year, plain ones for an hour', async
   const page = await request(server, 'GET', '/?v=0123456789');
   assert.equal(page.headers['cache-control'], 'no-cache');
 });
+
+test('unknown URLs get the branded 404 page with a 404 status', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'static-server-'));
+  await fs.writeFile(path.join(root, 'index.html'), '<h1>ok</h1>');
+  await fs.writeFile(path.join(root, '404.html'), '<h1>lost</h1>');
+  const server = createStaticServer({ root, notFound: '404.html' });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    await fs.rm(root, { recursive: true, force: true });
+  });
+
+  const missing = await request(server, 'GET', '/no-such-page');
+  assert.equal(missing.status, 404);
+  assert.match(missing.headers['content-type'], /text\/html/);
+  assert.equal(missing.body, '<h1>lost</h1>');
+  const hidden = await request(server, 'GET', '/.git/config');
+  assert.equal(hidden.status, 404);
+  assert.doesNotMatch(hidden.body, /\[core\]/);
+});

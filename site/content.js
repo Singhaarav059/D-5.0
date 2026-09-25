@@ -1,6 +1,7 @@
 // All site content, taken verbatim from https://www.demazetech.com (verified 2026-09-23).
 // Only obvious typos were corrected ("Al" -> "AI", "Progessive", "Resller"). Never invent facts here.
-const img = (id, w = 1600) => `https://framerusercontent.com/images/${id}?width=${w}`;
+// Images live in assets/img/work (optimised AVIF + fallback, see manifest.json); content refers to them by key.
+const img = (id) => id.replace(/\.\w+$/, '');
 
 module.exports = {
   calendly: 'https://calendly.com/krupal-demazetech/30min',
@@ -89,16 +90,16 @@ module.exports = {
   ],
 
   services: [
-    { id: 'ai', title: 'AI & ML', image: img('Duf4IQUMIa6MIBdumJk5C3PYR5w.png', 1000), color: '#4f5bff',
+    { id: 'ai', title: 'AI & ML', color: '#4f5bff',
       description: 'We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.',
       items: ['Predictive Analytics & Forecasting', 'NLP & Conversational AI', 'Computer Vision & Image Processing', 'Generative Models & Content Synthesis', 'Recommendation Systems & Personalization', 'AI Dashboards & Insights'] },
-    { id: 'web', title: 'Web / Mobile App / SaaS', image: img('YFL2wUsxGifdIbDr6qI69fyzZc.png', 1000), color: '#7a4dff',
+    { id: 'web', title: 'Web / Mobile App / SaaS', color: '#7a4dff',
       description: 'We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.',
       items: ['Web App Development', 'Mobile App Development', 'Custom SaaS Development', 'Workflow Automation', 'API Development & System Integration', 'Progressive Web App (PWA)'] },
-    { id: 'ecom', title: 'E commerce', image: img('0K8yspLc6XlnFG9G9wxsXa7P1cQ.png', 1000), color: '#ff6b4a',
+    { id: 'ecom', title: 'E commerce', color: '#ff6b4a',
       description: 'We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.',
       items: ['D2C / Multi-Vendor Marketplace', 'AI-Powered Personalization & Recommendation', 'Subscription / Rental & Recurring Billing Models', 'Checkout, Payment & Fraud Protection', 'Inventory, Fulfillment & Logistics Integration', 'UI/UX for Storefront & Customer Experience'] },
-    { id: 'cloud', title: 'Cloud', image: img('miuw5HMaBt8VhyOLvGTezxmbFhI.png', 1000), color: '#0ea5a4',
+    { id: 'cloud', title: 'Cloud', color: '#0ea5a4',
       description: 'We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.',
       items: ['Cloud Migration & Modernization', 'Cloud Native App Development', 'Multi-Cloud & Hybrid Cloud Architecture', 'Cloud Security, Compliance & Governance', 'Observability, Monitoring & Performance Optimization', 'Disaster Recovery, Backup & Business Continuity'] },
   ],
@@ -154,17 +155,17 @@ module.exports = {
   ],
 
   whyUs: [
-    { title: 'AI-First Innovation', image: img('UoV40soWAuwc3apDIJ2CrWUKep0.png', 800),
+    { title: 'AI-First Innovation',
       description: "We don't just build software; we create intelligent solutions that learn, adapt, and evolve. Our deep expertise in AI, machine learning, and emerging technologies ensures your business stays ahead of the curve with future-ready solutions that drive automation and growth." },
-    { title: 'End-to-End Partnership', image: img('ZuFdyAXcxKQErCF3yYmtowWit8Q.png', 800),
+    { title: 'End-to-End Partnership',
       description: "From concept to deployment and beyond, we're your dedicated tech partner. We work as an extension of your team, providing comprehensive support across the entire development lifecycle while focusing on long-term success rather than just project delivery." },
-    { title: 'Proven Track Record', image: img('jm0rrK5HlZW33kreUxCyYlYQzQ.png', 800),
+    { title: 'Proven Track Record',
       description: 'With 45+ successful projects across diverse industries and $10M+ generated for our clients, we bring measurable results. Our experienced team of 35+ professionals combines technical excellence with business acumen to deliver solutions that create real impact.' },
   ],
 
   about: {
     keywords: ['AI-First Innovation', 'Scalable Solutions', 'Digital Transformation', 'Future-Ready Architecture', 'Automation Excellence', 'Strategic Partnership', 'Cutting-Edge Technology', 'Business Intelligence', 'Agile Development', 'End-to-End Solutions'],
-    image: img('8VkbVqoQKxMC9ceHpawwCrFLkvY.png', 900),
+   
     whoWeAre: [
       "At Demaze Technologies, we're more than just developers; we're digital transformation architects. We're a passionate team of 35+ technologists, innovators, and strategic thinkers who believe in the power of AI and cutting-edge technology to reshape businesses.",
       'Founded with a vision to democratize advanced technology, we bridge the gap between complex technical possibilities and real business outcomes.',
