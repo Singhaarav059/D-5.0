@@ -696,8 +696,22 @@ html:has(.pdlg[open]) { overflow: hidden; }
 
 /* ---------- visit (contact page) ---------- */
 .visit__grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
-.visit__map { border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 16 / 10; background: #1b2150; box-shadow: var(--shadow-2); }
-.visit__map iframe { width: 100%; height: 100%; border: 0; filter: invert(0.9) hue-rotate(185deg) saturate(0.7) brightness(0.95); }
+/* Office "map": a local, code-drawn location card (no third-party embed); the whole card opens Google Maps. */
+.visit__map { position: relative; display: block; border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 16 / 10; background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(61, 90, 254, 0.22), transparent 70%), #0a0d20; box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.18); }
+.visit__map svg { width: 100%; height: 100%; display: block; }
+.visit__dots { fill: rgba(143, 164, 255, 0.18); }
+.visit__dots circle, #visit-dots circle { fill: rgba(143, 164, 255, 0.22); }
+.visit__road { fill: none; stroke: rgba(169, 184, 255, 0.45); stroke-width: 6; stroke-linecap: round; }
+.visit__road.is-minor { stroke-width: 3; stroke: rgba(169, 184, 255, 0.25); }
+.visit__ring { fill: none; stroke: rgba(109, 134, 255, 0.5); stroke-width: 1.2; transform-origin: 240px 150px; animation: visit-pulse 3.2s ease-out infinite; }
+.visit__ring.is-2 { animation-delay: 1.6s; }
+@keyframes visit-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+.visit__pin { fill: #3d5afe; filter: drop-shadow(0 0 10px rgba(61, 90, 254, 0.9)); }
+.visit__pin-dot { fill: #fff; }
+.visit__label { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(5, 6, 12, 0.7); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.25); font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; color: #dfe5ff; }
+.visit__label i { width: 6px; height: 6px; border-radius: 50%; background: #6d86ff; box-shadow: 0 0 8px #6d86ff; }
+.visit__map:hover .visit__label { background: #3d5afe; }
+@media (prefers-reduced-motion: reduce) { .visit__ring { animation: none; opacity: 0.5; } }
 .visit__ctas { justify-content: flex-start; }
 
 /* ---------- footer ---------- */
