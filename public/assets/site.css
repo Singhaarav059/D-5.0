@@ -1,4 +1,15 @@
-/* Demaze — design system + sections */
+/* Demaze: design tokens, components and page sections, in one stylesheet (no build step).
+   Rules later in the file win, so the order below matters: base + components, then sections,
+   then the responsive layers, then the late refinements.
+
+   Contents
+     tokens (:root) · base · type · buttons · nav
+     hero backgrounds · home hero · cinematic hero (cine.js) · page hero
+     knowledge map · metrics · work stack · services · "How we work" (ink.js) · industries
+     founder quote · FAQ · contact · projects page · about · visit (contact page, visit3d.js) · footer
+     pointer spotlight · initial motion states · responsive · phones · accessibility preferences
+     tablet + phone layouts · "Who we are" (home) · responsive refinements (kept last)
+*/
 :root {
   color-scheme: dark;
   /* surfaces: mid-dark navy page, deeper ink for feature panels, frosted glass for cards */
@@ -443,10 +454,6 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .checks li { display: flex; gap: 8px; align-items: flex-start; font-size: 0.9rem; font-weight: 500; }
 .checks svg { flex: none; width: 18px; height: 18px; margin-top: 2px; padding: 3px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); }
 
-/* ---------- why ---------- */
-
-/* ---------- process ---------- */
-
 /* ---------- "How we work" on paper (ink.js) ----------
    With motion the track is tall and the paper sticks while the story plays; otherwise it is one static panel. */
 .section.ink { padding-block: clamp(40px, 7vw, 80px); }
@@ -516,8 +523,6 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .ind__panel li { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); font-size: 0.92rem; font-weight: 500; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
 .ind__panel li svg { flex: none; width: 18px; height: 18px; color: var(--lime); margin-top: 1px; }
 
-/* ---------- tools ---------- */
-
 /* ---------- founder quote ---------- */
 .quote { padding-block: clamp(20px, 4vh, 48px); }
 .quote__panel { position: relative; overflow: hidden; margin: 0 10px; border-radius: var(--r-xl); color: #fff; background: radial-gradient(ellipse 55% 80% at 100% 0%, rgba(61, 90, 254, 0.45), transparent 65%), radial-gradient(ellipse 45% 60% at 0% 100%, rgba(61, 90, 254, 0.35), transparent 60%), var(--ink); padding-block: clamp(52px, 6.5vw, 88px); }
@@ -581,7 +586,6 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .form__trap { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .form__note { font-size: 0.82rem; color: rgba(235, 239, 255, 0.72); }
 
-/* ---------- projects page ---------- */
 /* ---------- projects page ---------- */
 .pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .pcard { position: relative; display: flex; flex-direction: column; border-radius: var(--r-xl); background: var(--card); box-shadow: var(--shadow-1); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); overflow: hidden; transition: transform 400ms var(--ease-out), box-shadow 400ms var(--ease-out); }
