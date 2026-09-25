@@ -3,6 +3,11 @@
   "version": "2.0.0",
   "private": true,
   "description": "Demaze Technologies marketing website: static pages generated from src/content.js, served by a small Node server with a contact API.",
+  "homepage": "https://d-50-production.up.railway.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Singhaarav059/D-5.0.git"
+  },
   "main": "server.js",
   "engines": {
     "node": ">=20"
