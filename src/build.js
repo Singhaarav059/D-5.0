@@ -24,17 +24,17 @@ const icon = {
 };
 
 // Photos and project screens live in public/assets/img/work (see manifest.json for each image's variants):
-// a <picture> with AVIF at the listed widths and a PNG/JPEG fallback. `small` picks the avatar-sized variants.
+// a <picture> with WebP at the listed widths and a PNG/JPEG fallback. `small` picks the avatar-sized variants.
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(PUBLIC, 'assets/img/work/manifest.json'), 'utf8'));
 const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy" decoding="async"', cls = '' } = {}) => {
   const m = MANIFEST[key];
   if (!m) throw new Error(`missing image ${key}`);
   const fit = m.files.filter((f) => (small ? f.w <= 200 : f.w > 200));
-  const avif = fit.filter((f) => f.fmt === 'avif').sort((a, b) => a.w - b.w);
-  const fb = fit.filter((f) => f.fmt !== 'avif').sort((a, b) => b.w - a.w)[0];
+  const webp = fit.filter((f) => f.fmt === 'webp').sort((a, b) => a.w - b.w);
+  const fb = fit.filter((f) => f.fmt !== 'webp').sort((a, b) => b.w - a.w)[0];
   const u = (f) => `./assets/img/work/${f.file}`;
   const h = Math.round((fb.w * m.h) / m.w);
-  return `<picture><source type="image/avif" srcset="${avif.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
+  return `<picture><source type="image/webp" srcset="${webp.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
 };
 
 const btn = (label, href, cls = 'btn--blue', extra = '') =>

@@ -35,7 +35,7 @@ public/                Everything a visitor can load (the only folder the server
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Figtree, Instrument Serif, JetBrains Mono)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
-    img/work/          Project screens + founder photo (AVIF + PNG/JPEG fallback) and manifest.json
+    img/work/          Project screens + founder photo (WebP + PNG/JPEG fallback) and manifest.json
     img/tech/          Technology logos used in the tools map
     img/logo.png, og.png  Brand mark and the social share image (1200x630)
   robots.txt, sitemap.xml
@@ -53,8 +53,9 @@ test/                  Automated checks (node --test)
 ### Adding a project
 
 1. Prepare the screenshot at about 1600px wide and export three files into `public/assets/img/work/`:
-   `<slug>-800.avif`, `<slug>-1600.avif` (AVIF, quality ~55) and `<slug>-720.png` (fallback for old browsers).
-   Any tool works (Squoosh, Photoshop, `sips` on macOS, `sharp`); keep the PNG for transparent images.
+   `<slug>-800.webp`, `<slug>-1600.webp` (WebP, quality ~78, keep transparency) and `<slug>-720.png`
+   (fallback for old browsers). Use a proper encoder such as Squoosh (squoosh.app), `cwebp` or `sharp`.
+   Check the result in Chrome and Safari before committing.
 2. Add an entry to `public/assets/img/work/manifest.json` with the original `w`/`h` and the three files
    (copy an existing entry as the template).
 3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, then build.

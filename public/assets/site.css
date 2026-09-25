@@ -51,6 +51,8 @@ body {
 }
 main { overflow-x: clip; }
 img { display: block; max-width: 100%; height: auto; }
+/* <picture> only chooses the file; layout rules target the img as if it were the direct child. */
+picture { display: contents; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 600; letter-spacing: -0.01em; }
