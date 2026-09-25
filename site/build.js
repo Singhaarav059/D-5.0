@@ -145,7 +145,6 @@ const techStack = () => {
   return `<section class="section kmap" id="tools" data-kmap>
   <div class="wrap">
     <div class="section-head">
-      ${eyebrow('Platforms & partners')}
       <h2 class="h2" data-split>Tools &amp; technologies</h2>
       <p class="lead" data-reveal>${esc(C.stack.lead)}</p>
     </div>
@@ -198,20 +197,6 @@ const hero = () => `<section class="hero hero--cine" data-hero>
     </div>
   </div>
 </section>`;
-
-// The 10 keywords from the live "About us" block, as a moving strip.
-// Two rows run in opposite directions (the second outlined); scroll speed pushes them along (site.js).
-const keywords = () => {
-  const k = C.about.keywords;
-  const row = (list) => list.map((t) => `<li>${esc(t)}</li>`).join('');
-  const half = Math.ceil(k.length / 2);
-  const a = row([...k.slice(0, half), ...k.slice(0, half)]), b = row([...k.slice(half), ...k.slice(half)]);
-  return `<section class="strip strip--words" aria-label="What we stand for" data-words>
-  <p class="sr-only">${k.map(esc).join(', ')}</p>
-  <div class="marquee" aria-hidden="true"><ul class="marquee__track">${a}</ul><ul class="marquee__track">${a}</ul></div>
-  <div class="marquee marquee--rev marquee--outline" aria-hidden="true"><ul class="marquee__track">${b}</ul><ul class="marquee__track">${b}</ul></div>
-</section>`;
-};
 
 // "About us": Who We Are beside the four What Drives Us values (both from the live homepage).
 const about = ({ metrics = false, link = true } = {}) => `<section class="section about" id="about">
@@ -277,7 +262,7 @@ const services = (withHead = true) => `<section class="section services" data-se
 
 const whyUs = () => `<section class="section why">
   <div class="wrap">
-    <div class="section-head">${eyebrow('Benefits')}<h2 class="h2" data-split>Why choose us</h2></div>
+    <div class="section-head"><h2 class="h2" data-split>Why choose us</h2></div>
     <div class="why__grid" data-stagger>
       ${C.whyUs.map((w, i) => `<article class="why-card why-card--${i}"><div class="why-card__art"><img src="${w.image}" alt="${esc(w.title)} illustration" loading="lazy" decoding="async"></div><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></article>`).join('')}
     </div>
@@ -287,7 +272,6 @@ const whyUs = () => `<section class="section why">
 const industries = () => `<section class="section industries" id="industries">
   <div class="wrap ind" data-tabs data-ind-auto>
     <div class="ind__side">
-      ${eyebrow('Industries')}
       <h2 class="h2" data-split>Industries we serve</h2>
       <p class="lead" data-reveal>${C.industries.length} industries. Pick one to see the kinds of systems we build for it.</p>
       <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n], i) => `<button role="tab" type="button" id="ind-tab-${i}" aria-controls="ind-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(n)}</button>`).join('')}</div>
@@ -331,7 +315,7 @@ const founder = () => `<section class="section quote" id="founder">
 
 const faq = () => `<section class="section faq">
   <div class="wrap faq__grid">
-    <div>${eyebrow('FAQs')}<h2 class="h2" data-split>Questions? Answers!</h2><p class="lead" data-reveal>Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a></p></div>
+    <div><h2 class="h2" data-split>Questions, answered</h2><p class="lead" data-reveal>Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a></p></div>
     <div class="acc" data-stagger>
       ${C.faq.map((f, i) => `<div class="acc__item"><h3><button type="button" aria-expanded="false" aria-controls="faq-${i}" id="faq-q-${i}" data-acc><span class="acc__num">${pad(i + 1)}</span><span class="acc__q">${esc(f.q)}</span><i class="acc__icon">${icon.plus}</i></button></h3><div class="acc__a" id="faq-${i}" role="region" aria-labelledby="faq-q-${i}"><div><p>${esc(f.a)}</p></div></div></div>`).join('')}
     </div>
@@ -365,7 +349,6 @@ const contact = (id = 'contact') => `<section class="section contact" id="${id}"
   </div>
 </section>`;
 
-const statsBar = () => `<ul class="phero__stats" data-hero-fade>${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${m.label}</small></li>`).join('')}</ul>`;
 
 // Projects page: compact cards; each opens a dialog with the full case (content lives in a <template>).
 const projectsGrid = () => `<section class="section projects">
@@ -429,14 +412,14 @@ const pages = {
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
     // Same order as the live homepage: work, services, tools, industries, why us, about, process, FAQ, contact.
-    body: [hero(), work(), services(), techStack(), industries(), whyUs(), keywords(), about(), processSection(), founder(), faq(), contact()].join('\n'),
+    body: [hero(), work(), services(), techStack(), industries(), whyUs(), about(), processSection(), founder(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
     title: 'Projects | Demaze Technologies',
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     body: [
-      pageHero('Our work', 'The projects <em>we did</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`, statsBar()),
+      pageHero('Our work', 'The projects <em>we did</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`),
       projectsGrid(),
       contact(),
     ].join('\n'),
@@ -455,8 +438,8 @@ const pages = {
     title: 'About Us | Demaze Technologies',
     description: C.about.whoWeAre[0],
     body: [
-      pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1], statsBar()),
-      keywords(), about({ link: false }), whyUs(), founder(), processSection(), contact(),
+      pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1]),
+      about({ link: false }), whyUs(), founder(), processSection(), contact(),
     ].join('\n'),
   }),
   contact: layout({
