@@ -24,7 +24,15 @@ lib/
   contact-api.js       Contact form endpoint: validation, honeypot, rate limit, webhook delivery
 src/
   content.js           ALL copy and data (projects, services, FAQ, tools, contact details)
-  build.js             Page templates; writes public/*.html from content.js
+  pages.js             Which sections each page shows, plus each page's title and description
+  templates/           The HTML, one file per area:
+    helpers.js           escaping, icons, <picture> images, buttons, site-wide constants
+    layout.js            the shell every page shares: <head>, nav, footer
+    shared.js            sections used on several pages: subpage hero, FAQ, contact block
+    home.js, about.js, services.js, projects.js, contact.js   sections for each page
+  build.js             Renders pages.js into public/*.html and fingerprints asset URLs
+scripts/
+  check-syntax.js      `npm run check`: syntax-checks every first-party script
 public/                Everything a visitor can load (the only folder the server exposes)
   *.html               Generated pages (index, projects, services, about-us, contact, 404). Do not edit by hand.
   assets/
@@ -46,7 +54,7 @@ test/                  Automated checks (node --test)
 
 ## Editing the site
 
-1. Change text or data in `src/content.js` (layout and markup live in `src/build.js`).
+1. Change text or data in `src/content.js`. Markup lives in `src/templates/`; page composition in `src/pages.js`.
 2. Run `npm run build` to regenerate `public/*.html`.
 3. Run `npm run test:all`, then commit **both** the source change and the regenerated HTML
    (CI fails if `public/*.html` is out of date).

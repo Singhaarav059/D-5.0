@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
-const dirs = ['.', 'lib', 'src', 'scripts', 'test', 'public/assets'];
+const dirs = ['.', 'lib', 'src', 'src/templates', 'scripts', 'test', 'public/assets'];
 const files = dirs.flatMap((dir) => fs.readdirSync(path.join(root, dir))
   .filter((f) => f.endsWith('.js'))
   .map((f) => path.join(dir, f)));
