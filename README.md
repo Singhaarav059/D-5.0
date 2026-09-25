@@ -105,7 +105,7 @@ Set these as environment variables on the host (see `.env.example`; never commit
 | Variable | Used for |
 | --- | --- |
 | `PORT` | Port to listen on (the host usually sets this). |
-| `HOST` | Bind address. Defaults to `0.0.0.0` when `NODE_ENV=production`, else `127.0.0.1`. |
+| `HOST` | Bind address. Defaults to `0.0.0.0` on a hosting platform (`NODE_ENV=production`, or Render / Railway detected), else `127.0.0.1`. |
 | `NODE_ENV` | `production` in deployment. |
 | `CONTACT_WEBHOOK_URL` | HTTPS webhook that receives validated contact submissions as JSON. **If unset, the form cannot deliver messages** and falls back to opening the visitor's email app. |
 | `TRUST_PROXY` | `1` behind a proxy/load balancer so rate limiting sees the real client IP. |
