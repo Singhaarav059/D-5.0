@@ -383,6 +383,11 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .kmap__count { font: 400 0.74rem/1 var(--mono); color: var(--muted); }
 .kmap__count b { font: 500 1.05rem/1 var(--mono); color: #fff; margin-right: 3px; }
 .kmap__list { display: grid; gap: 2px; }
+/* All six lists share one grid cell, so the column is always as tall as the longest list. Switching
+   categories never changes the layout, which would otherwise move the cards under a hovering pointer. */
+.kmap__lists { display: grid; align-items: center; }
+.kmap__panel { grid-area: 1 / 1; }
+.kmap__panel[hidden] { display: block !important; visibility: hidden; }
 .kmap__item { display: flex; align-items: center; gap: 10px; min-height: 30px; font-size: 0.9rem; }
 .kmap__dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: #0b0d1a; box-shadow: 0 0 0 1.5px rgba(143, 164, 255, 0.8), 0 0 8px rgba(90, 120, 255, 0.7); margin-right: 2px; }
 .kmap__item img { width: 22px; height: 22px; padding: 2px; border-radius: 6px; background: #fff; object-fit: contain; flex: none; }
