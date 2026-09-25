@@ -177,9 +177,11 @@ function createStaticServer({ root, fallback = null, logger = console, onRequest
       'Content-Length': stat.size,
       'ETag': `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`,
       'Last-Modified': stat.mtime.toUTCString(),
+      // Pages always revalidate. Assets requested with a build fingerprint (?v=<hash>, added by
+      // site/build.js) never change at that URL, so they can be cached for a year.
       'Cache-Control': path.extname(filePath).toLowerCase() === '.html'
         ? 'no-cache'
-        : 'public, max-age=3600'
+        : /[?&]v=[0-9a-f]{8,}(?:&|$)/.test(req.url || '') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600'
     };
 
     if (req.headers['if-none-match'] === headers.ETag || req.headers['if-modified-since'] === headers['Last-Modified']) {

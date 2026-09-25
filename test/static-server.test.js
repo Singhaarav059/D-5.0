@@ -72,3 +72,23 @@ test('static server protects the root and serves safe routes', async (t) => {
   assert.equal(post.status, 405);
   assert.equal(post.headers.allow, 'GET, HEAD');
 });
+
+test('fingerprinted assets are cached for a year, plain ones for an hour', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'static-server-'));
+  await fs.writeFile(path.join(root, 'index.html'), '<h1>ok</h1>');
+  await fs.writeFile(path.join(root, 'site.css'), 'body{}');
+  const server = createStaticServer({ root });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    await fs.rm(root, { recursive: true, force: true });
+  });
+
+  const versioned = await request(server, 'GET', '/site.css?v=0123456789');
+  assert.equal(versioned.status, 200);
+  assert.match(versioned.headers['cache-control'], /max-age=31536000, immutable/);
+  const plain = await request(server, 'GET', '/site.css');
+  assert.equal(plain.headers['cache-control'], 'public, max-age=3600');
+  const page = await request(server, 'GET', '/?v=0123456789');
+  assert.equal(page.headers['cache-control'], 'no-cache');
+});

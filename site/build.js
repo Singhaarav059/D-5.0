@@ -454,7 +454,21 @@ const pages = {
   }),
 };
 
-for (const [name, html] of Object.entries(pages)) {
+// Fingerprint local assets (./assets/...) with a hash of their contents so a deploy never serves new
+// pages with stale CSS/JS; the server caches fingerprinted URLs for a year.
+const crypto = require('crypto');
+const fingerprints = new Map();
+const fingerprint = (html) => html.replace(/(src|href)="\.\/(assets\/[^"?#]+)"/g, (m, attr, rel) => {
+  if (!fingerprints.has(rel)) {
+    const file = path.join(__dirname, rel);
+    fingerprints.set(rel, fs.existsSync(file) ? crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex').slice(0, 10) : null);
+  }
+  const v = fingerprints.get(rel);
+  return v ? `${attr}="./${rel}?v=${v}"` : m;
+});
+
+for (const [name, page] of Object.entries(pages)) {
+  const html = fingerprint(page);
   fs.writeFileSync(path.join(__dirname, name + '.html'), html);
   console.log('wrote', name + '.html', (html.length / 1024).toFixed(1) + 'KB');
 }
