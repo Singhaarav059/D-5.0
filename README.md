@@ -33,7 +33,7 @@ public/                Everything a visitor can load (the only folder the server
     cine.js            Home hero opening + Three.js dotted globe
     ink.js             "How we work" ink story (canvas)
     boot.js            Sets motion / reduced-motion classes before first paint
-    fonts/, fonts.css  Self-hosted fonts (Figtree, Instrument Serif, JetBrains Mono)
+    fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree, JetBrains Mono)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
     img/work/          Project screens + founder photo (WebP + PNG/JPEG fallback) and manifest.json
     img/tech/          Technology logos used in the tools map
