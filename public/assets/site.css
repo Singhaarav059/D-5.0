@@ -654,19 +654,51 @@ html:has(.pdlg[open]) { overflow: hidden; }
 /* Office "map": a local, code-drawn location card (no third-party embed); the whole card opens Google Maps. */
 .visit__map { position: relative; display: block; border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 16 / 10; background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(61, 90, 254, 0.22), transparent 70%), #0a0d20; box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.18); }
 .visit__map svg { width: 100%; height: 100%; display: block; }
-.visit__dots { fill: rgba(143, 164, 255, 0.18); }
-.visit__dots circle, #visit-dots circle { fill: rgba(143, 164, 255, 0.22); }
-.visit__road { fill: none; stroke: rgba(169, 184, 255, 0.45); stroke-width: 6; stroke-linecap: round; }
-.visit__road.is-minor { stroke-width: 3; stroke: rgba(169, 184, 255, 0.25); }
-.visit__ring { fill: none; stroke: rgba(109, 134, 255, 0.5); stroke-width: 1.2; transform-origin: 240px 150px; animation: visit-pulse 3.2s ease-out infinite; }
+.visit__art { transform-origin: 261px 138px; transition: transform 700ms var(--ease-out); }
+.visit__map:hover .visit__art { transform: scale(1.04); }
+#visit-dots circle { fill: rgba(143, 164, 255, 0.14); }
+.visit__blocks path { fill: rgba(143, 164, 255, 0.05); stroke: rgba(143, 164, 255, 0.08); stroke-width: 1; }
+.visit__park { fill: rgba(94, 214, 160, 0.1); stroke: rgba(94, 214, 160, 0.2); stroke-width: 1; }
+.visit__water { fill: rgba(80, 170, 255, 0.14); }
+.visit__streets path { fill: none; stroke: rgba(169, 184, 255, 0.14); stroke-width: 2; stroke-linecap: round; }
+.visit__road { fill: none; stroke: rgba(169, 184, 255, 0.42); stroke-width: 5; stroke-linecap: round; }
+.visit__road.is-casing { stroke: rgba(5, 6, 12, 0.7); stroke-width: 9; }
+.visit__hwy { fill: none; stroke: rgba(196, 206, 255, 0.55); stroke-width: 10; stroke-linecap: round; }
+.visit__hwy.is-casing { stroke: rgba(5, 6, 12, 0.75); stroke-width: 16; }
+.visit__hwy-line { fill: none; stroke: rgba(10, 13, 32, 0.8); stroke-width: 1; stroke-dasharray: 6 6; }
+.visit__route { fill: none; stroke: #6d86ff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 7; filter: drop-shadow(0 0 5px rgba(109, 134, 255, 0.9)); animation: visit-route 1.4s linear infinite; }
+@keyframes visit-route { to { stroke-dashoffset: -18; } }
+.visit__street-name { font: 500 7.5px/1 var(--mono); letter-spacing: 0.22em; fill: rgba(223, 229, 255, 0.72); paint-order: stroke; stroke: rgba(5, 6, 12, 0.85); stroke-width: 3px; dominant-baseline: middle; }
+.visit__dir { font: 500 7px/1 var(--mono); letter-spacing: 0.18em; fill: rgba(169, 184, 255, 0.55); }
+.visit__compass circle { fill: rgba(5, 6, 12, 0.6); stroke: rgba(143, 164, 255, 0.3); }
+.visit__compass path { fill: #6d86ff; }
+.visit__compass path.is-s { fill: rgba(169, 184, 255, 0.35); }
+.visit__compass text { font: 500 7px/1 var(--mono); fill: rgba(223, 229, 255, 0.8); text-anchor: middle; }
+.visit__bldg { fill: rgba(109, 134, 255, 0.45); stroke: #8fa4ff; stroke-width: 1.2; }
+.visit__ring { fill: none; stroke: rgba(109, 134, 255, 0.55); stroke-width: 1.2; transform-origin: 261px 138px; animation: visit-pulse 3.2s ease-out infinite; }
 .visit__ring.is-2 { animation-delay: 1.6s; }
-@keyframes visit-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+@keyframes visit-pulse { from { transform: scale(0.3); opacity: 1; } to { transform: scale(2); opacity: 0; } }
 .visit__pin { fill: #3d5afe; filter: drop-shadow(0 0 10px rgba(61, 90, 254, 0.9)); }
 .visit__pin-dot { fill: #fff; }
+.visit__callout rect { fill: rgba(10, 13, 32, 0.88); stroke: rgba(143, 164, 255, 0.35); }
+.visit__callout text { font: 400 8.5px/1 var(--body); fill: rgba(223, 229, 255, 0.7); }
+.visit__callout text.is-title { font: 600 11px/1 var(--display); fill: #f2f1ee; }
+/* 3D diorama (visit3d.js) fades in over the SVG once it has drawn; tags are HTML pinned to 3D points. */
+.visit__map svg { transition: opacity 900ms ease; }
+.visit3d { position: absolute; inset: 0; opacity: 0; transition: opacity 900ms ease; pointer-events: none; }
+.visit3d canvas { width: 100%; height: 100%; display: block; }
+.visit__map.has-3d .visit3d { opacity: 1; }
+.visit__map.has-3d svg { opacity: 0; }
+.visit__tag { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 600ms ease 300ms; }
+.visit__map.has-3d .visit__tag { opacity: 1; }
+.visit__tag.is-road { margin-top: -6px; padding: 5px 8px; border-radius: 6px; background: rgba(5, 6, 12, 0.6); font: 500 0.58rem/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(223, 229, 255, 0.78); }
+.visit__tag.is-office { display: grid; gap: 4px; margin-top: -8px; padding: 9px 13px; border-radius: 12px; background: rgba(10, 13, 32, 0.86); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.35), 0 12px 30px -12px rgba(61, 90, 254, 0.7); font: 600 0.82rem/1 var(--display); color: #f2f1ee; }
+.visit__tag.is-office small { font: 400 0.68rem/1 var(--body); color: rgba(223, 229, 255, 0.7); }
+.visit__label { z-index: 2; }
 .visit__label { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(5, 6, 12, 0.7); box-shadow: inset 0 0 0 1px rgba(143, 164, 255, 0.25); font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; color: #dfe5ff; }
 .visit__label i { width: 6px; height: 6px; border-radius: 50%; background: #6d86ff; box-shadow: 0 0 8px #6d86ff; }
 .visit__map:hover .visit__label { background: #3d5afe; }
-@media (prefers-reduced-motion: reduce) { .visit__ring { animation: none; opacity: 0.5; } }
+@media (prefers-reduced-motion: reduce) { .visit__ring, .visit__route { animation: none; } .visit__ring { opacity: 0.5; } .visit__art { transition: none; } }
 .visit__ctas { justify-content: flex-start; }
 
 /* ---------- footer ---------- */

@@ -31,6 +31,7 @@ public/                Everything a visitor can load (the only folder the server
     site.css           All styles
     site.js            Interactions and scroll motion (GSAP + ScrollTrigger + Lenis)
     cine.js            Home hero opening + Three.js dotted globe
+    visit3d.js         Contact page office map as a Three.js diorama (SVG fallback in the page)
     ink.js             "How we work" ink story (canvas)
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree, JetBrains Mono)
