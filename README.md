@@ -120,6 +120,12 @@ share image are built for `https://demazetech.com`, so they resolve once that do
 Caching: HTML is always revalidated; every asset link carries a content fingerprint (`?v=<hash>`, added by the
 build), so assets are cached for a year and a deploy never shows stale styles.
 
+### Render (alternative host)
+
+Create a **Web Service** from this repository with runtime Node, build command `npm ci`, start command
+`npm start` and health check path `/`. Add `NODE_ENV=production` and, for the contact form, `CONTACT_WEBHOOK_URL`
+as environment variables. Render supplies `PORT`; the server detects Render and listens on `0.0.0.0`.
+
 ## Checks
 
 ```bash
