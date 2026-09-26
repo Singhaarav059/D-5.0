@@ -49,10 +49,36 @@
   // Thin concentric rings behind every chapter (the X Ticker backdrop).
   const RINGS = `<svg class="reel__rings" viewBox="0 0 640 440" aria-hidden="true">${[92, 164, 244, 330].map((r) => `<circle cx="320" cy="250" r="${r}"/>`).join('')}</svg>`;
 
-  // Art circling the name on the title and sign-off: the brief's own icons on an elliptical orbit, kept above and below
-  // the name (never level with it) so they frame it without covering it.
-  const SLOTS = [-142, -38, 38, 142, -90, 90];
-  const orbit = (arts, cls) => `<div class="reel__orbit ${cls}">${arts.map((a, i) => { const ang = (SLOTS[i] * Math.PI) / 180; return `<i class="reel__sat" style="left:${(50 + 47 * Math.cos(ang)).toFixed(1)}%;top:${(50 + 47 * Math.sin(ang)).toFixed(1)}%">${art(a)}</i>`; }).join('')}</div>`;
+  // Openings: every reel starts its own way (content.js `open`), so the grid of cards never shows sixteen copies of
+  // one title card. Each shares the same parts (case number, name, tagline, client) and adds its own device.
+  const ROLL = '0123456789'; // equal-width figures, like a rate board
+  const letters = (name, kind) => [...name].map((c, i) => {
+    const ch = c === ' ' ? '&nbsp;' : esc(c);
+    if (kind === 'ticker' && c !== ' ') { // a column of passing characters that rolls up to the real one
+      const pass = Array.from({ length: 5 }, (_, k) => ROLL[(name.charCodeAt(i) * 7 + k * 11 + i * 3) % ROLL.length]);
+      return `<span class="reel__rollbox"><i>${ch}</i><b class="reel__roll">${pass.map(esc).join('<br>')}<br>${ch}</b></span>`; // the <i> sizes the slot to the real letter
+    }
+    return `<span><b>${ch}</b></span>`;
+  }).join('');
+  const OPEN_DECOR = {
+    spotlight: '<i class="reel__light"></i>',
+    rise: '<i class="reel__sun"></i>',
+    marquee: (d) => `<div class="reel__ghost" aria-hidden="true">${Array.from({ length: 3 }, () => `<span>${esc(d.name)}</span>`).join('')}</div>`,
+    ribbon: '<i class="reel__ribbon reel__ribbon--h"></i><i class="reel__ribbon reel__ribbon--v"></i><i class="reel__bow"></i>',
+    seal: '<svg class="reel__seal" viewBox="0 0 200 200"><circle cx="100" cy="100" r="92"/><circle class="reel__seal-dash" cx="100" cy="100" r="80"/></svg><b class="reel__covered"><i>✓</i>Covered</b>',
+    count: '<div class="reel__leader"><svg viewBox="0 0 100 100"><circle class="reel__leader-ring" cx="50" cy="50" r="44"/><circle class="reel__leader-sweep" cx="50" cy="50" r="22"/><path d="M50 0V100M0 50H100"/></svg><b>3</b></div>',
+  };
+  const opening = (d, size) => {
+    const kind = d.open || 'rise', deco = OPEN_DECOR[kind];
+    const name = `<h3 style="font-size:${size}px">${letters(d.name, kind)}${kind === 'type' ? '<i class="reel__caret"></i>' : ''}</h3>`;
+    return `<section class="reel__scene reel__title reel__title--${kind}">${typeof deco === 'function' ? deco(d) : deco || ''}<div class="reel__inner">
+        <small class="reel__case">Case study ${esc(d.num)}</small>
+        ${kind === 'split' ? `<div class="reel__split">${name.replace('<h3', '<h3 class="reel__half reel__half--a"')}${name.replace('<h3', '<h3 class="reel__half reel__half--b" aria-hidden="true"')}<i class="reel__rule"></i></div>` : name}
+        ${kind === 'type' ? `<b class="reel__stamp">Case ${esc(d.num)}</b>` : ''}
+        <div class="reel__tagline">${words(d.tagline, 1)}</div>
+        ${d.client ? `<small class="reel__client">${esc(d.client)}</small>` : ''}
+      </div></section>`;
+  };
 
   function heroMarkup(h) {
     if (h.kind === 'car') {
@@ -83,7 +109,6 @@
 
   function markup(d, plan) {
     const size = Math.min(112, Math.round(560 / (d.name.length * 0.56)));
-    const sats = (d.brief?.items || []).map((it) => it.art).concat(['sparkle', 'star']).slice(0, 6);
     const scenes = d.scenes.map((sc) => `<section class="reel__scene rk rk--${sc.type}"><div class="reel__inner">${TYPES[sc.type].html(sc)}</div></section>`).join('');
     return `<div class="reel__bg">${RINGS}</div><i class="reel__flash"></i>
     <div class="reel__stage">
@@ -91,20 +116,15 @@
       <div class="reel__progress"><em></em></div>
       <div class="reel__caps">${plan.map((p) => `<h4 class="reel__cap">${p.cap ? words(p.cap, p.accent) : ''}</h4>`).join('')}</div>
 
-      <section class="reel__scene reel__title">${orbit(sats, 'reel__orbit--title')}<div class="reel__inner">
-        <small class="reel__case">Case study ${esc(d.num)}</small>
-        <h3 style="font-size:${size}px">${[...d.name].map((c) => `<span><b>${c === ' ' ? '&nbsp;' : esc(c)}</b></span>`).join('')}</h3>
-        <div class="reel__tagline">${words(d.tagline, 1)}</div>
-        ${d.client ? `<small class="reel__client">${esc(d.client)}</small>` : ''}
-      </div></section>
+      ${opening(d, size)}
       ${d.brief ? `<section class="reel__scene rk rk--brief"><div class="reel__inner">${TYPES.brief.html(d.brief)}</div></section>` : ''}
       ${heroMarkup(d.hero)}
       ${scenes}
       ${d.outcome ? `<section class="reel__scene rk rk--outcome"><div class="reel__inner">${TYPES.outcome.html(d.outcome)}</div></section>` : ''}
 
-      <section class="reel__scene reel__outro">${orbit(sats, 'reel__orbit--outro')}<div class="reel__inner">
+      <section class="reel__scene reel__outro"><div class="reel__inner">
         <div class="reel__kicker">${esc(d.outro)}</div>
-        <h3>${esc(d.name)}</h3>
+        <h3>${esc(d.name)}</h3><i class="reel__underline"></i>
         <div class="reel__sign">Designed &amp; built by <b>Demaze</b></div>
       </div></section>
     </div>`;
@@ -202,7 +222,7 @@
         .set('.reel__title h3 b', { yPercent: 110 }, 0)
         .set('.reel__title .reel__tagline b', { yPercent: 110 }, 0)
         .set('.reel__title .reel__inner > small', { opacity: 0, y: 10 }, 0)
-        .set('.reel__outro .reel__inner > *', { opacity: 0, y: 24 }, 0);
+        .set('.reel__outro .reel__inner > *:not(.reel__underline)', { opacity: 0, y: 24 }, 0);
 
       let t = 0, idx = 0;
       const chapter = (dur, fn) => {
@@ -216,16 +236,96 @@
         t += dur; idx += 1;
       };
 
-      // Title: the brief's icons circle in on a ring, the name lands on the beat, then what it is and who it was for.
+      // Opening, in this reel's own way; the tagline and small print follow once the name has landed.
       chapter(TITLE, (s, e) => {
         const $ = find(scenes[idx]);
-        const ring = $('.reel__orbit')[0], sats = $('.reel__sat');
-        tl.fromTo(ring, { scale: 0.7, rotation: -10 }, { scale: 1.1, rotation: 6, duration: e - s, ease: 'power1.out', immediateRender: false }, s)
-          .fromTo(sats, { rotation: 10 }, { rotation: -6, duration: e - s, ease: 'power1.out', immediateRender: false }, s);
-        pop(tl, sats, s + 0.05, 0.07, { opacity: 0, scale: 0.2 });
-        tl.to('.reel__title h3 b', { yPercent: 0, duration: 0.8, stagger: 0.035, ease: 'expo.out' }, s + 0.2)
-          .to('.reel__title .reel__tagline b', { yPercent: 0, duration: 0.6, stagger: 0.06, ease: 'expo.out' }, s + 0.75)
-          .to('.reel__title .reel__inner > small', { opacity: 1, y: 0, duration: 0.5, stagger: 0.3 }, s + 0.6);
+        const kind = d.open || 'rise', L = $('h3 b'), spans = $('h3 > span');
+        let land = s + 1; // when the name is readable
+        if (kind === 'spotlight') {
+          // a pool of light sweeps in from the dark and each letter lights as it passes
+          tl.set(L, { yPercent: 0, opacity: 0.07 }, 0)
+            .fromTo($('.reel__light'), { xPercent: -170, opacity: 0.4 }, { xPercent: -50, opacity: 1, duration: 1.5, ease: 'power2.out', immediateRender: false }, s)
+            .to(L, { opacity: 1, duration: 0.3, stagger: 0.07, ease: 'power1.in' }, s + 0.35);
+          land = s + 0.4 + L.length * 0.07;
+        } else if (kind === 'type') {
+          // typed a letter at a time behind a caret, then stamped with the case number
+          tl.set(L, { yPercent: 0 }, 0).set(spans, { display: 'none' }, 0);
+          spans.forEach((sp, i) => tl.set(sp, { display: 'block' }, s + 0.25 + i * 0.075));
+          land = s + 0.35 + spans.length * 0.075;
+          tl.set($('.reel__stamp'), { opacity: 0, scale: 2.4, rotation: -20 }, 0).to($('.reel__stamp'), { opacity: 1, scale: 1, rotation: -9, duration: 0.28, ease: 'power4.in' }, land + 0.9);
+        } else if (kind === 'split') {
+          // the two halves of the name slide in from opposite sides and lock on a ruled line
+          tl.set(L, { yPercent: 0 }, 0)
+            .fromTo($('.reel__half--a'), { xPercent: -30, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.9, ease: 'expo.out', immediateRender: false }, s + 0.2)
+            .fromTo($('.reel__half--b'), { xPercent: 30, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.9, ease: 'expo.out', immediateRender: false }, s + 0.2)
+            .fromTo($('.reel__rule'), { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.6, ease: 'power2.inOut', immediateRender: false }, s)
+            .to($('.reel__rule'), { opacity: 0, duration: 0.3 }, s + 1);
+          land = s + 1;
+        } else if (kind === 'marquee') {
+          // the name enters far too big and runs across the frame, settling to size; its outline keeps drifting behind
+          tl.set(L, { yPercent: 0 }, 0)
+            .fromTo($('h3'), { scale: 3.2, xPercent: 80 }, { scale: 1, xPercent: 0, duration: 1.5, ease: 'expo.inOut', immediateRender: false }, s)
+            .fromTo($('.reel__ghost'), { xPercent: 0 }, { xPercent: -30, duration: e - s, ease: 'none', immediateRender: false }, s);
+          land = s + 1.4;
+        } else if (kind === 'grid') {
+          // letters flip up out of the dot grid in no particular order
+          tl.set(L, { yPercent: 0 }, 0)
+            .fromTo(spans, { rotationX: -95, opacity: 0, transformOrigin: '50% 100%' }, { rotationX: 0, opacity: 1, duration: 0.6, stagger: { each: 0.06, from: 'random' }, ease: 'back.out(1.6)', immediateRender: false }, s + 0.15);
+          land = s + 0.8 + spans.length * 0.06;
+        } else if (kind === 'draft') {
+          // drafted: dimension lines, the name in outline, then inked in
+          const P = getComputedStyle(el).getPropertyValue('--fg').trim() || '#0e0f12';
+          tl.set(L, { yPercent: 0, color: 'rgba(30,70,130,0.16)' }, 0) // pencilled in pale blue, then inked
+            // the dimension lines are drawn on the name itself (CSS ::before/::after), so they always fit it
+            .fromTo($('h3'), { '--dim': 0 }, { '--dim': 1, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, s + 0.1)
+            .fromTo(L, { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.05, immediateRender: false }, s + 0.3)
+            .to(L, { color: P, duration: 0.4, stagger: 0.03 }, s + 1.2);
+          land = s + 1.4;
+        } else if (kind === 'ribbon') {
+          // a ribbon crosses the frame like the band on a gift, then unties to show the name
+          tl.set(L, { yPercent: 0 }, 0)
+            .fromTo($('.reel__ribbon--h'), { scaleX: 0, clipPath: 'inset(0% 0% 0% 0%)' }, { scaleX: 1, duration: 0.45, ease: 'power3.out', immediateRender: false }, s)
+            .fromTo($('.reel__ribbon--v'), { scaleY: 0, clipPath: 'inset(0% 0% 0% 0%)' }, { scaleY: 1, duration: 0.45, ease: 'power3.out', immediateRender: false }, s + 0.15)
+            .fromTo($('.reel__bow'), { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2.5)', immediateRender: false }, s + 0.45)
+            .to($('.reel__bow'), { scale: 0, rotation: 60, duration: 0.3, ease: 'power2.in' }, s + 1.05)
+            .to($('.reel__ribbon--h'), { clipPath: 'inset(0% 50% 0% 50%)', duration: 0.55, ease: 'power3.inOut' }, s + 1.15)
+            .to($('.reel__ribbon--v'), { clipPath: 'inset(50% 0% 50% 0%)', duration: 0.55, ease: 'power3.inOut' }, s + 1.15)
+            .fromTo(L, { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, s + 1.2);
+          land = s + 1.6;
+        } else if (kind === 'ticker') {
+          // each letter rolls through passing characters to its own, like a rate board settling
+          tl.set($('.reel__roll'), { yPercent: 0 }, 0)
+            .to($('.reel__roll'), { yPercent: -83.333, duration: 0.9, stagger: 0.06, ease: 'power3.inOut' }, s + 0.25);
+          land = s + 1.1 + spans.length * 0.06;
+        } else if (kind === 'seal') {
+          // a policy seal draws itself around the name, then a 'covered' mark lands on it
+          const ring = $('.reel__seal circle');
+          ring.forEach((c) => { const L = c.getTotalLength(); c.style.strokeDasharray = c.classList.contains('reel__seal-dash') ? '3 7' : L; if (!c.classList.contains('reel__seal-dash')) tl.set(c, { strokeDashoffset: L }, 0); });
+          tl.to(ring[0], { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, s)
+            .fromTo(ring[1], { opacity: 0, rotation: -40, svgOrigin: '100 100' }, { opacity: 1, rotation: 0, duration: 1.2, ease: 'power2.out', immediateRender: false }, s + 0.3)
+            .to(L, { yPercent: 0, duration: 0.8, stagger: 0.035, ease: 'expo.out' }, s + 0.35)
+            .set($('.reel__covered'), { opacity: 0 }, 0)
+            .fromTo($('.reel__covered'), { opacity: 0, scale: 2, rotation: -16 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.3, ease: 'power4.in', immediateRender: false }, s + 1.35);
+          land = s + 1;
+        } else if (kind === 'count') {
+          // a film leader counts down 3, 2, 1, flashes, and the title cuts in
+          const n = $('.reel__leader b')[0], leader = $('.reel__leader')[0];
+          tl.set(L, { yPercent: 110 }, 0).set(leader, { opacity: 1, scale: 1 }, 0).call(() => { n.textContent = '3'; }, null, s + 0.01)
+            .fromTo($('.reel__leader-sweep'), { rotation: -90, svgOrigin: '50 50', attr: { 'stroke-dasharray': '0 139' } }, { attr: { 'stroke-dasharray': '139 0' }, duration: 0.4, repeat: 2, ease: 'none', immediateRender: false }, s)
+            .call(() => { n.textContent = '2'; }, null, s + 0.4).call(() => { n.textContent = '3'; }, null, s + 0.39)
+            .call(() => { n.textContent = '1'; }, null, s + 0.8).call(() => { n.textContent = '2'; }, null, s + 0.79)
+            .to(leader, { opacity: 0, scale: 1.3, duration: 0.2 }, s + 1.2)
+            .fromTo(flash, { opacity: 0.9 }, { opacity: 0, duration: 0.35, immediateRender: false }, s + 1.2)
+            .to(L, { yPercent: 0, duration: 0.6, stagger: 0.03, ease: 'expo.out' }, s + 1.25);
+          land = s + 1.6;
+        } else {
+          // rise: a disc of the project's colour comes up behind the name as its letters rise
+          tl.fromTo($('.reel__sun'), { yPercent: 60, scale: 0.7, opacity: 0 }, { yPercent: 0, scale: 1, opacity: 1, duration: 1.4, ease: 'power3.out', immediateRender: false }, s)
+            .to(L, { yPercent: 0, duration: 0.8, stagger: 0.035, ease: 'expo.out' }, s + 0.25);
+          land = s + 0.9;
+        }
+        tl.to('.reel__title .reel__tagline b', { yPercent: 0, duration: 0.6, stagger: 0.06, ease: 'expo.out' }, Math.min(land, e - 1.2))
+          .to('.reel__title .reel__inner > small', { opacity: 1, y: 0, duration: 0.5, stagger: 0.25 }, Math.min(land - 0.3, e - 1.2));
       });
 
       if (d.brief) chapter(d.brief.dur || TYPES.brief.dur, (s, e) => TYPES.brief.run(tl, s, find(scenes[idx]), d.brief, e - OUT));
@@ -312,14 +412,11 @@
 
       if (d.outcome) chapter(d.outcome.dur || TYPES.outcome.dur, (s, e) => TYPES.outcome.run(tl, s, find(scenes[idx]), d.outcome, e - OUT));
 
-      // Sign-off: the icons fall inward to the name, then everything fades so the loop restarts from a clean frame.
+      // Sign-off: the name, a line drawn under it and the maker, then everything fades so the loop restarts clean.
       chapter(OUTRO, (s, e) => {
         const $ = find(scenes[idx]);
-        const ring = $('.reel__orbit')[0], sats = $('.reel__sat');
-        tl.set(sats, { opacity: 1, scale: 1 }, 0)
-          .fromTo(ring, { scale: 1.25, rotation: 30 }, { scale: 0.2, rotation: -40, duration: 1.1, ease: 'expo.in', immediateRender: false }, s)
-          .to(sats, { opacity: 0, duration: 0.2 }, s + 0.95)
-          .to('.reel__outro .reel__inner > *', { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'expo.out' }, s + 0.9)
+        tl.to('.reel__outro .reel__inner > *:not(.reel__underline)', { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'expo.out' }, s + 0.15)
+          .fromTo($('.reel__underline'), { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, s + 0.45)
           .to(inners[inners.length - 1], { opacity: 0, duration: 0.4 }, e - 0.45)
           .set({}, {}, e);
       });

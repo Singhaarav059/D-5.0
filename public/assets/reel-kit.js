@@ -150,11 +150,22 @@
     <ellipse cx="60" cy="32" rx="15" ry="17" fill="#e8bb96"/>
     <path d="M45 30c0-14 9-20 16-20s16 5 15 20c-3-7-9-10-16-10s-12 4-15 10z" fill="#3a2a24"/><circle cx="60" cy="10" r="7" fill="#3a2a24"/>
   </svg>`;
+  // Garments are drawn on the avatar's own body lines so they cover what they should: sleeves run from the shoulder
+  // to the wrist (only the hands show), hems fall where that garment would. The arms span x 28–45 and 75–92, wrists
+  // at y≈128; shoulders at y≈58; hips at y≈128; knees at y≈175.
   const GARMENT = {
-    dress: (c) => `<path d="M46 58h6l2 8h12l2-8h6l1 8 4 26-2 8 12 58H29l12-58-2-8 4-26z" fill="${c}"/><path d="M41 98h38l-1 6H42z" fill="rgba(0,0,0,0.18)"/>`,
-    blazer: (c) => `<path d="M40 60c6-5 34-5 40 0l12 20-2 50-8 2-2-54-2 92H42l-2-92-2 54-8-2-2-50z" fill="${c}"/><path d="M54 60l6 30 6-30-2 110h-8z" fill="#ece6dc"/><path d="M54 60l6 30-8-6-4-18zM66 60l-6 30 8-6 4-18z" fill="rgba(0,0,0,0.16)"/>`,
-    kimono: (c) => `<path d="M42 60c6-4 30-4 36 0l26 28-10 18-12-10v76H38V96l-12 10-10-18z" fill="${c}"/><path d="M52 60l8 24 8-24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="3"/><rect x="38" y="104" width="44" height="12" fill="rgba(0,0,0,0.35)"/>
-      ${[[50, 130], [70, 140], [58, 158], [30, 92], [92, 92], [66, 76]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="rgba(255,255,255,0.55)"/>`).join('')}`,
+    // a sleeveless midi dress with a fitted bodice and a flared skirt; the arms stay bare
+    dress: (c) => `<path d="M41.5 57C47 54 53 53 55 54L60 62 65 54C67 53 73 54 78.5 57L80 69 82.5 98 80.5 101 92 163H28L39.5 101 37.5 98 40 69Z" fill="${c}"/>
+      <path d="M40 98h40l-1 5H41z" fill="rgba(0,0,0,0.2)"/><path d="M46 104l-8 58M60 104v60M74 104l8 58" stroke="rgba(0,0,0,0.08)" stroke-width="1.5"/>`,
+    // a long linen coat, open over the top, with full sleeves to the wrist
+    blazer: (c) => `<path d="M40 58c-6 2-9 10-12 22l-3 26 2 24h13l1-24 4-24z" fill="${c}"/><path d="M80 58c6 2 9 10 12 22l3 26-2 24H80l-1-24-4-24z" fill="${c}"/>
+      <path d="M41 56c6-4 32-4 38 0l3 44-1 76H39l-1-76z" fill="${c}"/><path d="M54 57l6 30 6-30v118H54z" fill="#ece6dc"/>
+      <path d="M54 57l6 30-9-5-5-21zM66 57l-6 30 9-5 5-21z" fill="rgba(0,0,0,0.18)"/><path d="M27 124h13M80 124h13" stroke="rgba(0,0,0,0.15)" stroke-width="3"/>`,
+    // a silk kimono: wide hanging sleeves that hide the arms, a wrap to the ankle and an obi at the waist
+    kimono: (c) => `<path d="M42 56l-20 6-4 60c0 5 3 8 8 8h20l1-60z" fill="${c}"/><path d="M78 56l20 6 4 60c0 5-3 8-8 8H74l-1-60z" fill="${c}"/>
+      <path d="M42 55c6-3 30-3 36 0l4 70-2 78H40l-2-78z" fill="${c}"/><path d="M52 56l8 26 8-26" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="3"/><path d="M60 82v121" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/>
+      <rect x="39" y="96" width="42" height="13" fill="rgba(0,0,0,0.38)"/><rect x="39" y="101" width="42" height="3" fill="rgba(255,255,255,0.35)"/>
+      ${[[49, 128], [70, 142], [55, 166], [30, 84], [92, 84], [66, 72], [28, 110], [94, 110], [48, 188], [72, 184]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="rgba(255,255,255,0.55)"/>`).join('')}`,
   };
 
   const TYPES = {
@@ -200,7 +211,7 @@
       dur: 4,
       html: (sc) => `${sc.query ? `<div class="rk-searchbar">${glass}<span></span><i class="rk-caret"></i>${sc.ai ? '<b class="rk-chip">AI</b>' : ''}</div>` : ''}
         <div class="rk-products">${sc.items.map((it, i) => `<div class="rk-product${i === sc.pick ? ' is-pick' : ''}"><div class="rk-product__art">${art(it.art)}</div>
-          <strong>${esc(it.label)}</strong>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}${i === sc.pick ? `<b class="rk-badge">${esc(sc.badge || 'Picked')}</b>` : ''}</div>`).join('')}</div>`,
+          <strong${it.label.length > 9 ? ' class="is-long"' : ''}>${esc(it.label)}</strong>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}${i === sc.pick ? `<b class="rk-badge">${esc(sc.badge || 'Picked')}</b>` : ''}</div>`).join('')}</div>`,
       run(tl, t, $, sc, end) {
         let s = t + 0.1;
         if (sc.query) {
@@ -237,7 +248,7 @@
         const step = 3.4 / gs.length;
         gs.forEach((g, i) => {
           const s = t + 0.6 + i * step;
-          tl.to(rows[i], { backgroundColor: P.fg, color: P.inv, duration: 0.25 }, s)
+          tl.to(rows[i], { backgroundColor: P.fg, color: P.inv, duration: 0.25 }, s + 0.25)
             // the garment comes down over the head and settles on the shoulders
             .to(g, { opacity: 1, y: 0, scaleY: 1, duration: 0.6, ease: 'back.out(1.4)' }, s + 0.1)
             .to(scan, { opacity: 1, duration: 0.1 }, s + 0.55).fromTo(scan, { top: '0%' }, { top: '100%', duration: 0.5, ease: 'power2.inOut', immediateRender: false }, s + 0.55)
@@ -440,17 +451,21 @@
         $('.rk-links path').forEach((p) => { const l = p.getTotalLength(); p.style.strokeDasharray = `${l}`; tl.set(p, { strokeDashoffset: l }, 0); });
         tl.fromTo($('.rk-orb'), { scale: 0.6, opacity: 0, svgOrigin: '284 132' }, { scale: 1, opacity: 1, duration: 0.9, stagger: 0.1, ease: 'expo.out', immediateRender: false }, t);
         // side nodes hang inward from their link's end so long labels never run past the frame
-        tl.set($('.rk-hub'), { scale: 0 }, 0).set($('.rk-node'), { xPercent: (i, n) => (+n.dataset.x > 120 ? -86 : +n.dataset.x < -120 ? -14 : -50), yPercent: -50, x: 0, y: 0, scale: 0.3, opacity: 0 }, 0)
+        // each node keeps its angle but is pushed clear of the centre tile and pulled back inside the frame
+        const fit = (n) => { const w = n.offsetWidth / 2, x = +n.dataset.x, y = +n.dataset.y, W2 = 284 - 4;
+          if (Math.abs(y) < 80) return Math.sign(x) * Math.min(W2 - w, Math.max(Math.abs(x), 62 + 18 + w));
+          return Math.sign(x) * Math.min(W2 - w, Math.abs(x)); };
+        tl.set($('.rk-hub'), { scale: 0 }, 0).set($('.rk-node'), { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0.3, opacity: 0 }, 0)
           .to($('.rk-hub'), { scale: 1, duration: 0.5, ease: 'back.out(2)' }, t + 0.1)
           .to($('.rk-links path'), { strokeDashoffset: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }, t + 0.4);
-        $('.rk-node').forEach((c, i) => tl.to(c, { x: +c.dataset.x, y: +c.dataset.y, scale: 1, opacity: 1, duration: 0.6, ease: 'expo.out' }, t + 0.5 + i * 0.12));
+        $('.rk-node').forEach((c, i) => tl.to(c, { x: () => fit(c), y: +c.dataset.y, scale: 1, opacity: 1, duration: 0.6, ease: 'expo.out' }, t + 0.5 + i * 0.12));
         // pulses travel out to each node in turn, and the node answers
         const pulses = $('.rk-pulse'), nodes = $('.rk-node');
         tl.set(pulses, { x: 0, y: 0, opacity: 0, xPercent: -50, yPercent: -50 }, 0);
         const span = Math.max(1, end - t - 2.2) / nodes.length;
         nodes.forEach((nd, i) => {
           const s = t + 1.6 + i * span;
-          tl.to(pulses[i], { opacity: 1, duration: 0.1 }, s).to(pulses[i], { x: +nd.dataset.x, y: +nd.dataset.y, duration: 0.5, ease: 'power2.in' }, s)
+          tl.to(pulses[i], { opacity: 1, duration: 0.1 }, s).to(pulses[i], { x: () => fit(nd), y: +nd.dataset.y, duration: 0.5, ease: 'power2.in' }, s)
             .to(pulses[i], { opacity: 0, duration: 0.1 }, s + 0.5).to(nd, { scale: 1.08, duration: 0.18, yoyo: true, repeat: 1 }, s + 0.5);
         });
       },
@@ -671,7 +686,7 @@
         pop(tl, $('.rk-evidence'), t + 0.1, 0.14, { opacity: 0, scale: 1.3, y: -10 });
         drawOn(tl, $('.rk-strings path'), t + 1, 0.4, 0.15);
         tl.set($('.rk-lens'), { opacity: 0, x: 40, y: 40 }, 0).to($('.rk-lens'), { opacity: 1, duration: 0.2 }, t + 1.6)
-          .to($('.rk-lens'), { x: 430, y: 60, duration: 1.1, ease: 'sine.inOut' }, t + 1.6).to($('.rk-lens'), { x: 260, y: 170, duration: Math.max(0.8, end - t - 3.1), ease: 'sine.inOut' }, t + 2.7);
+          .to($('.rk-lens'), { x: 430, y: 60, duration: 1.1, ease: 'sine.inOut' }, t + 1.6).to($('.rk-lens'), { x: 228, y: 104, duration: Math.max(0.8, end - t - 3.1), ease: 'sine.inOut' }, t + 2.7);
       },
     },
 

@@ -197,13 +197,13 @@ module.exports = {
   // listed in reel-kit.js. Car heroes use the SUV studio renders (model: 'gls', a graphite Mercedes-Benz GLS, or 'rrs', a
   // debadged pearl Range Rover Sport); other heroes are 3D. Headlines put their last word or two in the project colour
   // (a scene can set `accent` to the number of words).
-  // Each reel has its own `look` (studio, noir, paper, blueprint, tint, dots), `move` between chapters (push, slide,
+  // Each reel opens its own way (`open`: spotlight, type, split, rise, marquee, grid, draft, ribbon, ticker, seal, count), has its own `look` (studio, noir, paper, blueprint, tint, dots), `move` between chapters (push, slide,
   // cut, wipe) and optional `align: 'left'`, so neighbouring cards never feel like the same film. Car heroes tell one
   // of two stories: the showroom start-up (default) or `story: 'service'` (drive-in, scan, job card). Dashboards have
   // one screen per sidebar tab in `views` (table, bars, line or donut); every figure in them is illustrative.
   reels: {
     'ai-based-software-for-luxury-car-dealers': {
-      name: 'Carzup', look: 'noir', move: 'push', tagline: 'AI software for luxury car dealers', client: "Built for one of India's largest luxury car dealerships",
+      name: 'Carzup', open: 'spotlight', look: 'noir', move: 'push', tagline: 'AI software for luxury car dealers', client: "Built for one of India's largest luxury car dealerships",
       brief: { text: 'One system to value used cars, quote new-car EMIs, run refurbishment and back the sales team.',
         items: [{ label: 'Valuations', art: 'car' }, { label: 'EMIs', art: 'card' }, { label: 'Refurbishment', art: 'tools' }, { label: 'Sales', art: 'office2' }] },
       hero: { kind: 'car', model: 'gls', chapter: 'Valuation', cap: 'A trade-in arrives and is valued accurately',
@@ -233,7 +233,7 @@ module.exports = {
       outro: 'Four tools · one dealership',
     },
     'investigative-case-management-software': {
-      name: 'Case Files', look: 'paper', move: 'cut', align: 'left', tagline: 'AI tools for private investigators', accent: '#2bb3a3',
+      name: 'Case Files', open: 'type', look: 'paper', move: 'cut', align: 'left', tagline: 'AI tools for private investigators', accent: '#2bb3a3',
       brief: { text: 'Give private investigators one secure place to organise cases, analyse media and automate the paperwork, from anywhere.',
         items: [{ label: 'Cases', art: 'folder' }, { label: 'Media', art: 'camera' }, { label: 'Documents', art: 'doc' }, { label: 'Security', art: 'lock' }] },
       hero: { kind: 'laptop', opts: { screen: { web: true, accent: '#2bb3a3', title: 'Cases', nav: ['Case board', 'Media', 'Documents', 'Workflows'], tiles: [['Cases', 'Organised'], ['Media', 'Stored'], ['Tasks', 'Automated']] } },
@@ -250,7 +250,7 @@ module.exports = {
       outro: 'Case work, organised',
     },
     'ai-powered-luxury-ecommerce-platform': {
-      name: 'Eco Chic', look: 'studio', move: 'slide', tagline: 'Sustainable luxury fashion', accent: '#2f7a5d',
+      name: 'Eco Chic', open: 'split', look: 'studio', move: 'slide', tagline: 'Sustainable luxury fashion', accent: '#2f7a5d',
       brief: { text: 'A premium store for sustainable luxury, where every piece can be bought, rented or resold.',
         items: [{ label: 'Shop', art: 'bagshop' }, { label: 'Rent', art: 'dress' }, { label: 'Resell', art: 'recycle' }, { label: 'Authenticate', art: 'gem' }] },
       hero: { kind: 'bag', opts: { color: '#1f5c46', label: 'ECO CHIC' }, chapter: 'The store', title: 'Eco Chic', cap: 'A premium, sustainable luxury store', tags: ['Shop', 'Rent', 'Sell'] },
@@ -280,7 +280,7 @@ module.exports = {
       outro: 'Luxury, made circular',
     },
     'senior-engagement-and-support-platform': {
-      name: 'Sukoon', look: 'paper', move: 'wipe', tagline: 'Community for seniors, by seniors', accent: '#e0a200', client: 'Sukoon Unlimited',
+      name: 'Sukoon', open: 'rise', look: 'paper', move: 'wipe', tagline: 'Community for seniors, by seniors', accent: '#e0a200', client: 'Sukoon Unlimited',
       brief: { text: 'Help seniors lead connected, purposeful lives, with support, conversation and activities that reduce isolation.',
         items: [{ label: 'Companions', art: 'senior' }, { label: 'Coaching', art: 'chat' }, { label: 'Meetups', art: 'calendar' }, { label: 'Stories', art: 'book' }] },
       hero: { kind: 'phone', opts: { accent: '#f5b50a', screen: { accent: '#e9a800', title: 'Sukoon', items: [['Sarathis', 'Trusted companions'], ['Club Sukoon', 'Activities'], ['Coaching', 'Personalised'], ['Meetups', 'Social'], ['Sukoon Corner', 'Blog']] } },
@@ -297,7 +297,7 @@ module.exports = {
       outro: 'Reducing isolation, fostering connection',
     },
     'multi-vendor-ecommerce-marketplace': {
-      name: 'Better That', look: 'tint', move: 'slide', align: 'left', tagline: 'You shop, we give back', accent: '#ef5b3f',
+      name: 'Better That', open: 'marquee', look: 'tint', move: 'slide', align: 'left', tagline: 'You shop, we give back', accent: '#ef5b3f',
       brief: { text: "Australia and New Zealand's marketplace where shoppers, retailers and good causes all do better.",
         items: [{ label: 'Shoppers', art: 'bagshop' }, { label: 'Retailers', art: 'store' }, { label: 'Good causes', art: 'heart' }, { label: 'Brands', art: 'tag' }] },
       hero: { kind: 'phone', opts: { accent: '#f3c3bb', screen: { accent: '#ef5b3f', title: 'better that.', items: [['Women', 'Shop by category'], ['Shoes', 'Latest trends'], ['Dresses', 'New in'], ['Accessories', 'Brands'], ['Wishlist', 'Saved']] } },
@@ -314,7 +314,7 @@ module.exports = {
       outro: 'Shopping made better',
     },
     'multi-shoppers-food-and-grocery-delivery-app': {
-      name: 'Local Shops', look: 'dots', move: 'push', align: 'left', tagline: 'Local stores, selling online', accent: '#2e9e4f',
+      name: 'Local Shops', open: 'grid', look: 'dots', move: 'push', align: 'left', tagline: 'Local stores, selling online', accent: '#2e9e4f',
       brief: { text: 'Help local shops sell online and run their digital stores, from the first order to the doorstep.',
         items: [{ label: 'Grocery', art: 'apple' }, { label: 'Household', art: 'basket' }, { label: 'Restaurants', art: 'takeout' }, { label: 'Delivery', art: 'scooter' }] },
       hero: { kind: 'phone', opts: { accent: '#f6c945', screen: { accent: '#2e9e4f', title: 'Deliver to Office', items: [['Grocery', 'Fresh & daily'], ['Household', 'Essentials'], ['Restaurants', 'Food'], ['Best Supermarket', 'Nearby'], ['Orders', 'Track']] } },
@@ -341,7 +341,7 @@ module.exports = {
       outro: 'Local stores, online',
     },
     'car-service-and-customer-engagement-platform': {
-      name: 'Car Service', look: 'blueprint', move: 'wipe', align: 'left', tagline: "For an authorised dealership's service department", accent: '#d64545',
+      name: 'Car Service', open: 'draft', look: 'blueprint', move: 'wipe', align: 'left', tagline: "For an authorised dealership's service department", accent: '#d64545',
       brief: { text: "Run an authorised dealership's service department on data: maintenance, repairs and body & paint.",
         items: [{ label: 'Maintenance', art: 'oil' }, { label: 'Repairs', art: 'wrench' }, { label: 'Body & paint', art: 'palette' }, { label: 'Customers', art: 'person3' }] },
       hero: { kind: 'car', model: 'rrs', story: 'service', chapter: 'Customer data', cap: 'Each car arrives with its customer record attached',
@@ -370,7 +370,7 @@ module.exports = {
       outro: 'Real-time service analytics',
     },
     'b2b-gift-marketplace': {
-      name: 'Greeto', look: 'tint', move: 'push', tagline: 'B2B gifting marketplace', accent: '#e8586b',
+      name: 'Greeto', open: 'ribbon', look: 'tint', move: 'push', tagline: 'B2B gifting marketplace', accent: '#e8586b',
       brief: { text: 'Connect gift resellers and manufacturers in one marketplace, with admins overseeing it all.',
         items: [{ label: 'Resellers', art: 'store' }, { label: 'Manufacturers', art: 'factory' }, { label: 'Admins', art: 'office' }, { label: 'Gifts', art: 'gift' }] },
       hero: { kind: 'gift', opts: { color: '#ff5a6e', products: ['basket', 'watch', 'headphone'] }, chapter: 'The marketplace', title: 'Greeto', cap: 'Resellers and manufacturers in one ecosystem', tags: ['Resellers', 'Manufacturers', 'Admins'] },
@@ -395,7 +395,7 @@ module.exports = {
       outro: 'Gifting, streamlined',
     },
     'global-payment-transfer-platform': {
-      name: 'Stablepay', look: 'noir', move: 'slide', tagline: 'The easiest way to transfer your money', accent: '#6b67b8',
+      name: 'Stablepay', open: 'ticker', look: 'noir', move: 'slide', tagline: 'The easiest way to transfer your money', accent: '#6b67b8',
       brief: { text: 'Make cross-border transfers fast, low-cost and safe, without traditional banking intermediaries.',
         items: [{ label: 'Global', art: 'earth' }, { label: 'Blockchain', art: 'link' }, { label: 'Stablecoins', art: 'coin' }, { label: 'Secure', art: 'lock' }] },
       hero: { kind: 'globe', opts: { color: '#6b67b8' }, chapter: 'The platform', title: 'Stablepay', cap: 'Fast, low-cost payments across borders', tags: ['USD → INR', 'Stablecoins', 'Cross-border'] },
@@ -410,7 +410,7 @@ module.exports = {
       outro: 'Fast · low-cost · secure',
     },
     'cma-report-generation-software': {
-      name: 'CMA Reports', look: 'blueprint', move: 'cut', align: 'left', tagline: 'Credit Monitoring Arrangement reports, automated', accent: '#c0392b',
+      name: 'CMA Reports', open: 'type', look: 'blueprint', move: 'cut', align: 'left', tagline: 'Credit Monitoring Arrangement reports, automated', accent: '#c0392b',
       brief: { text: 'Automate the preparation of Credit Monitoring Arrangement reports, from data tables to the final PDF.',
         items: [{ label: 'Data', art: 'ledger' }, { label: 'Charts', art: 'chart' }, { label: 'Cloud', art: 'cloud' }, { label: 'Export', art: 'receipt' }] },
       hero: { kind: 'chart', opts: { color: '#c0392b' }, chapter: 'The platform', title: 'CMA Reports', cap: 'Every data table and chart a CMA report needs', tags: ['Data tables', 'Charts', 'ReactJS · NodeJS'] },
@@ -435,7 +435,7 @@ module.exports = {
       outro: 'ReactJS · NodeJS',
     },
     'recruitment-platform': {
-      name: 'Find Your Work', look: 'studio', move: 'wipe', align: 'left', tagline: 'Hiring, from application to offer letter', accent: '#3b5bdb',
+      name: 'Find Your Work', open: 'split', look: 'studio', move: 'wipe', align: 'left', tagline: 'Hiring, from application to offer letter', accent: '#3b5bdb',
       brief: { text: 'Make hiring simple for businesses of all types, from the job post to the offer letter.',
         items: [{ label: 'Listings', art: 'brief' }, { label: 'Chat', art: 'chat' }, { label: 'Tracking', art: 'clipboard' }, { label: 'Analytics', art: 'chart' }] },
       hero: { kind: 'laptop', opts: { screen: { web: true, accent: '#1a3ee8', title: 'Hiring', nav: ['Job postings', 'Candidates', 'Chat', 'Analytics'], tiles: [['Postings', 'Live'], ['Candidates', 'Tracked'], ['Chats', 'Real-time']] } },
@@ -461,7 +461,7 @@ module.exports = {
       outro: 'The right candidate, the right employer',
     },
     'task-staff-and-document-management-platform': {
-      name: 'Task & Docs', look: 'dots', move: 'cut', tagline: 'For insurance and investment agencies', accent: '#4f86a8',
+      name: 'Task & Docs', open: 'type', look: 'studio', move: 'cut', tagline: 'For insurance and investment agencies', accent: '#4f86a8',
       brief: { text: 'Digitally transform insurance and investment agencies: tasks, staff and documents in one app.',
         items: [{ label: 'Tasks', art: 'clipboard' }, { label: 'Staff', art: 'office' }, { label: 'Documents', art: 'folder' }, { label: 'Messaging', art: 'chat' }] },
       hero: { kind: 'folders', opts: { color: '#5b8aa6' }, chapter: 'The app', title: 'Task & Docs', cap: 'Tasks, staff and documents in one place', tags: ['Tasks', 'Staff', 'Documents'] },
@@ -477,7 +477,7 @@ module.exports = {
       outro: 'Agencies, digitally transformed',
     },
     'educational-courses-and-lms-platform': {
-      name: 'Learning', look: 'tint', move: 'push', align: 'left', tagline: 'Courses, learners and VR', accent: '#3d8bfd',
+      name: 'Learning', open: 'rise', look: 'tint', move: 'push', align: 'left', tagline: 'Courses, learners and VR', accent: '#3d8bfd',
       brief: { text: 'One platform for courses, a learning management system and immersive VR lessons.',
         items: [{ label: 'Courses', art: 'books' }, { label: 'LMS', art: 'desktop' }, { label: 'Learners', art: 'student' }, { label: 'VR', art: 'vr' }] },
       hero: { kind: 'vr', opts: { color: '#3d8bfd' }, chapter: 'Immersive', title: 'VR lessons', cap: 'VR content for immersive learning', tags: ['VR content', 'Courses', 'Learners'] },
@@ -503,7 +503,7 @@ module.exports = {
       outro: 'Learn on screen or in VR',
     },
     'storyboard-creation-for-films-with-ai': {
-      name: 'Storyboard AI', look: 'noir', move: 'cut', tagline: 'Scripts into storyboards, in minutes', accent: '#e8672c',
+      name: 'Storyboard AI', open: 'count', look: 'noir', move: 'cut', tagline: 'Scripts into storyboards, in minutes', accent: '#e8672c',
       brief: { text: 'Turn scripts into visual storyboards in minutes, for filmmakers, advertisers and creators.',
         items: [{ label: 'Script', art: 'memo' }, { label: 'Scenes', art: 'clap' }, { label: 'Frames', art: 'film' }, { label: 'Editing', art: 'pen' }] },
       hero: { kind: 'clapper', opts: { color: '#ff5b1f', label: 'STORYBOARD' }, chapter: 'The tool', title: 'Storyboard AI', cap: 'Generative AI turns a script into a storyboard', tags: ['Script', 'Scenes', 'Frames'] },
@@ -519,7 +519,7 @@ module.exports = {
       outro: 'From script to screen',
     },
     'insurance-management-platform': {
-      name: 'InsureTech', look: 'paper', move: 'slide', tagline: 'Every policy in one hub', accent: '#e0662f',
+      name: 'InsureTech', open: 'seal', look: 'paper', move: 'slide', tagline: 'Every policy in one hub', accent: '#e0662f',
       brief: { text: 'Keep every insurance policy in one app, so no premium or coverage update is ever missed.',
         items: [{ label: 'Health', art: 'health' }, { label: 'Auto', art: 'car' }, { label: 'Home', art: 'house' }, { label: 'Life', art: 'umbrella' }] },
       hero: { kind: 'shield', opts: { color: '#e8612c' }, chapter: 'The app', title: 'InsureTech', cap: 'A single hub for every insurance policy', tags: ['Health', 'Auto', 'Life'] },
@@ -533,7 +533,7 @@ module.exports = {
       outro: 'Never miss a premium',
     },
     'social-media-and-social-commerce-platform': {
-      name: 'Social', look: 'tint', move: 'wipe', tagline: 'Connect through shared interests', accent: '#6a4cf0',
+      name: 'Social', open: 'marquee', look: 'dots', move: 'wipe', tagline: 'Connect through shared interests', accent: '#6a4cf0',
       brief: { text: 'A social network where shared interests become communities, and communities become a marketplace.',
         items: [{ label: 'Communities', art: 'hands' }, { label: 'Content', art: 'camera' }, { label: 'Marketplace', art: 'bagshop' }, { label: 'Wallet', art: 'coin' }] },
       hero: { kind: 'phone', opts: { accent: '#2a2340', screen: { dark: true, accent: '#5b3cf5', title: 'Discover', items: [['Adrenaline Junkies', 'Community'], ['Market', 'Peer-to-peer'], ['Leaderboard', 'Top creators'], ['Wallet', 'Crypto']] } },
