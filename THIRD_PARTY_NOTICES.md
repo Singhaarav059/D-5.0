@@ -28,3 +28,20 @@ site icons. All product names and logos are trademarks of their respective owner
 ## Images
 
 Project screens, the founder photo and the brand mark are Demaze Technologies' own material.
+
+## Project reel artwork (`public/assets/img/reel/`)
+
+| Artwork | Files | Source | Licence |
+| --- | --- | --- | --- |
+| Fluent Emoji 3D renders (objects and people in the reels) | every file except `suv-*.webp` | [microsoft/fluentui-emoji](https://github.com/microsoft/fluentui-emoji), resized to 224px WebP | MIT, Copyright (c) Microsoft Corporation |
+| SUV studio renders (Carzup reel) | `suv-gls-*.webp` | This work is based on "[Mersedes- Benz GLS](https://sketchfab.com/3d-models/mersedes-benz-gls-6f8ad7f1624e42c58b4e9525cc45c8be)" by [Black Snow](https://sketchfab.com/BlackSnow02) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| SUV studio renders (Car Service reel) | `suv-rrs-*.webp` | This work is based on "[Land Rover Range Rover Sport - 2023](https://sketchfab.com/3d-models/land-rover-range-rover-sport-2023-640826210d2a4be9ae6e638fec1e84fa)" by [Unn Interativa](https://sketchfab.com/unninterativa) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+
+Changes made to "Mersedes- Benz GLS": rendered to still images in graphite paint with headlights on and off; glass,
+interior and number plate materials adjusted. Mercedes-Benz and its star are trademarks of Mercedes-Benz Group AG; the
+reel shows the car as the vehicle a luxury dealership handles, with no endorsement implied.
+
+Changes made to "Land Rover Range Rover Sport - 2023": rendered to still images in pearl paint with daytime running
+lights on and off; the Range Rover lettering, Land Rover badges and the uploader's number-plate logo removed; glass
+tinted. No Land Rover or Range Rover trademark is shown or implied.
+

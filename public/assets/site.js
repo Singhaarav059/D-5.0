@@ -254,7 +254,11 @@
       dlg.setAttribute('aria-labelledby', `pdlg-title-${b.dataset.proj}`);
       dlg.showModal();
       body.scrollTop = 0;
+      // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
+      const media = $('[data-reel]', body);
+      if (media && window.Reel) window.Reel.mount(media);
     }));
+    dlg.addEventListener('close', () => { $('[data-reel]', body)?.reel?.destroy(); });
     $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }

@@ -40,7 +40,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/site.js"></script>
-<script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}
+<script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${slug === 'projects' || !slug ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
 </head>
 <body class="page-${slug || 'home'}">
 <a class="skip" href="#main">Skip to content</a>
