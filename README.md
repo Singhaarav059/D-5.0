@@ -40,6 +40,7 @@ src/
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
 scripts/
   check-syntax.js      `npm run check`: syntax-checks every first-party script
+  maze-tile.js         draws the background paper's seamless maze tile (public/assets/img/maze-tile*.svg); run it by hand
 public/                Everything a visitor can load (the only folder the server exposes)
   *.html               Generated pages (index, projects, services, about-us, contact, 404). Do not edit by hand.
   assets/
@@ -56,6 +57,7 @@ public/                Everything a visitor can load (the only folder the server
     img/work/          Project screens + founder photo (WebP + PNG/JPEG fallback) and manifest.json
     img/tech/          Technology logos used in the tools map
     img/logo.png, og.png  Brand mark and the social share image (1200x630)
+    img/maze-tile*.svg     The background: a seamless dotted maze under the paper and the sheets (scripts/maze-tile.js)
   robots.txt, sitemap.xml
 test/                  Automated checks (node --test)
 .github/workflows/     CI on every push and pull request: build, generated pages committed, syntax, tests, audit

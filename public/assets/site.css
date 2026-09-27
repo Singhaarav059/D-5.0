@@ -69,11 +69,13 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; background: var(--paper); }
+/* The paper: warm stock with a faint grain, and under everything a whisper of a maze (a seamless tile drawn by
+   scripts/maze-tile.js). The hero and "How we work" solve the maze; the rest of the site is written on it. */
+html { -webkit-text-size-adjust: 100%; background: url(img/maze-tile.svg) -20px -20px / 800px 800px, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), var(--paper); }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 body {
-  margin: 0; background: var(--paper); color: var(--text);
+  margin: 0; color: var(--text);
   font: 400 1rem/1.6 var(--body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip;
 }
 main { overflow-x: clip; counter-reset: shead; }
@@ -190,12 +192,12 @@ html.motion.js .scribble__loop path { stroke-dasharray: 1 1.01; stroke-dashoffse
   --surface: var(--ink-2);
   --surface-2: var(--ink-3);
   --accent-text: #9aabff;
-  background: var(--bg); color: var(--text);
+  background: url(img/maze-tile-light.svg) -20px -20px / 800px 800px, var(--bg); color: var(--text);
 }
 .sheet { margin-inline: 10px; border-radius: var(--r-sheet); transform-origin: 50% 0; }
 /* the brand-blue sheet (the contact block that closes every page) */
 .sheet--blue { --bg: #2b42e6; --text: #fff; --muted: rgba(255, 255, 255, 0.76); --line: rgba(255, 255, 255, 0.22); --line-2: rgba(255, 255, 255, 0.42); --surface: rgba(255, 255, 255, 0.1); --surface-2: rgba(255, 255, 255, 0.16); --accent-text: #ffe08a;
-  background: radial-gradient(70% 90% at 95% 0%, #5468ff, transparent 62%), radial-gradient(60% 70% at 0% 100%, #1f33c9, transparent 70%), var(--bg); }
+  background: url(img/maze-tile-light.svg) -20px -20px / 800px 800px, radial-gradient(70% 90% at 95% 0%, #5468ff, transparent 62%), radial-gradient(60% 70% at 0% 100%, #1f33c9, transparent 70%), var(--bg); }
 .sheet + .sheet { margin-top: 10px; }
 
 /* ---------- nav: a quiet bar that turns to frosted paper once the page moves ---------- */
@@ -272,10 +274,6 @@ html.menu-open { overflow: hidden; }
    slot, and journey.js drives the hand-over, the maze and the stages from the scroll position. */
 .journey { position: relative; isolation: isolate; padding-block: clamp(72px, 10vw, 136px); }
 .journey__sticky { isolation: isolate; }
-/* the scene is drawn on dot-grid paper, fading out at its lower edge */
-.journey::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, rgba(21, 21, 20, 0.16) 1px, transparent 1.6px) 0 0 / 24px 24px; -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
-.journey.is-live::before { display: none; }
-.journey.is-live .journey__sticky::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, rgba(21, 21, 20, 0.16) 1px, transparent 1.6px) 0 0 / 24px 24px; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
 .journey--home { padding-top: clamp(112px, 15vh, 160px); }
 .journey__stage { display: grid; gap: clamp(36px, 6vh, 64px); }
 .journey__caption .shead { margin-bottom: 0; }
