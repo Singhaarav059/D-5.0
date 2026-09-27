@@ -130,6 +130,40 @@
     </div>`;
   }
 
+  // One film at a time. The reel under the mouse plays (and keeps playing after the pointer leaves, until another is
+  // hovered or it scrolls away); without one, the reel in the middle of the screen plays (the topmost there, so the
+  // home deck plays the card on top). Every other reel rests on its title card, like a poster. An open dialog only
+  // considers its own reel. This keeps the page calm and costs one animation instead of sixteen.
+  const reels = new Set();
+  let picked = null, active = null, raf = 0;
+  const choose = () => {
+    raf = 0;
+    const scope = document.querySelector('dialog[open]');
+    const pool = [...reels].filter((h) => h.reel?.visible && (!scope || scope.contains(h)));
+    let next = pool.includes(picked) ? picked : null;
+    if (!next) {
+      const cx = innerWidth / 2, cy = innerHeight / 2;
+      const top = document.elementFromPoint(cx, cy)?.closest('.has-reel');
+      if (pool.includes(top)) next = top;
+      else {
+        let best = Infinity;
+        pool.forEach((h) => {
+          const b = h.getBoundingClientRect();
+          const dist = Math.hypot(b.left + b.width / 2 - cx, b.top + b.height / 2 - cy);
+          if (dist < best) { best = dist; next = h; }
+        });
+      }
+    }
+    if (next === active) return;
+    const prev = active;
+    active = next;
+    prev?.reel?.sync();
+    active?.reel?.sync();
+  };
+  const queue = () => { raf ||= requestAnimationFrame(choose); };
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', queue);
+
   function build(host) {
     const d = JSON.parse(host.dataset.reel);
     // Chapter list, in play order, with each chapter's headline and scene data.
@@ -440,12 +474,22 @@
       if (t >= heroFrom && t <= heroTo) drawHero();
     });
 
-    let userPaused = false, visible = false;
+    // Resting: paused on the title card just before its first cut, with the counter and headline as they are then.
+    const poster = Math.max(0.1, (labels[1] ? labels[1][1] : TITLE) - OUT - 0.05);
+    let userPaused = false, visible = false, resting = false;
+    const rest = () => { tl.pause(); tl.seek(poster, false); resting = true; drawHero(); };
     const sync = () => {
-      const run = visible && !userPaused && !document.hidden;
-      run ? tl.play() : tl.pause();
+      const mine = active === host;
+      const run = visible && mine && !userPaused && !document.hidden;
+      if (run) {
+        if (resting) { resting = false; tl.play(0); } else tl.play();
+      } else if (!mine && !resting) rest();
+      else tl.pause();
       el.classList.toggle('is-paused', !run);
     };
+    rest();
+    reels.add(host);
+    host.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { picked = host; queue(); } });
     toggle.addEventListener('click', (e) => {
       e.stopPropagation();
       userPaused = !userPaused;
@@ -453,7 +497,7 @@
       toggle.classList.toggle('is-paused', userPaused);
       sync();
     });
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }, { threshold: 0.35 });
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (host.reel) host.reel.visible = visible; queue(); sync(); }, { threshold: 0.35 });
     io.observe(host);
     document.addEventListener('visibilitychange', sync);
     let io3d;
@@ -480,8 +524,12 @@
     // Handle for inspecting a reel from the console (host.reel.tl.seek(t), host.reel.starts), and for taking it down
     // again (the project dialog mounts a reel each time it opens).
     host.reel = {
-      tl, st, starts: labels, draw: drawHero,
+      tl, st, starts: labels, draw: drawHero, visible, sync,
       destroy() {
+        reels.delete(host);
+        if (picked === host) picked = null;
+        if (active === host) active = null;
+        queue();
         tl.kill(); ro.disconnect(); io.disconnect(); io3d?.disconnect();
         document.removeEventListener('visibilitychange', sync);
         el.remove(); toggle.remove(); host.classList.remove('has-reel'); delete host.reel;
