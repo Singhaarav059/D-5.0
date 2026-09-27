@@ -351,7 +351,7 @@ html.motion.js .hero__arrow .dd__ink > * { animation: dd-draw 0.9s cubic-bezier(
 .maze.is-moving .maze__signal { opacity: 0; }
 .maze.is-travelling .maze__traveler { opacity: 1; }
 .maze__markset { transform-box: fill-box; }
-.maze.is-arrived .maze__mark { animation: maze-arrive 900ms var(--ease); }
+html.motion.js .maze.is-seen.is-arrived .maze__mark { animation: maze-arrive 900ms var(--ease); }
 html.motion.js .maze:not(.is-seen) .maze__walls, html.motion.js .maze:not(.is-seen) .maze__mark { opacity: 0; }
 html.motion.js .maze .maze__route { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; }
 html.motion.js .maze.is-seen .maze__walls { animation: maze-walls 4.4s var(--ease) both; }
@@ -371,12 +371,15 @@ html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-or
 .maze .dd__dots > * { fill: var(--ink); }
 .maze__tag rect { fill: var(--dd); stroke: var(--ink); stroke-width: 1.2; }
 .maze__tag text { font-family: var(--body); font-weight: 600; fill: var(--ink); text-anchor: middle; letter-spacing: -0.01em; }
-.maze__pit, .maze__pit-in, .maze__start, .maze__rocket, .maze__finish { transform-box: fill-box; transform-origin: 50% 50%; }
-.maze__exhaust { opacity: 0; }
-.maze__rocket { transition: transform 1.4s cubic-bezier(0.55, 0, 0.75, 0.3), opacity 0.5s ease 0.9s; }
-.maze.is-arrived .maze__rocket { transform: translateY(-160px) rotate(4deg); opacity: 0; }
+.maze__pit, .maze__pit-in, .maze__start, .maze__rocket, .maze__lift, .maze__finish { transform-box: fill-box; transform-origin: 50% 50%; }
+/* On arrival the flame lights and the rocket lifts off. The pop-in animates .maze__rocket, so the take-off moves the
+   group inside it; the flame flickers on its own wrapper (a CSS transform on the doodle itself would replace the
+   transform attribute that places it, and it would flash somewhere else on the line). */
+.maze__exhaust { opacity: 0; transform-box: fill-box; transform-origin: 50% 0; }
+.maze__lift { transition: transform 1.4s cubic-bezier(0.55, 0, 0.75, 0.3) 0.2s, opacity 0.5s ease 1.1s; }
+.maze.is-arrived .maze__lift { transform: translateY(-160px) rotate(4deg); opacity: 0; }
 .maze.is-arrived .maze__exhaust { opacity: 1; animation: maze-flicker 0.14s steps(2) infinite; }
-@keyframes maze-flicker { 50% { transform: scaleY(1.25) translateY(3px); } }
+@keyframes maze-flicker { 50% { transform: scaleY(1.3); } }
 html.motion.js .maze .maze__glow { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; }
 html.motion.js .maze.is-seen .maze__glow { animation: maze-route 2.5s cubic-bezier(0.65, 0, 0.35, 1) 0.7s forwards; }
 html.motion.js .maze:not(.is-seen) :is(.maze__pit-in, .maze__start, .maze__rocket, .maze__finish) { opacity: 0; }

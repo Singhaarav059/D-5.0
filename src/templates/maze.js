@@ -155,7 +155,7 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
     <path class="maze__line" d="M0 0"/>
     <path class="maze__trail" d="M0 0"/>
     <g class="maze__stops">${geo.stops.map((x) => `<circle class="maze__stop" cx="${x}" cy="${lineY}" r="7"/>`).join('')}</g>
-    <g class="maze__markset"><g class="maze__rocket">${doodleAt('exhaust', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato', cls: 'maze__exhaust' })}${doodleAt('rocket', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${finish ? `<g class="maze__finish">${tag(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
+    <g class="maze__markset"><g class="maze__rocket"><g class="maze__lift"><g class="maze__exhaust">${doodleAt('exhaust', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${doodleAt('rocket', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g></g>${finish ? `<g class="maze__finish">${tag(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
     <circle class="maze__signal" r="6"><animateMotion dur="7s" repeatCount="indefinite" begin="indefinite" path="${toPath(pts)}"/></circle>
     <circle class="maze__traveler" cx="${geo.stops[0]}" cy="${lineY}" r="7"/>
   </svg>`;
