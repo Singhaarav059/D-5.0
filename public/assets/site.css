@@ -95,6 +95,8 @@ figure { margin: 0; }
 .skip:focus { top: 16px; }
 .wrap { width: var(--wrap); margin-inline: auto; }
 .section { position: relative; padding-block: clamp(72px, 10vw, 136px); }
+/* two paper sections in a row: the next one's header hairline already separates them, so they sit closer */
+.section:not(.sheet) + .section:not(.sheet) { padding-top: clamp(16px, 3vw, 40px); }
 
 /* ---------- type ---------- */
 .h2 { font: 380 clamp(2.2rem, 4.4vw, 3.9rem)/1.02 var(--display); letter-spacing: -0.042em; text-wrap: balance; }
