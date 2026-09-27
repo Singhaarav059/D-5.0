@@ -145,6 +145,11 @@
     el.style.setProperty('--s', Math.min((w - 24) / (narrow ? DEMO_MAIN[el.dataset.demo] : 520), (h - 20) / 240).toFixed(4));
   }).observe(el.parentElement));
 
+  // About: hovering a value's card lights its station on the drawing beside it, and hovering a station its card.
+  const valueParts = $$('.drive[data-v], .values__stop');
+  const lightValue = (v) => valueParts.forEach((el) => el.classList.toggle('is-lit', el.dataset.v === v));
+  valueParts.forEach((el) => { el.addEventListener('pointerenter', () => lightValue(el.dataset.v)); el.addEventListener('pointerleave', () => lightValue(null)); });
+
   // Split text into words for staggered/scrubbed reveals. The parent keeps an accessible label.
   const split = (el, cls) => {
     const walk = (node) => [...node.childNodes].flatMap((n) => {
@@ -394,8 +399,8 @@
     });
   });
 
-  // Founder photo drifts against the quote as it passes (depth, not decoration on every image).
-  $$('.quote__photo').forEach((img) => gsap.fromTo(img, { yPercent: 8 }, { yPercent: -8, ease: 'none', scrollTrigger: { trigger: img.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } }));
+  // The founder's print drifts against the quote as it passes (depth, not decoration on every image).
+  $$('.quote__print').forEach((el) => gsap.fromTo(el, { yPercent: 7 }, { yPercent: -7, ease: 'none', scrollTrigger: { trigger: el.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } }));
 
   // Count-up metrics.
   $$('[data-count]').forEach((el) => {

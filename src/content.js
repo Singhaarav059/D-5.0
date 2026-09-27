@@ -37,6 +37,7 @@ module.exports = {
 
   founder: {
     quote: 'We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive - and we’re with you, executing every step of the way.',
+    mark: 'When you thrive, we thrive', // the part of the quote that gets a marker line
     name: 'Krupal Chaudhary',
     title: 'Founder & CEO',
     photo: 'krupal-chaudhary',

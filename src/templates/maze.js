@@ -161,4 +161,4 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
   </svg>`;
 }
 
-module.exports = { maze, carve, chevron };
+module.exports = { maze, carve, chevron, tag };

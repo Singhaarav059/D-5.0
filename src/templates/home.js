@@ -3,7 +3,7 @@
 
 const C = require('../content');
 const { esc, pad, icon, pic, shot, btn, head } = require('./helpers');
-const { reasons, stats } = require('./about');
+const { reasons, stats, quoteHtml } = require('./about');
 
 const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
   <div class="stack-card__inner">
@@ -48,7 +48,8 @@ const studio = () => `<section class="section sheet studio" id="about">
         <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
       </div>
       <figure class="studio__quote" id="founder" data-reveal>
-        <blockquote>“${esc(C.founder.quote)}”</blockquote>
+        <span class="quote__mark" aria-hidden="true">“</span>
+        <blockquote>${quoteHtml()}</blockquote>
         <figcaption>${pic(C.founder.photo, '', { small: true, sizes: '52px' })}<span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
       </figure>
     </div>
