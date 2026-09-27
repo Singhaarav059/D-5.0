@@ -548,6 +548,8 @@ html.motion.js .maze__mark { transform-box: fill-box; transform-origin: 30% 50%;
 .pdlg__part h3 { font: 500 0.84rem/1 var(--body); letter-spacing: 0; color: var(--muted); }
 .pdlg__part p { font-size: 0.98rem; line-height: 1.62; }
 .checks--list { grid-template-columns: 1fr; margin-top: 4px; }
+.pdlg__shot { margin: 4px 0 6px; padding: 10px; border-radius: 16px; background: var(--tint); }
+.pdlg__shot img { width: 100%; height: auto; border-radius: 10px; }
 /* CTA pinned to the bottom of the scrolling text column so it is never clipped */
 .pdlg__cta { position: sticky; bottom: 0; margin: 4px calc(-1 * clamp(24px, 3vw, 44px)) 0; padding: 20px clamp(24px, 3vw, 44px) clamp(20px, 2.6vw, 32px); background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper) 36%); }
 .pdlg__bar { position: absolute; top: 14px; right: 14px; z-index: 3; display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px var(--line); }

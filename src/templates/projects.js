@@ -1,6 +1,8 @@
 // Projects page: compact cards; each opens a dialog with the full case (content lives in a <template>).
 // The case reads as a short story: the brief, what we built, the outcome. The brief and outcome are the same lines
-// the project's reel tells (src/content.js `reels`), so the film and the text never disagree.
+// the project's reel tells (src/content.js `reels`), so the film and the text never disagree. The real product screens
+// sit under "What we built" (the reel covers them in the media column); their alt is empty there because the media
+// column's copy of the image already carries it.
 'use strict';
 
 const C = require('../content');
@@ -14,7 +16,9 @@ const caseBody = (p, i) => {
           <p class="pdlg__meta"><span>${pad(i + 1)} / ${pad(C.projects.length)}</span>${esc(p.sector)}</p>
           <h2 id="pdlg-title-${i}">${esc(p.title)}</h2>
           ${r.brief ? `<section class="pdlg__part"><h3>The brief</h3><p>${esc(r.brief.text)}</p></section>` : ''}
-          <section class="pdlg__part"><h3>What we built</h3>${p.description ? `<p>${esc(p.description)}</p>` : ''}<ul class="checks checks--list">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul></section>
+          <section class="pdlg__part"><h3>What we built</h3>
+            <figure class="pdlg__shot">${pic(p.image, '', { sizes: '(max-width: 1024px) 92vw, 500px' })}</figure>
+            ${p.description ? `<p>${esc(p.description)}</p>` : ''}<ul class="checks checks--list">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul></section>
           ${r.outcome ? `<section class="pdlg__part"><h3>The outcome</h3><p>${esc(r.outcome.text)}</p></section>` : ''}
           <div class="pdlg__cta">${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}</div>
         </div>`;
