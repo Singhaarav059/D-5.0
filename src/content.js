@@ -422,8 +422,9 @@ module.exports = {
   },
   closing: 'Have a product in mind? <em>Let’s find the way through.</em>',
 
-  // The moving band under the home hero and the services hero: what we build, one word or two each.
-  band: ['AI & ML', 'Web apps', 'Mobile apps', 'SaaS', 'eCommerce', 'Cloud', 'Automation', 'UI/UX'],
+  // The moving band under the home hero and the services hero: what we build, one word or two each, each followed by
+  // its drawing (a doodle name from templates/doodles.js).
+  band: [['AI & ML', 'chip'], ['Web apps', 'browser'], ['Mobile apps', 'phone'], ['SaaS', 'layers'], ['eCommerce', 'bag'], ['Cloud', 'cloud'], ['Automation', 'loop'], ['UI/UX', 'pen']],
 
   // Where each page sends you next (the big link at the top of the footer), so a visit reads as one route through
   // the site: home → projects → services → about → contact → projects. [label, headline, link]

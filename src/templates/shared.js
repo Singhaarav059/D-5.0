@@ -52,8 +52,9 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
   </div>
 </section>`;
 
-// The moving band: what we build, separated by sparkles, running sideways (faster as you scroll; site.js).
-const STARS = ['sun', 'pink', 'mint', 'sky'];
-const band = () => `<div class="band" aria-hidden="true"><div class="band__track">${[0, 1].map(() => `<div class="band__run">${C.band.map((t, i) => `<span>${esc(t)}</span>${doodle('star', { color: STARS[i % STARS.length] })}`).join('')}</div>`).join('')}</div></div>`;
+// The moving band: what we build, each followed by its own drawing, running sideways (faster as you scroll; site.js).
+// Marker colours that read on the tomato strip.
+const FILLS = ['sun', 'sky', 'mint', 'lilac'];
+const band = () => `<div class="band" aria-hidden="true"><div class="band__track">${[0, 1].map(() => `<div class="band__run">${C.band.map(([t, d], i) => `<span>${esc(t)}</span>${doodle(d, { color: FILLS[i % FILLS.length] })}`).join('')}</div>`).join('')}</div></div>`;
 
 module.exports = { pageHero, faq, contact, band };

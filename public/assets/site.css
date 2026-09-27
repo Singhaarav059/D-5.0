@@ -841,8 +841,12 @@ html.motion.js .contact__plane:not(.is-in) .contact__trail { clip-path: inset(-2
 .band__track { display: flex; width: max-content; animation: band 42s linear infinite; }
 .band__run { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 32px); padding-right: clamp(18px, 2.4vw, 32px); }
 .band span { font: 400 clamp(1.7rem, 3.6vw, 3rem)/1 var(--display); letter-spacing: -0.035em; white-space: nowrap; }
-.band .dd { flex: none; width: clamp(26px, 3vw, 40px); height: clamp(26px, 3vw, 40px); }
+.band .dd { flex: none; width: clamp(30px, 3.4vw, 46px); height: clamp(30px, 3.4vw, 46px); }
 .band .dd__ink > * { stroke: var(--ink); stroke-width: 3.2; }
+/* each drawing keeps the small jitter of hand-drawn animation, out of step with its neighbours */
+html.motion.js .band .dd { animation: dd-boil 1.6s steps(1) infinite; }
+html.motion.js .band .dd:nth-of-type(3n + 2) { animation-delay: -0.5s; }
+html.motion.js .band .dd:nth-of-type(3n) { animation-delay: -1.1s; }
 @keyframes band { to { transform: translateX(-50%); } }
 
 /* ---------- page heroes: a cluster of doodles beside the headline (wide screens) ---------- */
