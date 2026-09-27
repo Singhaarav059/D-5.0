@@ -3,7 +3,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, btn, eyebrow } = require('./helpers');
+const { esc, btn, head } = require('./helpers');
 
 const visit = () => `<section class="section visit">
   <div class="wrap visit__grid">
@@ -50,10 +50,8 @@ const visit = () => `<section class="section visit">
       <span class="visit__label"><i></i>Gota, Ahmedabad · Open in Maps</span>
     </a>
     <div class="visit__copy">
-      ${eyebrow('Office location')}
-      <h2 class="h2" data-split>Visit us in Ahmedabad</h2>
-      <p class="lead" data-reveal>${esc(C.address)}</p>
-      <div class="hero__ctas visit__ctas" data-reveal>${btn('Get directions', C.mapUrl, 'btn--blue', 'target="_blank" rel="noopener"')}${btn('Book with Calendly', C.calendly, 'btn--white', 'target="_blank" rel="noopener"')}</div>
+      ${head({ label: 'Visit', title: 'Visit us <em>in Ahmedabad</em>', lead: esc(C.address), stack: true })}
+      <div class="hero__ctas visit__ctas" data-reveal>${btn('Get directions', C.mapUrl, 'btn--primary', 'target="_blank" rel="noopener"')}${btn('Book with Calendly', C.calendly, 'btn--ghost', 'target="_blank" rel="noopener"')}</div>
     </div>
   </div>
 </section>`;

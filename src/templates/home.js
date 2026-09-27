@@ -1,36 +1,30 @@
-// Home page sections: the cinematic hero, the stacked project cards and "Who we are".
+// Home page sections: the hero, the stacked project cards and "Who we are".
 'use strict';
 
 const C = require('../content');
-const { esc, pad, icon, pic, btn, eyebrow } = require('./helpers');
+const { esc, pad, icon, pic, btn, head } = require('./helpers');
 const { reasons } = require('./about');
+const { maze } = require('./maze');
 
-// Home hero: a short code-drawn opening (cine.js) — a spark grows into a network of connections that folds
-// into a dotted globe — then the globe settles as a horizon under the headline. Without JS it is just the copy.
-const hero = () => `<section class="hero hero--cine" data-hero>
-  <div class="hero__panel">
-    <div class="cine" aria-hidden="true" data-cine>
-      <i class="cine__glow"></i>
-      <div class="cine__globe" data-globe></div>
-      <svg class="cine__net" data-net></svg>
-      <div class="cine__tokens" data-tokens></div>
-      <p class="cine__label"><i></i>Demaze Technologies</p>
-      <p class="cine__caption" data-caption></p>
-    </div>
-    <div class="hero__content">
-      <h1 class="hero__title" data-split="hero">Your Strategic Partner in Building <em>Scalable AI Products</em></h1>
+// Hero: the name as the promise. The headline says it; the maze under it shows it: one route finds its way
+// through and lands on the Demaze chevron. Two drawings of the maze, one shaped for wide screens and one for phones.
+const hero = () => `<section class="hero" data-hero>
+  <div class="wrap hero__top">
+    <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
+    <div class="hero__grid">
+      <h1 class="hero__title" data-split="hero">${C.hero.headline}</h1>
       <div class="hero__aside">
-        <p class="hero__lead" data-hero-fade>${esc(C.tagline)}</p>
-        <div class="hero__ctas" data-hero-fade>${btn("Let's Connect", './contact', 'btn--blue')}${btn('Explore Services', './services', 'btn--white')}</div>
+        <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
+        <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See our work', '#work', 'btn--ghost')}</div>
       </div>
     </div>
-    <div class="hero__proof" data-hero-proof>
-      <a class="hero__note" href="#founder">
-        ${pic(C.founder.photo, '', { small: true, sizes: '44px', attrs: 'decoding="async"' })}
-        <span><q>When you thrive, we thrive</q><small>${C.founder.name}, ${C.founder.title}</small></span>
-      </a>
-      <ul class="hero__stats">${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${m.label}</small></li>`).join('')}</ul>
-    </div>
+  </div>
+  <div class="hero__maze" data-maze>
+    ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide' })}
+    ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow' })}
+  </div>
+  <div class="wrap">
+    <ul class="hero__stats" data-hero-fade>${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${m.label}</small></li>`).join('')}</ul>
   </div>
 </section>`;
 
@@ -47,24 +41,29 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
   </div>
 </article>`;
 
-const work = () => `<section class="section work" id="work">
+// The section pins (site.js); the dark sheet sits inside it, because a pinned element with side margins is
+// measured without them and would run off the right edge.
+const work = () => `<section class="work" id="work">
+  <div class="section sheet">
   <div class="wrap">
-    <div class="section-head section-head--split">
-      <div>${eyebrow('Our work')}<h2 class="h2" data-split>The projects we did</h2><p class="lead" data-reveal>Four of the ${C.projects.length} products we’ve designed and built, from luxury automotive to senior care.</p></div>
-      <div>${btn('View all work', './projects', 'btn--white')}</div>
-    </div>
+    ${head({
+      label: 'Work',
+      title: 'Selected work, <em>from brief to launch</em>',
+      lead: esc(`Four of the ${C.projects.length} products we’ve designed and built, from luxury automotive to senior care.`),
+      side: btn('View all work', './projects', 'btn--ghost'),
+    })}
     <div class="stack" data-deck>${C.projects.slice(0, 4).map((p, i) => projectCard(p, i, 4)).join('')}</div>
+  </div>
   </div>
 </section>`;
 
 // Home: one "who we are" section in place of four (about, what drives us, why us, founder quote):
 // the story and the founder's words side by side, then the three reasons as numbered columns.
-const studio = () => `<section class="section studio" id="about">
+const studio = () => `<section class="section sheet studio" id="about">
   <div class="wrap">
+    ${head({ label: 'Studio', title: 'Who we are' })}
     <div class="studio__top">
       <div class="studio__copy">
-        ${eyebrow('About us')}
-        <h2 class="h2" data-split>Who we are</h2>
         <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
         <p class="about__sub" data-reveal>${esc(C.about.whoWeAre[1])}</p>
         <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>

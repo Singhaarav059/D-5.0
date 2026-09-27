@@ -43,9 +43,19 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
   return `<picture><source type="image/webp" srcset="${webp.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
 };
 
-const btn = (label, href, cls = 'btn--blue', extra = '') =>
+// Buttons: `btn--primary` (solid) or `btn--ghost` (outline). On a dark sheet both invert on their own (site.css).
+const btn = (label, href, cls = 'btn--primary', extra = '') =>
   `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
 
-const eyebrow = (t, dark) => `<p class="eyebrow${dark ? ' eyebrow--dark' : ''}"><span class="eyebrow__dot"></span>${esc(t)}</p>`;
+// Every section opens the same way: a hairline with the section's number (a CSS counter, so it follows the page
+// order) and its label, then the headline with an optional quieter second half (<em>), then an optional lead and
+// actions. `title` and `lead` are HTML (escape any content first); `stack` keeps the lead under the headline.
+const head = ({ label, title, lead = '', side = '', stack = false, cls = '' }) => `<header class="shead${stack ? ' shead--stack' : ''}${cls ? ' ' + cls : ''}">
+  <p class="shead__label" data-reveal><span class="shead__n" aria-hidden="true"></span>${esc(label)}</p>
+  <div class="shead__row">
+    <h2 class="h2" data-reveal>${title}</h2>
+    ${lead || side ? `<div class="shead__side" data-reveal>${lead ? `<p class="lead">${lead}</p>` : ''}${side}</div>` : ''}
+  </div>
+</header>`;
 
-module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, btn, eyebrow };
+module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, btn, head };

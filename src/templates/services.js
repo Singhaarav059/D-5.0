@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, icon, btn, eyebrow } = require('./helpers');
+const { PUBLIC, esc, pad, icon, btn, head } = require('./helpers');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
@@ -41,10 +41,7 @@ const techStack = () => {
   const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
   return `<section class="section kmap" id="tools" data-kmap>
   <div class="wrap">
-    <div class="section-head">
-      <h2 class="h2" data-split>Tools &amp; technologies</h2>
-      <p class="lead" data-reveal>${esc(C.stack.lead)}</p>
-    </div>
+    ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead) })}
     <div class="kmap__stage" data-tabs data-kmap-stage data-reveal>
       <svg class="kmap__wires" aria-hidden="true" data-kmap-wires></svg>
       <div class="kmap__core" aria-hidden="true">
@@ -105,7 +102,7 @@ const services = (withHead = true) => `<section class="section services" data-se
   <div class="services__pin">
     <div class="wrap services__grid">
       <div class="services__side">
-        ${withHead ? `${eyebrow('Services', true)}<h2 class="h2" data-split>Apps, websites, AI and more</h2>` : ''}
+        ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true } : { label: 'Services', title: 'What we <em>build</em>', stack: true })}
         <ol class="svc-list" role="list">${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
       </div>
       <div class="services__stage">${C.services.map(servicePanel).join('')}</div>
@@ -114,13 +111,14 @@ const services = (withHead = true) => `<section class="section services" data-se
 </section>`;
 
 const industries = () => `<section class="section industries" id="industries">
-  <div class="wrap ind" data-tabs data-ind-auto>
+  <div class="wrap">
+    ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.` })}
+  </div>
+  <div class="wrap ind" data-tabs>
     <div class="ind__side">
-      <h2 class="h2" data-split>Industries we serve</h2>
-      <p class="lead" data-reveal>${C.industries.length} industries. Pick one to see the kinds of systems we build for it.</p>
       <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n], i) => `<button role="tab" type="button" id="ind-tab-${i}" aria-controls="ind-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(n)}</button>`).join('')}</div>
     </div>
-    <div class="ind__stage">${C.industries.map(([n, items], i) => `<div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}" style="--hue:${(i * 23) % 150 - 40}deg"${i ? ' hidden' : ''}><span class="ind__big" aria-hidden="true">${pad(i + 1)}</span><div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3></div><ul>${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div>
+    <div class="ind__stage">${C.industries.map(([n, items], i) => `<div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}"${i ? ' hidden' : ''}><span class="ind__big" aria-hidden="true">${pad(i + 1)}</span><div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3></div><ul>${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div>
   </div>
 </section>`;
 
@@ -131,10 +129,7 @@ const processSection = () => `<section class="section process ink" data-process 
     <div class="ink__sticky">
       <div class="ink__paper">
         <i class="grain" aria-hidden="true"></i>
-        <div class="ink__head">
-          <div>${eyebrow('How we work', true)}<h2 class="h2 ink__title">From a first idea to a product at scale</h2></div>
-          <div>${btn('Book a call', C.calendly, 'btn--ink', 'target="_blank" rel="noopener"')}</div>
-        </div>
+        ${head({ label: 'Process', title: 'From a first idea <em>to a product at scale</em>', side: btn('Book a call', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"'), cls: 'ink__head' })}
         <div class="ink__stage"><canvas class="ink__canvas" aria-hidden="true" data-ink-canvas></canvas></div>
         <ol class="ink__steps">${C.process.map((s, i) => `
           <li class="ink__step" data-ink-step><span class="ink__num">${pad(i + 1)} / ${pad(C.process.length)}</span><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p></li>`).join('')}

@@ -54,7 +54,7 @@
         t.tabIndex = on ? 0 : -1;
         const panel = document.getElementById(t.getAttribute('aria-controls'));
         panel.hidden = !on;
-        if (on && motion) gsap.fromTo(panel.querySelectorAll('li, h3'), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.03, ease: 'power3.out', overwrite: true });
+        if (on && motion) gsap.fromTo(panel.querySelectorAll('li, h3'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.02, ease: 'power3.out', overwrite: true });
         if (on) box.dispatchEvent(new CustomEvent('tabchange', { bubbles: true, detail: panel }));
       });
       if (focus) tab.focus();
@@ -222,8 +222,8 @@
         const X = x * c + z * s, Z = -x * s + z * c;
         const Y = y * 0.96 + Z * 0.28, Z2 = Z * 0.96 - y * 0.28; // slight tilt toward the viewer
         const f = (Z2 + 1) / 2;
-        ctx.globalAlpha = 0.08 + f * f * 0.85;
-        ctx.fillStyle = '#a9b8ff';
+        ctx.globalAlpha = 0.06 + f * f * 0.7;
+        ctx.fillStyle = '#151514';
         ctx.beginPath(); ctx.arc(S / 2 + X * R, S / 2 - Y * R, 1.4 + f * 2.6, 0, 6.283); ctx.fill();
       }
     };
@@ -234,43 +234,34 @@
     }
   });
 
-  // Card spotlight: feed the pointer position to CSS (delegated, fine pointers only).
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    document.addEventListener('pointermove', (e) => {
-      const c = e.target.closest && e.target.closest('.drive, .pcard');
-      if (!c) return;
-      const r = c.getBoundingClientRect();
-      c.style.setProperty('--mx', e.clientX - r.left + 'px');
-      c.style.setProperty('--my', e.clientY - r.top + 'px');
-    }, { passive: true });
-  }
-
   // Projects page: card opens a modal with the full case study (native <dialog>: Esc, focus trap, top layer).
+  // The arrows (and the left/right keys) step to the neighbouring case without closing.
   const dlg = $('[data-pdlg]');
   if (dlg) {
     const body = $('[data-pdlg-body]', dlg);
-    $$('[data-proj]').forEach((b) => b.addEventListener('click', () => {
-      body.replaceChildren($(`[data-proj-tpl="${b.dataset.proj}"]`).content.cloneNode(true));
-      dlg.setAttribute('aria-labelledby', `pdlg-title-${b.dataset.proj}`);
-      dlg.showModal();
+    const total = $$('[data-proj-tpl]').length;
+    let current = 0;
+    const show = (i, dir = 0) => {
+      $('[data-reel]', body)?.reel?.destroy();
+      current = (i + total) % total;
+      body.replaceChildren($(`[data-proj-tpl="${current}"]`).content.cloneNode(true));
+      dlg.setAttribute('aria-labelledby', `pdlg-title-${current}`);
       body.scrollTop = 0;
+      $('.pdlg__body', body).scrollTop = 0;
+      if (dir && motion) { body.style.setProperty('--dir', dir); body.classList.remove('is-swapping'); void body.offsetWidth; body.classList.add('is-swapping'); }
       // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
       const media = $('[data-reel]', body);
       if (media && window.Reel) window.Reel.mount(media);
-    }));
-    dlg.addEventListener('close', () => { $('[data-reel]', body)?.reel?.destroy(); });
+    };
+    $$('[data-proj]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.proj); dlg.showModal(); }));
+    $$('[data-pdlg-step]', dlg).forEach((b) => b.addEventListener('click', () => show(current + +b.dataset.pdlgStep, +b.dataset.pdlgStep)));
+    dlg.addEventListener('keydown', (e) => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (d && !e.target.closest('input, textarea, select')) { e.preventDefault(); show(current + d, d); }
+    });
+    dlg.addEventListener('close', () => { $('[data-reel]', body)?.reel?.destroy(); body.classList.remove('is-swapping'); });
     $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
-  }
-
-  // Home hero opening (cine.js reads the decision): it plays once per session and only with motion on.
-  const cine = $('[data-cine]');
-  let introDelay = 0;
-  if (cine) {
-    let seen = true;
-    try { seen = sessionStorage.getItem('demaze-intro') === '1'; sessionStorage.setItem('demaze-intro', '1'); } catch (e) { /* storage blocked: skip the intro */ }
-    cine.dataset.intro = motion && !seen ? 'play' : 'rest';
-    if (cine.dataset.intro === 'play') introDelay = 4.4;
   }
 
   if (!motion) return;
@@ -293,7 +284,9 @@
       lenis.scrollTo(t, { offset: -90 });
     }));
   }
-  const EASE = 'expo.out';
+  // One curve and one travel distance for everything that enters: short, quiet, never bouncing.
+  const EASE = 'power3.out';
+  const RISE = 16;
 
   // Nav: tint after hero, hide on fast downward scroll, show on up.
   let lastY = 0;
@@ -308,56 +301,27 @@
   });
   nav.classList.toggle('is-scrolled', scrollY > 40); // reload mid-page
 
-  // Hero intro: title words rise out of their clip, then supporting copy, then the card fan.
+  // Hero intro: the headline's words rise out of their clip, then the supporting copy settles in.
+  // The home maze draws itself in CSS; once its route has landed, a small signal starts travelling along it.
   const hero = $('[data-hero]');
   if (hero) {
     const words = split($('[data-split=hero]', hero), 'w');
-    const tl = gsap.timeline({ defaults: { ease: EASE }, paused: !!introDelay });
-    tl.from(words, { yPercent: 140, rotate: 4, duration: 1.3, stagger: 0.055 }, 0.1)
-      .to($$('[data-hero-fade]', hero), { opacity: 1, duration: 1 }, 0.35)
-      .from($$('[data-hero-fade]', hero), { y: 24, duration: 1.2, stagger: 0.08 }, 0.35);
-    const proof = $('[data-hero-proof]', hero);
-    if (proof) tl.fromTo(proof, { opacity: 0, y: 40, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 1.4 }, 0.6);
-    // Underline draws under the emphasised phrase after its words land.
-    const em = $('.hero__title em', hero);
-    if (em) tl.to(em, { backgroundSize: '100% 0.07em', duration: 1.1, ease: 'power3.inOut' }, 0.9);
-    // During the opening the copy waits in its hidden start state, then plays as the globe settles.
-    if (introDelay) {
-      tl.progress(0);
-      let started = false;
-      const go = () => { if (!started) { started = true; tl.play(); } };
-      cine.addEventListener('cine:rest', go, { once: true });
-      gsap.delayedCall(introDelay + 3, go); // safety net if the opening never reports in
-    }
-    gsap.to($('.hero__content, .phero__content', hero), {
-      yPercent: -18, opacity: 0.2, ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-    });
-    // Pointer glow: damped follow (lerp) so it has weight instead of snapping to the cursor.
-    const glow = $('[data-glow]', hero);
-    const panel = glow && glow.closest('.hero__panel, .phero__panel');
-    if (glow && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      const qx = gsap.quickTo(glow, 'x', { duration: 0.9, ease: 'power3.out' });
-      const qy = gsap.quickTo(glow, 'y', { duration: 0.9, ease: 'power3.out' });
-      panel.addEventListener('pointermove', (e) => { const r = panel.getBoundingClientRect(); qx(e.clientX - r.left); qy(e.clientY - r.top); });
-    }
+    gsap.timeline({ defaults: { ease: EASE } })
+      .from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1)
+      .fromTo($$('[data-hero-fade]', hero), { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
+    const mazes = $$('.maze', hero);
+    if (mazes.length) gsap.delayedCall(3.4, () => mazes.forEach((m) => { m.classList.add('is-live'); m.querySelector('animateMotion')?.beginElement(); }));
   }
 
-  // Section headings: word rise on enter.
-  $$('[data-split]:not([data-split=hero])').forEach((h) => {
-    const words = split(h, 'w');
-    gsap.from(words, { yPercent: 110, duration: 1.1, stagger: 0.045, ease: EASE, scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
-  });
-
-  // Generic reveals.
-  $$('[data-reveal]').forEach((el) => gsap.fromTo(el, { opacity: 0, y: 40 }, {
-    opacity: 1, y: 0, duration: 1.1, ease: EASE, scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+  // Everything else enters the same way: a short rise and fade, once.
+  $$('[data-reveal]').forEach((el) => gsap.fromTo(el, { opacity: 0, y: RISE }, {
+    opacity: 1, y: 0, duration: 0.8, ease: EASE, scrollTrigger: { trigger: el, start: 'top 90%', once: true },
   }));
-  $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, { opacity: 0, y: 50 }, {
-    opacity: 1, y: 0, duration: 1.1, stagger: 0.09, ease: EASE, scrollTrigger: { trigger: g, start: 'top 85%', once: true },
+  $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, { opacity: 0, y: RISE }, {
+    opacity: 1, y: 0, duration: 0.8, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
   }));
 
-  // Scrubbed word reveal (manifesto, founder quote): words brighten as you read down.
+  // Scrubbed word reveal (the "who we are" statement): words brighten as you read down.
   $$('[data-scrub-words]').forEach((p) => {
     const words = split(p, 'sw');
     gsap.fromTo(words, { opacity: 0.16 }, {
@@ -369,12 +333,6 @@
   // Founder photo drifts against the quote as it passes (depth, not decoration on every image).
   $$('.quote__photo').forEach((img) => gsap.fromTo(img, { yPercent: 8 }, { yPercent: -8, ease: 'none', scrollTrigger: { trigger: img.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } }));
 
-  // Footer wordmark: letters rise out of the baseline in sequence when the footer arrives.
-  $$('[data-word]').forEach((w) => gsap.from(w.children, {
-    yPercent: 100, duration: 1.2, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: w, start: 'top 95%', once: true },
-  }));
-
-
   // Count-up metrics.
   $$('[data-count]').forEach((el) => {
     const end = +el.dataset.count;
@@ -382,25 +340,7 @@
     el.textContent = '0';
     // Hero stats sit at the very bottom of the first screen, so they count up with the intro instead.
     const inHero = el.closest('[data-hero]');
-    gsap.to(o, { v: end, duration: 2, delay: inHero ? 0.8 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
-  });
-
-  // Industries: while in view, cycle through the tabs. The chip's CSS progress fill sets the pace;
-  // when it ends we advance. Hover pauses; any real click or key press hands control to the visitor.
-  $$('[data-ind-auto]').forEach((box) => {
-    const tabs = $$('[role=tab]', box);
-    let stopped = false;
-    const stop = (e) => { if (e.isTrusted) { stopped = true; box.classList.remove('is-auto'); } };
-    $('[role=tablist]', box).addEventListener('click', stop);
-    $('[role=tablist]', box).addEventListener('keydown', stop);
-    box.addEventListener('pointerenter', () => box.classList.add('is-paused'));
-    box.addEventListener('pointerleave', () => box.classList.remove('is-paused'));
-    box.addEventListener('animationend', (e) => {
-      if (e.animationName !== 'indprog' || stopped) return;
-      const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
-      tabs[(i + 1) % tabs.length].click();
-    });
-    ScrollTrigger.create({ trigger: box, start: 'top 70%', end: 'bottom 30%', onToggle: (st) => box.classList.toggle('is-auto', st.isActive && !stopped) });
+    gsap.to(o, { v: end, duration: 1.6, delay: inHero ? 0.6 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
   });
 
   // Project deck (desktop): the section pins for one screen and each card slides up over the last.

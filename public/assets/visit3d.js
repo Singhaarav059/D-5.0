@@ -33,7 +33,7 @@ async function init() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   host.append(renderer.domElement);
 
-  const BG = new THREE.Color('#0a0d20');
+  const BG = new THREE.Color('#141413'); // the card's ink (site.css .visit__map)
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(BG, 30, 66);
   const camera = new THREE.PerspectiveCamera(32, 1.6, 0.5, 200);
@@ -58,8 +58,8 @@ async function init() {
         float d = distance(vW.xz, uOffice);
         float r = mod(uTime * 5.0, 36.0);
         float wave = exp(-abs(d - r) * 1.2) * (1.0 - r / 36.0);
-        vec3 col = vec3(0.035, 0.045, 0.11) + line * vec3(0.05, 0.06, 0.13);
-        col += vec3(0.12, 0.16, 0.5) * (exp(-d * 0.14) * 0.5 + wave * 0.35);
+        vec3 col = vec3(0.075, 0.075, 0.07) + line * vec3(0.06, 0.06, 0.055);
+        col += vec3(0.1, 0.14, 0.46) * (exp(-d * 0.14) * 0.5 + wave * 0.35);
         gl_FragColor = vec4(col, 1.0);
         #include <fog_fragment>
       }`,
@@ -79,11 +79,11 @@ async function init() {
       #include <fog_pars_fragment>
       void main() {
         float x = vUv.x * uW, y = vUv.y * uLen;
-        vec3 col = vec3(0.09, 0.11, 0.25);
+        vec3 col = vec3(0.13, 0.13, 0.12);
         float edge = step(x, 0.1) + step(uW - 0.1, x);
         float centre = step(abs(x - uW * 0.5), 0.05) * step(0.5, fract(y / 1.4));
         float lanes = uDash * step(abs(abs(x - uW * 0.5) - uW * 0.25), 0.03) * step(0.6, fract(y / 1.4));
-        col += vec3(0.35, 0.4, 0.7) * clamp(edge, 0.0, 1.0) * 0.6 + vec3(0.8, 0.8, 0.9) * (centre * 0.5 + lanes * 0.3);
+        col += vec3(0.42, 0.42, 0.4) * clamp(edge, 0.0, 1.0) * 0.6 + vec3(0.82, 0.8, 0.76) * (centre * 0.5 + lanes * 0.3);
         gl_FragColor = vec4(col, 1.0);
         #include <fog_fragment>
       }`,
@@ -146,7 +146,7 @@ async function init() {
           float on = step(uOn, hash(cell + vSeed * 7.13));
           vec3 lit = mix(uLit, uLit2, step(0.55, hash(cell.yx + vSeed)));
           col = mix(col, lit, win * on * 0.9) + win * (1.0 - on) * 0.025;
-          col += smoothstep(vH - 0.1, vH, y) * vec3(0.25, 0.3, 0.55);
+          col += smoothstep(vH - 0.1, vH, y) * vec3(0.3, 0.3, 0.28);
         }
         gl_FragColor = vec4(col, 1.0);
         #include <fog_fragment>
@@ -161,7 +161,7 @@ async function init() {
     scene.add(mesh);
     return mesh;
   };
-  instanced(lots, towerMat('#131a3d', '#1b2350', '#ffd9a0', '#9fb4ff', 0.66));
+  instanced(lots, towerMat('#1c1c1a', '#262623', '#ffd9a0', '#c9c4b8', 0.66));
   instanced([[OFFICE.x, OFFICE.z, OFFICE.w, OFFICE.w, OFFICE.h]], towerMat('#1f33a8', '#4c66ff', '#ffffff', '#b9c6ff', 0.3));
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(OFFICE.w, OFFICE.h, OFFICE.w)), new THREE.LineBasicMaterial({ color: '#9fb2ff', transparent: true, opacity: 0.8 }));
   edges.position.set(OFFICE.x, OFFICE.h / 2, OFFICE.z);

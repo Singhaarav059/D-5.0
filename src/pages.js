@@ -25,7 +25,7 @@ const pages = {
     title: 'Projects | Demaze Technologies',
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     body: [
-      pageHero('Our work', 'The projects <em>we did</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`),
+      pageHero('Projects', 'Products we’ve <em>designed and built</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`),
       projectsGrid(),
       contact(),
     ].join('\n'),
@@ -44,8 +44,8 @@ const pages = {
     title: 'About Us | Demaze Technologies',
     description: C.about.whoWeAre[0],
     body: [
-      pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1]),
-      about({ link: false }), whyUs(), founder(), processSection(), contact(),
+      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1]),
+      about(), whyUs(), founder(), processSection(), contact(),
     ].join('\n'),
   }),
   404: layout({
@@ -53,16 +53,16 @@ const pages = {
     noindex: true,
     title: 'Page not found | Demaze Technologies',
     description: 'This page does not exist. Head back to the Demaze home page or browse our projects.',
-    body: pageHero('Error 404', 'This page <em>drifted off the map</em>', 'The link may be old or mistyped. Everything we build is still one click away.',
-      `<div class="hero__ctas" data-hero-fade>${btn('Back to home', './', 'btn--blue')}${btn('See our work', './projects', 'btn--white')}</div>`),
+    body: pageHero('Error 404', 'A dead end. <em>Let’s find your way back.</em>', 'The link may be old or mistyped. Everything we build is still one click away.',
+      `<div class="hero__ctas" data-hero-fade>${btn('Back to home', './')}${btn('See our work', './projects', 'btn--ghost')}</div>`),
   }),
   contact: layout({
     slug: 'contact',
     title: 'Contact | Demaze Technologies',
     description: `Email ${C.email}, book a call, or visit us in Ahmedabad.`,
     body: [
-      pageHero('Contact', 'Reach us <em>at anytime</em>', 'Feel free to email us if you have any questions or need more details, or book a call if that’s more convenient and easier for you.',
-        `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--blue', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--white')}</div>`),
+      pageHero('Contact', 'Let’s talk about <em>what you’re building</em>', 'Email us with any question, or book a 30-minute call if that’s easier.',
+        `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--ghost')}</div>`),
       contact('form'), visit(), faq(),
     ].join('\n'),
   }),

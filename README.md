@@ -34,6 +34,7 @@ src/
     layout.js            the shell every page shares: <head>, nav, footer
     shared.js            sections used on several pages: subpage hero, FAQ, contact block
     home.js, about.js, services.js, projects.js, contact.js   sections for each page
+    maze.js              the home hero's maze: a seeded maze and its route, drawn as SVG at build time
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
 scripts/
   check-syntax.js      `npm run check`: syntax-checks every first-party script
@@ -42,7 +43,6 @@ public/                Everything a visitor can load (the only folder the server
   assets/
     site.css           All styles
     site.js            Interactions and scroll motion (GSAP + ScrollTrigger + Lenis)
-    cine.js            Home hero opening + Three.js dotted globe
     visit3d.js         Contact page office map as a Three.js diorama (SVG fallback in the page)
     ink.js             "How we work" ink story (canvas)
     boot.js            Sets motion / reduced-motion classes before first paint
@@ -66,7 +66,8 @@ test/                  Automated checks (node --test)
 | The head, nav or footer on every page | `src/templates/layout.js` |
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
-| The home hero opening, the "How we work" drawing, the contact map | `public/assets/cine.js`, `ink.js`, `visit3d.js` |
+| The home hero maze | `src/templates/maze.js` (the drawing), `public/assets/site.css` ("home hero + maze") |
+| The "How we work" drawing, the contact map | `public/assets/ink.js`, `visit3d.js` |
 | Security headers, caching, the 404 | `lib/static-server.js` |
 | The contact form endpoint | `lib/contact-api.js` |
 
@@ -140,9 +141,8 @@ assets**, and that no source code sits in `public/`. CI runs the same checks on 
 
 ## Accessibility and motion
 
-All content is real HTML; the hero opening, globe, tools map wires and ink story are decoration layered on top.
-With "reduce motion" enabled the opening is skipped and scenes render in their final state. The hero opening
-plays once per browser session.
+All content is real HTML; the hero maze, tools map wires, ink story and project reels are decoration layered on
+top. With "reduce motion" enabled every scene renders in its final state (the maze as a finished drawing).
 
 ## Open items
 
