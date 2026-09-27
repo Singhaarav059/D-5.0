@@ -86,3 +86,13 @@ test('every local link, anchor and asset on the pages resolves', () => {
     }
   }
 });
+
+test('screenshot backdrops (--shot) point at files next to the stylesheet that uses them', () => {
+  // A url() inside a custom property resolves against the stylesheet that reads it (public/assets/site.css).
+  for (const page of ['index', 'projects']) {
+    const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
+    const urls = [...html.matchAll(/--shot:url\(([^)]+)\)/g)].map((m) => m[1]);
+    assert.ok(urls.length, `${page} has no screenshot backdrops`);
+    for (const url of urls) assert.ok(fs.existsSync(path.join(root, 'public', 'assets', url)), `${page}: --shot ${url} does not resolve from public/assets/`);
+  }
+});

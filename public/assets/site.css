@@ -225,6 +225,7 @@ html.menu-open { overflow: hidden; }
 .journey.is-live .journey__track { height: var(--track, 320svh); }
 .journey.is-live .journey__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; align-items: center; }
 .journey--home.is-live .journey__sticky { align-items: flex-start; padding-top: clamp(84px, 11vh, 132px); }
+.journey--home.is-live.is-roomy .journey__sticky { align-items: center; padding-top: 64px; }
 .journey.is-live .journey__stage { grid-template-areas: "text" "map" "steps"; gap: clamp(18px, 3.6vh, 44px); }
 .journey.is-live .journey__intro, .journey.is-live .journey__caption { grid-area: text; align-self: end; }
 /* the drawing is capped at about 27% of the screen's height; the steps take the same width so each stage's title
@@ -793,7 +794,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .reason + .reason { border-top: 1px solid var(--line); }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   .journey__steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   /* compact scene: hero copy, heading and the current stage take turns in one slot above the drawing */
   .journey.is-live .journey__stage { grid-template-areas: "text" "map"; }
@@ -806,7 +807,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .journey.is-live .journey__step h3 { margin: 10px 0 8px; }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 860px) {
   .maze--wide { display: none; }
   .maze--narrow { display: block; }
   .maze__route, .maze__line, .maze__trail { stroke-width: 4.4; }

@@ -44,10 +44,11 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
 };
 
 // Buttons: `btn--primary` (solid) or `btn--ghost` (outline). On a dark sheet both invert on their own (site.css).
-// The smallest large WebP of a screenshot, for the blurred backdrop behind it (site.css: --shot).
+// The smallest large WebP of a screenshot, for the blurred backdrop behind it (site.css: --shot). A url() inside a
+// custom property resolves against the stylesheet that uses it (public/assets/site.css), hence no ./assets/ prefix.
 const shot = (key) => {
   const f = MANIFEST[key].files.filter((x) => x.fmt === 'webp' && x.w > 200).sort((x, y) => x.w - y.w)[0];
-  return `--shot:url(./assets/img/work/${f.file})`;
+  return `--shot:url(img/work/${f.file})`;
 };
 
 const btn = (label, href, cls = 'btn--primary', extra = '') =>

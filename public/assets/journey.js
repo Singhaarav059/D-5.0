@@ -86,7 +86,7 @@
     const stepsBox = sec.querySelector('.journey__steps');
     const steps = $$('[data-step]', sec);
     const drawings = $$('.maze', sec).map(drawing);
-    const compact = matchMedia('(max-width: 760px)'); // the stages share the heading's slot (site.css)
+    const compact = matchMedia('(max-width: 860px)'); // the stages share the heading's slot (site.css)
     // The scene's beats, as fractions of the track. Home starts as the hero, so it hands over first.
     const P = home
       ? { intro: [0.02, 0.12], caption: [0.12, 0.22], walls: [0.1, 0.28], morph: [0.2, 0.46], stops: [0.44, 0.52], travel: [0.55, 0.95] }
@@ -98,6 +98,7 @@
       sec.classList.add('is-live');
       const room = sticky.clientHeight - parseFloat(getComputedStyle(sticky).paddingTop) - 8;
       const ok = stage.offsetHeight <= room;
+      sec.classList.toggle('is-roomy', ok && room - stage.offsetHeight > 160); // tall screens: centre the stage
       if (!ok) {
         sec.classList.remove('is-live');
         [intro, caption, stepsBox].forEach((el) => el && (el.style.opacity = el.style.transform = '', el.inert = false));
