@@ -15,7 +15,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
       <a class="link-arrow" href="./projects#${p.image}">Read the case study ${icon.arrow}</a>
     </div>
-    <figure class="stack-card__media" style="${shot(p.image)}" data-tour="${esc(JSON.stringify(p.tour))}">${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 640px' })}</figure>
+    <figure class="stack-card__media" style="${shot(p.image)}"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
   </div>
 </article>`;
 

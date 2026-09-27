@@ -271,16 +271,16 @@
     const cards = $$('[data-proj]').map((b) => b.closest('.pcard'));
     let current = 0;
     const show = (i, dir = 0) => {
-      $('[data-tour]', body)?.tour?.destroy();
+      $('[data-reel]', body)?.reel?.destroy();
       current = (i + total) % total;
       body.replaceChildren($(`[data-proj-tpl="${current}"]`).content.cloneNode(true));
       dlg.setAttribute('aria-labelledby', `pdlg-title-${current}`);
       body.scrollTop = 0;
       $('.pdlg__body', body).scrollTop = 0;
       if (dir && motion) { body.style.setProperty('--dir', dir); body.classList.remove('is-swapping'); void body.offsetWidth; body.classList.add('is-swapping'); }
-      // the case's product tour plays large in the dialog (tour.js; absent with reduced motion or no JS)
-      const media = $('[data-tour]', body);
-      if (media && window.Tour) window.Tour.mount(media);
+      // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
+      const media = $('[data-reel]', body);
+      if (media && window.Reel) window.Reel.mount(media);
       history.replaceState(null, '', '#' + cards[current].id);
     };
     $$('[data-proj]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.proj); dlg.showModal(); }));
@@ -290,11 +290,11 @@
       if (d && !e.target.closest('input, textarea, select')) { e.preventDefault(); show(current + d, d); }
     });
     dlg.addEventListener('close', () => {
-      $('[data-tour]', body)?.tour?.destroy();
+      $('[data-reel]', body)?.reel?.destroy();
       body.classList.remove('is-swapping');
       history.replaceState(null, '', location.pathname + location.search);
     });
-    // after every deferred script (the tours) has run
+    // after every deferred script (the reels) has run
     const fromHash = () => {
       const i = cards.findIndex((c) => c.id === decodeURIComponent(location.hash.slice(1)));
       if (i >= 0 && !dlg.open) { show(i); dlg.showModal(); }

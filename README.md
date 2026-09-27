@@ -46,7 +46,9 @@ public/                Everything a visitor can load (the only folder the server
     site.css           All styles
     site.js            Interactions and scroll motion (GSAP + ScrollTrigger + Lenis)
     visit3d.js         Contact page office map as a Three.js diorama (SVG fallback in the page)
-    tour.js            Product tours: a camera over each project's real screens (one plays at a time)
+    reel.js            Project reels: the short film on each project card (one plays at a time)
+    reel-kit.js        The reels' scene types and illustrations
+    reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
     journey.js         The maze scene: the home hero turning into "How we work" as you scroll
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
@@ -90,11 +92,13 @@ test/                  Automated checks (node --test)
    Check the result in Chrome and Safari before committing.
 2. Add an entry to `public/assets/img/work/manifest.json` with the original `w`/`h` and the three files
    (copy an existing entry as the template).
-3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, a short `name`, a `sector` label, a
-   one-line `brief` and `outcome` (they open and close the case study) and a `tour`: three stops over the
-   screenshot, each `[x, y, zoom, 'caption']` with x and y as fractions of the image (0 to 1) and a caption naming
-   what is on screen there. Add the slug to the `work` list of each service it shows, then build.
-   Check the tour on the projects page: hover the card and watch each stop land where its caption says.
+3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, a short `name`, a `sector` label and a
+   one-line `brief` and `outcome` (they open and close the case study). Add the slug to the `work` list of each
+   service it shows.
+4. Give it a reel: an entry under `reels` in `src/content.js`, keyed by the slug. Pick an opening (`open`), a `look`
+   and a `chrome` that its neighbours on the projects page don't use, a 3D or car `hero`, and three or four scenes
+   from `public/assets/reel-kit.js` that fit the product; prefer a scene type no other reel uses yet (the comment
+   above `reels` has the rules). Build, then play it on the projects page and check every chapter lands cleanly.
 
 The build stops with `missing image <slug>` if the manifest entry is missing.
 
@@ -149,7 +153,7 @@ assets**, and that no source code sits in `public/`. CI runs the same checks on 
 
 ## Accessibility and motion
 
-All content is real HTML; the maze scene, tools map wires and product tours are decoration layered on
+All content is real HTML; the maze scene, tools map wires and project reels are decoration layered on
 top. With "reduce motion" enabled every scene renders in its final state (the maze as a finished drawing).
 
 ## Open items
