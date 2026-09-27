@@ -234,12 +234,41 @@
     }
   });
 
+  // Projects page: filter the cards by service (?filter=<id> preselects). Cards that come and go glide into place
+  // with a same-page view transition where the browser has them.
+  const grid = $('[data-pgrid]');
+  if (grid) {
+    const btns = $$('[data-filter]');
+    const setFilter = (f, animate) => {
+      const apply = () => {
+        grid.dataset.filter = f;
+        btns.forEach((b) => b.setAttribute('aria-pressed', b.dataset.filter === f));
+        $$('.pcard', grid).forEach((c) => { c.hidden = f !== 'all' && !c.dataset.services.split(' ').includes(f); });
+      };
+      const done = () => { root.classList.remove('is-filtering'); if (window.ScrollTrigger) ScrollTrigger.refresh(); };
+      if (animate && motion && document.startViewTransition) {
+        root.classList.add('is-filtering');
+        document.startViewTransition(apply).finished.then(done, done);
+      } else { apply(); done(); }
+    };
+    btns.forEach((b) => b.addEventListener('click', () => {
+      setFilter(b.dataset.filter, true);
+      const u = new URL(location.href);
+      if (b.dataset.filter === 'all') u.searchParams.delete('filter'); else u.searchParams.set('filter', b.dataset.filter);
+      history.replaceState(null, '', u);
+    }));
+    const q = new URLSearchParams(location.search).get('filter');
+    if (q && btns.some((b) => b.dataset.filter === q)) setFilter(q, false);
+  }
+
   // Projects page: card opens a modal with the full case study (native <dialog>: Esc, focus trap, top layer).
-  // The arrows (and the left/right keys) step to the neighbouring case without closing.
+  // The arrows (and the left/right keys) step to the neighbouring case without closing. Every case has its own
+  // address (#<project>): opening one updates it, and arriving on it opens the case.
   const dlg = $('[data-pdlg]');
   if (dlg) {
     const body = $('[data-pdlg-body]', dlg);
     const total = $$('[data-proj-tpl]').length;
+    const cards = $$('[data-proj]').map((b) => b.closest('.pcard'));
     let current = 0;
     const show = (i, dir = 0) => {
       $('[data-tour]', body)?.tour?.destroy();
@@ -252,6 +281,7 @@
       // the case's product tour plays large in the dialog (tour.js; absent with reduced motion or no JS)
       const media = $('[data-tour]', body);
       if (media && window.Tour) window.Tour.mount(media);
+      history.replaceState(null, '', '#' + cards[current].id);
     };
     $$('[data-proj]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.proj); dlg.showModal(); }));
     $$('[data-pdlg-step]', dlg).forEach((b) => b.addEventListener('click', () => show(current + +b.dataset.pdlgStep, +b.dataset.pdlgStep)));
@@ -259,7 +289,18 @@
       const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
       if (d && !e.target.closest('input, textarea, select')) { e.preventDefault(); show(current + d, d); }
     });
-    dlg.addEventListener('close', () => { $('[data-tour]', body)?.tour?.destroy(); body.classList.remove('is-swapping'); });
+    dlg.addEventListener('close', () => {
+      $('[data-tour]', body)?.tour?.destroy();
+      body.classList.remove('is-swapping');
+      history.replaceState(null, '', location.pathname + location.search);
+    });
+    // after every deferred script (the tours) has run
+    const fromHash = () => {
+      const i = cards.findIndex((c) => c.id === decodeURIComponent(location.hash.slice(1)));
+      if (i >= 0 && !dlg.open) { show(i); dlg.showModal(); }
+    };
+    addEventListener('DOMContentLoaded', fromHash);
+    addEventListener('hashchange', fromHash);
     $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }

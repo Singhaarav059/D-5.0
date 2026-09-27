@@ -19,9 +19,18 @@ const caseBody = (p, i) => {
         </div>`;
 };
 
+// Filters: the services each project shows (content.js `services[].work`). ?filter=<service id> preselects one.
+const servicesOf = (p) => C.services.filter((s) => s.work.includes(p.image)).map((s) => s.id).join(' ');
+const filters = () => `<div class="pfilter" role="group" aria-label="Show projects by service" data-reveal>
+      <button type="button" aria-pressed="true" data-filter="all">All <span>${C.projects.length}</span></button>${C.services.map((s) => `
+      <button type="button" aria-pressed="false" data-filter="${s.id}">${esc(s.title)} <span>${s.work.length}</span></button>`).join('')}
+    </div>`;
+
+// Each card is an anchor target (#<image key>): opening that link opens the case (site.js).
 const projectsGrid = () => `<section class="section projects">
   <div class="wrap">
-    <div class="pgrid">${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" style="--tint:${p.tint};${shot(p.image)}" data-reveal>
+    ${filters()}
+    <div class="pgrid" data-pgrid>${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" id="${p.image}" style="--tint:${p.tint};${shot(p.image)};view-transition-name:pcard-${i}" data-services="${servicesOf(p)}" data-reveal>
       <figure class="pcard__media"${tourAttr(p)}>${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
       <div class="pcard__body">
         <p class="pcard__meta"><span class="pcard__num">${pad(i + 1)}</span>${esc(p.sector)}</p>

@@ -344,6 +344,14 @@ html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-or
 .checks { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
 .checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.92rem; line-height: 1.4; }
 .checks svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--accent-text); }
+/* "Seen in": the projects that show the service, linking into their case studies */
+.svc-panel__work { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+.svc-panel__work span { color: var(--muted); }
+.svc-panel__work a { font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color var(--t-2) ease; }
+.svc-panel__work a:hover { text-decoration-color: currentColor; }
+.svc-panel__work .svc-panel__all { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; text-decoration: none; color: var(--accent-text); }
+.svc-panel__work svg { width: 14px; height: 14px; }
+.stack-card .link-arrow { margin-top: 22px; }
 
 /* Service art: line drawings in ink with one blue signal; the .flow stroke carries a slow moving dash. */
 .svc-art { width: auto; max-width: 86%; height: 80%; overflow: visible; }
@@ -535,6 +543,26 @@ html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-or
   .pcard:hover .pcard__btn { background-size: 100% 1px; }
   .pcard:hover .pcard__more svg { transform: translateX(3px); }
 }
+
+/* filters: a row of service chips; a filtered grid treats the featured card like the others */
+.pfilter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: clamp(32px, 5vw, 56px); }
+.pfilter button {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border: 0; border-radius: 999px; cursor: pointer;
+  background: none; color: var(--text); font-size: 0.9rem; font-weight: 500; box-shadow: inset 0 0 0 1px var(--line-2);
+  transition: background-color var(--t-2) var(--ease), color var(--t-2) var(--ease), box-shadow var(--t-2) var(--ease), transform var(--t-1) var(--ease);
+}
+.pfilter button span { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; transition: color var(--t-2) ease; }
+.pfilter button:hover { background: var(--surface); }
+.pfilter button:active { transform: scale(0.96); }
+.pfilter button[aria-pressed='true'] { background: var(--text); color: var(--bg); box-shadow: none; }
+.pfilter button[aria-pressed='true'] span { color: color-mix(in srgb, var(--bg) 70%, var(--text)); }
+.pgrid[data-filter]:not([data-filter='all']) .pcard--wide { grid-column: auto; display: flex; gap: 20px; }
+.pgrid[data-filter]:not([data-filter='all']) .pcard--wide .pcard__media { aspect-ratio: 16 / 11; }
+.pgrid[data-filter]:not([data-filter='all']) .pcard--wide h2 { font-size: clamp(1.3rem, 1.6vw, 1.5rem); line-height: 1.12; letter-spacing: -0.03em; }
+.pgrid[data-filter]:not([data-filter='all']) .pcard--wide .pcard__body > p:not(.pcard__meta) { -webkit-line-clamp: 2; font-size: 0.95rem; }
+/* filtering animates only the cards, not the whole page */
+html.is-filtering::view-transition-old(root), html.is-filtering::view-transition-new(root) { animation: none; }
+html.is-filtering::view-transition-group(*) { animation-duration: 460ms; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* case dialog: centred, scales in from 0.97 (never from 0); arrows step through the projects */
 .pdlg {
@@ -805,6 +833,9 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .ind__head { flex-direction: column; gap: 8px; }
   .ind__tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
   .ind__tabs::-webkit-scrollbar { display: none; }
+  .pfilter { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
+  .pfilter::-webkit-scrollbar { display: none; }
+  .pfilter button { flex: none; }
   .ind__tabs button { flex: none; }
   .acc button { gap: 14px; }
   .acc__a p { padding: 0 0 22px 38px; }

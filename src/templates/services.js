@@ -89,12 +89,16 @@ const SVC_ART = {
 
 const serviceArt = (id) => `<svg class="svc-art" viewBox="0 0 240 140" aria-hidden="true">${SVC_ART[id] || SVC_ART.web}</svg>`;
 
+// Each service names the projects that show it and links into their case studies (and to all of them, filtered).
+const seenIn = (s) => `<p class="svc-panel__work"><span>Seen in</span>${s.work.slice(0, 4).map((k) => C.projects.find((p) => p.image === k)).map((p) => `<a href="./projects#${p.image}">${esc(p.name)}</a>`).join('')}<a class="svc-panel__all" href="./projects?filter=${s.id}">All ${s.work.length} ${icon.arrow}</a></p>`;
+
 const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" data-svc-panel>
   <div class="svc-panel__art">${serviceArt(s.id)}</div>
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.description)}</p>
     <ul class="checks">${s.items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
+    ${seenIn(s)}
   </div>
 </article>`;
 
