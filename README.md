@@ -34,7 +34,8 @@ src/
     layout.js            the shell every page shares: <head>, nav, footer
     shared.js            sections used on several pages: subpage hero, FAQ, contact block
     home.js, about.js, services.js, projects.js, contact.js   sections for each page
-    maze.js              the home hero's maze: a seeded maze and its route, drawn as SVG at build time
+    journey.js           the maze scene (home hero + "How we work"), used on home, services and about
+    maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
 scripts/
   check-syntax.js      `npm run check`: syntax-checks every first-party script
@@ -47,7 +48,7 @@ public/                Everything a visitor can load (the only folder the server
     reel.js            Project reels: the short film on each project card (one plays at a time)
     reel-kit.js        The reels' scene types and illustrations
     reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
-    ink.js             "How we work" ink story (canvas)
+    journey.js         The maze scene: the home hero turning into "How we work" as you scroll
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
@@ -69,8 +70,8 @@ test/                  Automated checks (node --test)
 | The head, nav or footer on every page | `src/templates/layout.js` |
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
-| The home hero maze | `src/templates/maze.js` (the drawing), `public/assets/site.css` ("home hero + maze") |
-| The "How we work" drawing, the contact map | `public/assets/ink.js`, `visit3d.js` |
+| The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` (markup), `public/assets/journey.js` (scroll), `site.css` ("the journey") |
+| The contact map | `public/assets/visit3d.js` |
 | Security headers, caching, the 404 | `lib/static-server.js` |
 | The contact form endpoint | `lib/contact-api.js` |
 
@@ -144,7 +145,7 @@ assets**, and that no source code sits in `public/`. CI runs the same checks on 
 
 ## Accessibility and motion
 
-All content is real HTML; the hero maze, tools map wires, ink story and project reels are decoration layered on
+All content is real HTML; the maze scene, tools map wires and project reels are decoration layered on
 top. With "reduce motion" enabled every scene renders in its final state (the maze as a finished drawing).
 
 ## Open items

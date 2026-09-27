@@ -9,7 +9,7 @@
 
    Contents
      tokens · base · type · buttons · section header · sheets · nav
-     home hero + maze · page hero · work deck · services · knowledge map · industries · "How we work" (ink.js)
+     the journey (home hero + "How we work", journey.js) · page hero · work deck · services · knowledge map · industries
      studio + reasons · about · founder quote · FAQ · contact + form · projects + case dialog · visit · footer
      initial motion states · tablet (<=1024) · small tablet (<=860) · phone (<=560) · preferences
      project reels (reel.js; their own tokens, kept last)
@@ -206,37 +206,82 @@ html:not(.js) .nav__links a[aria-current] { box-shadow: inset 0 -1px 0 var(--tex
 .nav__menu-mail svg { width: 18px; height: 18px; }
 html.menu-open { overflow: hidden; }
 
-/* ---------- home hero: the headline, then the maze it promises ---------- */
-.hero { padding: clamp(112px, 15vh, 160px) 0 clamp(56px, 9vh, 104px); }
+/* ---------- the journey: the home hero and "How we work" as one scene (templates/journey.js, journey.js) ----------
+   Without motion it is plain flow: (hero copy) → the solved maze → the heading → the four stages. With motion
+   (.is-live) the track is tall and the stage sticks while the scene plays; the hero copy and the heading share one
+   slot, and journey.js drives the hand-over, the maze and the stages from the scroll position. */
+.journey { position: relative; padding-block: clamp(72px, 10vw, 136px); }
+.journey--home { padding-top: clamp(112px, 15vh, 160px); }
+.journey__stage { display: grid; gap: clamp(36px, 6vh, 64px); }
+.journey__caption .shead { margin-bottom: 0; }
+.journey__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.journey__step { padding-right: clamp(16px, 2.4vw, 36px); }
+.journey__num { font: 500 0.8rem/1 var(--body); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.journey__step h3 { margin: 14px 0 8px; font-size: clamp(1.3rem, 1.8vw, 1.6rem); line-height: 1.1; letter-spacing: -0.03em; }
+.journey.is-live .journey__step h3 { margin-bottom: 0; }
+.journey__step p { font-size: 0.93rem; line-height: 1.55; color: var(--muted); }
+
+.journey.is-live { padding: 0; }
+.journey.is-live .journey__track { height: var(--track, 320svh); }
+.journey.is-live .journey__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; align-items: center; }
+.journey--home.is-live .journey__sticky { align-items: flex-start; padding-top: clamp(84px, 11vh, 132px); }
+.journey.is-live .journey__stage { grid-template-areas: "text" "map" "steps"; gap: clamp(18px, 3.6vh, 44px); }
+.journey.is-live .journey__intro, .journey.is-live .journey__caption { grid-area: text; align-self: end; }
+/* the drawing is capped at about 27% of the screen's height; the steps take the same width so each stage's title
+   sits under its stop (the wide maze is 4.52 times wider than tall) */
+.journey.is-live .journey__map, .journey.is-live .journey__steps { width: min(100%, 120svh); }
+.journey.is-live .journey__map { grid-area: map; }
+.journey--home.is-live .journey__caption { opacity: 0; }
+/* a progress rail: the four titles in a row under their stops, the current stage's description under them */
+.journey.is-live .journey__steps { grid-area: steps; opacity: 0; grid-template-rows: auto auto; row-gap: 14px; }
+.journey.is-live .journey__step { display: contents; }
+.journey.is-live .journey__head { grid-row: 1; padding-right: 16px; opacity: 0.32; transition: opacity 400ms var(--ease); }
+.journey.is-live .journey__step:nth-child(2) .journey__head { grid-column: 2; }
+.journey.is-live .journey__step:nth-child(3) .journey__head { grid-column: 3; }
+.journey.is-live .journey__step:nth-child(4) .journey__head { grid-column: 4; }
+.journey.is-live .journey__step.is-done .journey__head { opacity: 0.6; }
+.journey.is-live .journey__step.is-active .journey__head { opacity: 1; }
+.journey.is-live .journey__step p { grid-row: 2; grid-column: 1 / -1; max-width: 68ch; opacity: 0; transform: translateY(6px); transition: opacity 400ms var(--ease), transform 400ms var(--ease); }
+.journey.is-live .journey__step.is-active p { opacity: 1; transform: none; }
+
+/* hero copy (the start of the home journey) */
 .hero__grid { margin-top: clamp(28px, 5vh, 52px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 32px clamp(40px, 5vw, 88px); align-items: end; }
-.hero__title { font: 360 clamp(2.9rem, 6.1vw, 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
+.hero__title { font: 360 clamp(2.9rem, min(6.1vw, 9.6vh), 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
 .hero__title em { display: block; }
 /* display ascenders and descenders reach past the word masks: give them room */
 .hero__title .w, .phero__title .w { padding: 0.08em 0.05em 0.14em; margin: -0.08em -0.05em -0.14em; }
 .hero__lead { font-size: clamp(1.02rem, 1.25vw, 1.15rem); line-height: 1.5; color: var(--muted); max-width: 40ch; }
 .hero__ctas { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
-.hero__maze { width: var(--wrap); margin: clamp(44px, 7vh, 80px) auto 0; }
-.hero__stats { margin-top: clamp(28px, 4.5vh, 48px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
-.hero__stats li { display: grid; gap: 8px; padding: 20px 20px 0 0; }
-.hero__stats li + li { padding-left: 20px; border-left: 1px solid var(--line); }
-.hero__stats b { font: 360 clamp(2rem, 3.3vw, 3rem)/1 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
-.hero__stats small { font-size: 0.9rem; color: var(--muted); }
 
-/* The maze (src/templates/maze.js). Final state is the resting drawing: faint walls, the blue route, the chevron.
-   With motion, the walls rise, the route draws itself through, the chevron lands and the walls fall back. */
+/* The maze (templates/maze.js). Resting state: faint walls, the blue route, the chevron. When a maze first comes
+   into view the walls rise, the route draws itself through, the chevron lands and the walls fall back. */
 .maze { display: block; width: 100%; height: auto; overflow: visible; }
 .maze--narrow { display: none; }
 .maze__walls { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-linecap: square; vector-effect: non-scaling-stroke; opacity: 0.3; }
-.maze__route { fill: none; stroke: var(--blue); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.maze__route, .maze__line, .maze__trail { fill: none; stroke: var(--blue); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.maze__line, .maze__trail { visibility: hidden; }
+.maze.is-morphing .maze__route { visibility: hidden; }
+.maze.is-morphing .maze__line, .maze.is-morphing .maze__trail { visibility: visible; }
+.maze__line { transition: stroke 500ms var(--ease); }
+.maze.is-straight .maze__line { stroke: color-mix(in srgb, var(--blue) 24%, var(--paper)); }
 .maze__mark { fill: var(--blue); }
-.maze__signal { fill: var(--paper); stroke: var(--blue); stroke-width: 2.4; opacity: 0; transition: opacity 600ms ease; }
+.maze__stop { fill: var(--paper); stroke: var(--ink); stroke-width: 1.6; opacity: 0; transform-box: fill-box; transform-origin: center; transition: fill 300ms ease, stroke 300ms ease; }
+.maze__stop.is-on { fill: var(--blue); stroke: var(--blue); }
+.maze__signal, .maze__traveler { fill: var(--paper); stroke: var(--blue); stroke-width: 2.6; opacity: 0; transition: opacity 500ms ease; }
 .maze.is-live .maze__signal { opacity: 1; }
-html.motion.js .maze__walls { animation: maze-walls 4.4s var(--ease) both; }
-html.motion.js .maze__route { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; animation: maze-route 2.5s cubic-bezier(0.65, 0, 0.35, 1) 0.7s forwards; }
-html.motion.js .maze__mark { transform-box: fill-box; transform-origin: 30% 50%; animation: maze-mark 800ms var(--ease) 3.05s both; }
+.maze.is-moving .maze__signal { opacity: 0; }
+.maze.is-travelling .maze__traveler { opacity: 1; }
+.maze__markset { transform-box: fill-box; }
+.maze.is-arrived .maze__mark { animation: maze-arrive 900ms var(--ease); }
+html.motion.js .maze:not(.is-seen) .maze__walls, html.motion.js .maze:not(.is-seen) .maze__mark { opacity: 0; }
+html.motion.js .maze .maze__route { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; }
+html.motion.js .maze.is-seen .maze__walls { animation: maze-walls 4.4s var(--ease) both; }
+html.motion.js .maze.is-seen .maze__route { animation: maze-route 2.5s cubic-bezier(0.65, 0, 0.35, 1) 0.5s forwards; }
+html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-origin: 30% 50%; animation: maze-mark 800ms var(--ease) 2.85s both; }
 @keyframes maze-walls { 0% { opacity: 0; } 16% { opacity: 0.62; } 70% { opacity: 0.62; } 100% { opacity: 0.3; } }
 @keyframes maze-route { to { stroke-dashoffset: 0; } }
 @keyframes maze-mark { from { opacity: 0; transform: translateX(-14px) scale(0.5); } to { opacity: 1; transform: none; } }
+@keyframes maze-arrive { 40% { transform: translateX(6px); } }
 
 /* ---------- page hero (projects, services, about, contact, 404) ---------- */
 .phero { padding: clamp(120px, 17vh, 176px) 0 clamp(8px, 2vw, 24px); }
@@ -378,36 +423,6 @@ html.motion.js .maze__mark { transform-box: fill-box; transform-origin: 30% 50%;
 .ind__panel ul { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
 .ind__panel li { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--line); font-size: 0.93rem; line-height: 1.35; }
 .ind__panel li svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--accent-text); }
-
-/* ---------- "How we work" on paper (ink.js) ----------
-   With motion the track is tall and the paper sticks while the story plays; otherwise it is one static panel. */
-.section.ink { padding-block: clamp(40px, 6vw, 72px); }
-.ink__track { position: relative; }
-.ink.is-scroll .ink__track { height: 340vh; }
-.ink__sticky { padding-inline: 10px; }
-.ink.is-scroll .ink__sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
-.ink.is-scroll .ink__paper { height: calc(100svh - 20px); }
-.ink__paper {
-  position: relative; overflow: hidden; width: 100%; isolation: isolate;
-  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: clamp(12px, 2.4vh, 22px);
-  min-height: min(760px, calc(100svh - 20px)); max-height: calc(100svh - 20px); padding: clamp(22px, 3.6vw, 48px);
-  border-radius: var(--r-sheet); background: #efe9dc; box-shadow: inset 0 0 0 1px var(--line);
-}
-.grain { position: absolute; inset: 0; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.ink__paper .grain { opacity: 0.4; mix-blend-mode: multiply; z-index: -1; }
-.ink__head { margin: 0; }
-.ink__head .shead__row { margin-top: clamp(14px, 2.4vh, 26px); }
-.ink__head .h2 { font-size: clamp(2rem, min(3.8vw, 6vh), 3.4rem); max-width: 18ch; }
-.ink__stage { position: relative; min-height: 200px; }
-.ink__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-.ink__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2.4vw, 32px); margin: 0; padding: clamp(12px, 2vh, 18px) 0 0; border-top: 1px solid var(--line); }
-.ink__step { opacity: 0.34; transition: opacity 400ms ease; }
-.ink__step.is-done { opacity: 0.62; }
-.ink__step.is-active { opacity: 1; }
-.ink__num { font: 500 0.78rem/1 var(--body); color: var(--accent-text); font-variant-numeric: tabular-nums; }
-.ink__step h3 { margin: 8px 0 6px; font-size: clamp(1.3rem, 1.8vw, 1.6rem); line-height: 1.1; letter-spacing: -0.03em; }
-.ink__step p { font-size: 0.88rem; line-height: 1.5; color: var(--muted); }
 
 /* ---------- studio ("Who we are", home) and the reasons ---------- */
 .studio__top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 6vw, 96px); align-items: end; }
@@ -688,7 +703,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .ind__big { display: none; }
   .studio__top { gap: 36px; align-items: start; }
 
-  .ink.is-scroll .ink__track { height: 260vh; }
+  .journey:not(.is-live) .journey__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 0; }
 
   .quote__inner { grid-template-columns: auto minmax(0, 1fr); gap: 32px; }
   .quote__photo { width: 180px; order: -1; }
@@ -731,25 +746,29 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .hero__stats li:nth-child(n + 3) { margin-top: 18px; border-top: 1px solid var(--line); }
   .visit__grid { grid-template-columns: minmax(0, 1fr); }
   .contact__ways small { display: none; }
-  .ink__steps { gap: 12px; }
   .reasons { grid-template-columns: minmax(0, 1fr); }
   .reason, .reason + .reason { padding: 22px 0 24px; border-left: 0; }
   .reason + .reason { border-top: 1px solid var(--line); }
 }
 
 @media (max-width: 760px) {
-  .ink__steps { grid-template-columns: minmax(0, 1fr); }
-  .ink.is-scroll .ink__step { grid-area: 1 / 1; opacity: 0; }
-  .ink.is-scroll .ink__step.is-active { opacity: 1; }
-  .ink.is-scroll .ink__track { height: 250vh; }
-  .ink__head .shead__side { display: none; }
-  .ink__head .h2 { font-size: clamp(1.9rem, 8.4vw, 2.5rem); }
+  .journey__steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  /* compact scene: hero copy, heading and the current stage take turns in one slot above the drawing */
+  .journey.is-live .journey__stage { grid-template-areas: "text" "map"; }
+  .journey.is-live .journey__steps { grid-area: text; align-self: end; }
+  .journey.is-live .journey__map { width: min(100%, 58svh); }
+  .journey.is-live .journey__steps { grid-template-rows: none; }
+  .journey.is-live .journey__step { display: block; grid-area: 1 / 1; opacity: 0; transition: opacity 400ms var(--ease); }
+  .journey.is-live .journey__step.is-active { opacity: 1; }
+  .journey.is-live .journey__step .journey__head, .journey.is-live .journey__step p { opacity: 1; transform: none; }
+  .journey.is-live .journey__step h3 { margin: 10px 0 8px; }
 }
 
 @media (max-width: 700px) {
   .maze--wide { display: none; }
   .maze--narrow { display: block; }
-  .maze__route { stroke-width: 4.4; }
+  .maze__route, .maze__line, .maze__trail { stroke-width: 4.4; }
+  .maze__stop { r: 9; }
 }
 
 /* =========================================================================
@@ -760,7 +779,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .section { padding-block: 64px; }
   .sheet { margin-inline: 8px; }
   .footer { padding: 8px; }
-  .hero { padding-top: 104px; padding-bottom: 56px; }
+  .journey--home { padding-top: 104px; }
   .hero__title { font-size: clamp(2.6rem, 12.4vw, 3.4rem); }
   .hero__ctas .btn { flex: 1 1 auto; justify-content: space-between; }
   .phero { padding-top: 112px; }

@@ -1,10 +1,10 @@
-// Services sections (several also appear on the home page): services, tools & technologies, industries, how we work.
+// Services sections (the services list also appears on the home page): services, tools & technologies, industries.
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, icon, btn, head } = require('./helpers');
+const { PUBLIC, esc, pad, icon, head } = require('./helpers');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
@@ -122,21 +122,4 @@ const industries = () => `<section class="section industries" id="industries">
   </div>
 </section>`;
 
-// "How we work", told on paper: an ink character walks through the four stages while the page scrolls
-// (ink.js draws it; the stage text below is the real content and reads fine without the drawing).
-const processSection = () => `<section class="section process ink" data-process data-ink>
-  <div class="ink__track">
-    <div class="ink__sticky">
-      <div class="ink__paper">
-        <i class="grain" aria-hidden="true"></i>
-        ${head({ label: 'Process', title: 'From a first idea <em>to a product at scale</em>', side: btn('Book a call', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"'), cls: 'ink__head' })}
-        <div class="ink__stage"><canvas class="ink__canvas" aria-hidden="true" data-ink-canvas></canvas></div>
-        <ol class="ink__steps">${C.process.map((s, i) => `
-          <li class="ink__step" data-ink-step><span class="ink__num">${pad(i + 1)} / ${pad(C.process.length)}</span><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p></li>`).join('')}
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>`;
-
-module.exports = { techStack, services, industries, processSection };
+module.exports = { techStack, services, industries };

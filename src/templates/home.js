@@ -1,32 +1,9 @@
-// Home page sections: the hero, the stacked project cards and "Who we are".
+// Home page sections: the stacked project cards and "Who we are" (the hero is templates/journey.js).
 'use strict';
 
 const C = require('../content');
 const { esc, pad, icon, pic, btn, head } = require('./helpers');
 const { reasons } = require('./about');
-const { maze } = require('./maze');
-
-// Hero: the name as the promise. The headline says it; the maze under it shows it: one route finds its way
-// through and lands on the Demaze chevron. Two drawings of the maze, one shaped for wide screens and one for phones.
-const hero = () => `<section class="hero" data-hero>
-  <div class="wrap hero__top">
-    <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
-    <div class="hero__grid">
-      <h1 class="hero__title" data-split="hero">${C.hero.headline}</h1>
-      <div class="hero__aside">
-        <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
-        <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See our work', '#work', 'btn--ghost')}</div>
-      </div>
-    </div>
-  </div>
-  <div class="hero__maze" data-maze>
-    ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide' })}
-    ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow' })}
-  </div>
-  <div class="wrap">
-    <ul class="hero__stats" data-hero-fade>${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${m.label}</small></li>`).join('')}</ul>
-  </div>
-</section>`;
 
 const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
   <div class="stack-card__inner">
@@ -77,4 +54,4 @@ const studio = () => `<section class="section sheet studio" id="about">
   </div>
 </section>`;
 
-module.exports = { hero, work, studio };
+module.exports = { work, studio };

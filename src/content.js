@@ -21,6 +21,12 @@ module.exports = {
     lead: 'From the first workshop to launch and beyond, we design, build and scale AI software with you, as one long-term team.',
   },
 
+  // "How we work" (templates/journey.js): the heading over the maze scene; the four stages are `process` below.
+  journey: {
+    title: 'Every product starts as a maze. <em>We find the way through.</em>',
+    lead: 'Four stages and one team, from your first idea to a product at scale.',
+  },
+
   founder: {
     quote: 'We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive - and we’re with you, executing every step of the way.',
     name: 'Krupal Chaudhary',

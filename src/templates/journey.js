@@ -1,0 +1,45 @@
+// "How we work" as one scene: the maze (templates/maze.js), the four stages under it, and on the home page the
+// hero copy above it. journey.js plays it on scroll: the walls fall away, the route straightens into a line, the
+// stops appear and a signal walks the stages. Without motion it reads top to bottom as plain content:
+// (hero copy) → the solved maze → the heading → the four stages.
+'use strict';
+
+const C = require('../content');
+const { esc, pad, btn, head } = require('./helpers');
+const { maze } = require('./maze');
+
+const heroCopy = () => `<div class="journey__intro" data-hero>
+          <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
+          <div class="hero__grid">
+            <h1 class="hero__title" data-split="hero">${C.hero.headline}</h1>
+            <div class="hero__aside">
+              <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
+              <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See how we work', '#how', 'btn--ghost')}</div>
+            </div>
+          </div>
+        </div>`;
+
+const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead) })}</div>`;
+
+const drawing = () => `<div class="journey__map">
+          ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide' })}
+          ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow' })}
+        </div>`;
+
+const steps = () => `<ol class="journey__steps">${C.process.map((s, i) => `
+          <li class="journey__step" data-step><div class="journey__head"><span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
+        </ol>`;
+
+// `intro`: the home page, where the scene starts as the hero.
+const journey = ({ intro = false } = {}) => `<section class="journey${intro ? ' journey--home' : ''}" data-journey>
+  <div class="journey__track">
+    <div class="journey__sticky">
+      <div class="wrap journey__stage">
+        ${intro ? heroCopy() + drawing() + caption() : caption() + drawing()}
+        ${steps()}
+      </div>
+    </div>
+  </div>
+</section>`;
+
+module.exports = { journey };

@@ -6,9 +6,10 @@ const C = require('./content');
 const { btn } = require('./templates/helpers');
 const { layout } = require('./templates/layout');
 const { pageHero, faq, contact } = require('./templates/shared');
-const { hero, work, studio } = require('./templates/home');
+const { work, studio } = require('./templates/home');
+const { journey } = require('./templates/journey');
 const { about, whyUs, founder } = require('./templates/about');
-const { techStack, services, industries, processSection } = require('./templates/services');
+const { techStack, services, industries } = require('./templates/services');
 const { projectsGrid } = require('./templates/projects');
 const { visit } = require('./templates/contact');
 
@@ -17,8 +18,9 @@ const pages = {
     slug: '',
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
-    // Home page order: hero, work, services, tools, industries, who we are, process, FAQ, contact.
-    body: [hero(), work(), services(), techStack(), industries(), studio(), processSection(), faq(), contact()].join('\n'),
+    // Home page order: the hero that turns into "how we work", then proof (work), what we do (services), who we
+    // are (studio), questions, contact. The tools map and industries live on the services page.
+    body: [journey({ intro: true }), work(), services(), studio(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
@@ -36,7 +38,7 @@ const pages = {
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     body: [
       pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline),
-      services(false), techStack(), industries(), processSection(), contact(),
+      services(false), techStack(), industries(), journey(), contact(),
     ].join('\n'),
   }),
   'about-us': layout({
@@ -45,7 +47,7 @@ const pages = {
     description: C.about.whoWeAre[0],
     body: [
       pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1]),
-      about(), whyUs(), founder(), processSection(), contact(),
+      about(), whyUs(), founder(), journey(), contact(),
     ].join('\n'),
   }),
   404: layout({

@@ -281,7 +281,9 @@
       const t = a.getAttribute('href') === '#main' && a.hasAttribute('data-top') ? 0 : $(a.getAttribute('href'));
       if (t === null) return;
       e.preventDefault();
-      lenis.scrollTo(t, { offset: -90 });
+      // a target inside a scroll scene (journey.js) says where in the scene to land
+      const y = t && t.scrollTarget ? t.scrollTarget() : t;
+      lenis.scrollTo(y, { offset: typeof y === 'number' ? 0 : -90 });
     }));
   }
   // One curve and one travel distance for everything that enters: short, quiet, never bouncing.
@@ -302,15 +304,13 @@
   nav.classList.toggle('is-scrolled', scrollY > 40); // reload mid-page
 
   // Hero intro: the headline's words rise out of their clip, then the supporting copy settles in.
-  // The home maze draws itself in CSS; once its route has landed, a small signal starts travelling along it.
+  // (The home maze below it is journey.js.)
   const hero = $('[data-hero]');
   if (hero) {
     const words = split($('[data-split=hero]', hero), 'w');
     gsap.timeline({ defaults: { ease: EASE } })
       .from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1)
       .fromTo($$('[data-hero-fade]', hero), { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
-    const mazes = $$('.maze', hero);
-    if (mazes.length) gsap.delayedCall(3.4, () => mazes.forEach((m) => { m.classList.add('is-live'); m.querySelector('animateMotion')?.beginElement(); }));
   }
 
   // Everything else enters the same way: a short rise and fade, once.
