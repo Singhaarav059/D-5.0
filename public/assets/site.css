@@ -276,7 +276,7 @@ html.motion.js .maze__mark { transform-box: fill-box; transform-origin: 30% 50%;
 .svc-list__btn {
   position: relative; width: 100%; display: flex; align-items: baseline; gap: 16px; padding: clamp(11px, 1.6vh, 15px) 0;
   border: 0; background: none; cursor: pointer; text-align: left;
-  font: 400 clamp(1.3rem, 1.9vw, 1.75rem)/1.1 var(--display); letter-spacing: -0.03em; color: color-mix(in srgb, var(--muted) 70%, var(--bg));
+  font: 400 clamp(1.3rem, 1.9vw, 1.75rem)/1.1 var(--display); letter-spacing: -0.03em; color: color-mix(in srgb, var(--muted) 84%, var(--bg));
   transition: color var(--t-2) var(--ease);
 }
 .svc-list__btn:hover, .svc-list__btn.is-active { color: var(--text); }
