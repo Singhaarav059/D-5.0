@@ -85,7 +85,11 @@ function footer() {
         <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book with Calendly</a><a href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
       </div>
     </div>
-    <p class="footer__word" aria-hidden="true">Demaze</p>
+    <div class="footer__mark" aria-hidden="true" data-draw>
+      <svg class="footer__route" viewBox="0 0 600 80" preserveAspectRatio="none"><path d="M0 62H84V18H214V54H338V26H468V40H600"/></svg>
+      <svg class="footer__chevron" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg>
+      <span>Demaze</span>
+    </div>
     <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><a href="#main" data-top>Back to top ↑</a></div>
   </div>
 </footer>`;

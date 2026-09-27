@@ -8,7 +8,7 @@ const { layout } = require('./templates/layout');
 const { pageHero, faq, contact } = require('./templates/shared');
 const { work, studio } = require('./templates/home');
 const { journey } = require('./templates/journey');
-const { about, whyUs, founder } = require('./templates/about');
+const { about, stats, whyUs, founder } = require('./templates/about');
 const { techStack, services, industries } = require('./templates/services');
 const { projectsGrid } = require('./templates/projects');
 const { visit } = require('./templates/contact');
@@ -46,7 +46,7 @@ const pages = {
     title: 'About Us | Demaze Technologies',
     description: C.about.whoWeAre[0],
     body: [
-      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1]),
+      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats()),
       about(), whyUs(), founder(), journey(), contact(),
     ].join('\n'),
   }),

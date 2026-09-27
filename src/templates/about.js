@@ -20,6 +20,9 @@ const about = () => `<section class="section about" id="about">
   </div>
 </section>`;
 
+// The four figures, counting up as they arrive (site.js [data-count]).
+const stats = () => `<ul class="stats" data-stagger>${C.metrics.map((m) => `<li><b>${m.prefix}<span data-count="${m.value}">${m.value}</span>${m.suffix}</b><small>${esc(m.label)}</small></li>`).join('')}</ul>`;
+
 const reasons = () => `<ol class="reasons" data-stagger>${C.whyUs.map((w, i) => `<li class="reason"><span class="reason__num">${pad(i + 1)}</span><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></li>`).join('')}</ol>`;
 
 const whyUs = () => `<section class="section why">
@@ -39,4 +42,4 @@ const founder = () => `<section class="section sheet quote" id="founder">
   </figure>
 </section>`;
 
-module.exports = { about, reasons, whyUs, founder };
+module.exports = { about, stats, reasons, whyUs, founder };

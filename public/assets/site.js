@@ -362,6 +362,14 @@
     opacity: 1, y: 0, duration: 0.8, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
   }));
 
+  // Dark sheets settle into place as they arrive: a small lift and scale, tied to the scroll.
+  $$('.section.sheet').forEach((el) => gsap.fromTo(el, { y: 48, scale: 0.965 }, {
+    y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 55%', scrub: true },
+  }));
+
+  // The footer's route draws itself into the chevron when the footer arrives.
+  $$('[data-draw]').forEach((el) => ScrollTrigger.create({ trigger: el, start: 'top 94%', once: true, onEnter: () => el.classList.add('is-drawn') }));
+
   // Scrubbed word reveal (the "who we are" statement): words brighten as you read down.
   $$('[data-scrub-words]').forEach((p) => {
     const words = split(p, 'sw');
