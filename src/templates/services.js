@@ -6,6 +6,7 @@ const path = require('path');
 const C = require('../content');
 const { PUBLIC, esc, pad, icon, head } = require('./helpers');
 const { serviceDemo } = require('./demos');
+const { doodle } = require('./doodles');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
@@ -92,15 +93,31 @@ const services = (withHead = true) => `<section class="section services" data-se
   </div>
 </section>`;
 
+// Industries: an index of drawn tiles beside one card at a time. The card draws the industry, lists the kinds of
+// systems we build for it and links to our case studies in that sector. While it is on screen the index moves on by
+// itself, a bar filling on the current tile, until the visitor picks one (site.js).
+const workIn = (keys) => keys.map((k) => C.projects.find((p) => p.image === k)).filter(Boolean);
 const industries = () => `<section class="section industries" id="industries">
   <div class="wrap">
     ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.`, mark: ['star', 'sky'] })}
   </div>
-  <div class="wrap ind" data-tabs>
-    <div class="ind__side">
-      <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n], i) => `<button role="tab" type="button" id="ind-tab-${i}" aria-controls="ind-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(n)}</button>`).join('')}</div>
+  <div class="wrap ind" data-tabs data-ind>
+    <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n, , a], i) => `
+      <button class="ind__tile" role="tab" type="button" id="ind-tab-${i}" aria-controls="ind-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--mk:var(--${a.color})"><span class="ind__icon">${doodle(a.doodle, { color: a.color })}</span><span class="ind__name">${esc(n)}</span><i class="ind__timer" aria-hidden="true"></i></button>`).join('')}
     </div>
-    <div class="ind__stage">${C.industries.map(([n, items], i) => `<div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}"${i ? ' hidden' : ''}><span class="ind__big" aria-hidden="true">${pad(i + 1)}</span><div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3></div><ul>${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div>
+    <div class="ind__stage">${C.industries.map(([n, items, a], i) => {
+      const work = workIn(a.work);
+      return `
+      <div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}" style="--mk:var(--${a.color})"${i ? ' hidden' : ''}>
+        <div class="ind__top">
+          <div class="ind__art" aria-hidden="true">${doodle(a.doodle, { color: a.color })}</div>
+          <div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3><p>${items.length} kinds of systems we build</p></div>
+        </div>
+        <ul class="ind__list">${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
+        ${work.length ? `<p class="ind__work"><span>Our work here</span>${work.map((p) => `<a href="./projects#${p.image}">${esc(p.name)}</a>`).join('')}</p>` : `<p class="ind__work"><span>Building for ${esc(n.toLowerCase())}?</span><a href="./contact">Tell us about it</a></p>`}
+      </div>`;
+    }).join('')}
+    </div>
   </div>
 </section>`;
 

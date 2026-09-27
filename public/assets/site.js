@@ -570,6 +570,25 @@
   });
   if (demos.length) new IntersectionObserver(([e]) => { svcSeen = e.isIntersecting; onSvc(); }, { threshold: 0.25 }).observe(demos[0].el.closest('[data-services]'));
 
+  // Industries: while the section is on screen the index moves on by itself, the current tile's bar (site.css) saying
+  // when. Picking an industry (a click or the arrow keys) stops it for good.
+  $$('[data-ind]').forEach((box) => {
+    const strip = $('[role=tablist]', box);
+    const tabs = $$('[role=tab]', box);
+    let stopped = false, auto = false;
+    const stop = () => { stopped = true; box.classList.remove('is-auto'); };
+    new IntersectionObserver(([e]) => box.classList.toggle('is-auto', e.isIntersecting && !stopped), { threshold: 0.35 }).observe(box);
+    box.addEventListener('animationend', (e) => {
+      if (e.animationName !== 'ind-timer' || stopped) return;
+      const next = tabs[(tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') + 1) % tabs.length];
+      auto = true; next.click(); auto = false;
+      // a sideways strip (tablet, phone) keeps the current tile in view, without moving the page
+      if (strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: next.offsetLeft - strip.offsetLeft - 16, behavior: 'smooth' });
+    });
+    tabs.forEach((t) => t.addEventListener('click', () => { if (!auto) stop(); }));
+    strip.addEventListener('keydown', stop);
+  });
+
   // Services: pin on desktop, scroll drives the active service.
   const svc = $('[data-services]');
   if (svc) {

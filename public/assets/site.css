@@ -754,26 +754,52 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 .kmap__mono { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--surface); font: 600 0.6rem/1 var(--body); }
 .kmap__item small { margin-left: auto; padding: 3px 8px; border-radius: 6px; background: var(--surface); color: var(--muted); font-size: 0.7rem; white-space: nowrap; }
 
-/* ---------- industries ---------- */
-.ind { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 5vw, 72px); align-items: stretch; }
-.ind__side { display: flex; flex-direction: column; }
-.ind__tabs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
-.ind__tabs button {
-  border: 0; cursor: pointer; padding: 9px 15px; border-radius: 999px; background: none; color: var(--text); font-size: 0.88rem; font-weight: 500;
-  box-shadow: inset 0 0 0 1px var(--line-2); transition: background-color var(--t-2) var(--ease), color var(--t-2) var(--ease), box-shadow var(--t-2) var(--ease), transform var(--t-1) var(--ease);
+/* ---------- industries: an index of drawn tiles beside one card at a time ----------
+   The index moves on by itself while the section is on screen (site.js): the current tile's bar fills, and when it
+   is full the next industry opens. Hovering or focusing the index pauses it; picking an industry stops it. */
+.ind { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+.ind__tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px; }
+/* 19 tiles: the last one takes the row's spare cell */
+.ind__tile:last-child:nth-child(4n + 3) { grid-column: span 2; }
+.ind__tile {
+  position: relative; display: grid; align-content: space-between; justify-items: start; gap: 10px; min-height: 96px; padding: 12px 12px 14px;
+  border: 0; border-radius: 16px; background: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--text); text-align: left; cursor: pointer; overflow: hidden;
+  transition: background-color var(--t-2) var(--ease), box-shadow var(--t-2) var(--ease), transform var(--t-1) var(--ease);
 }
-.ind__tabs button:active { transform: scale(0.96); }
-.ind__tabs button:hover { background: var(--surface); }
-.ind__tabs button[aria-selected='true'] { background: var(--text); color: var(--bg); box-shadow: none; }
-.ind__stage { display: grid; }
-.ind__panel { position: relative; isolation: isolate; overflow: hidden; grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; padding: clamp(24px, 3vw, 40px); border-radius: 26px; background: var(--surface); }
-.ind__big { position: absolute; right: -0.04em; bottom: -0.22em; z-index: -1; font: 300 clamp(8rem, 15vw, 13rem)/1 var(--display); letter-spacing: -0.07em; color: color-mix(in srgb, var(--text) 6%, transparent); pointer-events: none; }
-.ind__head { display: flex; align-items: baseline; gap: 14px; }
+.ind__tile:hover { background: var(--surface); }
+.ind__tile:active { transform: scale(0.97); }
+.ind__tile[aria-selected='true'] { background: color-mix(in srgb, var(--mk) 22%, var(--paper)); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.ind__icon .dd { display: block; width: 34px; height: 34px; }
+.ind__icon .dd__ink > * { stroke-width: 3; }
+/* the index is ink only until picked: the marker colour belongs to the current industry */
+.ind__tile:not([aria-selected='true']) .dd__fill > * { fill: color-mix(in srgb, var(--mk) 38%, var(--paper)); }
+.ind__name { font-size: 0.84rem; font-weight: 600; line-height: 1.2; }
+.ind__timer { position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--ink); transform: scaleX(0); transform-origin: left; }
+.ind.is-auto .ind__tile[aria-selected='true'] .ind__timer { animation: ind-timer 5s linear forwards; }
+.ind.is-auto:is(:hover, :focus-within) .ind__timer { animation-play-state: paused; }
+@keyframes ind-timer { to { transform: scaleX(1); } }
+.ind__stage { display: grid; position: sticky; top: 100px; }
+.ind__panel { position: relative; isolation: isolate; grid-area: 1 / 1; overflow: hidden; padding: clamp(22px, 2.6vw, 34px); border-radius: 26px; background: var(--surface); }
+/* the card's corner holds a wash of the industry's colour on dot-grid paper */
+.ind__panel::before { content: ''; position: absolute; inset: 0 0 auto; height: 150px; z-index: -1; background: radial-gradient(color-mix(in srgb, var(--mk) 45%, transparent) 1px, transparent 1.4px) 0 0 / 16px 16px, color-mix(in srgb, var(--mk) 26%, var(--surface)); -webkit-mask-image: linear-gradient(#000 40%, transparent); mask-image: linear-gradient(#000 40%, transparent); }
+.ind__top { display: flex; align-items: center; gap: 20px; }
+.ind__art { flex: none; width: 104px; height: 104px; padding: 8px; border-radius: 24px; background: var(--paper); box-shadow: 0 0 0 1px var(--line), 0 14px 28px -18px rgba(21, 21, 20, 0.45); }
+.ind__art .dd { width: 100%; height: 100%; }
+.ind__art .dd__ink > * { stroke-width: 2.6; }
+html.motion.js .ind__panel:not([hidden]) .ind__art .dd__ink > * { stroke-dasharray: 1 1.01; animation: dd-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both; }
+html.motion.js .ind__panel:not([hidden]) .ind__art :is(.dd__fill, .dd__dots) { animation: dd-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s both; }
+html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s steps(1) 1.4s infinite; }
+.ind__head { display: grid; gap: 4px; }
 .ind__head span { font: 500 0.84rem/1 var(--body); color: var(--accent-text); font-variant-numeric: tabular-nums; }
-.ind__head h3 { font-size: clamp(1.6rem, 2.3vw, 2.1rem); letter-spacing: -0.035em; }
-.ind__panel ul { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
-.ind__panel li { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--line); font-size: 0.93rem; line-height: 1.35; }
-.ind__panel li svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--accent-text); }
+.ind__head h3 { font-size: clamp(1.6rem, 2.3vw, 2.1rem); line-height: 1.05; letter-spacing: -0.035em; }
+.ind__head p { font-size: 0.9rem; color: var(--muted); }
+.ind__list { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+.ind__list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--line); font-size: 0.92rem; line-height: 1.35; }
+.ind__list li svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: color-mix(in srgb, var(--mk) 55%, var(--ink)); }
+.ind__work { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+.ind__work span { color: var(--muted); }
+.ind__work a { font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color var(--t-2) ease; }
+.ind__work a:hover { text-decoration-color: currentColor; }
 
 /* ---------- studio ("Who we are", home) and the reasons ---------- */
 .studio__top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 6vw, 96px); align-items: end; }
@@ -1153,8 +1179,13 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .kmap__item small { display: none; }
 
   .ind, .faq__grid, .contact__grid, .footer__top, .about__grid, .studio__top { grid-template-columns: minmax(0, 1fr); }
+  /* industries: the index becomes a sideways strip of tiles over the card */
+  .ind__tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding: 2px var(--pad) 6px; }
+  .ind__tabs::-webkit-scrollbar { display: none; }
+  .ind__tile { flex: none; width: 128px; min-height: 92px; }
+  .ind__tile:last-child:nth-child(4n + 3) { grid-column: auto; }
+  .ind__stage { position: static; }
   .faq__grid > .shead { position: static; }
-  .ind__big { display: none; }
   .studio__top { gap: 36px; align-items: start; }
 
   .journey:not(.is-live) .journey__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 0; }
@@ -1259,7 +1290,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .stack-card p { -webkit-line-clamp: 3; font-size: 0.93rem; }
   .stack-card .tags li:nth-child(n + 3) { display: none; }
 
-  .checks, .ind__panel ul, .drives__grid { grid-template-columns: minmax(0, 1fr); }
+  .checks, .ind__list, .drives__grid { grid-template-columns: minmax(0, 1fr); }
   .drive, .drive:nth-child(odd), .drive:nth-child(even) { padding: 20px 0 22px; border-right: 0; }
   .svc-panel__art { height: 214px; }
   .svc-panel__body { padding: 22px 20px; }
@@ -1267,13 +1298,12 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .kmap__item { font-size: 0.86rem; gap: 8px; min-height: 28px; }
   .kmap__item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ind__panel { padding: 22px 18px; }
-  .ind__head { flex-direction: column; gap: 8px; }
-  .ind__tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
-  .ind__tabs::-webkit-scrollbar { display: none; }
+  .ind__top { gap: 14px; }
+  .ind__art { width: 76px; height: 76px; border-radius: 18px; }
+  .ind__tile { width: 116px; }
   .pfilter { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
   .pfilter::-webkit-scrollbar { display: none; }
   .pfilter button { flex: none; }
-  .ind__tabs button { flex: none; }
   .acc button { gap: 14px; }
   .acc__a p { padding: 0 0 22px 38px; }
   .quote__inner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -1294,7 +1324,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 
 /* Touch screens: every tap target is at least 44px tall. */
 @media (pointer: coarse) {
-  .svc-list__btn, .ind__tabs button, .brand, .link-arrow, .footer__bottom a, select { min-height: 44px; }
+  .svc-list__btn, .brand, .link-arrow, .footer__bottom a, select { min-height: 44px; }
   .svc-list__btn, .footer__bottom a { display: inline-flex; align-items: center; }
   .footer__cols a { padding-block: 10px; }
 }
