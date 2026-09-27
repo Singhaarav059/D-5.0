@@ -131,35 +131,26 @@
     </div>`;
   }
 
-  // One film at a time. The reel under the mouse plays (and keeps playing after the pointer leaves, until another is
-  // hovered or it scrolls away); without one, the reel in the middle of the screen plays (the topmost there, so the
-  // home deck plays the card on top). Every other reel rests on its title card, like a poster. An open dialog only
-  // considers its own reel. This keeps the page calm and costs one animation instead of sixteen.
+  // Every reel on screen plays; the rest wait on their title card, like posters. A reel is on screen when at least a
+  // third of it is in view and nothing covers the middle of that part (the home deck stacks its cards, so only the
+  // card on top plays). An open dialog plays only its own reel.
   const reels = new Set();
-  let picked = null, active = null, raf = 0;
+  let playing = new Set(), raf = 0;
+  const shown = (h) => {
+    if (!h.reel?.visible) return false;
+    const b = h.getBoundingClientRect();
+    const x = (Math.max(b.left, 0) + Math.min(b.right, innerWidth)) / 2, y = (Math.max(b.top, 0) + Math.min(b.bottom, innerHeight)) / 2;
+    const top = document.elementFromPoint(x, y);
+    // the reel itself ignores the pointer, and a card's link covers the whole card, so ask the card, not the figure
+    return !!top && (h.closest('.pcard, .stack-card, dialog') || h).contains(top);
+  };
   const choose = () => {
     raf = 0;
     const scope = document.querySelector('dialog[open]');
-    const pool = [...reels].filter((h) => h.reel?.visible && (!scope || scope.contains(h)));
-    let next = pool.includes(picked) ? picked : null;
-    if (!next) {
-      const cx = innerWidth / 2, cy = innerHeight / 2;
-      const top = document.elementFromPoint(cx, cy)?.closest('.has-reel');
-      if (pool.includes(top)) next = top;
-      else {
-        let best = Infinity;
-        pool.forEach((h) => {
-          const b = h.getBoundingClientRect();
-          const dist = Math.hypot(b.left + b.width / 2 - cx, b.top + b.height / 2 - cy);
-          if (dist < best) { best = dist; next = h; }
-        });
-      }
-    }
-    if (next === active) return;
-    const prev = active;
-    active = next;
-    prev?.reel?.sync();
-    active?.reel?.sync();
+    const next = new Set([...reels].filter((h) => (!scope || scope.contains(h)) && shown(h)));
+    const changed = [...reels].filter((h) => next.has(h) !== playing.has(h));
+    playing = next;
+    changed.forEach((h) => h.reel?.sync());
   };
   const queue = () => { raf ||= requestAnimationFrame(choose); };
   addEventListener('scroll', queue, { passive: true });
@@ -485,7 +476,7 @@
     let userPaused = false, visible = false, resting = false;
     const rest = () => { tl.pause(); tl.seek(poster, false); resting = true; drawHero(); };
     const sync = () => {
-      const mine = active === host;
+      const mine = playing.has(host);
       const run = visible && mine && !userPaused && !document.hidden;
       if (run) {
         if (resting) { resting = false; tl.play(0); } else tl.play();
@@ -495,7 +486,6 @@
     };
     rest();
     reels.add(host);
-    host.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { picked = host; queue(); } });
     toggle.addEventListener('click', (e) => {
       e.stopPropagation();
       userPaused = !userPaused;
@@ -533,8 +523,7 @@
       tl, st, starts: labels, draw: drawHero, visible, sync,
       destroy() {
         reels.delete(host);
-        if (picked === host) picked = null;
-        if (active === host) active = null;
+        playing.delete(host);
         queue();
         tl.kill(); ro.disconnect(); io.disconnect(); io3d?.disconnect();
         document.removeEventListener('visibilitychange', sync);

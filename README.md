@@ -46,7 +46,7 @@ public/                Everything a visitor can load (the only folder the server
     site.css           All styles
     site.js            Interactions and scroll motion (GSAP + ScrollTrigger + Lenis)
     visit3d.js         Contact page office map as a Three.js diorama (SVG fallback in the page)
-    reel.js            Project reels: the short film on each project card (one plays at a time)
+    reel.js            Project reels: the short film on each project card (every reel on screen plays)
     reel-kit.js        The reels' scene types and illustrations
     reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
     journey.js         The maze scene: the home hero turning into "How we work" as you scroll
