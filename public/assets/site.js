@@ -125,13 +125,25 @@
     }
   }));
 
-  // Services list buttons (also used when motion is off).
+  // Services list buttons (also used when motion is off). `onSvc` lets the demos (below) follow the active panel.
   const svcBtns = $$('[data-svc-btn]');
   const svcPanels = $$('[data-svc-panel]');
+  let onSvc = () => {};
   const setSvc = (i, p = 1) => {
     svcBtns.forEach((b, j) => { b.classList.toggle('is-active', j === i); b.style.setProperty('--p', j === i ? p : 0); });
     svcPanels.forEach((pn, j) => pn.classList.toggle('is-active', j === i));
+    onSvc();
   };
+
+  // Service demos (templates/demos.js) are drawn on a 520 x 240 canvas and scaled to their panel. A narrow panel
+  // (phones) shows the demo's main window alone, larger, rather than the whole canvas too small to read.
+  const DEMO_MAIN = { ai: 244, web: 392, ecom: 318, cloud: 318 };
+  $$('[data-demo]').forEach((el) => new ResizeObserver(([e]) => {
+    const { width: w, height: h } = e.contentRect;
+    const narrow = w < 470;
+    el.parentElement.classList.toggle('is-narrow', narrow);
+    el.style.setProperty('--s', Math.min((w - 24) / (narrow ? DEMO_MAIN[el.dataset.demo] : 520), (h - 20) / 240).toFixed(4));
+  }).observe(el.parentElement));
 
   // Split text into words for staggered/scrubbed reveals. The parent keeps an accessible label.
   const split = (el, cls) => {
@@ -423,6 +435,140 @@
       },
     });
   }
+
+  // Service demos: the active panel's demo builds up and loops while the services are on screen; the others hold their
+  // finished picture (the markup). Figures count up, the cursor finds its button wherever layout put it.
+  const INK = '#151514', MINT_INK = '#0b7f5b';
+  const spot = (el, box, fx = 0.5, fy = 0.55) => { // an element's point in its window's coordinates
+    let x = el.offsetWidth * fx, y = el.offsetHeight * fy;
+    for (let n = el; n && n !== box; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; }
+    return { x, y };
+  };
+  const click = (tl, cursor, target, at) => tl.to(cursor, { scale: 0.84, transformOrigin: '0% 0%', duration: 0.08, yoyo: true, repeat: 1 }, at)
+    .to(target, { scale: 0.94, duration: 0.08, yoyo: true, repeat: 1 }, at + 0.02);
+  const DEMOS = {
+    ai(tl, $) {
+      tl.from($('.sd-chat'), { opacity: 0, y: 10, duration: 0.5 }, 0)
+        .from($('.sd-vision'), { opacity: 0, y: 10, duration: 0.5 }, 0.15)
+        .from($('.sd-msg--me'), { opacity: 0, y: 8, scale: 0.96, transformOrigin: '100% 100%', duration: 0.4 }, 0.5)
+        .set($('.sd-msg--ai'), { opacity: 0 }, 0)
+        .fromTo($('.sd-typing'), { opacity: 0 }, { opacity: 1, duration: 0.2 }, 1)
+        .to($('.sd-typing i'), { opacity: 1, y: -2, duration: 0.22, stagger: 0.11, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 1)
+        .to($('.sd-typing'), { opacity: 0, duration: 0.15 }, 2)
+        .to($('.sd-msg--ai'), { opacity: 1, duration: 0.2 }, 2.05)
+        .from($('.sd-stream span'), { opacity: 0, duration: 0.12, stagger: 0.09 }, 2.1)
+        .from($('.sd-forecast'), { opacity: 0, y: 6, duration: 0.35 }, 2.7)
+        .fromTo($('.sd-actual'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, 2.8)
+        .from($('.sd-now'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, ease: 'back.out(3)' }, 3.6)
+        .fromTo($('.sd-predict'), { clipPath: 'inset(-20% 100% -20% 0%)' }, { clipPath: 'inset(-20% 0% -20% 0%)', duration: 0.9, ease: 'power2.inOut' }, 3.7)
+        .from($('.sd-band'), { opacity: 0, duration: 0.6 }, 3.9)
+        .from($('.sd-conf'), { opacity: 0, scale: 0.7, transformOrigin: '0% 50%', duration: 0.3, ease: 'back.out(2)' }, 4.5)
+        // the vision model scans the car, then marks what it found
+        .from($('.sd-shot img'), { opacity: 0, duration: 0.5 }, 0.6)
+        .set($('.sd-scan'), { opacity: 1 }, 1.1)
+        .fromTo($('.sd-scan'), { top: '0%' }, { top: '100%', duration: 1.2, ease: 'power1.inOut', yoyo: true, repeat: 1 }, 1.1)
+        .set($('.sd-scan'), { opacity: 0 }, 3.5)
+        .from($('.sd-box'), { opacity: 0, scale: 1.18, transformOrigin: '50% 50%', duration: 0.35, stagger: 0.4 }, 1.7)
+        .from($('.sd-score em'), { scaleX: 0, duration: 0.9, ease: 'power2.out' }, 3.1)
+        .from($('.sd-findings > *'), { opacity: 0, y: 6, duration: 0.3, stagger: 0.22 }, 3.5)
+        .to($('.sd-chat, .sd-vision'), { opacity: 0, duration: 0.4 }, 8.4);
+      return 7;
+    },
+    web(tl, $) {
+      const cursor = $('.sd-cursor')[0], btn = $('.sd-publish')[0], box = $('.sd-browser')[0], to = spot(btn, box, 0.55, 0.6);
+      tl.from(box, { opacity: 0, y: 10, duration: 0.5 }, 0)
+        .from($('.sd-phone'), { opacity: 0, y: 14, duration: 0.5 }, 0.2)
+        .from($('.sd-nav > *'), { opacity: 0, x: -6, duration: 0.3, stagger: 0.06 }, 0.4)
+        .set($('.sd-publish__a'), { opacity: 1 }, 0).set($('.sd-publish__b'), { opacity: 0 }, 0).set(btn, { backgroundColor: INK }, 0)
+        .from($('.sd-kpis > div'), { opacity: 0, y: 8, duration: 0.35, stagger: 0.1 }, 0.6);
+      $('.sd-kpis [data-to]').forEach((el, i) => {
+        const end = +el.dataset.to, dec = +(el.dataset.dec || 0), n = { v: 0 };
+        tl.fromTo(n, { v: 0 }, { v: end, duration: 1.1, ease: 'power2.out', onUpdate: () => { el.textContent = dec ? n.v.toFixed(dec) : Math.round(n.v).toLocaleString('en-IN'); } }, 0.7 + i * 0.1);
+      });
+      tl.from($('.sd-chart'), { opacity: 0, duration: 0.3 }, 0.9)
+        .from($('.sd-browser .sd-bars i'), { scaleY: 0, duration: 0.5, stagger: 0.07 }, 1)
+        .from($('.sd-phone__kpi, .sd-phone__row'), { opacity: 0, y: 6, duration: 0.3, stagger: 0.1 }, 1.1)
+        .from($('.sd-phone .sd-bars i'), { scaleY: 0, duration: 0.5, stagger: 0.06 }, 1.3)
+        // the release is published from the web app and lands on the phone
+        .set(cursor, { opacity: 1 }, 2.3)
+        .fromTo(cursor, { x: to.x - 150, y: to.y + 130 }, { x: to.x, y: to.y, duration: 0.8, ease: 'power3.inOut' }, 2.3);
+      click(tl, cursor, btn, 3.15)
+        .to($('.sd-publish__a'), { opacity: 0, duration: 0.15 }, 3.3)
+        .to($('.sd-publish__b'), { opacity: 1, duration: 0.2 }, 3.35)
+        .to(btn, { backgroundColor: MINT_INK, duration: 0.3 }, 3.3)
+        .to(cursor, { opacity: 0, duration: 0.3 }, 4.2)
+        .from($('.sd-toast'), { opacity: 0, y: 16, duration: 0.45, ease: 'back.out(1.8)' }, 3.6)
+        .to($('.sd-browser, .sd-phone'), { opacity: 0, duration: 0.4 }, 7.8);
+      return 6.6;
+    },
+    ecom(tl, $) {
+      const box = $('.sd-store')[0], cursor = $('.sd-cursor')[0], add = $('.sd-add')[0], fly = $('.sd-fly')[0], badge = $('.sd-badge')[0];
+      const to = spot(add, box, 0.6, 0.6), from = spot(add, box, 0.5, 0.5), cart = spot($('.sd-cart')[0], box, 0.5, 0.45);
+      tl.from(box, { opacity: 0, y: 10, duration: 0.5 }, 0)
+        .from($('.sd-pdp__img img'), { opacity: 0, scale: 0.85, y: 10, duration: 0.6, ease: 'back.out(1.6)' }, 0.3)
+        .from($('.sd-pdp__info > *'), { opacity: 0, x: 8, duration: 0.3, stagger: 0.06 }, 0.45)
+        .set(badge, { scale: 0 }, 0)
+        .set(cursor, { opacity: 1 }, 1.3)
+        .fromTo(cursor, { x: to.x + 60, y: to.y + 120 }, { x: to.x, y: to.y, duration: 0.8, ease: 'power3.inOut' }, 1.3);
+      click(tl, cursor, add, 2.15)
+        .to($('.sd-add__a'), { opacity: 0, duration: 0.15 }, 2.3).to($('.sd-add__b'), { opacity: 1, duration: 0.15 }, 2.32)
+        // the item arcs into the cart
+        .set(fly, { opacity: 1, x: from.x, y: from.y, scale: 1 }, 2.3)
+        .to(fly, { keyframes: [{ x: (from.x + cart.x) / 2, y: Math.min(from.y, cart.y) - 30, duration: 0.35, ease: 'power1.out' }, { x: cart.x, y: cart.y, scale: 0.5, duration: 0.35, ease: 'power1.in' }] }, 2.3)
+        .set(fly, { opacity: 0 }, 3)
+        .to(badge, { scale: 1, duration: 0.35, ease: 'back.out(3)' }, 3)
+        .to(cursor, { opacity: 0, duration: 0.3 }, 3.1)
+        .to($('.sd-add__b'), { opacity: 0, duration: 0.2 }, 3.7).to($('.sd-add__a'), { opacity: 1, duration: 0.2 }, 3.75)
+        // and the store recommends what goes with it, then the order goes through
+        .from($('.sd-recs'), { opacity: 0, y: 10, duration: 0.4 }, 3.1)
+        .from($('.sd-rec'), { opacity: 0, y: 10, duration: 0.35, stagger: 0.12 }, 3.3)
+        .from($('.sd-ai'), { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.3, ease: 'back.out(2.5)' }, 3.6)
+        .from($('.sd-order'), { opacity: 0, y: 10, duration: 0.4 }, 4.4)
+        .from($('.sd-order__icon'), { scale: 0, transformOrigin: '50% 50%', duration: 0.35, ease: 'back.out(3)' }, 4.6)
+        .from($('.sd-fraud'), { opacity: 0, y: 6, duration: 0.3 }, 5)
+        .to($('.sd-store, .sd-recs, .sd-order, .sd-fraud'), { opacity: 0, duration: 0.4 }, 8.2);
+      return 7;
+    },
+    cloud(tl, $) {
+      tl.from($('.sd-topo'), { opacity: 0, y: 10, duration: 0.5 }, 0)
+        .from($('.sd-node:not(.sd-scale)'), { opacity: 0, scale: 0.8, transformOrigin: '50% 50%', duration: 0.35, stagger: 0.1 }, 0.3)
+        .from($('.sd-edges > path:not(.sd-scale-edge)'), { opacity: 0, duration: 0.4 }, 0.7)
+        .from($('.sd-group, .sd-group__t'), { opacity: 0, duration: 0.4 }, 0.9)
+        .from($('.sd-pipe'), { opacity: 0, y: 10, duration: 0.4 }, 0.2)
+        .set($('.sd-pipe__a'), { opacity: 1 }, 0).set($('.sd-pipe__b'), { opacity: 0 }, 0)
+        .fromTo($('.sd-progress em'), { scaleX: 0 }, { scaleX: 1, duration: 2.4, ease: 'power1.inOut' }, 0.6)
+        .from($('.sd-step'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, stagger: 0.8, ease: 'back.out(3)' }, 1.2)
+        .to($('.sd-pipe__a'), { opacity: 0, duration: 0.2 }, 3).to($('.sd-pipe__b'), { opacity: 1, duration: 0.2 }, 3.05)
+        // load grows: a third server joins the group
+        .from($('.sd-scale'), { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.45, ease: 'back.out(2)' }, 2.7)
+        .from($('.sd-scale-edge'), { opacity: 0, duration: 0.3 }, 2.8)
+        .from($('.sd-metrics'), { opacity: 0, y: 10, duration: 0.4 }, 0.5)
+        .fromTo($('.sd-spark'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power1.inOut' }, 0.8)
+        .from($('.sd-backup'), { opacity: 0, y: 6, duration: 0.3 }, 3.5)
+        .to($('.sd-led'), { opacity: 0.3, duration: 0.3, yoyo: true, repeat: 9, stagger: 0.15 }, 1);
+      // requests run through the edges, again and again
+      $('.sd-flows path').forEach((p, i) => {
+        const at = 1.1 + i * 0.16 + (p.classList.contains('sd-scale-flow') ? 1.8 : 0);
+        tl.set(p, { opacity: 1 }, at).fromTo(p, { strokeDashoffset: 0.16 }, { strokeDashoffset: -1, duration: 0.7, ease: 'none', repeat: 5, repeatDelay: 0.3 }, at).set(p, { opacity: 0 }, at + 6);
+      });
+      tl.to($('.sd-topo, .sd-pipe, .sd-metrics, .sd-backup'), { opacity: 0, duration: 0.4 }, 8.3);
+      return 7;
+    },
+  };
+  const demos = $$('[data-demo]').map((el) => {
+    const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: 'power3.out' } });
+    const rest = DEMOS[el.dataset.demo] ? DEMOS[el.dataset.demo](tl, (q) => $$(q, el)) : 0;
+    tl.seek(rest, false);
+    return { el, panel: el.closest('[data-svc-panel]'), tl, rest, on: false };
+  });
+  let svcSeen = false;
+  onSvc = () => demos.forEach((d) => {
+    const on = svcSeen && d.panel.classList.contains('is-active');
+    if (on && !d.on) d.tl.restart();
+    else if (!on && d.on) { d.tl.pause(); d.tl.seek(d.rest, false); }
+    d.on = on;
+  });
+  if (demos.length) new IntersectionObserver(([e]) => { svcSeen = e.isIntersecting; onSvc(); }, { threshold: 0.25 }).observe(demos[0].el.closest('[data-services]'));
 
   // Services: pin on desktop, scroll drives the active service.
   const svc = $('[data-services]');
