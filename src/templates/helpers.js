@@ -44,6 +44,12 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
 };
 
 // Buttons: `btn--primary` (solid) or `btn--ghost` (outline). On a dark sheet both invert on their own (site.css).
+// The smallest large WebP of a screenshot, for the blurred backdrop behind it (site.css: --shot).
+const shot = (key) => {
+  const f = MANIFEST[key].files.filter((x) => x.fmt === 'webp' && x.w > 200).sort((x, y) => x.w - y.w)[0];
+  return `--shot:url(./assets/img/work/${f.file})`;
+};
+
 const btn = (label, href, cls = 'btn--primary', extra = '') =>
   `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
 
@@ -58,4 +64,4 @@ const head = ({ label, title, lead = '', side = '', stack = false, cls = '' }) =
   </div>
 </header>`;
 
-module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, btn, head };
+module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, shot, btn, head };

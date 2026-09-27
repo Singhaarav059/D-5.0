@@ -242,16 +242,16 @@
     const total = $$('[data-proj-tpl]').length;
     let current = 0;
     const show = (i, dir = 0) => {
-      $('[data-reel]', body)?.reel?.destroy();
+      $('[data-tour]', body)?.tour?.destroy();
       current = (i + total) % total;
       body.replaceChildren($(`[data-proj-tpl="${current}"]`).content.cloneNode(true));
       dlg.setAttribute('aria-labelledby', `pdlg-title-${current}`);
       body.scrollTop = 0;
       $('.pdlg__body', body).scrollTop = 0;
       if (dir && motion) { body.style.setProperty('--dir', dir); body.classList.remove('is-swapping'); void body.offsetWidth; body.classList.add('is-swapping'); }
-      // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
-      const media = $('[data-reel]', body);
-      if (media && window.Reel) window.Reel.mount(media);
+      // the case's product tour plays large in the dialog (tour.js; absent with reduced motion or no JS)
+      const media = $('[data-tour]', body);
+      if (media && window.Tour) window.Tour.mount(media);
     };
     $$('[data-proj]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.proj); dlg.showModal(); }));
     $$('[data-pdlg-step]', dlg).forEach((b) => b.addEventListener('click', () => show(current + +b.dataset.pdlgStep, +b.dataset.pdlgStep)));
@@ -259,7 +259,7 @@
       const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
       if (d && !e.target.closest('input, textarea, select')) { e.preventDefault(); show(current + d, d); }
     });
-    dlg.addEventListener('close', () => { $('[data-reel]', body)?.reel?.destroy(); body.classList.remove('is-swapping'); });
+    dlg.addEventListener('close', () => { $('[data-tour]', body)?.tour?.destroy(); body.classList.remove('is-swapping'); });
     $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }
