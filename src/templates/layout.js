@@ -26,7 +26,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <meta property="og:image" content="${SITE_URL}/assets/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Demaze: your strategic partner in building scalable AI products">
+<meta property="og:image:alt" content="Demaze: AI products, without the maze. A route through a maze ending in the Demaze chevron.">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
