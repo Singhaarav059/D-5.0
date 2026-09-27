@@ -430,7 +430,7 @@ module.exports = {
   next: {
     '': ['Projects', 'See what we’ve built', './projects'],
     projects: ['Services', 'What we can build for you', './services'],
-    services: ['About', 'Meet the team behind it', './about-us'],
+    services: ['About', 'The story behind the work', './about-us'],
     'about-us': ['Contact', 'Tell us what you’re building', './contact'],
     contact: ['Projects', 'See what we’ve built', './projects'],
     404: ['Home', 'Back to the start', './'],
