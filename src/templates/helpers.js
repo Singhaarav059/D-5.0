@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
+const { doodle } = require('./doodles');
 
 // Everything visitors can load lives in public/; this script writes the HTML pages there.
 const PUBLIC = path.join(__dirname, '..', '..', 'public');
@@ -55,12 +56,13 @@ const btn = (label, href, cls = 'btn--primary', extra = '') =>
   `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
 
 // Every section opens the same way: a hairline with the section's number (a CSS counter, so it follows the page
-// order) and its label, then the headline with an optional quieter second half (<em>), then an optional lead and
-// actions. `title` and `lead` are HTML (escape any content first); `stack` keeps the lead under the headline.
-const head = ({ label, title, lead = '', side = '', stack = false, cls = '' }) => `<header class="shead${stack ? ' shead--stack' : ''}${cls ? ' ' + cls : ''}">
+// order) and its label, then the headline, whose second half (<em>) gets a marker swipe in the section's colour, and
+// a doodle after it; then an optional lead and actions. `title` and `lead` are HTML (escape any content first);
+// `stack` keeps the lead under the headline; `mark` is [doodle, marker colour] (templates/doodles.js, site.css).
+const head = ({ label, title, lead = '', side = '', stack = false, cls = '', mark = ['star', 'sun'] }) => `<header class="shead${stack ? ' shead--stack' : ''}${cls ? ' ' + cls : ''}" style="--mk:var(--${mark[1]})">
   <p class="shead__label" data-reveal><span class="shead__n" aria-hidden="true"></span>${esc(label)}</p>
   <div class="shead__row">
-    <h2 class="h2" data-reveal>${title}</h2>
+    <h2 class="h2" data-reveal>${title}${doodle(mark[0], { color: mark[1], cls: 'shead__dd' })}</h2>
     ${lead || side ? `<div class="shead__side" data-reveal>${lead ? `<p class="lead">${lead}</p>` : ''}${side}</div>` : ''}
   </div>
 </header>`;

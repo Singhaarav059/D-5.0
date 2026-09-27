@@ -7,7 +7,7 @@ const { esc, pad, pic, head } = require('./helpers');
 // About page: "Who we are" beside the four "What drives us" values (the founding line is the page hero's lead).
 const about = () => `<section class="section about" id="about">
   <div class="wrap">
-    ${head({ label: 'About', title: 'Who we are' })}
+    ${head({ label: 'About', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
     <div class="about__grid">
       <div class="about__copy">
         <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
@@ -27,7 +27,7 @@ const reasons = () => `<ol class="reasons" data-stagger>${C.whyUs.map((w, i) => 
 
 const whyUs = () => `<section class="section why">
   <div class="wrap">
-    ${head({ label: 'Why us', title: 'Why teams <em>choose us</em>' })}
+    ${head({ label: 'Why us', title: 'Why teams <em>choose us</em>', mark: ['star', 'sun'] })}
     ${reasons()}
   </div>
 </section>`;

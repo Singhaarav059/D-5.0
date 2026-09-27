@@ -421,4 +421,18 @@ module.exports = {
     },
   },
   closing: 'Have a product in mind? <em>Let’s find the way through.</em>',
+
+  // The moving band under the home hero and the services hero: what we build, one word or two each.
+  band: ['AI & ML', 'Web apps', 'Mobile apps', 'SaaS', 'eCommerce', 'Cloud', 'Automation', 'UI/UX'],
+
+  // Where each page sends you next (the big link at the top of the footer), so a visit reads as one route through
+  // the site: home → projects → services → about → contact → projects. [label, headline, link]
+  next: {
+    '': ['Projects', 'See what we’ve built', './projects'],
+    projects: ['Services', 'What we can build for you', './services'],
+    services: ['About', 'Meet the team behind it', './about-us'],
+    'about-us': ['Contact', 'Tell us what you’re building', './contact'],
+    contact: ['Projects', 'See what we’ve built', './projects'],
+    404: ['Home', 'Back to the start', './'],
+  },
 };

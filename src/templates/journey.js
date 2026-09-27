@@ -26,15 +26,17 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
           </div>
         </div>`;
 
-const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead) })}</div>`;
+const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead), mark: ['bulb', 'sun'] })}</div>`;
 
 const drawing = () => `<div class="journey__map">
           ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide', pits: J.pitfalls, start: J.start, finish: J.finish })}
           ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow', pits: J.pitfalls.slice(0, 4), start: J.start, finish: J.finish, tagSize: 14 })}
         </div>`;
 
+// Each stage has its own marker colour and doodle (its stop on the line lights up in the same colour, site.css).
+const STAGE_ART = [['bulb', 'sun'], ['pencil', 'lilac'], ['gear', 'sky'], ['rocket', 'tomato']];
 const steps = () => `<ol class="journey__steps">${C.process.map((s, i) => `
-          <li class="journey__step" data-step><div class="journey__head"><span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
+          <li class="journey__step" data-step style="--mk:var(--${STAGE_ART[i % 4][1]})"><div class="journey__head">${doodle(STAGE_ART[i % 4][0], { color: STAGE_ART[i % 4][1], cls: 'journey__dd' })}<span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
         </ol>`;
 
 // `intro`: the home page, where the scene starts as the hero.

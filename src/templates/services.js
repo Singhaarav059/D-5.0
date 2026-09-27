@@ -41,7 +41,7 @@ const techStack = () => {
   const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
   return `<section class="section kmap" id="tools" data-kmap>
   <div class="wrap">
-    ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead) })}
+    ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead), mark: ['gear', 'mint'] })}
     <div class="kmap__stage" data-tabs data-kmap-stage data-reveal>
       <svg class="kmap__wires" aria-hidden="true" data-kmap-wires></svg>
       <div class="kmap__core" aria-hidden="true">
@@ -87,12 +87,15 @@ const SVC_ART = {
     <circle class="art__node is-hot" cx="122" cy="48" r="7"/>`,
 };
 
+// Each service has its own marker colour (the panel's art, its bar in the list, its ticks).
+const SVC_MARK = { ai: 'lilac', web: 'sky', ecom: 'tomato', cloud: 'mint' };
+
 const serviceArt = (id) => `<svg class="svc-art" viewBox="0 0 240 140" aria-hidden="true">${SVC_ART[id] || SVC_ART.web}</svg>`;
 
 // Each service names the projects that show it and links into their case studies (and to all of them, filtered).
 const seenIn = (s) => `<p class="svc-panel__work"><span>Seen in</span>${s.work.slice(0, 4).map((k) => C.projects.find((p) => p.image === k)).map((p) => `<a href="./projects#${p.image}">${esc(p.name)}</a>`).join('')}<a class="svc-panel__all" href="./projects?filter=${s.id}">All ${s.work.length} ${icon.arrow}</a></p>`;
 
-const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" data-svc-panel>
+const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-panel>
   <div class="svc-panel__art">${serviceArt(s.id)}</div>
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
@@ -106,8 +109,8 @@ const services = (withHead = true) => `<section class="section services" data-se
   <div class="services__pin">
     <div class="wrap services__grid">
       <div class="services__side">
-        ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true } : { label: 'Services', title: 'What we <em>build</em>', stack: true })}
-        <ol class="svc-list" role="list">${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
+        ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true, mark: ['pencil', 'lilac'] } : { label: 'Services', title: 'What we <em>build</em>', stack: true, mark: ['pencil', 'lilac'] })}
+        <ol class="svc-list" role="list">${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
       </div>
       <div class="services__stage">${C.services.map(servicePanel).join('')}</div>
     </div>
@@ -116,7 +119,7 @@ const services = (withHead = true) => `<section class="section services" data-se
 
 const industries = () => `<section class="section industries" id="industries">
   <div class="wrap">
-    ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.` })}
+    ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.`, mark: ['star', 'sky'] })}
   </div>
   <div class="wrap ind" data-tabs>
     <div class="ind__side">

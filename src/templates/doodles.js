@@ -76,6 +76,21 @@ const D = {
   },
 };
 
+// A cog: eight teeth around a hub, computed once.
+const cog = (cx, cy) => {
+  const pts = [];
+  for (let i = 0; i < 16; i++) {
+    const r = i % 2 ? 15 : 21, a0 = ((i - 0.32) * Math.PI) / 8, a1 = ((i + 0.32) * Math.PI) / 8;
+    pts.push([cx + Math.cos(a0) * r, cy + Math.sin(a0) * r], [cx + Math.cos(a1) * r, cy + Math.sin(a1) * r]);
+  }
+  return `M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}Z`;
+};
+D.gear = { fill: '<circle cx="35" cy="35" r="17"/>', ink: `<path d="${cog(32, 32)}"/><circle cx="32" cy="32" r="6"/>` };
+D.pencil = {
+  fill: '<path d="M18 52l4-12 26-26 8 8-26 26z"/>',
+  ink: '<path d="M14 49l4-12 26-26 8 8-26 26z"/><path d="M40 15l8 8M18 37l8 8"/><path d="M14 49l-3 5 5-3"/>',
+};
+
 const NAMES = Object.keys(D);
 
 // The drawing's layers as SVG children (for use inside another SVG).

@@ -50,7 +50,7 @@ const visit = () => `<section class="section visit">
       <span class="visit__label"><i></i>Gota, Ahmedabad · Open in Maps</span>
     </a>
     <div class="visit__copy">
-      ${head({ label: 'Visit', title: 'Visit us <em>in Ahmedabad</em>', lead: esc(C.address), stack: true })}
+      ${head({ label: 'Visit', title: 'Visit us <em>in Ahmedabad</em>', lead: esc(C.address), stack: true, mark: ['cup', 'tomato'] })}
       <div class="hero__ctas visit__ctas" data-reveal>${btn('Get directions', C.mapUrl, 'btn--primary', 'target="_blank" rel="noopener"')}${btn('Book with Calendly', C.calendly, 'btn--ghost', 'target="_blank" rel="noopener"')}</div>
     </div>
   </div>

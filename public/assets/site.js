@@ -348,15 +348,18 @@
   // (The home maze below it is journey.js.)
   const hero = $('[data-hero]');
   if (hero) {
-    const words = split($('[data-split=hero]', hero), 'w');
+    const title = $('[data-split=hero]', hero);
+    const words = split(title, 'w');
     gsap.timeline({ defaults: { ease: EASE } })
+      .call(() => title.classList.add('is-in'), null, 0.7)
       .from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1)
       .fromTo($$('[data-hero-fade]', hero), { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
   }
 
   // Everything else enters the same way: a short rise and fade, once.
+  // (.is-in lets CSS finish the entrance: the headline's marker swipe and its doodle drawing on)
   $$('[data-reveal]').forEach((el) => gsap.fromTo(el, { opacity: 0, y: RISE }, {
-    opacity: 1, y: 0, duration: 0.8, ease: EASE, scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+    opacity: 1, y: 0, duration: 0.8, ease: EASE, onStart: () => el.classList.add('is-in'), scrollTrigger: { trigger: el, start: 'top 90%', once: true },
   }));
   $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, { opacity: 0, y: RISE }, {
     opacity: 1, y: 0, duration: 0.8, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
@@ -442,6 +445,19 @@
       },
     });
   }
+
+  // The moving band runs faster while the page scrolls, and backwards when it scrolls up, then eases back.
+  $$('.band__track').forEach((track) => {
+    const run = track.getAnimations()[0];
+    if (!run) return;
+    ScrollTrigger.create({
+      trigger: track, start: 'top bottom', end: 'bottom top',
+      onUpdate: (st) => {
+        run.playbackRate = gsap.utils.clamp(-6, 6, 1 + st.getVelocity() / 300);
+        gsap.to(run, { playbackRate: 1, duration: 0.8, ease: 'power2.out', overwrite: true });
+      },
+    });
+  });
 
   // Pins (projects deck, services) add scroll distance; triggers below them must be measured after them.
   ScrollTrigger.sort();

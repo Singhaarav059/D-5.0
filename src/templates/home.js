@@ -29,6 +29,7 @@ const work = () => `<section class="work" id="work">
       title: 'Selected work, <em>from brief to launch</em>',
       lead: esc(`Four of the ${C.projects.length} products we’ve designed and built, from luxury automotive to senior care.`),
       side: btn('View all work', './projects', 'btn--ghost'),
+      mark: ['star', 'tomato'],
     })}
     <div class="stack" data-deck>${C.projects.slice(0, 4).map((p, i) => projectCard(p, i, 4)).join('')}</div>
   </div>
@@ -39,7 +40,7 @@ const work = () => `<section class="work" id="work">
 // the story and the founder's words side by side, then the three reasons as numbered columns.
 const studio = () => `<section class="section sheet studio" id="about">
   <div class="wrap">
-    ${head({ label: 'Studio', title: 'Who we are' })}
+    ${head({ label: 'Studio', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
     <div class="studio__top">
       <div class="studio__copy">
         <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>

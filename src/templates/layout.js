@@ -3,6 +3,7 @@
 
 const C = require('../content');
 const { SITE_URL, esc, pad, cal, icon } = require('./helpers');
+const { doodle } = require('./doodles');
 
 const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="28" height="28"><span>Demaze</span></a>`;
 
@@ -64,15 +65,18 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <main id="main">
 ${body}
 </main>
-${footer()}
+${footer(slug)}
 </body>
 </html>
 `;
 }
 
-function footer() {
+// The footer opens with the next page on the route through the site (content.js `next`).
+function footer(slug) {
+  const [label, line, href] = C.next[slug] || C.next[''];
   return `<footer class="footer">
   <div class="footer__panel">
+    <a class="footer__next" href="${href}" data-reveal><small>Next up · ${esc(label)}</small><span>${esc(line)}</span><i class="footer__next-arrow">${doodle('arrow', { color: 'sun' })}</i></a>
     <div class="footer__top">
       <div class="footer__intro">
         ${logo}

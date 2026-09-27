@@ -90,6 +90,7 @@
     const stage = sec.querySelector('.journey__stage');
     const intro = sec.querySelector('.journey__intro');
     const caption = sec.querySelector('.journey__caption');
+    const capTitle = caption.querySelector('.h2');
     const stepsBox = sec.querySelector('.journey__steps');
     const steps = $$('[data-step]', sec);
     const drawings = $$('.maze', sec).map(drawing);
@@ -124,6 +125,8 @@
         caption.style.opacity = c.toFixed(3);
         caption.style.transform = `translateY(${(24 * (1 - c)).toFixed(1)}px)`;
         caption.inert = c < 0.5;
+        // the headline's marker swipe and doodle play as the heading takes over from the hero
+        capTitle?.classList.toggle('is-in', c > 0.6);
       }
       const s = { walls: span(p, P.walls), morph: span(p, P.morph), stops: span(p, P.stops), travel: span(p, P.travel) };
       if (compact.matches) {
