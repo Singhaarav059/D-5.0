@@ -1540,9 +1540,11 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 .reel__ribbon--h { left: -4%; right: -4%; top: 50%; height: 56px; margin-top: -28px; transform-origin: left; }
 .reel__ribbon--v { top: -4%; bottom: -4%; left: 50%; width: 56px; margin-left: -28px; transform-origin: top; }
 .reel__bow { position: absolute; z-index: 3; left: 50%; top: 50%; width: 96px; height: 60px; margin: -30px 0 0 -48px; background: radial-gradient(circle at 26% 50%, var(--brand) 0 36%, transparent 37%), radial-gradient(circle at 74% 50%, var(--brand) 0 36%, transparent 37%), radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--brand) 70%, #000) 0 14%, transparent 15%); }
-.reel__title--ticker h3 span { position: relative; height: 1em; padding-bottom: 0; margin-bottom: 0; overflow: hidden; }
+.reel__title--ticker h3 span { position: relative; height: 1.24em; padding-bottom: 0; margin-bottom: -0.2em; overflow: hidden; } /* the row shows at the top; the rest of the slot is room for descenders */
 .reel__rollbox > i { display: block; font-style: normal; line-height: 1em; visibility: hidden; }
-.reel__roll { position: absolute; left: 50%; top: 0; line-height: 1em; text-align: center; translate: -50% 0; }
+/* the rolling column spans its slot and centres its characters (a translate: -50% would be folded into GSAP's own
+   transform at the width the column had when the reel was built, and land off-centre) */
+.reel__roll { position: absolute; left: 0; right: 0; top: 0; line-height: 1em; text-align: center; }
 .reel__leader { position: absolute; left: 50%; top: 50%; z-index: 2; width: 200px; height: 200px; margin: -100px 0 0 -100px; opacity: 0; }
 .reel__leader svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke: color-mix(in srgb, var(--fg) 40%, transparent); stroke-width: 1; }
 .reel__leader-ring { stroke-width: 2; }
@@ -1550,7 +1552,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 .reel__leader b { position: absolute; inset: 0; display: grid; place-items: center; font: 800 96px/1 var(--display); color: var(--fg); }
 .reel__underline { display: block; width: 220px; height: 3px; margin: -4px auto 0; border-radius: 2px; background: var(--brand); transform-origin: left; }
 .reel__case { font: 600 14px/1 ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
-.reel__title h3 { display: flex; margin: 0; font: 800 112px/0.92 var(--display); letter-spacing: -0.06em; white-space: nowrap; color: var(--fg); }
+.reel__title h3 { display: flex; margin: 0 0 0.1em; font: 800 112px/0.92 var(--display); letter-spacing: -0.06em; white-space: nowrap; color: var(--fg); }
 .reel__title h3 span { display: block; overflow: hidden; padding: 0 0.1em 0.24em; margin: 0 -0.1em -0.18em; }
 .reel__title h3 b { display: block; font-weight: inherit; }
 .reel__tagline { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 0.26em; max-width: 430px; font: 700 26px/1.1 var(--display); letter-spacing: -0.025em; text-align: center; }
@@ -2034,6 +2036,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 
 /* phones and other small cards: the stage scales below ~0.66, so secondary lines give way to larger primary text */
 .reel.is-compact .reel__cap { font-size: 36px; }
+/* the subtitle frame's slot is shallower: at this size two lines need more room, and the scene moves up for it */
+.reel--subtitle.is-compact .reel__caps { bottom: 10px; height: 92px; }
+.reel--subtitle.is-compact .reel__cap { line-height: 1.06; }
+.reel--subtitle.is-compact .reel__scene:not(.reel__title, .reel__outro, .rk--brief, .rk--outcome) { inset: 44px 26px 110px; }
 .reel.is-compact .reel__head { font-size: 17px; }
 .reel.is-compact .reel__client, .reel.is-compact .rk-brief p, .reel.is-compact .rk-outcome p { display: none; }
 .reel.is-compact .rk-product small, .reel.is-compact .rk-tile2 small, .reel.is-compact .rk-bigcard small, .reel.is-compact .rk-note small,
