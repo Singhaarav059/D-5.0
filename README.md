@@ -88,7 +88,11 @@ test/                  Automated checks (node --test)
    Check the result in Chrome and Safari before committing.
 2. Add an entry to `public/assets/img/work/manifest.json` with the original `w`/`h` and the three files
    (copy an existing entry as the template).
-3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, then build.
+3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, a short `name`, a `sector` label, a
+   one-line `brief` and `outcome` (they open and close the case study) and a `tour`: three stops over the
+   screenshot, each `[x, y, zoom, 'caption']` with x and y as fractions of the image (0 to 1) and a caption naming
+   what is on screen there. Add the slug to the `work` list of each service it shows, then build.
+   Check the tour on the projects page: hover the card and watch each stop land where its caption says.
 
 The build stops with `missing image <slug>` if the manifest entry is missing.
 
