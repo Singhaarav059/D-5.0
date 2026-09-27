@@ -8,6 +8,7 @@ const C = require('../content');
 const { esc, pad, btn, head } = require('./helpers');
 const { maze } = require('./maze');
 const { doodle } = require('./doodles');
+const { stageArt } = require('./stages');
 
 const J = C.journey;
 
@@ -33,10 +34,11 @@ const drawing = () => `<div class="journey__map">
           ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow', pits: J.pitfalls.slice(0, 4), start: J.start, finish: J.finish, tagSize: 14 })}
         </div>`;
 
-// Each stage has its own marker colour and doodle (its stop on the line lights up in the same colour, site.css).
+// Each stage has its own marker colour and doodle (its stop on the line lights up in the same colour, site.css), and
+// a small scene of the work itself (templates/stages.js) that plays while it is the current stage.
 const STAGE_ART = [['bulb', 'sun'], ['pencil', 'lilac'], ['gear', 'sky'], ['rocket', 'tomato']];
 const steps = () => `<ol class="journey__steps">${C.process.map((s, i) => `
-          <li class="journey__step" data-step style="--mk:var(--${STAGE_ART[i % 4][1]})"><div class="journey__head">${doodle(STAGE_ART[i % 4][0], { color: STAGE_ART[i % 4][1], cls: 'journey__dd' })}<span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
+          <li class="journey__step" data-step style="--mk:var(--${STAGE_ART[i % 4][1]})"><div class="journey__art">${stageArt(i)}</div><div class="journey__head">${doodle(STAGE_ART[i % 4][0], { color: STAGE_ART[i % 4][1], cls: 'journey__dd' })}<span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
         </ol>`;
 
 // `intro`: the home page, where the scene starts as the hero.

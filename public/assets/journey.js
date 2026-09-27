@@ -20,6 +20,107 @@
   if (!root.classList.contains('motion') || !window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
+  // Stage scenes (src/templates/stages.js). The markup is the finished picture; each timeline builds it up from its
+  // parts, holds it, fades the parts and starts again. `rest` is where the finished picture holds, which is what a
+  // scene shows while another stage is the current one.
+  const SCENES = {
+    discover(tl, $) {
+      const lens = $('.ja-lens');
+      tl.from($('.ja-doc'), { opacity: 0, x: 10, duration: 0.5 }, 0.3)
+        .from($('.ja-note'), { opacity: 0, scale: 0.55, rotation: -10, transformOrigin: '50% 50%', duration: 0.5, stagger: 0.2, ease: 'back.out(2)' }, 0.2)
+        .from(lens, { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.3 }, 1.1)
+        // the lens reads each note in turn, then leaves toward the brief
+        .to(lens, { keyframes: [{ x: 45, y: -3, duration: 0.45 }, { x: 4, y: 44, duration: 0.55 }, { x: 49, y: 42, duration: 0.45 }, { x: 96, y: 34, opacity: 0, duration: 0.45 }], ease: 'power2.inOut' }, 1.4)
+        .fromTo($('.ja-arrow'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.inOut' }, 3.1)
+        .from($('.ja-arrow-head'), { opacity: 0, scale: 0.4, transformOrigin: '50% 50%', duration: 0.25 }, 3.55)
+        .from($('.ja-goal'), { scaleX: 0, transformOrigin: '0% 50%', duration: 0.4 }, 3.6)
+        .from($('.ja-check'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, stagger: 0.32, ease: 'back.out(3)' }, 3.9)
+        .from($('.ja-stamp'), { opacity: 0, scale: 1.9, rotation: -14, transformOrigin: '50% 50%', duration: 0.3, ease: 'power4.in' }, 5)
+        .to($('.ja-note, .ja-doc, .ja-arrow, .ja-arrow-head, .ja-lens'), { opacity: 0, duration: 0.35 }, 7.4);
+      return 6.6;
+    },
+    design(tl, $) {
+      const wire = $('.ja-wire'), btn = $('.ja-btn'), cursor = $('.ja-cursor');
+      tl.from($('.ja-window'), { opacity: 0, y: 6, duration: 0.45 }, 0.1)
+        .from($('.ja-phone'), { opacity: 0, y: 10, duration: 0.5 }, 0.35)
+        .set(wire, { opacity: 1 }, 0)
+        .from($('.ja-wire > *'), { opacity: 0, duration: 0.2, stagger: 0.09 }, 0.4)
+        // the wireframe is painted into the real interface, left to right
+        .fromTo($('.ja-paint'), { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.1, ease: 'power2.inOut' }, 1.4)
+        .from($('.ja-screen-a'), { opacity: 0, duration: 0.5 }, 1.9)
+        .to(wire, { opacity: 0, duration: 0.3 }, 2.4)
+        // the cursor comes in, clicks the button, and the prototype moves on
+        .from(cursor, { x: 118, y: -46, opacity: 0, duration: 0.9, ease: 'power3.out' }, 2.6)
+        .to(cursor, { scale: 0.86, transformOrigin: '0% 0%', duration: 0.09, yoyo: true, repeat: 1 }, 3.55)
+        .to(btn, { scale: 0.93, transformOrigin: '50% 50%', duration: 0.09, yoyo: true, repeat: 1 }, 3.58)
+        .fromTo($('.ja-ripple'), { opacity: 0.9, scale: 0.3, transformOrigin: '50% 50%' }, { opacity: 0, scale: 1.7, duration: 0.6, ease: 'power2.out' }, 3.6)
+        .to($('.ja-screen-a'), { x: -24, duration: 0.5, ease: 'power3.inOut' }, 3.8)
+        .from($('.ja-screen-b'), { x: 58, duration: 0.5, ease: 'power3.inOut' }, 3.8)
+        .from($('.ja-screen-b circle, .ja-screen-b .jart__tick'), { scale: 0, transformOrigin: '50% 50%', duration: 0.35, stagger: 0.08, ease: 'back.out(2.5)' }, 4.2)
+        .to($('.ja-window, .ja-paint, .ja-phone, .ja-cursor'), { opacity: 0, duration: 0.35 }, 6.6);
+      return 5.8;
+    },
+    build(tl, $) {
+      tl.from($('.ja-editor'), { opacity: 0, y: 6, duration: 0.45 }, 0.1)
+        .set($('.ja-node'), { opacity: 0.35 }, 0)
+        .set($('.ja-running'), { opacity: 1 }, 0).set($('.ja-passed'), { opacity: 0 }, 0)
+        .to($('.jart__spin'), { rotation: 900, transformOrigin: '50% 50%', duration: 3.2, ease: 'none' }, 0.2);
+      // typed a token at a time, line by line
+      $('.ja-code').forEach((line, i) => tl.from(line.children, { scaleX: 0, transformOrigin: '0% 50%', duration: 0.2, stagger: 0.14, ease: 'none' }, 0.45 + i * 0.4));
+      // each service answers as data runs down its wire
+      $('.ja-packet').forEach((p, i) => {
+        const at = 1.3 + i * 0.35;
+        tl.set(p, { opacity: 1 }, at)
+          .fromTo(p, { strokeDashoffset: 0.12 }, { strokeDashoffset: -1, duration: 0.65, ease: 'power1.inOut', repeat: 2, repeatDelay: 0.3 }, at)
+          .set(p, { opacity: 0 }, at + 2.6)
+          .to($('.ja-node')[i], { opacity: 1, duration: 0.25 }, at + 0.5)
+          .fromTo($('.ja-led')[i], { scale: 1 }, { scale: 1.7, transformOrigin: '50% 50%', duration: 0.14, yoyo: true, repeat: 1 }, at + 0.55);
+      });
+      tl.to($('.ja-running'), { opacity: 0, duration: 0.2 }, 3.5)
+        .to($('.ja-passed'), { opacity: 1, duration: 0.3 }, 3.6)
+        .from($('.ja-passed circle'), { scale: 0, transformOrigin: '50% 50%', duration: 0.35, ease: 'back.out(3)' }, 3.6)
+        .to($('.ja-editor, .ja-node'), { opacity: 0, duration: 0.35 }, 6.2);
+      return 5.4;
+    },
+    launch(tl, $) {
+      const count = $('.ja-count')[0], n = { v: 1.2 };
+      tl.from($('.ja-chart'), { opacity: 0, y: 6, duration: 0.45 }, 0.1)
+        .from($('.ja-live'), { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.35, ease: 'back.out(2)' }, 0.35)
+        .to($('.ja-live-dot'), { opacity: 0.2, duration: 0.45, yoyo: true, repeat: 9, ease: 'sine.inOut' }, 0.7)
+        .fromTo($('.ja-line'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut' }, 0.5)
+        .from($('.ja-area'), { opacity: 0, duration: 0.8 }, 1.2)
+        .fromTo(n, { v: 1.2 }, { v: 24.8, duration: 1.8, ease: 'power2.inOut', onUpdate: () => { count.textContent = n.v.toFixed(1); } }, 0.5)
+        .from($('.ja-peak'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, ease: 'back.out(3)' }, 2.25)
+        .fromTo($('.jart__halo'), { scale: 1, opacity: 0.9 }, { scale: 2.3, opacity: 0, transformOrigin: '50% 50%', duration: 1, repeat: 2 }, 2.4)
+        .from($('.ja-growth'), { opacity: 0, scale: 0.5, transformOrigin: '50% 50%', duration: 0.35, ease: 'back.out(2.5)' }, 2.3)
+        // servers are added as the users arrive
+        .from($('.ja-server'), { opacity: 0, x: 10, duration: 0.4, stagger: 0.55, ease: 'power3.out' }, 0.4)
+        .to($('.ja-server .ja-led'), { opacity: 0.25, duration: 0.3, yoyo: true, repeat: 5, stagger: 0.17 }, 2.8)
+        .to($('.ja-chart, .ja-server'), { opacity: 0, duration: 0.35 }, 6.2);
+      return 5.4;
+    },
+  };
+  const scenes = $$('.jart').map((svg) => {
+    const $ = (s) => $$(s, svg);
+    const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: 'power3.out' } });
+    const rest = SCENES[svg.dataset.scene] ? SCENES[svg.dataset.scene](tl, $) : 0;
+    const hold = () => { tl.pause(); tl.seek(rest, false); };
+    hold();
+    return { svg, play: () => tl.restart(), hold, playing: false };
+  });
+  const playScenes = (list) => scenes.forEach((s) => {
+    const on = list.includes(s.svg);
+    if (on && !s.playing) s.play(); else if (!on && s.playing) s.hold();
+    s.playing = on;
+  });
+  // Outside the scroll scene (a short screen, or its plain layout), every scene on screen plays.
+  const inView = new Set();
+  const plainIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => (e.isIntersecting ? inView.add(e.target) : inView.delete(e.target)));
+    if (!document.querySelector('.journey.is-live')) playScenes([...inView]);
+  }, { threshold: 0.4 });
+  scenes.forEach((s) => plainIO.observe(s.svg));
+
   const clamp = (v) => Math.min(1, Math.max(0, v));
   const span = (p, [a, b]) => clamp((p - a) / (b - a));
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -142,9 +243,20 @@
       const at = (shown[0] || drawings[0]).at;
       const active = at.reduce((n, a, i) => (s.travel >= a - 0.001 ? i : n), 0);
       steps.forEach((el, i) => { el.classList.toggle('is-active', i === active); el.classList.toggle('is-done', i < active); });
+      current = active;
+      staged = s.stops > 0.5;
+      syncScenes();
+    };
+    let onScreen = false, current = 0, staged = false;
+    const syncScenes = () => {
+      if (!sec.classList.contains('is-live')) { playScenes([...inView]); return; }
+      const art = onScreen && staged ? steps[current].querySelector('.jart') : null;
+      playScenes(art ? [art] : []);
     };
 
     const st = ScrollTrigger.create({ trigger: track, start: 'top top', end: 'bottom bottom', onUpdate: (self) => update(self.progress), onRefresh: (self) => update(self.progress) });
+    // The current stage's scene plays while the scene is on screen and the stages are showing.
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; syncScenes(); }).observe(sec);
     fit();
     ScrollTrigger.refresh();
     let t = 0;
