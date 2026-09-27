@@ -1,6 +1,6 @@
 // The maze scene (src/templates/journey.js). Each maze draws itself in when it first comes into view (CSS). With
 // motion, the scene's section becomes a tall track with a sticky stage, and the scroll position plays it: the hero
-// copy hands over to the heading (home), the walls fall away, the route straightens into one line, the four stops
+// copy hands over to the heading (home), the walls and the pitfalls in them fall away, the route straightens into one line, the four stops
 // appear and a signal walks the stages to the chevron. Scrolling back plays it backwards. Without motion, or on a
 // screen too short to hold the stage, the section stays plain content with the solved maze.
 (() => {
@@ -49,7 +49,7 @@
     const x0 = g.pts[0][0], x1 = g.pts[g.pts.length - 1][0];
     const line = route.map((_, i) => [x0 + ((x1 - x0) * i) / (N - 1), g.y]);
     const q = (s) => svg.querySelector(s);
-    const els = { walls: q('.maze__wallset'), line: q('.maze__line'), trail: q('.maze__trail'), mark: q('.maze__markset'), traveler: q('.maze__traveler'), stops: $$('.maze__stop', svg) };
+    const els = { walls: q('.maze__wallset'), line: q('.maze__line'), trail: q('.maze__trail'), mark: q('.maze__markset'), traveler: q('.maze__traveler'), stops: $$('.maze__stop', svg), glow: q('.maze__glow'), pits: $$('.maze__pit', svg) };
     const end = g.mark[0] - g.C * 0.62; // the signal comes to rest against the chevron
     // where each stage is reached, as a fraction of the walk
     const at = g.stops.map((x) => (x - g.stops[0]) / (end - g.stops[0]));
@@ -59,6 +59,13 @@
       if (key === last) return;
       last = key;
       els.walls.style.opacity = (1 - s.walls).toFixed(3);
+      // the highlighter fades with the walls, and the pitfalls drop out of the picture one after another
+      if (els.glow) els.glow.style.opacity = (0.55 * (1 - s.walls)).toFixed(3);
+      els.pits.forEach((p, i) => {
+        const k = clamp(s.walls * 1.9 - i * 0.13), f = k * k;
+        p.style.opacity = (1 - k).toFixed(3);
+        p.style.transform = k ? `translate(0, ${(f * 90).toFixed(1)}px) rotate(${(f * (i % 2 ? 28 : -24)).toFixed(1)}deg)` : '';
+      });
       svg.classList.toggle('is-moving', s.walls > 0 || s.morph > 0);
       svg.classList.toggle('is-morphing', s.morph > 0);
       const e = ease(s.morph);

@@ -7,12 +7,19 @@
 const C = require('../content');
 const { esc, pad, btn, head } = require('./helpers');
 const { maze } = require('./maze');
+const { doodle } = require('./doodles');
+
+const J = C.journey;
+
+// The loop drawn around the headline's <mark>ed word.
+const LOOP = '<svg class="scribble__loop" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M186 12C120 2 22 12 10 50c-10 34 88 44 170 40 72-3 118-18 110-44C282 18 206 6 118 12"/></svg>';
+const headline = (h) => h.replace(/<mark>(.*?)<\/mark>/, `<span class="scribble">$1${LOOP}${doodle('star', { color: 'sun', cls: 'hero__star' })}${doodle('star', { color: 'pink', cls: 'hero__star hero__star--2' })}</span>`);
 
 const heroCopy = () => `<div class="journey__intro" data-hero>
           <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
           <div class="hero__grid">
-            <h1 class="hero__title" data-split="hero">${C.hero.headline}</h1>
-            <div class="hero__aside">
+            <h1 class="hero__title" data-split="hero">${headline(C.hero.headline)}</h1>
+            <div class="hero__aside">${doodle('arrow', { color: 'tomato', cls: 'hero__arrow' })}
               <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
               <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See how we work', '#how', 'btn--ghost')}</div>
             </div>
@@ -22,8 +29,8 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
 const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead) })}</div>`;
 
 const drawing = () => `<div class="journey__map">
-          ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide' })}
-          ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow' })}
+          ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide', pits: J.pitfalls, start: J.start, finish: J.finish })}
+          ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow', pits: J.pitfalls.slice(0, 4), start: J.start, finish: J.finish, tagSize: 14 })}
         </div>`;
 
 const steps = () => `<ol class="journey__steps">${C.process.map((s, i) => `

@@ -14,10 +14,11 @@ module.exports = {
   logoMark: './assets/img/logo.png',
   tagline: 'We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.',
 
-  // Home hero. The headline is the name's promise (de-maze); the part in <em> is set in the quieter tone.
+  // Home hero. The headline is the name's promise (de-maze); the part in <em> is set in brand blue and the word in
+  // <mark> gets a hand-drawn loop around it.
   hero: {
     label: 'Demaze Technologies · Ahmedabad, India',
-    headline: 'AI products, <em>without the maze.</em>',
+    headline: 'AI products, <em>without the <mark>maze.</mark></em>',
     lead: 'From the first workshop to launch and beyond, we design, build and scale AI software with you, as one long-term team.',
   },
 
@@ -25,6 +26,13 @@ module.exports = {
   journey: {
     title: 'Every product starts as a maze. <em>We find the way through.</em>',
     lead: 'Four stages and one team, from your first idea to a product at scale.',
+    // The maze's dead ends are where products get lost: each holds one of these (a doodle, its label, a marker
+    // colour). The route passes all of them; on scroll they fall away with the walls. `start` and `finish` label
+    // the doodles at the entrance and the exit.
+    pitfalls: [['ghost', 'Scope creep', 'lilac'], ['bug', 'Bugs', 'tomato'], ['clock', 'Deadlines', 'sun'], ['tangle', 'Tech debt', 'pink'],
+      ['question', 'Vague specs', 'sky'], ['flame', 'Budget burn', 'tomato'], ['lock', 'Lock-in', 'mint']],
+    start: 'Your idea',
+    finish: 'Launch',
   },
 
   founder: {

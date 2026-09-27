@@ -2,7 +2,13 @@
 // computed at build time so the page ships plain SVG. It opens the home page and tells "How we work" on every page:
 // the route finds its way through, then (journey.js, on scroll) the walls fall away, the route straightens into one
 // line, four stops appear on it and a signal walks the stages. With reduced motion or no JS it is the finished drawing.
+// Decoration, drawn as doodles (templates/doodles.js): the maze's dead ends hold the pitfalls a product gets lost in
+// (content.js `journey.pitfalls`), a highlighter marks the way through, an idea waits at the entrance and a rocket
+// at the exit.
 'use strict';
+
+const { doodleAt } = require('./doodles');
+const { esc } = require('./helpers');
 
 // Carve a perfect maze on a cols x rows grid, then find the route from the entrance (left edge, row `entry`)
 // to the exit (right edge, row `exit`). `right`/`down` mark the walls on each cell's right and bottom sides.
@@ -77,6 +83,43 @@ function routePoints(way, entry, exit, cols, C) {
 }
 const toPath = (pts) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${+x.toFixed(1)} ${+y.toFixed(1)}`).join('');
 
+// Cells off the route with a single opening: the dead ends a visitor could wander into.
+function deadEnds(cols, rows, { right, down, way }) {
+  const id = (x, y) => y * cols + x;
+  const route = new Set(way.map(([x, y]) => id(x, y)));
+  const out = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (route.has(id(x, y))) continue;
+      const open = (x < cols - 1 && !right[id(x, y)]) + (x > 0 && !right[id(x - 1, y)]) + (y < rows - 1 && !down[id(x, y)]) + (y > 0 && !down[id(x, y - 1)]);
+      if (open === 1) out.push([x, y]);
+    }
+  }
+  return out;
+}
+
+// `n` dead ends spread evenly across the maze: one per equal slice of its width, the nearest to the slice's middle,
+// never in the column next to one already taken.
+function spread(ends, cols, n) {
+  const taken = [];
+  for (let i = 0; i < n; i++) {
+    const mid = ((i + 0.5) * cols) / n;
+    const free = ends.filter(([x]) => !taken.some(([tx]) => Math.abs(tx - x) < 2));
+    if (!free.length) break;
+    taken.push(free.reduce((a, b) => (Math.abs(b[0] - mid) < Math.abs(a[0] - mid) ? b : a)));
+  }
+  return taken;
+}
+
+// (Anything CSS animates is a wrapper <g> without a transform attribute: a CSS transform would replace it.)
+// A sticker label: a small tilted tag in the doodle's colour, centred on x, y (width estimated from the text).
+// `minX` keeps the whole tag right of that x (the drawing's left edge), so it is never cut off by the page margin.
+const tag = (text, x, y, size, color, tilt, minX = -Infinity) => {
+  const w = text.length * size * 0.56 + size * 1.3, h = size * 1.75;
+  x = Math.max(x, minX + w / 2);
+  return `<g class="maze__tag" style="--dd:var(--${color})" transform="translate(${+x.toFixed(1)} ${+y.toFixed(1)}) rotate(${tilt})"><rect x="${+(-w / 2).toFixed(1)}" y="${+(-h / 2).toFixed(1)}" width="${+w.toFixed(1)}" height="${+h.toFixed(1)}" rx="${+(h / 2).toFixed(1)}"/><text y="${+(size * 0.36).toFixed(1)}" font-size="${size}">${esc(text)}</text></g>`;
+};
+
 // The Demaze chevron (the logo's shape), its tip pointing right, centred on cx, cy.
 const chevron = (cx, cy, s) => {
   const p = [[0, 0], [1, 0.5], [0, 1], [0.3, 0.5]].map(([x, y]) => `${+(cx + (x - 0.42) * s).toFixed(1)} ${+(cy + (y - 0.5) * s).toFixed(1)}`);
@@ -85,20 +128,34 @@ const chevron = (cx, cy, s) => {
 
 // One drawing. `stops` (fractions of the drawing's width) are where the four stages sit once the route is a line;
 // they line up with the four step columns under the drawing. journey.js reads `data-geo` to do the straightening.
-function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512, 0.762] }) {
+// `pits`: [doodle, label, colour] for the dead ends (as many as fit); `start`/`finish` label the entrance and exit
+// doodles; `tagSize` is the label type size in user units (larger on the narrow maze, which is drawn smaller).
+function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512, 0.762], pits = [], start = '', finish = '', tagSize = 10 }) {
   const C = 40, W = cols * C, H = rows * C;
   const m = carve(cols, rows, seed, entry, exit);
   const pts = routePoints(m.way, entry, exit, cols, C);
   const vb = [-C, -8, W + C * 2.4, H + 16];
   const lineY = H / 2;
   const geo = { pts, y: lineY, stops: stops.map((f) => +(vb[0] + f * vb[2]).toFixed(1)), mark: [W + C * 0.95, (exit + 0.5) * C], C };
+  const spots = spread(deadEnds(cols, rows, m), cols, pits.length);
+  const pitfalls = spots.map(([x, y], i) => {
+    const [name, label, color] = pits[i];
+    const cx = (x + 0.5) * C, cy = (y + 0.5) * C;
+    // the label sits on the side of the maze with more room: under the doodle in the top half, over it below
+    const ty = y < rows / 2 ? cy + C * 0.62 : cy - C * 0.62;
+    return `<g class="maze__pit" style="--i:${i}"><g class="maze__pit-in">${doodleAt(name, cx, cy, C * 0.8, { color })}${tag(label, cx, ty, tagSize, color, i % 2 ? 4 : -4)}</g></g>`;
+  }).join('');
+  const [ex, ey] = pts[0];
   return `<svg class="maze ${cls}" viewBox="${vb.join(' ')}" aria-hidden="true" focusable="false" data-geo='${JSON.stringify(geo)}'>
     <g class="maze__wallset"><path class="maze__walls" d="${wallPath(cols, rows, m, entry, exit, C)}"/></g>
+    <path class="maze__glow" d="${toPath(pts)}" pathLength="1"/>
+    <g class="maze__pits">${pitfalls}</g>
+    <g class="maze__start">${doodleAt('bulb', ex + C * 0.35, ey - C * 1.05, C * 0.95, { color: 'sun' })}${start ? tag(start, ex + C * 0.35, ey - C * 1.95, tagSize, 'sun', -5, vb[0] + 4) : ''}</g>
     <path class="maze__route" d="${toPath(pts)}" pathLength="1"/>
     <path class="maze__line" d="M0 0"/>
     <path class="maze__trail" d="M0 0"/>
     <g class="maze__stops">${geo.stops.map((x) => `<circle class="maze__stop" cx="${x}" cy="${lineY}" r="7"/>`).join('')}</g>
-    <g class="maze__markset"><path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
+    <g class="maze__markset"><g class="maze__rocket">${doodleAt('exhaust', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato', cls: 'maze__exhaust' })}${doodleAt('rocket', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${finish ? `<g class="maze__finish">${tag(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
     <circle class="maze__signal" r="6"><animateMotion dur="7s" repeatCount="indefinite" begin="indefinite" path="${toPath(pts)}"/></circle>
     <circle class="maze__traveler" cx="${geo.stops[0]}" cy="${lineY}" r="7"/>
   </svg>`;

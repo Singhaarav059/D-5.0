@@ -36,6 +36,7 @@ src/
     home.js, about.js, services.js, projects.js, contact.js   sections for each page
     journey.js           the maze scene (home hero + "How we work"), used on home, services and about
     maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
+    doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, hero sparkles
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
 scripts/
   check-syntax.js      `npm run check`: syntax-checks every first-party script
@@ -69,6 +70,7 @@ test/                  Automated checks (node --test)
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
 | The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` (markup), `public/assets/journey.js` (scroll), `site.css` ("the journey") |
+| The maze's pitfalls and their labels | `journey.pitfalls` in `src/content.js`; the drawings are in `src/templates/doodles.js` |
 | The contact map | `public/assets/visit3d.js` |
 | Security headers, caching, the 404 | `lib/static-server.js` |
 | The contact form endpoint | `lib/contact-api.js` |

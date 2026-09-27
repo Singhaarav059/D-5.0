@@ -3,12 +3,13 @@
    The system in one paragraph: warm paper with near-black ink, and a few full-width dark "sheets" that set the
    pace down the page (work, studio, founder, contact, footer). Components never name a colour; they use the
    context tokens (--bg, --text, --muted, --line, --surface), and a .sheet redefines those, so the same card or
-   button is right on paper and on ink. Brand blue is the signal colour and stays small: the maze route, the
-   section numbers, focus rings and active states. One display face (Bricolage Grotesque, light) with a quieter
-   grey second half for emphasis (<em>), Figtree for text. One easing curve, three durations.
+   button is right on paper and on ink. Brand blue is the signal colour: the maze route, the section numbers, focus
+   rings and active states. Marker colours (tomato, sun, mint, lilac, pink, sky) fill the hand-drawn doodles and
+   highlights. One display face (Bricolage Grotesque, light) with a quieter grey second half for emphasis (<em>),
+   Figtree for text. One easing curve, three durations.
 
    Contents
-     tokens · base · type · buttons · section header · sheets · nav
+     tokens · base · type · doodles · buttons · section header · sheets · nav
      the journey (home hero + "How we work", journey.js) · page hero · work deck · services · knowledge map · industries
      studio + reasons · about · founder quote · FAQ · contact + form · projects + case dialog · visit · footer
      initial motion states · tablet (<=1024) · small tablet (<=860) · phone (<=560) · preferences
@@ -24,6 +25,25 @@
   --ink-2: #1f1f1d;
   --ink-3: #2b2b28;
   --blue: #3d5afe;
+  /* marker colours: doodles, highlights, each section's accent. Fills and backgrounds only; for small text on paper
+     use the matching -ink shade. */
+  --tomato: #ff6242;
+  --sun: #ffcb45;
+  --mint: #2fd0a0;
+  --lilac: #a58bff;
+  --pink: #ff85b8;
+  --sky: #62c1ff;
+  --blue-tint: #e3e8ff;
+  --tomato-tint: #ffe3da;
+  --sun-tint: #fff1c9;
+  --mint-tint: #d6f6ea;
+  --lilac-tint: #ece5ff;
+  --pink-tint: #ffe3ef;
+  --sky-tint: #ddf1ff;
+  --tomato-ink: #d43d1d;
+  --mint-ink: #0b7f5b;
+  --lilac-ink: #6a4ee0;
+  --pink-ink: #c42c6c;
   /* context tokens: what components use; .sheet redefines them for dark sections */
   --bg: var(--paper);
   --text: var(--ink);
@@ -83,6 +103,25 @@ figure { margin: 0; }
 .link-arrow svg { width: 16px; height: 16px; transition: transform var(--t-2) var(--ease); }
 .link-arrow:hover { box-shadow: inset 0 -1px 0 var(--text); }
 .link-arrow:hover svg { transform: translateX(3px); }
+
+/* ---------- doodles (templates/doodles.js): ink lines over a blob of marker colour ----------
+   Lines take the context text colour, so a doodle is right on paper and on a sheet. .is-drawing draws the lines on
+   (pathLength 1) and pops the colour in after them; .is-boiling gives the lines the small jitter of hand-drawn
+   animation. Neither runs with reduced motion. */
+.dd { overflow: visible; }
+.dd__fill > * { fill: var(--dd, var(--sun)); }
+.dd__ink > * { fill: none; stroke: var(--text); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.dd__dots > * { fill: var(--text); }
+@keyframes dd-draw { from { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; } to { stroke-dasharray: 1 1.01; stroke-dashoffset: 0; } }
+@keyframes dd-pop { from { opacity: 0; transform: scale(0.6); } }
+@keyframes dd-boil { 0% { transform: rotate(-1.6deg); } 33% { transform: rotate(1.2deg) translate(0.4px, -0.6px); } 66% { transform: rotate(-0.4deg) translate(-0.4px, 0.3px); } }
+.dd__fill { transform-box: fill-box; transform-origin: center; }
+
+/* the hero's scribble: a hand-drawn loop around one word (content.js marks it with <mark>) */
+.scribble { position: relative; display: inline-block; }
+.scribble__loop { position: absolute; left: -12%; top: -8%; width: 124%; height: 122%; overflow: visible; pointer-events: none; }
+.scribble__loop path { fill: none; stroke: var(--tomato); stroke-width: 3.2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+html.motion.js .scribble__loop path { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; animation: dd-draw 1.1s cubic-bezier(0.65, 0, 0.35, 1) 1.3s forwards; }
 
 /* split words (built by JS for the hero headline) */
 .w { display: inline-block; overflow: clip; overflow-clip-margin: 0.14em; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
@@ -210,7 +249,12 @@ html.menu-open { overflow: hidden; }
    Without motion it is plain flow: (hero copy) → the solved maze → the heading → the four stages. With motion
    (.is-live) the track is tall and the stage sticks while the scene plays; the hero copy and the heading share one
    slot, and journey.js drives the hand-over, the maze and the stages from the scroll position. */
-.journey { position: relative; padding-block: clamp(72px, 10vw, 136px); }
+.journey { position: relative; isolation: isolate; padding-block: clamp(72px, 10vw, 136px); }
+.journey__sticky { isolation: isolate; }
+/* the scene is drawn on dot-grid paper, fading out at its lower edge */
+.journey::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, rgba(21, 21, 20, 0.16) 1px, transparent 1.6px) 0 0 / 24px 24px; -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
+.journey.is-live::before { display: none; }
+.journey.is-live .journey__sticky::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, rgba(21, 21, 20, 0.16) 1px, transparent 1.6px) 0 0 / 24px 24px; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
 .journey--home { padding-top: clamp(112px, 15vh, 160px); }
 .journey__stage { display: grid; gap: clamp(36px, 6vh, 64px); }
 .journey__caption .shead { margin-bottom: 0; }
@@ -248,7 +292,17 @@ html.menu-open { overflow: hidden; }
 /* hero copy (the start of the home journey) */
 .hero__grid { margin-top: clamp(28px, 5vh, 52px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 32px clamp(40px, 5vw, 88px); align-items: end; }
 .hero__title { font: 360 clamp(2.9rem, min(6.1vw, 9.6vh), 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
-.hero__title em { display: block; }
+.hero__title em { display: block; color: var(--blue); }
+/* hero doodles: two sparkles by the looped word, an arrow from the actions down to the maze */
+.hero__star { position: absolute; width: 0.34em; height: 0.34em; right: -0.42em; top: -0.18em; }
+.hero__star--2 { width: 0.2em; height: 0.2em; right: -0.62em; top: 0.3em; }
+.hero__aside { position: relative; }
+.hero__arrow { position: absolute; width: 74px; height: 74px; left: -96px; bottom: -64px; transform: rotate(118deg) scaleY(-1); }
+.hero__arrow .dd__ink > * { stroke: var(--tomato); stroke-width: 3; }
+html.motion.js .hero__star { animation: dd-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 2.1s both, dd-spin 5s linear 2.6s infinite; }
+html.motion.js .hero__star--2 { animation-delay: 2.3s, 2.8s; animation-direction: normal, reverse; }
+@keyframes dd-spin { to { rotate: 1turn; } }
+html.motion.js .hero__arrow .dd__ink > * { animation: dd-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1.9s both; }
 /* display ascenders and descenders reach past the word masks: give them room */
 .hero__title .w, .phero__title .w { padding: 0.08em 0.05em 0.14em; margin: -0.08em -0.05em -0.14em; }
 .hero__lead { font-size: clamp(1.02rem, 1.25vw, 1.15rem); line-height: 1.5; color: var(--muted); max-width: 40ch; }
@@ -283,6 +337,28 @@ html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-or
 @keyframes maze-route { to { stroke-dashoffset: 0; } }
 @keyframes maze-mark { from { opacity: 0; transform: translateX(-14px) scale(0.5); } to { opacity: 1; transform: none; } }
 @keyframes maze-arrive { 40% { transform: translateX(6px); } }
+
+/* Maze decoration: a highlighter under the way through, the pitfalls in the dead ends (a doodle and a sticker label
+   each), the idea at the entrance and the rocket at the exit. They pop in after the route has drawn itself, then
+   boil gently; on scroll (journey.js) the pitfalls fall away with the walls and the rocket takes off on arrival. */
+.maze__glow { fill: none; stroke: var(--sun); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; mix-blend-mode: multiply; }
+.maze.is-morphing .maze__glow { visibility: hidden; }
+.maze .dd__ink > * { stroke: var(--ink); stroke-width: 3; }
+.maze .dd__dots > * { fill: var(--ink); }
+.maze__tag rect { fill: var(--dd); stroke: var(--ink); stroke-width: 1.2; }
+.maze__tag text { font-family: var(--body); font-weight: 600; fill: var(--ink); text-anchor: middle; letter-spacing: -0.01em; }
+.maze__pit, .maze__pit-in, .maze__start, .maze__rocket, .maze__finish { transform-box: fill-box; transform-origin: 50% 50%; }
+.maze__exhaust { opacity: 0; }
+.maze__rocket { transition: transform 1.4s cubic-bezier(0.55, 0, 0.75, 0.3), opacity 0.5s ease 0.9s; }
+.maze.is-arrived .maze__rocket { transform: translateY(-160px) rotate(4deg); opacity: 0; }
+.maze.is-arrived .maze__exhaust { opacity: 1; animation: maze-flicker 0.14s steps(2) infinite; }
+@keyframes maze-flicker { 50% { transform: scaleY(1.25) translateY(3px); } }
+html.motion.js .maze .maze__glow { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; }
+html.motion.js .maze.is-seen .maze__glow { animation: maze-route 2.5s cubic-bezier(0.65, 0, 0.35, 1) 0.7s forwards; }
+html.motion.js .maze:not(.is-seen) :is(.maze__pit-in, .maze__start, .maze__rocket, .maze__finish) { opacity: 0; }
+html.motion.js .maze.is-seen .maze__start { animation: dd-pop 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both, dd-boil 1.5s steps(1) 0.8s infinite; }
+html.motion.js .maze.is-seen .maze__pit-in { animation: dd-pop 560ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.9s + var(--i) * 0.26s) both, dd-boil 1.6s steps(1) calc(1.5s + var(--i) * 0.26s) infinite; }
+html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__rocket { animation: dd-pop 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 3s both; }
 
 /* ---------- page hero (projects, services, about, contact, 404) ---------- */
 .phero { padding: clamp(120px, 17vh, 176px) 0 clamp(8px, 2vw, 24px); }
@@ -780,6 +856,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .nav__bar { height: 64px; }
   .hero__grid, .shead__row { grid-template-columns: minmax(0, 1fr); }
   .hero__grid { gap: 22px; }
+  .hero__arrow { display: none; }
   .hero__title { font-size: clamp(2.6rem, 9.4vw, 4.8rem); }
   .phero__title { font-size: clamp(2.4rem, 8.4vw, 4.4rem); }
   .hero__lead { max-width: 52ch; }
@@ -812,6 +889,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .maze--narrow { display: block; }
   .maze__route, .maze__line, .maze__trail { stroke-width: 4.4; }
   .maze__stop { r: 9; }
+  .maze__glow { stroke-width: 24; }
 }
 
 /* =========================================================================
