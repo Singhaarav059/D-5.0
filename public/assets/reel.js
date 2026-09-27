@@ -249,7 +249,7 @@
           .call(() => { num.textContent = pad(i); chap.textContent = plan[i - 1].label; }, null, t - 0.09)
           .fromTo([num, chap], { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.45, stagger: 0.05, immediateRender: false }, t - 0.05);
         // headline: the old words fall away with the cut, the new ones rise one by one once the scene has landed
-        if (capWords[from].length) tl.to(capWords[from], { yPercent: 110, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, t - OUT);
+        if (capWords[from].length) tl.to(capWords[from], { yPercent: 135, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, t - OUT);
         if (capWords[to].length) tl.fromTo(capWords[to], { yPercent: -110 }, { yPercent: 0, duration: 0.55, stagger: 0.045, ease: 'expo.out', immediateRender: false }, t + 0.2);
       };
 
@@ -258,8 +258,8 @@
         .set(capWords.flat(), { yPercent: -110 }, 0).set([num, chap], { yPercent: 0, opacity: 1 }, 0).set(bar, { scaleX: 0 }, 0)
         .call(() => { num.textContent = '01'; chap.textContent = plan[0].label; }, null, 0.001)
         .set(st, { enter: 0, pitch: 0, lights: 0, open: 0, orbit: 0, focus: 0 }, 0)
-        .set('.reel__title h3 b', { yPercent: 110 }, 0)
-        .set('.reel__title .reel__tagline b', { yPercent: 110 }, 0)
+        .set('.reel__title h3 b', { yPercent: 135 }, 0)
+        .set('.reel__title .reel__tagline b', { yPercent: 135 }, 0)
         .set('.reel__title .reel__inner > small', { opacity: 0, y: 10 }, 0)
         .set('.reel__outro .reel__inner > *:not(.reel__underline)', { opacity: 0, y: 24 }, 0);
 
@@ -350,7 +350,7 @@
         } else if (kind === 'count') {
           // a film leader counts down 3, 2, 1, flashes, and the title cuts in
           const n = $('.reel__leader b')[0], leader = $('.reel__leader')[0];
-          tl.set(L, { yPercent: 110 }, 0).set(leader, { opacity: 1, scale: 1 }, 0).call(() => { n.textContent = '3'; }, null, s + 0.01)
+          tl.set(L, { yPercent: 135 }, 0).set(leader, { opacity: 1, scale: 1 }, 0).call(() => { n.textContent = '3'; }, null, s + 0.01)
             .fromTo($('.reel__leader-sweep'), { rotation: -90, svgOrigin: '50 50', attr: { 'stroke-dasharray': '0 139' } }, { attr: { 'stroke-dasharray': '139 0' }, duration: 0.4, repeat: 2, ease: 'none', immediateRender: false }, s)
             .call(() => { n.textContent = '2'; }, null, s + 0.4).call(() => { n.textContent = '3'; }, null, s + 0.39)
             .call(() => { n.textContent = '1'; }, null, s + 0.8).call(() => { n.textContent = '2'; }, null, s + 0.79)

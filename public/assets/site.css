@@ -1164,7 +1164,9 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 /* the headline above the stage: one per chapter, stacked; reel.js raises its words in turn */
 .reel__caps { position: absolute; left: 34px; right: 34px; top: 56px; height: 84px; z-index: 2; }
 .reel__cap { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; column-gap: 0.24em; margin: 0; text-align: center; font: 800 32px/1.02 var(--display); letter-spacing: -0.035em; color: var(--fg); text-wrap: balance; }
-.reel .w { display: inline-block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; vertical-align: top; }
+/* word and letter masks: room on both sides and below, so negative tracking and descenders are never shaved off (the
+   words start and leave far enough outside the mask not to peek into that room) */
+.reel .w { display: inline-block; overflow: hidden; padding: 0 0.1em 0.22em; margin: 0 -0.1em -0.22em; vertical-align: top; }
 .reel .w > b { display: inline-block; font-weight: inherit; }
 .reel .w.is-accent { color: var(--accent); }
 
@@ -1201,7 +1203,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 .reel__ribbon--h { left: -4%; right: -4%; top: 50%; height: 56px; margin-top: -28px; transform-origin: left; }
 .reel__ribbon--v { top: -4%; bottom: -4%; left: 50%; width: 56px; margin-left: -28px; transform-origin: top; }
 .reel__bow { position: absolute; z-index: 3; left: 50%; top: 50%; width: 96px; height: 60px; margin: -30px 0 0 -48px; background: radial-gradient(circle at 26% 50%, var(--brand) 0 36%, transparent 37%), radial-gradient(circle at 74% 50%, var(--brand) 0 36%, transparent 37%), radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--brand) 70%, #000) 0 14%, transparent 15%); }
-.reel__title--ticker h3 span { position: relative; height: 1em; padding-bottom: 0; overflow: hidden; }
+.reel__title--ticker h3 span { position: relative; height: 1em; padding-bottom: 0; margin-bottom: 0; overflow: hidden; }
 .reel__rollbox > i { display: block; font-style: normal; line-height: 1em; visibility: hidden; }
 .reel__roll { position: absolute; left: 50%; top: 0; line-height: 1em; text-align: center; translate: -50% 0; }
 .reel__leader { position: absolute; left: 50%; top: 50%; z-index: 2; width: 200px; height: 200px; margin: -100px 0 0 -100px; opacity: 0; }
@@ -1212,7 +1214,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 .reel__underline { display: block; width: 220px; height: 3px; margin: -4px auto 0; border-radius: 2px; background: var(--brand); transform-origin: left; }
 .reel__case { font: 600 14px/1 ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
 .reel__title h3 { display: flex; margin: 0; font: 800 112px/0.92 var(--display); letter-spacing: -0.06em; white-space: nowrap; color: var(--fg); }
-.reel__title h3 span { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.reel__title h3 span { display: block; overflow: hidden; padding: 0 0.1em 0.24em; margin: 0 -0.1em -0.18em; }
 .reel__title h3 b { display: block; font-weight: inherit; }
 .reel__tagline { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 0.26em; max-width: 430px; font: 700 26px/1.1 var(--display); letter-spacing: -0.025em; text-align: center; }
 .reel__client { max-width: 440px; font-size: 16px; text-align: center; color: var(--mute); }

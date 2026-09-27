@@ -179,7 +179,7 @@
       run(tl, t, $, sc) {
         pop(tl, $('.rk-kicker'), t, 0, { opacity: 0, y: 10 });
         const lines = $('.rk-line'), gap = Math.min(0.45, 1.9 / lines.length);
-        tl.set($('.rk-line b'), { yPercent: 110 }, 0).set($('.rk-line__art'), { scale: 0, rotation: -30 }, 0);
+        tl.set($('.rk-line b'), { yPercent: 135 }, 0).set($('.rk-line__art'), { scale: 0, rotation: -30 }, 0);
         lines.forEach((l, i) => tl.to(l.querySelector('b'), { yPercent: 0, duration: 0.5, ease: 'expo.out' }, t + 0.3 + i * gap)
           .to(l.querySelector('.rk-line__art'), { scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2.2)' }, t + 0.36 + i * gap));
         pop(tl, $('.rk-brief p'), t + 0.5 + lines.length * gap, 0, { opacity: 0, y: 10 });
@@ -199,7 +199,7 @@
         let s = t + 0.25;
         if (sc.stat) { pop(tl, $('.rk-bigstat'), t + 0.2, 0, { opacity: 0, scale: 0.9 }); counter(tl, $('.rk-bigstat span')[0], sc.stat.to, t + 0.3, 1.6, sc.stat.dec || 0); s += 0.5; }
         const lines = $('.rk-line');
-        tl.set($('.rk-line b'), { yPercent: 110 }, 0).set($('.rk-tick'), { scale: 0 }, 0);
+        tl.set($('.rk-line b'), { yPercent: 135 }, 0).set($('.rk-tick'), { scale: 0 }, 0);
         lines.forEach((l, i) => tl.to(l.querySelector('b'), { yPercent: 0, duration: 0.5, ease: 'expo.out' }, s + i * 0.42)
           .to(l.querySelector('.rk-tick'), { scale: 1, duration: 0.4, ease: 'back.out(3)' }, s + 0.1 + i * 0.42));
         pop(tl, $('.rk-outcome p'), s + 0.3 + lines.length * 0.42, 0, { opacity: 0, y: 10 });
