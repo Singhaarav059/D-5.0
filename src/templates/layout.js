@@ -71,6 +71,10 @@ ${footer(slug)}
 `;
 }
 
+// The footer closes on the route from the hero, now with the four stages on it as stations (the middle of each run
+// of the line, as percentages of the drawing), ending in the chevron and the name.
+const STOPS = [['bulb', 'sun', 'Idea', 24.8, 22.5], ['pencil', 'lilac', 'Design', 46, 67.5, true], ['gear', 'sky', 'Build', 67.1, 32.5], ['rocket', 'tomato', 'Launch', 89, 50, true]];
+
 // The footer opens with the next page on the route through the site (content.js `next`).
 function footer(slug) {
   const [label, line, href] = C.next[slug] || C.next[''];
@@ -90,9 +94,12 @@ function footer(slug) {
       </div>
     </div>
     <div class="footer__mark" aria-hidden="true" data-draw>
-      <svg class="footer__route" viewBox="0 0 600 80" preserveAspectRatio="none"><path d="M0 62H84V18H214V54H338V26H468V40H600"/></svg>
+      <div class="footer__trail">
+        <svg class="footer__route" viewBox="0 0 600 80" preserveAspectRatio="none"><path d="M0 62H84V18H214V54H338V26H468V40H600"/></svg>
+        ${STOPS.map(([d, c, label, x, y, below], i) => `<span class="footer__stop${below ? ' is-below' : ''}" style="left:${x}%;top:${y}%;--i:${i};--dd:var(--${c})">${doodle(d, { color: c })}<b>${label}</b></span>`).join('')}
+      </div>
       <svg class="footer__chevron" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg>
-      <span>Demaze</span>
+      <span class="footer__word">Demaze${doodle('star', { color: 'sun', cls: 'footer__spark' })}${doodle('star', { color: 'pink', cls: 'footer__spark footer__spark--2' })}</span>
     </div>
     <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><a href="#main" data-top>Back to top ↑</a></div>
   </div>
