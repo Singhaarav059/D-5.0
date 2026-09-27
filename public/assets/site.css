@@ -173,7 +173,7 @@ html:not(.js) .nav__links a[aria-current] { box-shadow: inset 0 -1px 0 var(--tex
 .nav__toggle:active { transform: scale(0.94); }
 .nav__toggle span { position: absolute; left: 13px; width: 18px; height: 1.5px; border-radius: 2px; background: var(--text); transition: transform 350ms var(--ease); }
 .nav__toggle span:first-child { top: 18px; }
-.nav__toggle span:last-child { top: 24px; transform: scaleX(0.66); transform-origin: left; }
+.nav__toggle span:last-child { top: 24px; transform: scaleX(0.66); }
 .nav__toggle[aria-expanded='true'] { background: var(--surface); }
 .nav__toggle[aria-expanded='true'] span:first-child { transform: translateY(3px) rotate(45deg); }
 .nav__toggle[aria-expanded='true'] span:last-child { transform: translateY(-3px) rotate(-45deg); }
@@ -628,6 +628,17 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .footer__word { margin: clamp(40px, 6vw, 72px) 0 0; overflow: clip; font: 360 clamp(5rem, 19vw, 17rem)/0.8 var(--display); letter-spacing: -0.055em; text-align: center; color: color-mix(in srgb, var(--text) 8%, transparent); user-select: none; padding-bottom: 0.04em; }
 .footer__bottom { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 0.86rem; }
 .footer__bottom a:hover { color: var(--text); }
+
+/* ---------- page to page: the nav stays put while the page crossfades and settles (native view transitions,
+   no script; browsers without them simply navigate) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .nav__bar { view-transition-name: nav; }
+  ::view-transition-old(root) { animation: 160ms ease-out both vt-out; }
+  ::view-transition-new(root) { animation: 440ms var(--ease) 60ms both vt-in; }
+  @keyframes vt-out { to { opacity: 0; } }
+  @keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+}
 
 /* ---------- initial states (only when motion is allowed and JS is running) ---------- */
 html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js [data-hero-fade] { opacity: 0; }
