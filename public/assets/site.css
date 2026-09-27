@@ -923,7 +923,8 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .quote blockquote p { font-size: clamp(1.35rem, 3.2vw, 1.9rem); max-width: none; }
 
   .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pdlg__inner { grid-template-columns: minmax(0, 1fr); overflow-y: auto; }
+  /* one column: the arrows and close button get their own strip above the reel, so they never sit on its labels */
+  .pdlg__inner { grid-template-columns: minmax(0, 1fr); overflow-y: auto; padding-top: 68px; }
   .pdlg__media { min-height: 0; }
   .pdlg__media img { max-height: 40svh; }
   .pdlg__body { overflow: visible; max-height: none; padding-top: 28px; }
