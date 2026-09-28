@@ -421,7 +421,7 @@ module.exports = {
       outro: 'Creators, consumers & brands',
     },
   },
-  closing: 'Have a product in mind? <em>Let’s find the way through.</em>',
+  closing: 'Have a product in mind? <em>Let’s talk it through.</em>',
   // The contact form's optional questions (lib/contact-api.js accepts exactly these values). Edit both together.
   brief: {
     budgets: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not sure yet'],
