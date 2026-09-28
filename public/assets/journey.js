@@ -1,8 +1,7 @@
-// The maze scene (src/templates/journey.js). Each maze draws itself in when it first comes into view (CSS). With
-// motion, the scene's section becomes a tall track with a sticky stage, and the scroll position plays it: the hero
-// copy hands over to the heading (home), the walls and the pitfalls in them fall away, the route straightens into one line, the four stops
-// appear and a signal walks the stages to the chevron. Scrolling back plays it backwards. Without motion, or on a
-// screen too short to hold the stage, the section stays plain content with the solved maze.
+// The home hero's maze and "How we work" (src/templates/journey.js). Each maze draws itself in when it first comes
+// into view (CSS). "How we work" is four rows with the Demaze route running through them: the route is drawn from the
+// rows' positions (so it follows the layout at every width) and, with motion, draws itself as the rows scroll by,
+// lighting each stage's stop as it arrives. Each stage's scene of the work plays while it is on screen.
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -17,8 +16,7 @@
   }), { threshold: 0.3 });
   $$('.maze').forEach((m) => seen.observe(m));
 
-  if (!root.classList.contains('motion') || !window.gsap || !window.ScrollTrigger) return;
-  gsap.registerPlugin(ScrollTrigger);
+  const motion = root.classList.contains('motion') && window.gsap && window.ScrollTrigger;
 
   // Stage scenes (src/templates/stages.js). The markup is the finished picture; each timeline builds it up from its
   // parts, holds it, fades the parts and starts again. `rest` is where the finished picture holds, which is what a
@@ -101,184 +99,107 @@
       return 5.4;
     },
   };
-  const scenes = $$('.jart').map((svg) => {
+  const scenes = motion ? $$('.jart').map((svg) => {
     const $ = (s) => $$(s, svg);
     const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: 'power3.out' } });
     const rest = SCENES[svg.dataset.scene] ? SCENES[svg.dataset.scene](tl, $) : 0;
-    const hold = () => { tl.pause(); tl.seek(rest, false); };
-    hold();
-    return { svg, play: () => tl.restart(), hold, playing: false };
-  });
-  const playScenes = (list) => scenes.forEach((s) => {
-    const on = list.includes(s.svg);
-    if (on && !s.playing) s.play(); else if (!on && s.playing) s.hold();
-    s.playing = on;
-  });
-  // Outside the scroll scene (a short screen, or its plain layout), every scene on screen plays.
-  const inView = new Set();
-  const plainIO = new IntersectionObserver((entries) => {
-    entries.forEach((e) => (e.isIntersecting ? inView.add(e.target) : inView.delete(e.target)));
-    if (!document.querySelector('.journey.is-live')) playScenes([...inView]);
-  }, { threshold: 0.4 });
-  scenes.forEach((s) => plainIO.observe(s.svg));
+    tl.seek(rest, false);
+    return { svg, tl, rest, playing: false };
+  }) : [];
+  // a scene plays while it is on screen, and holds its finished picture otherwise
+  const sceneIO = new IntersectionObserver((entries) => entries.forEach((e) => {
+    const s = scenes.find((x) => x.svg === e.target);
+    if (e.isIntersecting && !s.playing) s.tl.restart();
+    else if (!e.isIntersecting && s.playing) { s.tl.pause(); s.tl.seek(s.rest, false); }
+    s.playing = e.isIntersecting;
+  }), { threshold: 0.4 });
+  scenes.forEach((s) => sceneIO.observe(s.svg));
 
-  const clamp = (v) => Math.min(1, Math.max(0, v));
-  const span = (p, [a, b]) => clamp((p - a) / (b - a));
-  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const N = 240; // points the route is resampled into for the straightening
-
-  // N points spread evenly along a polyline.
-  const resample = (pts) => {
-    const segs = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
-    const total = segs.reduce((a, b) => a + b, 0);
-    const out = [];
-    let seg = 0, before = 0;
-    for (let i = 0; i < N; i++) {
-      const d = (total * i) / (N - 1);
-      while (seg < segs.length - 1 && before + segs[seg] < d) before += segs[seg++];
-      const t = segs[seg] ? (d - before) / segs[seg] : 0;
-      const [a, b] = [pts[seg], pts[seg + 1]];
-      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+  // The route through "How we work": from the idea, down into each stage's scene (entering at its stop), across to the
+  // next one in the gap between rows, and out to the launch chevron. Right angles with rounded corners, as in the maze.
+  const R = 26;
+  const rounded = (pts) => {
+    let d = `M${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [p, c, n] = [pts[i - 1], pts[i], pts[i + 1]];
+      const a = Math.hypot(c[0] - p[0], c[1] - p[1]), b = Math.hypot(n[0] - c[0], n[1] - c[1]);
+      const r = Math.min(R, a / 2, b / 2);
+      const p1 = [c[0] + ((p[0] - c[0]) / a) * r, c[1] + ((p[1] - c[1]) / a) * r];
+      const p2 = [c[0] + ((n[0] - c[0]) / b) * r, c[1] + ((n[1] - c[1]) / b) * r];
+      d += `L${p1[0].toFixed(1)} ${p1[1].toFixed(1)}Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
     }
-    return out;
+    const e = pts[pts.length - 1];
+    return d + `L${e[0].toFixed(1)} ${e[1].toFixed(1)}`;
   };
-  const toD = (pts) => 'M' + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L');
+  // drop repeated points and the middle of straight runs, so every remaining point is a turn
+  const turns = (pts) => pts.filter((p, i) => i === 0 || Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) > 0.5)
+    .filter((p, i, a) => i === 0 || i === a.length - 1 || !((a[i - 1][0] === p[0] && p[0] === a[i + 1][0]) || (a[i - 1][1] === p[1] && p[1] === a[i + 1][1])));
 
-  // One drawing (wide or narrow) and how to put it in a given state.
-  const drawing = (svg) => {
-    const g = JSON.parse(svg.dataset.geo);
-    const route = resample(g.pts);
-    const x0 = g.pts[0][0], x1 = g.pts[g.pts.length - 1][0];
-    const line = route.map((_, i) => [x0 + ((x1 - x0) * i) / (N - 1), g.y]);
-    const q = (s) => svg.querySelector(s);
-    const els = { walls: q('.maze__wallset'), line: q('.maze__line'), trail: q('.maze__trail'), mark: q('.maze__markset'), traveler: q('.maze__traveler'), stops: $$('.maze__stop', svg), pits: $$('.maze__pit', svg) };
-    const end = g.mark[0] - g.C * 0.62; // the signal comes to rest against the chevron
-    // where each stage is reached, as a fraction of the walk
-    const at = g.stops.map((x) => (x - g.stops[0]) / (end - g.stops[0]));
-    let last = '';
-    const render = (s) => {
-      const key = [s.walls, s.morph, s.stops, s.travel].map((v) => v.toFixed(4)).join();
-      if (key === last) return;
-      last = key;
-      els.walls.style.opacity = (1 - s.walls).toFixed(3);
-      // the pitfalls drop out of the picture one after another
-      els.pits.forEach((p, i) => {
-        const k = clamp(s.walls * 1.9 - i * 0.13), f = k * k;
-        p.style.opacity = (1 - k).toFixed(3);
-        p.style.transform = k ? `translate(0, ${(f * 90).toFixed(1)}px) rotate(${(f * (i % 2 ? 28 : -24)).toFixed(1)}deg)` : '';
+  $$('[data-process]').forEach((sec) => {
+    const body = sec.querySelector('.process__body');
+    const svg = body.querySelector('.process__route');
+    const [line, ink] = svg.querySelectorAll('path');
+    const rows = $$('[data-stage]', body);
+    const start = body.querySelector('.process__bulb'), end = body.querySelector('.process__chevron');
+    let length = 0, reach = [], progress = motion ? 0 : 1;
+
+    const paint = () => {
+      ink.style.strokeDashoffset = (length * (1 - progress)).toFixed(1);
+      rows.forEach((r, i) => r.classList.toggle('is-reached', progress * length >= reach[i] - 1));
+      sec.classList.toggle('is-arrived', progress >= 0.999);
+    };
+    const layout = () => {
+      const o = body.getBoundingClientRect();
+      const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.left - o.left + r.width / 2, top: r.top - o.top, bottom: r.bottom - o.top, y: r.top - o.top + r.height / 2, left: r.left - o.left }; };
+      const s = box(start), e = box(end);
+      const arts = rows.map((r) => box(r.querySelector('.process__art')));
+      // side by side, the route drops into each scene through the middle of its top edge; stacked (one column), it
+      // runs down the gutter beside the rows, clear of the words, and enters each scene at the middle of its left edge
+      const stacked = arts.every((a) => Math.abs(a.x - arts[0].x) < 2);
+      const X = Math.round(arts[0].left) - 14;
+      const pts = [[s.x, s.bottom + 6]];
+      const marks = [];
+      arts.forEach((a, i) => {
+        const prevBottom = i ? arts[i - 1].bottom : s.bottom;
+        const mid = (prevBottom + a.top) / 2;
+        const art = rows[i].querySelector('.process__art');
+        if (stacked) {
+          if (!i) pts.push([s.x, mid], [X, mid]);
+          pts.push([X, a.y]);
+          art.style.setProperty('--stop-x', `${X - a.left}px`);
+          art.style.setProperty('--stop-y', '50%');
+        } else {
+          pts.push([pts[pts.length - 1][0], mid], [a.x, mid], [a.x, a.top]);
+          art.style.removeProperty('--stop-x');
+          art.style.removeProperty('--stop-y');
+        }
+        marks.push(pts.length - 1);
+        if (!stacked) pts.push([a.x, a.y]);
       });
-      svg.classList.toggle('is-moving', s.walls > 0 || s.morph > 0);
-      svg.classList.toggle('is-morphing', s.morph > 0);
-      const e = ease(s.morph);
-      if (s.morph > 0) els.line.setAttribute('d', toD(route.map(([x, y], i) => [x + (line[i][0] - x) * e, y + (line[i][1] - y) * e])));
-      els.mark.setAttribute('transform', `translate(0 ${((g.y - g.mark[1]) * e).toFixed(2)})`);
-      svg.classList.toggle('is-straight', s.stops > 0);
-      els.stops.forEach((c, i) => { const k = clamp(s.stops * 4 - i); c.style.opacity = k; c.style.transform = `scale(${0.3 + 0.7 * k})`; });
-      const x = g.stops[0] + (end - g.stops[0]) * s.travel;
-      svg.classList.toggle('is-travelling', s.stops >= 1);
-      els.traveler.setAttribute('cx', x.toFixed(1));
-      els.trail.setAttribute('d', s.stops >= 1 ? `M${x0} ${g.y}L${x.toFixed(1)} ${g.y}` : 'M0 0');
-      els.stops.forEach((c, i) => c.classList.toggle('is-on', s.stops >= 1 && s.travel >= at[i] - 0.001));
-      svg.classList.toggle('is-arrived', s.travel >= 1);
+      const last = arts[arts.length - 1];
+      if (stacked) pts.push([X, e.y], [e.left + 4, e.y]);
+      else pts.push([last.x, last.bottom], [last.x, e.y], [e.left + 4, e.y]);
+      const clean = turns(pts.map(([x, y]) => [Math.round(x), Math.round(y)]));
+      svg.setAttribute('viewBox', `0 0 ${Math.round(o.width)} ${Math.round(o.height)}`);
+      const d = rounded(clean);
+      line.setAttribute('d', d); ink.setAttribute('d', d);
+      length = ink.getTotalLength();
+      ink.style.strokeDasharray = `${length.toFixed(1)} ${length.toFixed(1)}`;
+      // how far along the route each stop is (the corner rounding shortens it a little: measured on the raw points)
+      const raw = (k) => pts.slice(1, k + 1).reduce((sum, p, i) => sum + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
+      const total = raw(pts.length - 1);
+      reach = marks.map((k) => (raw(k) / total) * length);
+      body.classList.add('has-route');
+      paint();
     };
-    return { svg, at, render };
-  };
-
-  $$('[data-journey]').forEach((sec) => {
-    const home = sec.classList.contains('journey--home');
-    const track = sec.querySelector('.journey__track');
-    const sticky = sec.querySelector('.journey__sticky');
-    const stage = sec.querySelector('.journey__stage');
-    const intro = sec.querySelector('.journey__intro');
-    const caption = sec.querySelector('.journey__caption');
-    const capTitle = caption.querySelector('.h2');
-    const stepsBox = sec.querySelector('.journey__steps');
-    const steps = $$('[data-step]', sec);
-    const drawings = $$('.maze', sec).map(drawing);
-    const compact = matchMedia('(max-width: 860px)'); // the stages share the heading's slot (site.css)
-    // The scene's beats, as fractions of the track. Home starts as the hero, so it hands over first.
-    const P = home
-      ? { intro: [0.02, 0.12], caption: [0.12, 0.22], walls: [0.1, 0.28], morph: [0.2, 0.46], stops: [0.44, 0.52], travel: [0.55, 0.95] }
-      : { walls: [0, 0.16], morph: [0.06, 0.34], stops: [0.32, 0.4], travel: [0.43, 0.93] };
-    // About one and a half screens of scroll, not three; on phones, where the stages take turns in one slot, a little
-    // over half a screen less (every beat is a fraction of the track, so the story keeps its shape).
-    const setTrack = () => sec.style.setProperty('--track', compact.matches ? (home ? '160svh' : '140svh') : (home ? '220svh' : '180svh'));
-    setTrack();
-    compact.addEventListener('change', () => { setTrack(); ScrollTrigger.refresh(); });
-
-    // Live only if the stage fits the screen. A stage up to a fifth too tall (most laptops, for the home page) is scaled
-    // down to fit (--fit, site.css); a screen shorter than that keeps the plain version. (offsetHeight ignores the
-    // scale, so this measures the stage at full size.)
-    const fit = () => {
-      sec.classList.add('is-live');
-      sec.style.removeProperty('--fit');
-      const room = sticky.clientHeight - parseFloat(getComputedStyle(sticky).paddingTop) - 8;
-      const k = room / stage.offsetHeight;
-      const ok = k >= 0.8;
-      sec.style.setProperty('--fit', Math.min(1, k).toFixed(4));
-      sec.classList.toggle('is-roomy', k >= 1 && room - stage.offsetHeight > 160); // tall screens: centre the stage
-      if (!ok) {
-        sec.classList.remove('is-live');
-        sec.style.removeProperty('--day');
-        [intro, caption, stepsBox].forEach((el) => el && (el.style.opacity = el.style.transform = '', el.inert = false));
-        drawings.forEach((d) => d.render({ walls: 0, morph: 0, stops: 0, travel: 0 }));
-      }
-      return ok;
-    };
-
-    const update = (p) => {
-      if (!sec.classList.contains('is-live')) return;
-      if (home) {
-        const k = span(p, P.intro), c = span(p, P.caption);
-        intro.style.opacity = (1 - k).toFixed(3);
-        intro.style.transform = `translateY(${(-36 * k).toFixed(1)}px)`;
-        intro.inert = k > 0.5;
-        caption.style.opacity = c.toFixed(3);
-        caption.style.transform = `translateY(${(24 * (1 - c)).toFixed(1)}px)`;
-        caption.inert = c < 0.5;
-        // the headline's marker swipe and doodle play as the heading takes over from the hero
-        capTitle?.classList.toggle('is-in', c > 0.6);
-        // the night hero turns into the violet "How we work" room with the heading (site.css, .journey --day)
-        sec.style.setProperty('--day', c.toFixed(3));
-      }
-      const s = { walls: span(p, P.walls), morph: span(p, P.morph), stops: span(p, P.stops), travel: span(p, P.travel) };
-      // the stages' entrance; on phones and tablets they share the heading's slot, so the heading leaves in the first
-      // half of the beat and the stages arrive in the second, never on screen together
-      let enter = s.stops;
-      if (compact.matches) {
-        const c = home ? span(p, P.caption) : 1;
-        const out = c * (1 - Math.min(1, s.stops * 2));
-        enter = Math.max(0, s.stops * 2 - 1);
-        caption.style.opacity = out.toFixed(3);
-        caption.inert = out < 0.5;
-      } else if (!home) { caption.style.opacity = ''; caption.inert = false; }
-      stepsBox.style.opacity = enter.toFixed(3);
-      stepsBox.style.transform = `translateY(${(16 * (1 - enter)).toFixed(1)}px)`;
-      const shown = drawings.filter((d) => d.svg.getBoundingClientRect().width > 0);
-      shown.forEach((d) => d.render(s));
-      const at = (shown[0] || drawings[0]).at;
-      const active = at.reduce((n, a, i) => (s.travel >= a - 0.001 ? i : n), 0);
-      steps.forEach((el, i) => { el.classList.toggle('is-active', i === active); el.classList.toggle('is-done', i < active); });
-      current = active;
-      staged = s.stops > 0.5;
-      syncScenes();
-    };
-    let onScreen = false, current = 0, staged = false;
-    const syncScenes = () => {
-      if (!sec.classList.contains('is-live')) { playScenes([...inView]); return; }
-      const art = onScreen && staged ? steps[current].querySelector('.jart') : null;
-      playScenes(art ? [art] : []);
-    };
-
-    const st = ScrollTrigger.create({ trigger: track, start: 'top top', end: 'bottom bottom', onUpdate: (self) => update(self.progress), onRefresh: (self) => update(self.progress) });
-    // The current stage's scene plays while the scene is on screen and the stages are showing.
-    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; syncScenes(); }).observe(sec);
-    fit();
-    ScrollTrigger.refresh();
+    layout();
     let t = 0;
-    addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { fit(); ScrollTrigger.refresh(); }, 150); });
-
-    // "See how we work" lands where the four stages are laid out, not at the top of the track.
-    caption.scrollTarget = () => (sec.classList.contains('is-live') ? st.start + (st.end - st.start) * (P.stops[1] + 0.02) : caption);
+    new ResizeObserver(() => { clearTimeout(t); t = setTimeout(layout, 80); }).observe(body);
+    if (motion) {
+      gsap.registerPlugin(ScrollTrigger);
+      // the tip of the line keeps pace a little below the middle of the screen, and reaches the chevron while it is
+      // still in view
+      ScrollTrigger.create({ trigger: body, start: 'top 62%', end: 'bottom 85%', onUpdate: (self) => { progress = self.progress; paint(); }, onRefresh: (self) => { progress = self.progress; paint(); } });
+    }
   });
 })();

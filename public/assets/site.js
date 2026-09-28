@@ -521,9 +521,7 @@
       const t = a.getAttribute('href') === '#main' && a.hasAttribute('data-top') ? 0 : $(a.getAttribute('href'));
       if (t === null) return;
       e.preventDefault();
-      // a target inside a scroll scene (journey.js) says where in the scene to land
-      const y = t && t.scrollTarget ? t.scrollTarget() : t;
-      lenis.scrollTo(y, { offset: typeof y === 'number' ? 0 : -90 });
+      lenis.scrollTo(t, { offset: t === 0 ? 0 : -90 });
     }));
   }
   // One curve and one travel distance for everything that enters: short, quiet, never bouncing.
@@ -544,7 +542,7 @@
   nav.classList.toggle('is-scrolled', scrollY > 40); // reload mid-page
 
   // Hero intro: the headline's words rise out of their clip, then the supporting copy settles in.
-  // (The home maze below it is journey.js.)
+  // (The maze under it is journey.js.)
   const hero = $('[data-hero]');
   if (hero) {
     // (a case study's title arrives with its card instead, so it isn't split: it only gets its marker)

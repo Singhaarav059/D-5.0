@@ -1,12 +1,11 @@
-// "How we work" as one scene: the maze (templates/maze.js), the four stages under it, and on the home page the
-// hero copy above it. journey.js plays it on scroll: the walls fall away, the route straightens into a line, the
-// stops appear and a signal walks the stages. Without motion it reads top to bottom as plain content:
-// (hero copy) → the solved maze → the heading → the four stages.
+// The home hero (its copy and the maze, templates/maze.js) and "How we work": the four stages as rows, a scene of the
+// work beside its words, alternating sides, with the Demaze route running through them from the idea to the launch
+// chevron (journey.js draws it from the rows' positions and on scroll). Without JS the rows read as plain content.
 'use strict';
 
 const C = require('../content');
-const { esc, pad, btn, head } = require('./helpers');
-const { maze } = require('./maze');
+const { esc, pad, btn, head, icon } = require('./helpers');
+const { maze, chevron } = require('./maze');
 const { doodle } = require('./doodles');
 const { stageArt } = require('./stages');
 
@@ -33,30 +32,44 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
           </div>
         </div>`;
 
-const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead), mark: ['bulb', 'sun'] })}</div>`;
-
 const drawing = () => `<div class="journey__map">
           ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide', pits: J.pitfalls, start: J.start, finish: J.finish })}
           ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow', pits: J.pitfalls.slice(0, 4), start: J.start, finish: J.finish, tagSize: 14 })}
         </div>`;
 
-// Each stage has its own marker colour and doodle (its stop on the line lights up in the same colour, site.css), and
-// a small scene of the work itself (templates/stages.js) that plays while it is the current stage.
-const STAGE_ART = [['bulb', 'sun'], ['pencil', 'lilac'], ['gear', 'sky'], ['rocket', 'tomato']];
-const steps = () => `<ol class="journey__steps">${C.process.map((s, i) => `
-          <li class="journey__step" data-step style="--mk:var(--${STAGE_ART[i % 4][1]})"><div class="journey__art">${stageArt(i)}</div><div class="journey__head">${doodle(STAGE_ART[i % 4][0], { color: STAGE_ART[i % 4][1], cls: 'journey__dd' })}<span class="journey__num">${pad(i + 1)}</span><h3>${esc(s.title)}</h3></div><p>${esc(s.description)}</p></li>`).join('')}
-        </ol>`;
+// The home page opens with the promise and the maze it gets you out of.
+const hero = () => `<section class="journey journey--home">
+  <div class="wrap journey__stage">
+    ${heroCopy()}
+    ${drawing()}
+  </div>
+</section>`;
 
-// `intro`: the home page, where the scene starts as the hero.
-const journey = ({ intro = false } = {}) => `<section class="journey${intro ? ' journey--home' : ''}" data-journey>
-  <div class="journey__track">
-    <div class="journey__sticky">
-      <div class="wrap journey__stage">
-        ${intro ? heroCopy() + drawing() + caption() : caption() + drawing()}
-        ${steps()}
-      </div>
+// Each stage has its own marker colour and doodle (its stop on the route lights up in the same colour) and a scene of
+// the work itself (templates/stages.js) that plays while it is on screen.
+const STAGE_ART = [['bulb', 'sun'], ['pencil', 'lilac'], ['gear', 'sky'], ['rocket', 'tomato']];
+const row = (s, i) => `<li class="process__row${i % 2 ? ' is-flip' : ''}" style="--mk:var(--${STAGE_ART[i][1]})" data-stage>
+          <div class="process__art" data-reveal><i class="process__stop" aria-hidden="true"></i>${stageArt(i)}</div>
+          <div class="process__copy" data-reveal>
+            <p class="process__meta">${doodle(STAGE_ART[i][0], { color: STAGE_ART[i][1], cls: 'process__dd' })}<span class="process__num">${pad(i + 1)}</span></p>
+            <h3>${esc(s.title)}</h3>
+            <p class="process__text">${esc(s.description)}</p>
+            <ul class="process__steps">${s.steps.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
+          </div>
+        </li>`;
+
+// "How we work": a violet room of four rows, the route from "Your idea" through every stage to the launch chevron.
+const howWeWork = () => `<section class="section sheet sheet--day sheet--lilac process" id="how" data-process>
+  <div class="wrap">
+    ${head({ label: 'How we work', title: J.title, lead: esc(J.lead), mark: ['bulb', 'sun'] })}
+    <div class="process__body">
+      <svg class="process__route" aria-hidden="true" focusable="false"><path class="process__line"/><path class="process__ink"/></svg>
+      <p class="process__start" aria-hidden="true">${doodle('bulb', { color: 'sun', cls: 'process__bulb' })}<span class="process__tag">${esc(J.start)}</span></p>
+      <ol class="process__rows">${C.process.map(row).join('')}
+      </ol>
+      <p class="process__end" aria-hidden="true"><svg class="process__chevron" viewBox="0 0 40 40"><path d="${chevron(20, 20, 30)}"/></svg><span class="process__tag">${esc(J.finish)}</span></p>
     </div>
   </div>
 </section>`;
 
-module.exports = { journey };
+module.exports = { hero, howWeWork };

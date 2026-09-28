@@ -131,23 +131,20 @@ const chevron = (cx, cy, s) => {
   return `M${p[0]}L${p[1]}L${p[2]}L${p[3]}Z`;
 };
 
-// One drawing. `stops` (fractions of the drawing's width) are where the four stages sit once the route is a line;
-// they line up with the four step columns under the drawing. journey.js reads `data-geo` to do the straightening.
-// `pits`: [doodle, label, colour] for the dead ends (as many as fit); `start`/`finish` label the entrance and exit
+// One drawing. `pits`: [doodle, label, colour] for the dead ends (as many as fit); `start`/`finish` label the entrance and exit
 // doodles; `tagSize` is the label type size in user units (larger on the narrow maze, which is drawn smaller).
-function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512, 0.762], pits = [], start = '', finish = '', tagSize = 10 }) {
+function maze({ cols, rows, seed, entry, exit, cls, pits = [], start = '', finish = '', tagSize = 10 }) {
   const C = 40, W = cols * C, H = rows * C;
   const m = carve(cols, rows, seed, entry, exit);
   const pts = routePoints(m.way, entry, exit, cols, C);
   const vb = [-C, -8, W + C * 2.4, H + 16];
-  const lineY = H / 2;
-  const geo = { pts, y: lineY, stops: stops.map((f) => +(vb[0] + f * vb[2]).toFixed(1)), mark: [W + C * 0.95, (exit + 0.5) * C], C };
+  const mark = [W + C * 0.95, (exit + 0.5) * C]; // the chevron, just past the exit
   // A pitfall's label sits on the side of the maze with more room (under the doodle in the top half, over it below),
   // or on the other side if that is where it stays clear of the labels already placed and of the "Launch" tag under
   // the exit. The margin allows for the stickers' tilt.
   const box = (text, x, y) => ({ x, y, s: tagBox(text, tagSize) });
   const apart = (a, b) => Math.abs(a.x - b.x) > (a.s[0] + b.s[0]) / 2 + 10 || Math.abs(a.y - b.y) > (a.s[1] + b.s[1]) / 2 + 10;
-  const fin = finish ? [box(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9)] : [];
+  const fin = finish ? [box(finish, mark[0] + C * 0.05, mark[1] + C * 0.9)] : [];
   const label = (i, [x, y], taken) => {
     const others = [...fin, ...taken.map(([tx, , ty], j) => box(pits[j][1], (tx + 0.5) * C, ty))];
     const side = y < rows / 2 ? 1 : -1;
@@ -164,17 +161,13 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
     return `<g class="maze__pit" style="--i:${i}"><g class="maze__pit-in">${doodleAt(name, cx, cy, C * 0.8, { color })}${tag(label, cx, ty, tagSize, color, i % 2 ? 4 : -4)}</g></g>`;
   }).join('');
   const [ex, ey] = pts[0];
-  return `<svg class="maze ${cls}" viewBox="${vb.join(' ')}" aria-hidden="true" focusable="false" data-geo='${JSON.stringify(geo)}'>
+  return `<svg class="maze ${cls}" viewBox="${vb.join(' ')}" aria-hidden="true" focusable="false">
     <g class="maze__wallset"><path class="maze__walls" d="${wallPath(cols, rows, m, entry, exit, C)}"/></g>
     <g class="maze__pits">${pitfalls}</g>
     <path class="maze__route" d="${toPath(pts)}" pathLength="1"/>
-    <path class="maze__line" d="M0 0"/>
-    <path class="maze__trail" d="M0 0"/>
     <g class="maze__start">${doodleAt('bulb', ex + C * 0.35, ey - C * 1.05, C * 0.95, { color: 'sun' })}${start ? tag(start, ex + C * 0.35, ey - C * 1.95, tagSize, 'sun', -5, vb[0] + 4) : ''}</g>
-    <g class="maze__stops">${geo.stops.map((x) => `<circle class="maze__stop" cx="${x}" cy="${lineY}" r="7"/>`).join('')}</g>
-    <g class="maze__markset"><g class="maze__rocket"><g class="maze__lift"><g class="maze__exhaust">${doodleAt('exhaust', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${doodleAt('rocket', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g></g>${finish ? `<g class="maze__finish">${tag(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
+    <g class="maze__markset"><g class="maze__rocket">${doodleAt('rocket', mark[0] + C * 0.05, mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${finish ? `<g class="maze__finish">${tag(finish, mark[0] + C * 0.05, mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(mark[0], mark[1], C * 0.95)}"/></g>
     <circle class="maze__signal" r="6"><animateMotion dur="7s" repeatCount="indefinite" begin="indefinite" path="${toPath(pts)}"/></circle>
-    <circle class="maze__traveler" cx="${geo.stops[0]}" cy="${lineY}" r="7"/>
   </svg>`;
 }
 

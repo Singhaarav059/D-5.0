@@ -230,11 +230,12 @@ module.exports = {
     ],
   },
 
+  // How we work (templates/journey.js): each stage's `steps` are the work its description names, as a short list.
   process: [
-    { title: 'Discover & Define', description: 'We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.' },
-    { title: 'Design & Prototype', description: 'Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.' },
-    { title: 'Build & Integrate', description: 'Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.' },
-    { title: 'Launch & Scale', description: 'Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.' },
+    { title: 'Discover & Define', description: 'We start by understanding your vision, challenges, and goals. Through deep discovery workshops and research, we define clear requirements and success metrics.', steps: ['Discovery workshops', 'Research', 'Requirements', 'Success metrics'] },
+    { title: 'Design & Prototype', description: 'Ideas take shape with user-focused designs and interactive prototypes. This ensures alignment, clarity, and a shared vision before development begins.', steps: ['User-focused design', 'Interactive prototypes', 'A shared vision'] },
+    { title: 'Build & Integrate', description: 'Our engineering team develops scalable, secure, and high-performance solutions. We follow agile methods, ensuring continuous feedback and seamless system integration.', steps: ['Agile sprints', 'Continuous feedback', 'System integration'] },
+    { title: 'Launch & Scale', description: 'Once tested and refined, we launch with confidence. Beyond delivery, we support you in scaling, optimizing, and evolving the product for long-term growth.', steps: ['Testing', 'Launch', 'Scaling and optimising'] },
   ],
 
   faq: [

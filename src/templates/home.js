@@ -1,4 +1,4 @@
-// Home page sections: the stacked project cards and "Who we are" (the hero is templates/journey.js).
+// Home page sections: the stacked project cards and "Who we are" (the hero and "How we work" are templates/journey.js).
 'use strict';
 
 const C = require('../content');

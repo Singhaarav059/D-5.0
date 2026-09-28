@@ -36,7 +36,7 @@ src/
     home.js, about.js, services.js, projects.js, contact.js   sections for each page
     case.js              the case study pages (/projects/<case>), one per project
     schema.js            structured data (schema.org JSON-LD) for search engines, from content.js
-    journey.js           the maze scene (home hero + "How we work"), used on home, services and about
+    journey.js           the home hero with its maze, and "How we work" (the four stages as rows on one route; home, about)
     maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
     stages.js            the four "How we work" stage scenes (the work of each stage, animated by public/assets/journey.js)
     demos.js             the service demos: each service panel as a small working product (animated by site.js)
@@ -61,7 +61,7 @@ public/                Everything a visitor can load (the only folder the server
     reel.js            Project reels: the short film on each project card (every reel on screen plays)
     reel-kit.js        The reels' scene types and illustrations
     reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
-    journey.js         The maze scene: the home hero turning into "How we work" as you scroll
+    journey.js         The maze's draw-in, the stage scenes, and the "How we work" route drawn through the rows on scroll
     ambient.js         The moving background: doodles coming and going behind every page; loads crew3d.js for the crew band
     crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) working an idea through
                        Idea, Design, Build and Launch in a row in the contact block; they wave when the cursor (or a tap)
@@ -89,7 +89,7 @@ test/                  Automated checks (node --test)
 | The head, nav or footer on every page | `src/templates/layout.js` |
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
-| The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), `public/assets/journey.js` (scroll, stage scenes), `site.css` ("the journey") |
+| The home hero and "How we work" | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), each stage's `steps` in `content.js` `process`, `public/assets/journey.js` (the route, stage scenes), `site.css` ("the home hero", "How we work") |
 | The crew | `public/assets/crew3d.js` (the characters, their fur and faces, the journey and its timing, when they play), `site.css` ("the Demaze crew": the band and its route) |
 | The background doodles and stickers | `src/templates/ambient.js` (the set), `public/assets/ambient.js` (how many, where, how long), `site.css` ("the moving background") |
 | The page tone and the glass | the tokens at the top of `site.css` (`--page`, `--glass`) and the aura on `html::before` |
