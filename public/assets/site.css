@@ -664,6 +664,9 @@ html:not(.motion) .services__pin { min-height: 0; }
 .services__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
 .services .shead { margin-bottom: clamp(20px, 3vh, 32px); }
 .svc-list { display: grid; }
+/* under the list: the next question answered, on glass */
+.svc-help { margin-top: clamp(24px, 4vh, 40px); display: grid; justify-items: start; gap: 14px; padding: 18px 20px; border-radius: 22px; background: var(--lg-bg); box-shadow: var(--lg-rim), var(--lg-drop); -webkit-backdrop-filter: var(--lg-blur); backdrop-filter: var(--lg-blur); font-size: 0.88rem; line-height: 1.5; color: var(--muted); }
+.svc-help b { display: block; margin-bottom: 4px; font: 400 1.08rem/1.25 var(--display); letter-spacing: -0.02em; color: var(--text); }
 .svc-list__btn {
   position: relative; width: 100%; display: flex; align-items: baseline; gap: 16px; padding: clamp(11px, 1.6vh, 15px) 0;
   border: 0; background: none; cursor: pointer; text-align: left;
@@ -1465,6 +1468,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   /* services: a row of tabs over one panel at a time (all panels share one cell, so the height never jumps) */
   .services__pin { min-height: 0; padding-block: clamp(64px, 9vw, 96px); }
   .services__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .svc-help { display: none; }
   .svc-list { display: flex; gap: 8px; margin: 4px calc(var(--pad) * -1) 0; padding: 0 var(--pad) 4px; overflow-x: auto; scrollbar-width: none; }
   .svc-list::-webkit-scrollbar { display: none; }
   .svc-list li { flex: none; }

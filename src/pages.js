@@ -38,7 +38,7 @@ const pages = {
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     body: [
       pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline, '', [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']], 'services'),
-      band(), services(false), techStack(), industries(), journey(), contact(),
+      band(), services(false), techStack(), industries(), contact(), // (how we work lives on home and about)
     ].join('\n'),
   }),
   'about-us': layout({

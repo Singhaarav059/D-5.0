@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, icon, head } = require('./helpers');
+const { PUBLIC, esc, pad, icon, head, btn } = require('./helpers');
 const { serviceDemo } = require('./demos');
 const { doodle } = require('./doodles');
 const { chevron } = require('./maze');
@@ -96,6 +96,7 @@ const services = (withHead = true) => `<section class="section services" data-se
       <div class="services__side">
         ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true, mark: ['pencil', 'lilac'] } : { label: 'Services', title: 'What we <em>build</em>', stack: true, mark: ['pencil', 'lilac'] })}
         <ol class="svc-list" role="list" data-seg>${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
+        <div class="svc-help"><p><b>Not sure which one you need?</b>Most products use two or three. Tell us the problem and we’ll map the route.</p>${btn('Book a 30-minute call', C.calendly, 'btn--ghost btn--sm', 'target="_blank" rel="noopener"')}</div>
       </div>
       <div class="services__stage">${C.services.map(servicePanel).join('')}</div>
     </div>
