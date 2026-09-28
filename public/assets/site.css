@@ -938,7 +938,8 @@ html.motion.js .kmap__cat[aria-selected='true'] .kmap__icon .dd { animation: dd-
    tall as the longest list: switching must never move the cards under the pointer. Touch keeps its height. */
 .kmap__lists { display: grid; align-items: center; }
 .kmap__panel { grid-area: 1 / 1; }
-@media (hover: hover) and (pointer: fine) { .kmap__panel[hidden] { display: block !important; visibility: hidden; } }
+/* wide screens keep every list's room so switching never jumps the page; stacked below, a list is only as tall as it is */
+@media (hover: hover) and (pointer: fine) and (min-width: 1025px) { .kmap__panel[hidden] { display: block !important; visibility: hidden; } }
 .kmap__item { display: flex; align-items: center; gap: 10px; min-height: 31px; font-size: 0.92rem; }
 .kmap__dot { flex: none; width: 8px; height: 8px; margin-right: 2px; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 1.5px var(--mk-line); }
 .kmap__item img { flex: none; width: 24px; height: 24px; padding: 3px; border-radius: 7px; background: #fff; box-shadow: 0 0 0 1px var(--line); object-fit: contain; }
@@ -1581,6 +1582,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .journey.is-live .journey__art .jart { height: clamp(88px, 14vh, 124px); }
   .journey.is-live .journey__step h3 { margin: 10px 0 8px; }
 }
+/* small tablets: the drawing takes the column's width, as it does on phones, rather than a phone-sized slice of it */
+@media (min-width: 561px) and (max-width: 860px) {
+  .journey.is-live .journey__map { width: min(100%, 80svh); }
+}
 
 @media (max-width: 860px) {
   .maze--wide { display: none; }
@@ -1639,10 +1644,15 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .quote__print { justify-self: start; margin-left: 6px; }
   .quote__photo { width: 200px; }
   .quote__star { right: -24px; width: 48px; height: 48px; }
-  .pgrid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  /* one column of reels, each with just its sector and name: the story is one tap away, so the page stays a browse */
+  .pgrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pcard { gap: 12px; }
+  .pcard__media { aspect-ratio: 16 / 10; }
+  .pcard__body { gap: 6px; }
+  .pcard__body > p:not(.pcard__meta), .pcard__more { display: none; }
   .pcard--wide { display: flex; }
-  .pcard--wide .pcard__media { aspect-ratio: 16 / 11; }
-  .pcard--wide h2 { font-size: 1.7rem; }
+  .pcard--wide .pcard__media { aspect-ratio: 16 / 10; }
+  .pcard--wide h2 { font-size: 1.5rem; }
   .form__row { grid-template-columns: minmax(0, 1fr); }
   .form { padding: 20px 16px; }
   .contact__plane { top: 14px; width: 110px; }
