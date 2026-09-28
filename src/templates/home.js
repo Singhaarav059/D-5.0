@@ -3,7 +3,7 @@
 
 const C = require('../content');
 const { esc, pad, caseHref, vt, icon, pic, shot, btn, head } = require('./helpers');
-const { quoteHtml } = require('./about');
+const { print, founderWords } = require('./about');
 const { SVC_ART } = require('./shared');
 const { doodle } = require('./doodles');
 
@@ -37,22 +37,21 @@ const work = () => `<section class="work" id="work">
   </div>
 </section>`;
 
-// Home: one "who we are" section in place of four (about, what drives us, why us, founder quote):
-// the story and the founder's words side by side, then the three reasons as numbered columns.
-const studio = () => `<section class="section sheet studio" id="about">
+// Home: who we are, as a person: the founder's print beside his words, then the team in one line (the full story,
+// the values and the reasons live on the about page).
+const team = C.metrics.find((m) => /team/i.test(m.label));
+const studio = () => `<section class="section sheet quote studio" id="about">
   <div class="wrap">
     ${head({ label: 'Studio', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
-    <div class="studio__top">
-      <div class="studio__copy">
-        <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
-        <p class="about__sub" data-reveal>${esc(C.about.whoWeAre[1])}</p>
+    <div class="studio__founder">
+      ${print()}
+      <div class="studio__words">
+        <figure class="quote__copy">
+          ${founderWords()}
+        </figure>
+        <p class="studio__team" data-reveal>${esc(C.founder.name.split(' ')[0])} leads a team of ${team.value}${team.suffix} technologists, designers and strategists in Ahmedabad who build your product with you, as one long-term team.</p>
         <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
       </div>
-      <figure class="studio__quote" id="founder" data-reveal>
-        <span class="quote__mark" aria-hidden="true">“</span>
-        <blockquote>${quoteHtml()}</blockquote>
-        <figcaption>${pic(C.founder.photo, '', { small: true, sizes: '52px' })}<span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
-      </figure>
     </div>
   </div>
 </section>`;

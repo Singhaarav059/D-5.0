@@ -48,21 +48,27 @@ const whyUs = () => `<section class="section sheet sheet--day sheet--sky why">
 // The founder's words (about page, and the home studio card): the promise at their heart gets a marker line.
 const quoteHtml = () => esc(C.founder.quote).replace(esc(C.founder.mark), `<mark>${esc(C.founder.mark)}</mark>`);
 
-// About: the quote beside the founder's photo, pinned to the sheet like a print (paper border, a strip of tape).
-const founder = () => `<section class="section sheet quote" id="founder">
-  <figure class="wrap quote__inner">
-    <div class="quote__copy">
-      <span class="quote__mark" aria-hidden="true">“</span>
-      <blockquote data-reveal><p>${quoteHtml()}</p></blockquote>
-      <figcaption data-reveal><span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
-    </div>
-    <div class="quote__print" data-reveal>
+// The founder's photo, pinned to the sheet like a print (paper border, a strip of tape, a star).
+const print = () => `<div class="quote__print" data-reveal>
       ${pic(C.founder.photo, `${C.founder.name}, ${C.founder.title}`, { sizes: '320px', cls: 'quote__photo' })}
       <span class="quote__cap"><img src="${C.logoMark}" alt="" width="14" height="14">Demaze · Ahmedabad</span>
       <i class="quote__tape" aria-hidden="true"></i>
       ${doodle('star', { color: 'sun', cls: 'quote__star' })}
+    </div>`;
+
+// The founder's words and name.
+const founderWords = () => `<span class="quote__mark" aria-hidden="true">“</span>
+      <blockquote data-reveal><p>${quoteHtml()}</p></blockquote>
+      <figcaption data-reveal><span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>`;
+
+// About: the quote beside the founder's print.
+const founder = () => `<section class="section sheet quote" id="founder">
+  <figure class="wrap quote__inner">
+    <div class="quote__copy">
+      ${founderWords()}
     </div>
+    ${print()}
   </figure>
 </section>`;
 
-module.exports = { about, stats, reasons, whyUs, founder, quoteHtml };
+module.exports = { about, stats, reasons, whyUs, founder, print, founderWords };
