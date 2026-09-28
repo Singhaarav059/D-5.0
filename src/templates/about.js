@@ -4,31 +4,28 @@
 const C = require('../content');
 const { esc, pad, pic, head } = require('./helpers');
 const { doodle, doodleAt } = require('./doodles');
-const { chevron, tag } = require('./maze');
+const { chevron } = require('./maze');
 
-// What drives us, drawn: the four values as stations on a Demaze route (the maze's way through), each in the colour of
-// its card beside it. Hovering a card lights its station and back (site.js). Decoration: the cards say it all.
-const VALUES = [['bulb', 'sun', 'Innovation', 124, 74, -1], ['heart', 'pink', 'Client success', 262, 196, 1], ['sprout', 'mint', 'Tech for good', 392, 74, -1], ['book', 'sky', 'Learning', 510, 196, 1]];
-const valuesMap = () => `<svg class="values" viewBox="0 0 600 272" aria-hidden="true" focusable="false" data-reveal data-values>
-  <circle class="values__start" cx="22" cy="74" r="7"/>
-  <path class="values__route" d="M22 74H190V196H330V74H450V196H566" pathLength="1"/>
-  <path class="values__mark" d="${chevron(582, 196, 30)}"/>
-  ${VALUES.map(([d, c, label, x, y, side], i) => `<g class="values__stop" data-v="${i}" style="--i:${i}"><g class="values__pop"><circle class="values__halo" style="--dd:var(--${c})" cx="${x}" cy="${y}" r="38"/><circle class="values__disc" cx="${x}" cy="${y}" r="30"/>${doodleAt(d, x, y, 50, { color: c })}${tag(label, x, y + side * 58, 16, c, side * 4, 4)}</g></g>`).join('')}
+// What drives us, drawn: the four values as stations on a Demaze route (the maze's way through) across the section,
+// each over its own column of words, in its colour. Hovering a column lights its station and back (site.js).
+// Stations sit at the centres of four equal columns (x 100, 300, 500, 700 of 800); the route steps between two heights.
+const VALUES = [['bulb', 'sun'], ['heart', 'pink'], ['sprout', 'mint'], ['book', 'sky']];
+const valuesMap = () => `<svg class="values" viewBox="0 0 800 150" aria-hidden="true" focusable="false" data-reveal data-values>
+  <circle class="values__start" cx="8" cy="55" r="7"/>
+  <path class="values__route" d="M8 55H200V95H400V55H600V95H768" pathLength="1"/>
+  <path class="values__mark" d="${chevron(782, 95, 28)}"/>
+  ${VALUES.map(([d, c], i) => { const x = 100 + i * 200, y = i % 2 ? 95 : 55; return `<g class="values__stop" data-v="${i}" style="--i:${i}"><g class="values__pop"><circle class="values__halo" style="--dd:var(--${c})" cx="${x}" cy="${y}" r="38"/><circle class="values__disc" cx="${x}" cy="${y}" r="30"/>${doodleAt(d, x, y, 50, { color: c })}</g></g>`; }).join('')}
 </svg>`;
 
-// About page: "Who we are" beside the four "What drives us" values (the founding line is the page hero's lead).
+// About page: who we are in one statement, then what drives us: the route of four values over their words.
 const about = () => `<section class="section about" id="about">
   <div class="wrap">
     ${head({ label: 'About', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
-    <div class="about__grid">
-      <div class="about__copy">
-        <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
-        ${valuesMap()}
-      </div>
-      <div class="about__drives">
-        <h3 class="about__label" data-reveal>What drives us</h3>
-        <div class="drives__grid" data-stagger>${C.about.drives.map((d, i) => `<article class="drive" data-v="${i}"><span>${pad(i + 1)}</span><h4>${esc(d.title)}</h4><p>${esc(d.description)}</p></article>`).join('')}</div>
-      </div>
+    <p class="about__text" data-scrub-words>${esc(C.about.whoWeAre[0])}</p>
+    <div class="about__drives">
+      <h3 class="about__label" data-reveal>What drives us</h3>
+      ${valuesMap()}
+      <div class="drives__grid" data-stagger>${C.about.drives.map((d, i) => `<article class="drive" data-v="${i}">${doodle(VALUES[i][0], { color: VALUES[i][1], cls: 'drive__dd' })}<span>${pad(i + 1)}</span><h4>${esc(d.title)}</h4><p>${esc(d.description)}</p></article>`).join('')}</div>
     </div>
   </div>
 </section>`;

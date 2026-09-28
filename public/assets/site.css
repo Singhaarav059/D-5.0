@@ -1085,19 +1085,21 @@ html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s
 .phero .stats { justify-self: stretch; margin-top: clamp(40px, 7vh, 72px); }
 
 /* ---------- about page ---------- */
-.about__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.about .about__text { max-width: 34ch; }
+.about__drives { margin-top: clamp(56px, 8vw, 104px); }
 .about__label { margin-bottom: 18px; font: 500 0.84rem/1 var(--body); color: var(--muted); }
-.drives__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
-.drive { display: grid; align-content: start; gap: 10px; padding: 22px 0 26px; border-bottom: 1px solid var(--line); }
-.drive:nth-child(odd) { padding-right: 24px; border-right: 1px solid var(--line); }
-.drive:nth-child(even) { padding-left: 24px; }
+/* four columns, each under its station on the route, topped by a line in its colour */
+.drives__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 clamp(20px, 3vw, 40px); margin-top: clamp(18px, 3vw, 32px); }
+.drive { display: grid; align-content: start; justify-items: start; gap: 10px; padding: 20px 14px 22px; border-top: 2px solid var(--mk, var(--sun)); border-radius: 0 0 16px 16px; }
+.drive__dd { display: none; width: 40px; height: 40px; }
+.drive__dd .dd__ink > * { stroke: var(--draw); stroke-width: 3; }
 .drive span { justify-self: start; padding: 5px 9px 4px; border-radius: 999px; background: var(--mk, var(--sun)); font: 600 0.76rem/1 var(--body); color: var(--ink); font-variant-numeric: tabular-nums; }
 .drive h4 { font-size: 1.3rem; line-height: 1.15; letter-spacing: -0.03em; }
 .drive p { color: var(--muted); font-size: 0.93rem; line-height: 1.55; }
 
 /* what drives us, drawn (about.js): the four values as stations on a Demaze route. The route draws itself when the
    drawing arrives, the stations pop in along it; hovering a card lights its station and back (site.js). */
-.values { display: block; width: 100%; max-width: 600px; height: auto; margin-top: clamp(40px, 7vh, 72px); overflow: visible; }
+.values { display: block; width: 100%; height: auto; overflow: visible; }
 .values__start { fill: var(--paper); stroke: var(--blue); stroke-width: 3; }
 .values__disc { fill: var(--paper); stroke: var(--ink); stroke-width: 1.6; }
 .values__route { fill: none; stroke: var(--blue); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
@@ -1655,7 +1657,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .kmap__list { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px 20px; }
   .kmap__item small { display: none; }
 
-  .ind, .faq__grid, .contact__grid, .footer__top, .about__grid { grid-template-columns: minmax(0, 1fr); }
+  .ind, .faq__grid, .contact__grid, .footer__top { grid-template-columns: minmax(0, 1fr); }
   /* industries: the index becomes a sideways strip of tiles over the card */
   .ind__tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding: 2px var(--pad) 6px; }
   .ind__tabs::-webkit-scrollbar { display: none; }
@@ -1716,7 +1718,11 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 }
 
 @media (max-width: 860px) {
-  /* the rows stack: each stage's scene over its words, the route running straight down through the scenes */
+  /* what drives us: the route needs its four columns; below that each value carries its own doodle */
+  .values { display: none; }
+  .drives__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; }
+  .drive__dd { display: block; }
+  /* the rows stack: each stage's scene over its words, the route running down the gutter beside them */
   .process__row { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .process__row.is-flip .process__art { order: 0; }
   .process__art { width: 100%; }
@@ -1767,7 +1773,6 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .stack-card .tags li:nth-child(n + 3) { display: none; }
 
   .checks, .ind__list, .drives__grid { grid-template-columns: minmax(0, 1fr); }
-  .drive, .drive:nth-child(odd), .drive:nth-child(even) { padding: 20px 0 22px; border-right: 0; }
   .svc-panel__art { height: 214px; }
   .svc-panel__body { padding: 22px 20px; }
   .kmap__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
