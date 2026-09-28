@@ -1392,7 +1392,7 @@ html.motion.js .phero__art { animation: dd-boil 1.8s steps(1) 2.4s infinite; }
 .phero--aside .phero__copy { display: grid; justify-items: start; }
 .phero--aside .phero__art { top: auto; bottom: clamp(-10px, 1vw, 10px); width: clamp(300px, 34vw, 480px); aspect-ratio: auto; height: clamp(300px, 28vw, 400px); z-index: 2; }
 .phero--aside .phero__dd--1 { left: -7%; top: -4%; width: 17%; height: auto; aspect-ratio: 1; }
-.phero--aside .phero__dd--2 { left: auto; right: -5%; top: auto; bottom: 6%; width: 13%; height: auto; aspect-ratio: 1; }
+.phero--aside .phero__dd--2 { left: auto; right: -12%; top: auto; bottom: -2%; width: 13%; height: auto; aspect-ratio: 1; }
 .phero--aside .phero__dd--3 { right: 6%; top: -8%; width: 10%; height: auto; aspect-ratio: 1; }
 .phero__show { position: relative; justify-self: stretch; }
 .phero-svcs__tile, .phero-team, .phero-next, .phero-chip, .phero-fan__card span {
@@ -1432,7 +1432,8 @@ html.motion.js .phero__art { animation: dd-boil 1.8s steps(1) 2.4s infinite; }
   .phero--aside .phero__art { display: none; }
 }
 @media (max-width: 560px) {
-  .phero-fan { height: 230px; }
+  .phero-fan { height: 230px; margin-bottom: 48px; }
+  .phero-chip { right: auto; left: 0; bottom: -50px; } /* under the fan, clear of the cards' names */
   .phero-svcs { gap: 8px; }
   .phero-svcs__tile { padding: 12px; }
   .phero-svcs__tile small { display: none; }
