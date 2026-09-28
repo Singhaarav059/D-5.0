@@ -18,6 +18,7 @@ function layout({ title, description, slug, body, noindex = false }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>@view-transition { navigation: auto; }</style>
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="theme-color" content="#d7d2c8">

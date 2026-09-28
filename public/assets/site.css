@@ -1321,9 +1321,13 @@ html.motion.js .phero__dd--3 .dd__ink > * { animation-delay: 1s; } html.motion.j
 html.motion.js .phero__art { animation: dd-boil 1.8s steps(1) 2.4s infinite; }
 
 /* ---------- page to page: the nav stays put while the page crossfades and settles (native view transitions,
-   no script; browsers without them simply navigate) ---------- */
+   no script; browsers without them simply navigate). The opt-in itself is an inline <style> at the top of every
+   page's <head> (templates/layout.js), unconditional, so the new page has it from its first style update however
+   the stylesheets arrive; with reduced motion the swap is instant. ---------- */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
   .nav__bar { view-transition-name: nav; }
   ::view-transition-old(root) { animation: 160ms ease-out both vt-out; }
   ::view-transition-new(root) { animation: 440ms var(--ease) 60ms both vt-in; }
