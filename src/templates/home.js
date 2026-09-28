@@ -29,11 +29,11 @@ const work = () => `<section class="work" id="work">
     ${head({
       label: 'Work',
       title: 'Selected work, <em>from brief to launch</em>',
-      lead: esc(`Four of the ${C.projects.length} products we’ve designed and built, from luxury automotive to senior care.`),
+      lead: esc(`Three of the ${C.projects.length} products we’ve designed and built, across luxury automotive, legal investigation and luxury retail.`),
       side: btn('View all work', './projects', 'btn--ghost'),
       mark: ['star', 'tomato'],
     })}
-    <div class="stack" data-deck>${C.projects.slice(0, 4).map((p, i) => projectCard(p, i, 4)).join('')}</div>
+    <div class="stack" data-deck>${C.projects.slice(0, 3).map((p, i) => projectCard(p, i, 3)).join('')}</div>
   </div>
   </div>
 </section>`;
