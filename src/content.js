@@ -158,20 +158,18 @@ module.exports = {
       work: ['cma-report-generation-software', 'investigative-case-management-software', 'task-staff-and-document-management-platform'] },
   ],
 
-  // Tools & technologies: the AI & ML category (grouped, with roles). `icon` names a file in public/assets/img/tech.
+  // Tools & technologies: the AI & ML category, with each tool's role. `icon` names a file in public/assets/img/tech.
   stack: {
-    heading: 'Connected intelligence, built for production',
     lead: 'How Demaze connects foundation AI models, orchestration frameworks, and real-time data infrastructure into resilient production software.',
-    groups: ['AI Models', 'Orchestration', 'Data & ML', 'Streaming & Search'],
     items: [
-      { name: 'OpenAI', role: 'Large Language Models', group: 'AI Models', icon: 'ai-openai' },
-      { name: 'Hugging Face', role: 'Open-Source AI Models', group: 'AI Models', icon: 'ai-hugging-face' },
-      { name: 'LangChain', role: 'LLM Orchestration', group: 'Orchestration', icon: 'ai-langchain' },
-      { name: 'Python', role: 'Core AI & APIs', group: 'Orchestration', icon: 'ai-python' },
-      { name: 'TensorFlow', role: 'Machine Learning Models', group: 'Data & ML', icon: 'ai-tensorflow' },
-      { name: 'Pinecone Database', role: 'Vector Database', group: 'Data & ML', icon: 'ai-pinecone-database' },
-      { name: 'Apache Kafka', role: 'Real-Time Streaming', group: 'Streaming & Search', icon: 'ai-apache-kafka' },
-      { name: 'Elasticsearch', role: 'Search & Indexing', group: 'Streaming & Search', icon: 'ai-elasticsearch' },
+      { name: 'OpenAI', role: 'Large Language Models', icon: 'ai-openai' },
+      { name: 'Hugging Face', role: 'Open-Source AI Models', icon: 'ai-hugging-face' },
+      { name: 'LangChain', role: 'LLM Orchestration', icon: 'ai-langchain' },
+      { name: 'Python', role: 'Core AI & APIs', icon: 'ai-python' },
+      { name: 'TensorFlow', role: 'Machine Learning Models', icon: 'ai-tensorflow' },
+      { name: 'Pinecone Database', role: 'Vector Database', icon: 'ai-pinecone-database' },
+      { name: 'Apache Kafka', role: 'Real-Time Streaming', icon: 'ai-apache-kafka' },
+      { name: 'Elasticsearch', role: 'Search & Indexing', icon: 'ai-elasticsearch' },
     ],
   },
 

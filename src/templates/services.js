@@ -10,7 +10,7 @@ const { doodle } = require('./doodles');
 const { chevron } = require('./maze');
 const { sketch } = require('./sketches');
 
-// Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
+// Tools & technologies: six categories from content.js (the AI & ML one carries each tool's role).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
 // with no local file (.svg preferred, then .png) falls back to a two-letter monogram.
 const techIcon = (slug) => {
@@ -21,7 +21,7 @@ const techIcon = (slug) => {
 const stackTabs = () => C.tools.map((t, i) => ({
   tab: t.tab,
   items: i === 0
-    ? C.stack.items.map((s) => ({ name: s.name, role: s.role, group: s.group, logo: techIcon(s.icon) }))
+    ? C.stack.items.map((s) => ({ name: s.name, role: s.role, logo: techIcon(s.icon) }))
     : t.items.map(([name, slug]) => ({ name, logo: techIcon(slug) })),
 }));
 
