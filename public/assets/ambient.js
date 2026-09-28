@@ -1,9 +1,10 @@
-/* The moving background (src/templates/ambient.js): behind every page, the Demaze crew and doodles of the work keep
-   appearing in free
-   spots, drawing themselves on, floating, and after a while giving way to others. They lean with the cursor (each at
-   its own depth), drift against the scroll, and perk up when the pointer comes near. Wide screens keep most of them in
-   the margins, where sketches of the work appear too; site.css fades whatever sits behind the text column. With reduced
-   motion a few rest in place, drawn. Decoration only: the layer is aria-hidden and never takes the pointer. */
+/* The moving background (src/templates/ambient.js): behind every page, a few doodles of the work keep appearing in
+   free spots, drawing themselves on, floating, and after a while giving way to others. They lean with the cursor (each
+   at its own depth), drift against the scroll, and perk up when the pointer comes near. Wide screens keep most of them
+   in the margins, where sketches of the work appear too; site.css fades whatever sits behind the text column. Once the
+   page has loaded, this also brings in the 3D crew (crew3d.js), and the doodles keep out of its way. With reduced
+   motion a few rest in place, drawn, and the crew holds a pose. Decoration only: the layer is aria-hidden and never
+   takes the pointer. */
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -12,7 +13,7 @@
   if (!layer || !set) return;
   const still = !root.classList.contains('motion');
   const pool = [...set.content.children];
-  const kinds = { crew: [], doodle: [], tag: [], sketch: [] };
+  const kinds = { doodle: [], tag: [], sketch: [] };
   pool.forEach((el) => kinds[el.dataset.kind].push(el));
 
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -35,13 +36,9 @@
     const fresh = (list) => list.filter((el) => !busy.has(el));
     const big = W >= 861, room = edge - 24; // what fits in a margin
     const inMargin = (w) => room >= w * 0.85 && Math.random() < 0.85;
-    if (r < 0.5) { // about half are the crew
-      const w = Math.round(big ? Math.min(rnd(86, 118), Math.max(room, 70)) : rnd(58, 72));
-      return { src: pick(fresh(kinds.crew)), kind: 'crew', w, margin: inMargin(w) };
-    }
-    if (room >= 170 && r < 0.6) return { src: pick(fresh(kinds.sketch)), kind: 'sketch', w: Math.min(230, room - 12), margin: true };
+    if (room >= 170 && r < 0.2) return { src: pick(fresh(kinds.sketch)), kind: 'sketch', w: Math.min(230, room - 12), margin: true };
     // stickers need a margin or a wide screen's edge; on tablets and phones the text runs too close to the edge
-    if (r < 0.74 && W >= 1025) return { src: pick(fresh(kinds.tag)), kind: 'tag', w: 0, margin: room >= 150, edgy: room < 150 };
+    if (r < 0.45 && W >= 1025) return { src: pick(fresh(kinds.tag)), kind: 'tag', w: 0, margin: room >= 150, edgy: room < 150 };
     const w = Math.round(big ? Math.min(rnd(46, 82), Math.max(room - 10, 40)) : rnd(36, 54));
     return { src: pick(fresh(kinds.doodle)), kind: 'doodle', w, margin: inMargin(w) };
   };
@@ -59,6 +56,8 @@
       else x = rnd(10, g.W - w - 10);
       const y = rnd(84, g.H - h - 24);
       const box = { x, y, w, h };
+      const zones = crew ? crew.zones() : [];
+      if (zones.some((z) => x < z.x + z.w + 16 && z.x < x + w + 16 && y < z.y + z.h + 16 && z.y < y + h + 16)) continue;
       const clear = live.every(({ box: b }) => x + w + 28 < b.x || b.x + b.w + 28 < x || y + h + 28 < b.y || b.y + b.h + 28 < y);
       if (clear) return box;
     }
@@ -81,23 +80,41 @@
     const w = el.offsetWidth, h = el.offsetHeight;
     const box = place(g, w, h, c.margin, c.edgy);
     if (!box) { el.remove(); return; }
-    const d = c.kind === 'sketch' ? rnd(0.3, 0.6) : c.kind === 'crew' ? rnd(0.6, 1.1) : rnd(0.5, 1.3); // nearer things move more
+    const d = c.kind === 'sketch' ? rnd(0.3, 0.6) : rnd(0.5, 1.3); // nearer things move more
     el.style.cssText += `;left:${box.x.toFixed(0)}px;top:${box.y.toFixed(0)}px;--r:${rnd(-9, 9).toFixed(1)}deg;--d:${d.toFixed(2)}`;
     float.style.cssText = `--dur:${rnd(5, 9).toFixed(1)}s;--delay:${rnd(-6, 0).toFixed(1)}s`;
     const item = { el, box, d, used: c.src, born: scrollY };
+    // it leaves (after a while, or early to make way), and something else appears somewhere else
+    let timer = 0;
+    item.leave = () => {
+      if (!live.includes(item)) return;
+      clearTimeout(timer);
+      live.splice(live.indexOf(item), 1);
+      if (still) { el.remove(); fill(); return; }
+      el.classList.add('is-out');
+      setTimeout(() => { el.remove(); setTimeout(spawn, rnd(300, 1500)); }, 800);
+    };
     live.push(item);
     if (still) { el.classList.add('is-in'); return; }
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
-    // after a while it leaves, and something else appears somewhere else
-    setTimeout(() => {
-      el.classList.add('is-out');
-      setTimeout(() => {
-        el.remove();
-        live.splice(live.indexOf(item), 1);
-        setTimeout(spawn, rnd(300, 1500));
-      }, 800);
-    }, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(7, 12) : rnd(10, 16)) * 1000);
+    timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(7, 12) : rnd(10, 16)) * 1000);
   };
+
+  // The 3D crew (crew3d.js): loaded once the page has settled, never on Save-Data. Its zones stay free of doodles.
+  let crew = null;
+  if (layer.dataset.src && !navigator.connection?.saveData) {
+    const load = () => import(new URL(layer.dataset.src, document.baseURI).href).then((m) => {
+      crew = m.start(layer, { still });
+      // doodles already sitting where the crew plays make way
+      const zones = crew ? crew.zones() : [];
+      for (const l of live.slice()) {
+        const { x, y, w, h } = l.box;
+        if (zones.some((z) => x < z.x + z.w && z.x < x + w && y < z.y + z.h && z.y < y + h)) l.leave();
+      }
+    }).catch(() => {});
+    const idle = () => (window.requestIdleCallback ? requestIdleCallback(load, { timeout: 2500 }) : setTimeout(load, 400));
+    if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+  }
 
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };
   fill();

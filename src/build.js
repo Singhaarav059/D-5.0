@@ -11,9 +11,10 @@ const pages = require('./pages');
 const { PUBLIC } = require('./templates/helpers');
 
 // Fingerprint local assets (./assets/...) with a hash of their contents so a deploy never serves new
-// pages with stale CSS/JS; the server caches fingerprinted URLs for a year.
+// pages with stale CSS/JS; the server caches fingerprinted URLs for a year. data-src names a module a script
+// loads later (the background crew, see assets/ambient.js).
 const fingerprints = new Map();
-const fingerprint = (html) => html.replace(/(src|href)="\.\/(assets\/[^"?#]+)"/g, (m, attr, rel) => {
+const fingerprint = (html) => html.replace(/(src|href|data-src)="\.\/(assets\/[^"?#]+)"/g, (m, attr, rel) => {
   if (!fingerprints.has(rel)) {
     const file = path.join(PUBLIC, rel);
     fingerprints.set(rel, fs.existsSync(file) ? crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex').slice(0, 10) : null);
