@@ -12,8 +12,8 @@
    behind the page and brighter inside each sheet); panels are smoked glass over it. Paper stays as the colour of the
    objects on the page (the stage scenes, the demos, stickers, reels, the founder print), each with its own dark ink.
    Line drawings made straight on the page (the maze, the sketches, the stack) use --draw, the light pen.
-   Day sheets (.sheet--day + mint / sun / lilac / sky) break the night into rooms: soft, saturated grounds with dark
-   ink, alternating with the night sections down each page.
+   Colour rooms (.sheet--day + mint / lilac / sky / sun) break the night into rooms: deep saturated grounds under the
+   light ink (sun: vivid yellow under dark ink), alternating with the night sections down each page.
 
    Contents
      tokens · base · type · doodles · buttons · section header · sheets · nav
@@ -330,22 +330,25 @@ html.motion.js .amb__item.is-in :is(.amb__dd, .amb__sk) :is(.dd__fill, .dd__dots
   --silk-a: #62c1ff; --silk-b: #ff85b8;
   background: url(img/maze-tile-light.svg) -20px -20px / 800px 800px, radial-gradient(70% 90% at 95% 0%, #5468ff, transparent 62%), radial-gradient(60% 70% at 0% 100%, #1f33c9, transparent 70%), color-mix(in srgb, var(--bg) 90%, transparent); }
 .sheet + .sheet { margin-top: 10px; }
-/* Day sheets: soft but saturated grounds that alternate with the night ones, so each section reads as its own room
-   (dark → colour → dark → colour → blue down the home page). Same context tokens, set for dark ink on a light ground;
-   no silk (silk.js skips them), the maze drawn faintly in ink. --day-a is the lit corner, --day-b the colour. */
-.sheet--day { color-scheme: light;
-  --text: #151514; --muted: #45443f; --line: rgba(21, 21, 20, 0.12); --line-2: rgba(21, 21, 20, 0.28); --accent-text: #2b42e6; --draw: #151514;
-  --surface: rgba(255, 255, 255, 0.55); --surface-2: rgba(255, 255, 255, 0.8);
-  --glass: rgba(255, 255, 255, 0.58); --glass-strong: rgba(255, 255, 255, 0.82);
-  --glass-shadow: inset 0 0 0 1px rgba(21, 21, 20, 0.06), 0 1px 2px rgba(21, 21, 20, 0.04), 0 22px 44px -28px rgba(21, 21, 20, 0.28);
+/* Colour rooms (.sheet--day): saturated grounds that alternate with the night ones, so each section reads as its own
+   room (violet → night → emerald → night → sun → blue down the home page). Pale washes looked faded next to the
+   tomato band and the blue contact block, so the rooms are deep colour under the night's light ink: --day-b is the
+   ground, --day-a the lit corner, --day-c the shaded one. Sun is the one bright room (a deep yellow turns brown):
+   vivid yellow under dark ink. No silk (silk.js skips them); the maze drawn faintly in the room's ink. */
+.sheet--day { --surface: rgba(255, 255, 255, 0.08); --surface-2: rgba(255, 255, 255, 0.14); --glass: rgba(255, 255, 255, 0.08); --glass-strong: rgba(255, 255, 255, 0.14); --muted: #d6d8e0;
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.09), 0 24px 48px -30px rgba(0, 0, 0, 0.6);
   --bg: var(--day-b);
-  background: radial-gradient(70% 80% at 88% 0%, var(--day-a), transparent 70%), radial-gradient(60% 70% at 0% 100%, color-mix(in srgb, var(--day-b) 70%, #fff), transparent 70%), var(--day-b); }
-.sheet--day::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: url(img/maze-tile.svg) -20px -20px / 800px 800px; opacity: 0.06; }
-.sheet--mint { --day-a: #f3fcf6; --day-b: #c4efd7; }
-.sheet--sun { --day-a: #fffaeb; --day-b: #ffe08f; }
-.sheet--lilac { --day-a: #f7f3ff; --day-b: #dcd0ff; }
-.sheet--sky { --day-a: #f2f9ff; --day-b: #bfe1fb; }
-.sheet--day .btn--primary { background: #151514; color: #fff; }
+  background: radial-gradient(60% 75% at 88% 0%, var(--day-a), transparent 70%), radial-gradient(70% 80% at 0% 100%, var(--day-c), transparent 70%), var(--day-b); }
+.sheet--day::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: url(img/maze-tile-light.svg) -20px -20px / 800px 800px; opacity: 0.1; }
+.sheet--mint { --day-a: #16b886; --day-b: #032c23; --day-c: #0a5a46; }
+.sheet--lilac { --day-a: #8a3df0; --day-b: #2a0f55; --day-c: #5c1a8f; } /* the "How we work" violet (.journey::before) */
+.sheet--sky { --day-a: #1aa6c4; --day-b: #032a36; --day-c: #0a5566; } /* teal, kept apart from the contact blue */
+.sheet--sun { color-scheme: light; --day-a: #ffe27a; --day-b: #ffc21a; --day-c: #ffa600;
+  --text: #151514; --muted: #3d3522; --line: rgba(21, 21, 20, 0.14); --line-2: rgba(21, 21, 20, 0.3); --accent-text: #2b42e6; --draw: #151514;
+  --surface: rgba(255, 255, 255, 0.45); --surface-2: rgba(255, 255, 255, 0.7); --glass: rgba(255, 255, 255, 0.45); --glass-strong: rgba(255, 255, 255, 0.7);
+  --glass-shadow: inset 0 0 0 1px rgba(21, 21, 20, 0.06), 0 22px 44px -28px rgba(120, 70, 0, 0.45); }
+.sheet--sun::before { background-image: url(img/maze-tile.svg); opacity: 0.07; }
+.sheet--sun .btn--primary { background: #151514; color: #fff; }
 
 /* ---------- nav: a floating capsule of liquid glass (frosted, a bright rim, a soft shadow) that firms up once the
    page moves; the two menus under it (Projects, Services) are panels of the same glass ---------- */
