@@ -29,7 +29,7 @@
   let openDrop = null;
   if (links) {
     const pill = $('.nav__pill', links);
-    const current = $('a[aria-current], .nav__trigger.is-current', links);
+    const current = $('a[aria-current]', links);
     const rest = () => openDrop || current;
     const moveTo = (a) => {
       links.classList.toggle('has-pill', !!a);
@@ -41,9 +41,10 @@
     links.addEventListener('pointerleave', () => moveTo(rest()));
     links.addEventListener('focusout', () => moveTo(rest()));
 
-    // The menus under the bar (Projects, Services): open on hover with a short grace period so the pointer can travel
-    // into them, on click or Enter for touch and keyboard; Escape, a click elsewhere, focus leaving or the bar hiding
-    // on scroll closes them.
+    // The menus under the bar (Projects, Services): the labels are links to their pages. A mouse opens the menu on hover
+    // (with a short grace period so the pointer can travel into it) and a click follows the link; a touch opens it on
+    // the first tap and follows on the second; the keyboard opens it with ArrowDown (Enter follows). Escape, a click
+    // elsewhere, focus leaving or the bar hiding on scroll closes them.
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
     const triggers = $$('[data-drop]', links);
     let closing = 0;
@@ -61,8 +62,14 @@
     const later = () => { clearTimeout(closing); closing = setTimeout(() => setDrop(null), 220); };
     triggers.forEach((t) => {
       const panel = document.getElementById(t.getAttribute('aria-controls'));
-      // (with a mouse the hover has already opened it, so a click keeps it open rather than toggling it shut)
-      t.addEventListener('click', () => setDrop(openDrop === t && !fine ? null : t));
+      t.addEventListener('click', (e) => { if (!fine && openDrop !== t) { e.preventDefault(); setDrop(t); } });
+      t.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowDown') return;
+        e.preventDefault();
+        setDrop(t);
+        const first = panel.querySelector('a, button');
+        if (first) first.focus();
+      });
       t.addEventListener('focusout', (e) => { if (openDrop === t && !panel.contains(e.relatedTarget)) setDrop(null); });
       if (fine) {
         t.addEventListener('pointerenter', () => setDrop(t));
