@@ -757,8 +757,8 @@ html:not(.motion) .services__pin { min-height: 0; }
 .build__icon { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 6px; border-radius: 16px; background: color-mix(in srgb, var(--dd) 22%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dd) 45%, transparent); transition: transform var(--t-2) var(--ease); }
 .build__icon .dd { width: 38px; height: 38px; }
 .build__tile:hover .build__icon { transform: rotate(-6deg) scale(1.06); }
-.build__tile h3 { font-size: 1.2rem; letter-spacing: -0.02em; }
-.build__tile p { font-size: 0.92rem; line-height: 1.5; color: var(--muted); }
+.build__tile h3 { font-size: clamp(1.25rem, 1.6vw, 1.45rem); line-height: 1.15; letter-spacing: -0.025em; }
+.build__tile p { font-size: 0.98rem; line-height: 1.5; color: var(--muted); }
 .build__work { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); }
 .build__more { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 500; }
 .build__more svg { width: 15px; height: 15px; transition: transform var(--t-2) var(--ease); }
@@ -1254,12 +1254,14 @@ html.motion .form-done:not([hidden]) { animation: form-done 520ms var(--ease) bo
 .projects { padding-top: clamp(32px, 5vw, 64px); }
 .pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(44px, 5vw, 72px) clamp(18px, 2vw, 28px); }
 .pcard { position: relative; display: flex; flex-direction: column; gap: 20px; }
-.pcard__media { position: relative; aspect-ratio: 16 / 11; display: grid; place-items: center; padding: 14px; border-radius: var(--r-card); overflow: hidden; background: var(--tint); box-shadow: inset 0 0 0 1px var(--line); transition: transform var(--t-3) var(--ease); }
+.pcard__media { position: relative; aspect-ratio: 16 / 11; display: grid; place-items: center; padding: 14px; border-radius: 24px; overflow: hidden; background: var(--tint); box-shadow: inset 0 0 0 1px var(--line); transition: transform var(--t-3) var(--ease); }
 .pcard__media img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
+/* hover: the picture moves inside its frame (the frame stays put), as on a good editorial grid */
+.pcard__media > .reel, .pcard__media > picture > img { transition: transform 900ms var(--ease); }
 .pcard__body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .pcard__meta { display: flex; align-items: center; gap: 12px; font-size: 0.84rem; color: var(--muted); }
 .pcard__num { color: var(--accent-text); font-variant-numeric: tabular-nums; }
-.pcard h2 { font-size: clamp(1.3rem, 1.6vw, 1.5rem); line-height: 1.12; letter-spacing: -0.03em; text-wrap: balance; }
+.pcard h2 { font-size: clamp(1.35rem, 1.9vw, 1.7rem); line-height: 1.1; letter-spacing: -0.03em; text-wrap: balance; }
 .pcard__btn { all: unset; cursor: pointer; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0% 1px; transition: background-size var(--t-3) var(--ease); }
 .pcard__btn::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: var(--r-card); }
 .pcard__btn:focus-visible::after { outline: 2px solid var(--blue); outline-offset: 4px; }
@@ -1271,7 +1273,7 @@ html.motion .form-done:not([hidden]) { animation: form-done 520ms var(--ease) bo
 .pcard--wide h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); line-height: 1.04; letter-spacing: -0.04em; }
 .pcard--wide p:not(.pcard__meta) { -webkit-line-clamp: 5; font-size: 1rem; }
 @media (hover: hover) and (pointer: fine) {
-  .pcard:hover .pcard__media { transform: translateY(-4px); }
+  .pcard:hover .pcard__media > .reel, .pcard:hover .pcard__media > picture > img { transform: scale(1.045); }
   .pcard:hover .pcard__btn { background-size: 100% 1px; }
   .pcard:hover .pcard__more svg { transform: translateX(3px); }
 }
@@ -1300,7 +1302,7 @@ html.motion .form-done:not([hidden]) { animation: form-done 520ms var(--ease) bo
 html:not(.js) .pfilter button[aria-pressed='true'] { background: var(--lg-lit); }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide { grid-column: auto; display: flex; gap: 20px; }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide .pcard__media { aspect-ratio: 16 / 11; }
-.pgrid[data-filter]:not([data-filter='all']) .pcard--wide h2 { font-size: clamp(1.3rem, 1.6vw, 1.5rem); line-height: 1.12; letter-spacing: -0.03em; }
+.pgrid[data-filter]:not([data-filter='all']) .pcard--wide h2 { font-size: clamp(1.35rem, 1.9vw, 1.7rem); line-height: 1.1; letter-spacing: -0.03em; }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide .pcard__body > p:not(.pcard__meta) { -webkit-line-clamp: 2; font-size: 0.95rem; }
 /* filtering animates only the cards, not the whole page */
 html.is-filtering::view-transition-old(root), html.is-filtering::view-transition-new(root) { animation: none; }
