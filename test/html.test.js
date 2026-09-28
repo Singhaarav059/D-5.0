@@ -14,7 +14,10 @@ test('generated active pages have required metadata and local runtime scripts', 
     const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
     assert.match(html, /<html lang="en">/);
     assert.match(html, /<title>[^<]+<\/title>/);
-    assert.match(html, /<meta name="description"/);
+    const desc = html.match(/<meta name="description" content="([^"]*)"/);
+    assert.ok(desc, `${page} has a description`);
+    const text = desc[1].replace(/&(amp|lt|gt|quot|#39|#x27);/g, '_');
+    assert.ok(text.length <= 160, `${page}: description is ${text.length} characters (search shows ~160)`);
     assert.match(html, /<link rel="canonical" href="https:\/\/demazetech\.com\//);
     assert.match(html, /<meta property="og:url"/);
     assert.match(html, /<meta name="twitter:card"/);

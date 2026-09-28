@@ -20,7 +20,7 @@ const pages = {
   index: layout({
     slug: '',
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
-    description: C.tagline,
+    description: 'Demaze designs and builds AI software, web and mobile apps, SaaS and eCommerce platforms, from the first workshop to launch and beyond.',
     schema: [S.organization(), S.website(), S.faqPage(3)],
     // Home is the summary: the hero that turns into "how we work", proof (work), what we build (four tiles), who we
     // are, the first questions, contact. The service panels, the tools map and industries live on the services page.
@@ -50,7 +50,7 @@ const pages = {
   'about-us': layout({
     slug: 'about-us',
     title: 'About Us | Demaze Technologies',
-    description: C.about.whoWeAre[0],
+    description: 'Demaze Technologies is a team of 35+ technologists in Ahmedabad building AI products, apps and platforms as a long-term partner to its clients.',
     schema: [S.organization(), S.breadcrumbs([['Home', './'], ['About us', './about-us']])],
     body: [
       pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats(), [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']], 'about'),
@@ -78,6 +78,15 @@ const pages = {
   }),
 };
 
+// Search engines show about 160 characters of a description: keep whole sentences that fit, else cut at a word.
+const fit = (text, max = 160) => {
+  if (text.length <= max) return text;
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+  let out = '';
+  for (const s of sentences) { if ((out + s).trim().length > max) break; out += s; }
+  return out.trim() || `${text.slice(0, max - 1).replace(/\s+\S*$/, '')}…`;
+};
+
 // One case study page per project, in the grid's order.
 C.projects.forEach((p, i) => {
   const href = caseHref(p);
@@ -87,7 +96,7 @@ C.projects.forEach((p, i) => {
     slug: href.slice(2),
     section: 'projects',
     title: `${p.title} | Case study | Demaze Technologies`,
-    description: `${p.brief} ${p.outcome}`,
+    description: fit(`${p.brief} ${p.outcome}`),
     og: { ...og, alt: `${p.title}, product screens` },
     reels: true,
     next: ['Next case', next.name, caseHref(next)],
