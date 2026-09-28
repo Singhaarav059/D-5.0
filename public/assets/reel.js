@@ -153,7 +153,9 @@
     changed.forEach((h) => h.reel?.sync());
   };
   const queue = () => { raf ||= requestAnimationFrame(choose); };
-  addEventListener('scroll', queue, { passive: true });
+  // Scrubbed scenes (the home deck) keep moving for a moment after the scroll stops: check again once they settle.
+  let settle = 0;
+  addEventListener('scroll', () => { queue(); clearTimeout(settle); settle = setTimeout(queue, 900); }, { passive: true });
   addEventListener('resize', queue);
 
   function build(host) {
