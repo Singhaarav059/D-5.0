@@ -176,11 +176,11 @@ html.motion.js .scribble__loop path { stroke-dasharray: 1 1.01; stroke-dashoffse
 .sw { transition: opacity 0.1s linear; }
 
 /* ---------- the moving background (templates/ambient.js, assets/ambient.js) ----------
-   A fixed layer behind the page where the 3D crew plays (one canvas, assets/crew3d.js) and doodles, task stickers
-   and sketches of the work come and go. It is clear in the margins and faded behind the text column; each doodle
-   leans with the cursor by its depth (--px, --py on the layer, --d on the item) and drifts against the scroll (--sy),
-   floats on its own wrapper, and perks up when the pointer comes near (.is-near). */
-.amb, .amb__crew3d {
+   A fixed layer behind the page where doodles, task stickers and sketches of the work come and go. It is clear in
+   the margins and faded behind the text column; each doodle leans with the cursor by its depth (--px, --py on the
+   layer, --d on the item) and drifts against the scroll (--sy), floats on its own wrapper, and perks up when the
+   pointer comes near (.is-near). */
+.amb {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
   --edge: calc((100% - var(--wrap)) / 2);
   -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--edge) - 10px), rgb(0 0 0 / 0.26) calc(var(--edge) + 70px), rgb(0 0 0 / 0.26) calc(100% - var(--edge) - 70px), #000 calc(100% - var(--edge) + 10px));
@@ -189,19 +189,22 @@ html.motion.js .scribble__loop path { stroke-dasharray: 1 1.01; stroke-dashoffse
 .amb { overflow: hidden; contain: strict; }
 /* tablets and phones have no margins: the few that come stay at the edges, softer, so text always wins */
 @media (max-width: 1024px) { .amb { opacity: 0.5; } }
-/* the crew's canvas (crew3d.js) sits just above the doodles and fades in once drawn */
-.amb__crew3d { width: 100%; height: 100%; opacity: 0; transition: opacity 1.4s ease; }
-.amb__crew3d.is-in { opacity: 1; }
-/* the crew's route down the right margin (crew3d.js): a faint corridor that lights up in brand blue behind the idea
-   as it travels, and four stations, each a marker-coloured disc with its name */
-.amb__route { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; overflow: visible; opacity: 0; transition: opacity 1.4s ease; }
-.amb__route.is-in { opacity: 1; }
+/* the Demaze crew (crew3d.js) in the contact block's crew band, where nothing on the page can pass over them: the
+   four stations in a row under the contact links, the route lighting up behind the idea as it travels, and four
+   stations, each a marker-coloured disc with its name; the rocket fades out as it lifts off the top. The band is
+   sized and shown by crew3d.js. */
+.crew-band { display: none; position: relative; margin-top: clamp(20px, 3vh, 32px); }
+.crew-band.is-live { display: block; }
+.amb__crew3d, .amb__route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.4s ease; -webkit-mask-image: linear-gradient(#0000, #000 28px); mask-image: linear-gradient(#0000, #000 28px); }
+.amb__crew3d { z-index: 1; }
+.amb__route { overflow: visible; }
+:is(.amb__crew3d, .amb__route).is-in { opacity: 1; }
 .amb__route path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.amb__route-line { stroke: var(--blue); stroke-width: 1.6; opacity: 0.25; }
+.amb__route-line { stroke: #fff; stroke-width: 1.6; opacity: 0.4; }
 .amb__route-glow { stroke: var(--sun); stroke-width: 8; opacity: 0.45; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
-.amb__route-done { stroke: var(--blue); stroke-width: 2.4; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.amb__route-done { stroke: #fff; stroke-width: 2.4; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
 .amb__stop ellipse { fill: color-mix(in srgb, var(--mk) 60%, #fff); stroke: var(--ink); stroke-width: 1.3; }
-.amb__stop text { font: 600 11px/1 var(--body); fill: var(--ink); text-anchor: middle; letter-spacing: 0.02em; opacity: 0.78; }
+.amb__stop text { font: 600 11px/1 var(--body); fill: #fff; text-anchor: middle; letter-spacing: 0.02em; opacity: 0.92; }
 @media (prefers-reduced-motion: reduce) { :is(.amb__crew3d, .amb__route) { transition: none; } }
 .amb__item { position: absolute; left: 0; top: 0; transform: translate3d(calc(var(--px, 0) * var(--d, 1) * 9px), calc(var(--py, 0) * var(--d, 1) * 7px + var(--sy, 0px)), 0) rotate(var(--r, 0deg)); }
 .amb__float { animation: amb-float var(--dur, 7s) ease-in-out var(--delay, 0s) infinite alternate; }

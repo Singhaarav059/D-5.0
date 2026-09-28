@@ -1,19 +1,19 @@
-// The Demaze crew: plush characters living behind the page, drawn with Three.js on one fixed, full-viewport canvas
-// (with their route drawn as SVG under it). ambient.js imports this module after the page has loaded (never on
-// Save-Data) and calls start().
+// The Demaze crew: plush characters drawn with Three.js on one canvas (with their route drawn as SVG under it), in
+// the crew band of the contact block ([data-crew]). ambient.js imports this module after the page has loaded (never
+// on Save-Data) and calls start().
 //
 // Each character is a little plush: cream-to-marker-coloured fur (shell texturing: every furry part is drawn as a
 // stack of shells, one GPU instance each, and a fragment shader keeps only the strands, hashed from 3D cells on the
 // rest surface, dark at the root and catching light at the tips), a smooth cream face, glossy black eyes, pink cheeks
 // and a small smile. Accessories (a cap, a bow, glasses, headphones) tell them apart.
 //
-// They work the Demaze process on a maze route down the right margin: an idea is had, designed, built and launched,
-// over and over (see "the journey" below). They watch the idea as it travels, and near the cursor they turn and
-// wave. They play where the right margin has room for them (wide screens); with reduced motion they hold one moment
-// of the journey and the canvas is drawn once.
+// They work the Demaze process on a maze route: an idea is had, designed, built and launched, over and over (see
+// "the journey" below). They watch the idea as it travels, and near the cursor they turn and wave (on touch screens,
+// a tap near them). They are drawn only while the band is on screen. With reduced motion they hold one moment of the
+// journey and the canvas is drawn once.
 //
-// The camera is orthographic in CSS pixels (world y up, 0 at the bottom of the viewport), so placing a character is
-// placing it on the screen.
+// The camera is orthographic in CSS pixels (world y up, 0 at the bottom of the canvas), so placing a character is
+// placing it on the canvas.
 
 import * as THREE from './vendor/three/three.module.js';
 
@@ -495,7 +495,7 @@ function idea() {
 
 /* ---------- the journey ---------- */
 
-// The crew's one act is the Demaze process, run on a maze route down the right margin: at Idea a bulb lights and
+// The crew's one act is the Demaze process, run on a maze route: at Idea a bulb lights and
 // the idea drops out of it; it rolls along the route to Design, where it is sketched and gains a ring; to Build,
 // where it hops onto a laptop and is coded into a product; to Launch, where it is loaded into a rocket that lifts
 // off, and a new idea is had at the top. Everyone watches the idea travel. Whoever the cursor comes near stops to
@@ -563,22 +563,33 @@ class Journey {
     });
   }
 
-  // Four stations down the right margin, alternating either side of its middle, as one block centred on the screen.
-  // The route runs down the middle and turns in to each station, like a corridor of the maze; it ends at the rocket.
-  layout({ W, H, edge, s }) {
-    this.W = W; this.H = H; this.s = s; this.edge = edge;
-    const cx = W - edge / 2, off = Math.min(1.3 * s + 6, edge / 2 - 1.15 * s - 6); // whole, inside the margin
-    const gap = clamp((H - 220) / 3.4, 4.6 * s, 7.4 * s);
-    const y0 = H / 2 - 1.5 * gap + 1.4 * s; // the first station's feet (screen y), the block centred
-    this.pts = STAGES.map((_, i) => ({ x: i === 3 ? cx + off : cx + (i % 2 ? off : -off), y: y0 + gap * i }));
-    this.cx = cx;
-    const route = [[this.pts[0].x, this.pts[0].y]], at = [0];
+  // Four stations in a row across the crew band, stepping up and down like a corridor of the maze. The route runs
+  // just in front of their feet, so the idea rolls past them rather than through them, and ends at the rocket,
+  // beside Launch.
+  layout({ W, H, s }) {
+    this.W = W; this.H = H; this.s = s;
+    const sp = (W - 3.9 * s) / 3, base = H - 0.55 * s - 24, jog = 0.5 * s;
+    this.pts = STAGES.map((_, i) => ({ x: 1.3 * s + i * sp, y: base - (i % 2 ? jog : 0) }));
+    const ry = (i) => this.pts[i].y + 0.55 * s;
+    const route = [[this.pts[0].x - 0.9 * s, ry(0)]], at = [];
     for (let i = 0; i < 3; i++) {
-      const p = this.pts[i], n = this.pts[i + 1];
-      route.push([cx, p.y], [cx, n.y]);
-      if (i < 2) route.push([n.x, n.y]);
+      const mx = (this.pts[i].x + this.pts[i + 1].x) / 2;
+      route.push([this.pts[i].x + 0.7 * s, ry(i)]);
       at.push(route.length - 1);
+      route.push([mx, ry(i)], [mx, ry(i + 1)]);
     }
+    route.push([this.pts[3].x + 1.7 * s, ry(3)]);
+    at.push(route.length - 1);
+    this.pad = { x: route[route.length - 1][0], y: H - ry(3) };
+    this.rest = this.pts.map((p, i) => (i === 3 ? { x: this.pad.x, y: this.pad.y + 0.2 * s } : { x: p.x + 0.7 * s, y: H - ry(i) + 0.2 * s }));
+    this.crew.forEach((c) => { c.face = 0.3; }); // turned a little towards where the idea goes
+    this.trace(route, at, this.pts.map((_, i) => ry(i) + 15));
+  }
+
+  // The route (screen points), the indices of its stations, and where each station's name goes: measured, drawn,
+  // and the crew put on their stations.
+  trace(route, at, labelY) {
+    const { H, s } = this;
     this.route = route.map(([x, y]) => ({ x, y: H - y })); // world (y up)
     this.segs = [];
     const dist = [0];
@@ -591,24 +602,18 @@ class Journey {
     this.stationD = at.map((k) => dist[k]);
     const dAttr = route.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
     for (const p of [this.glowPath, this.linePath, this.donePath]) p.setAttribute('d', dAttr);
-    this.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    this.svg.setAttribute('viewBox', `0 0 ${this.W} ${H}`);
     this.pts.forEach((p, i) => {
       const { disc, text } = this.stops[i];
       disc.setAttribute('cx', p.x); disc.setAttribute('cy', p.y);
       disc.setAttribute('rx', (1.15 * s).toFixed(1)); disc.setAttribute('ry', (0.38 * s).toFixed(1));
-      text.setAttribute('x', p.x); text.setAttribute('y', (p.y + 0.38 * s + 13).toFixed(1));
+      text.setAttribute('x', p.x); text.setAttribute('y', labelY[i].toFixed(1));
     });
-    this.crew.forEach((c, i) => {
-      place(c.root, this.pts[i].x, H - this.pts[i].y, s, 20 + i * 5);
-      c.face = this.pts[i].x < cx ? 0.38 : -0.38; // turned a little towards the route
-    });
-    this.pad = { x: cx - 0.1 * s, y: H - this.pts[3].y };
+    this.crew.forEach((c, i) => place(c.root, this.pts[i].x, H - this.pts[i].y, s, 20 + i * 5));
     this.rocket.g.scale.setScalar(s);
     this.orb.g.scale.setScalar(s);
-    this.top = this.pts[0].y - 4.4 * s;
   }
 
-  zone() { return { x: this.W - this.edge, y: 0, w: this.edge, h: this.H }; } // the whole right margin is theirs
 
   at(d) { // a point on the route, d pixels along it
     d = clamp(d, 0, this.total);
@@ -640,8 +645,7 @@ class Journey {
     const ph = this.phase(this.t);
     const u = ph.u, st = [0, 0, 1, 1, 2, 2, 3][ph.i]; // the station the idea is at, or has left
     const o = this.orb;
-    // the idea's rest spot at a station: on the route side of its worker; at Launch, the foot of the rocket
-    const foot = (i) => (i === 3 ? { x: this.pad.x, y: this.pad.y + 0.2 * s } : { x: this.pts[i].x + (this.pts[i].x < this.cx ? 0.62 : -0.62) * s, y: H - this.pts[i].y + 0.2 * s });
+    const foot = (i) => this.rest[i]; // where the idea rests at a station (layout)
     const wp = (obj) => obj.getWorldPosition(this.v);
     let pos, floor, show = { core: 1, ring: 0, cube: 0 }, bulbLit = 0, done = 0;
     let rocketY = 0, flame = 0, rocketIn = 1, shake = 0;
@@ -788,7 +792,10 @@ class Journey {
 
 const place = (obj, x, y, s, z = 0) => { obj.position.set(x, y, z); obj.scale.setScalar(s); };
 
-export function start(layer, { still = false } = {}) {
+export function start() {
+  const band = document.querySelector('[data-crew]');
+  if (!band) return null;
+  const still = !document.documentElement.classList.contains('motion');
   const canvas = document.createElement('canvas');
   canvas.className = 'amb__crew3d';
   canvas.setAttribute('aria-hidden', 'true');
@@ -816,33 +823,37 @@ export function start(layer, { still = false } = {}) {
 
   const journey = new Journey(scene, still);
   const env = { W: 0, H: 0, still, rush: 1, pointer: { x: -1e4, y: -1e4 } };
-  let on = false; // the crew plays only where the right margin has room for them
+  let on = false, seen = false; // on: the band has room for them; seen: it is on screen
+  const client = { x: -1e4, y: -1e4 }; // the pointer, in viewport pixels
 
   const layout = () => {
-    const W = innerWidth, H = innerHeight;
-    env.W = W; env.H = H;
-    const edge = (W - Math.min(1200, W - 48)) / 2;
-    on = edge >= 84 && H >= 560;
+    band.classList.add('is-live');
+    const W = band.clientWidth;
+    on = W >= 240;
+    band.classList.toggle('is-live', on);
     canvas.hidden = journey.svg.hidden = !on;
     if (!on) return;
-    const px = clamp(edge * 0.55, 60, 80); // a character's height
-    const s = px / HEIGHT;
-    env.s = s;
-    // a full-viewport canvas: 1.5 device pixels per CSS pixel at most keeps the GPU's fill cheap; the fur's strands
-    // are sized to the pixels they land on
+    if (canvas.parentNode !== band) band.append(journey.svg, canvas);
+    const s = Math.min(20, W / 15); // a character's scale: at most 71px tall
+    const H = Math.ceil(5 * s + 30);
+    band.style.height = H + 'px';
+    env.W = W; env.H = H; env.s = s;
+    // 1.5 device pixels per CSS pixel at most keeps the GPU's fill cheap; the fur's strands are sized to the pixels
+    // they land on
     const dpr = Math.min(devicePixelRatio || 1, 1.5);
     furShared.uDensity.value = clamp((s * dpr) / 1.2, 18, 44);
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.left = 0; camera.right = W; camera.top = H; camera.bottom = 0;
     camera.updateProjectionMatrix();
-    journey.layout({ W, H, edge, s });
+    journey.layout({ W, H, s });
   };
+  const playing = () => on && seen;
 
   let last = performance.now() / 1000, t = 0, raf = 0, lastScroll = scrollY, rushAim = 1;
   const frame = (nowMs) => {
     raf = 0;
-    if (!on) return;
+    if (!on || (!still && !playing())) return;
     const now = nowMs / 1000;
     const dt = Math.min(0.05, Math.max(0, now - last));
     last = now;
@@ -852,10 +863,17 @@ export function start(layer, { still = false } = {}) {
     lastScroll = scrollY;
     rushAim = damp(rushAim, 1 + Math.min(1.5, v / 900), v > 0 ? 6 : 2, dt);
     env.rush = rushAim;
+    const box = canvas.getBoundingClientRect();
+    env.pointer.x = client.x - box.left; env.pointer.y = client.y - box.top;
     step(dt);
     renderer.render(scene, camera);
     journey.draw();
     if (!still && !document.hidden) raf = requestAnimationFrame(frame);
+  };
+  const resume = () => {
+    if (still || raf || !playing() || document.hidden) return;
+    last = performance.now() / 1000;
+    raf = requestAnimationFrame(frame);
   };
 
   const step = (dt) => {
@@ -880,26 +898,37 @@ export function start(layer, { still = false } = {}) {
     t = 2;
     step(0);
   }
-  layer.after(journey.svg, canvas); // their own layers above the doodles (site.css)
   frame(performance.now());
   requestAnimationFrame(() => { canvas.classList.add('is-in'); journey.svg.classList.add('is-in'); });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; resume(); }, { rootMargin: '80px 0px' }).observe(band);
+  } else seen = true;
 
   let resizing = 0;
   addEventListener('resize', () => {
     clearTimeout(resizing);
-    resizing = setTimeout(() => { layout(); if (on && (still || !raf)) { last = performance.now() / 1000; frame(performance.now()); } }, 150);
+    resizing = setTimeout(() => { layout(); if (still) frame(performance.now()); else resume(); }, 150);
   });
   if (!still) {
-    addEventListener('pointermove', (e) => { env.pointer.x = e.clientX; env.pointer.y = e.clientY; }, { passive: true });
-    document.addEventListener('pointerleave', () => { env.pointer.x = env.pointer.y = -1e4; });
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && !raf && on) { last = performance.now() / 1000; raf = requestAnimationFrame(frame); }
-    });
+    addEventListener('pointermove', (e) => { client.x = e.clientX; client.y = e.clientY; }, { passive: true });
+    document.addEventListener('pointerleave', () => { client.x = client.y = -1e4; });
+    // on touch screens there is no cursor to come near: a tap near one of them gets a wave for a moment
+    let lift = 0;
+    addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      client.x = e.clientX; client.y = e.clientY;
+      clearTimeout(lift);
+      lift = setTimeout(() => { client.x = client.y = -1e4; }, 1800);
+    }, { passive: true });
+    document.addEventListener('visibilitychange', resume);
   }
-  canvas.addEventListener('webglcontextlost', () => { cancelAnimationFrame(raf); canvas.remove(); journey.svg.remove(); });
+  canvas.addEventListener('webglcontextlost', () => {
+    cancelAnimationFrame(raf);
+    on = false;
+    canvas.remove(); journey.svg.remove();
+    band.classList.remove('is-live');
+  });
 
-  return {
-    // screen rectangles (top-left origin) where the crew plays, for ambient.js to keep doodles out of
-    zones: () => (on ? [journey.zone()] : []),
-  };
+  return { band };
 }

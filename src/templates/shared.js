@@ -28,6 +28,7 @@ const faq = () => `<section class="section faq">
 </section>`;
 
 // `C.closing` is trusted HTML from content.js (its <em> sets the quieter half).
+// The crew band stays empty and hidden unless crew3d.js puts the Demaze crew there.
 const contact = (id = 'contact') => `<section class="section sheet sheet--blue contact" id="${id}">
   <div class="wrap contact__grid">
     <div class="contact__copy">
@@ -38,6 +39,7 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
         <li><a ${cal}><i>${icon.cal}</i><span><small>Prefer to talk? Book a 30-minute call</small>Book with Calendly</span></a></li>
         <li><a href="${C.mapUrl}" target="_blank" rel="noopener"><i>${icon.pin}</i><span><small>Office</small>${esc(C.address)}</span></a></li>
       </ul>
+      <div class="crew-band" data-crew aria-hidden="true"></div>
     </div>
     <form class="form" data-form data-reveal action="/api/contact" method="post" novalidate>
       <h3>Tell us about your project</h3>

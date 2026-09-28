@@ -1,10 +1,9 @@
 /* The moving background (src/templates/ambient.js): behind every page, a few doodles of the work keep appearing in
    the side margins, one to a slot, drawing themselves on, floating, and after a while giving way to others. They lean
    with the cursor (each at its own depth), drift a little against the scroll, and perk up when the pointer comes near;
-   wide margins get sketches of the work too. Screens without margins get none. Once the
-   page has loaded, this also brings in the 3D crew (crew3d.js), and the doodles keep out of its way. With reduced
-   motion a few rest in place, drawn, and the crew holds a pose. Decoration only: the layer is aria-hidden and never
-   takes the pointer. */
+   wide margins get sketches of the work too. Screens without margins get none. Once the page has loaded, this also
+   brings in the 3D crew (crew3d.js), who play in the contact block's crew band. With reduced motion a few rest in
+   place, drawn, and the crew holds a pose. Decoration only: the layer is aria-hidden and never takes the pointer. */
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -27,16 +26,14 @@
     return { W, H, edge: (W - wrap) / 2 };
   };
 
-  // Where doodles go: a lane down each side margin wide enough for one (not the crew's), split into evenly spaced
+  // Where doodles go: a lane down each side margin wide enough for one, split into evenly spaced
   // slots, one item to a slot, each kept whole on screen, clear of the edge and the text column even as it leans and
   // drifts. Narrower screens, where the text runs to the edges, get none.
   const PAD = 18, TOP = 96, BOTTOM = 24, SLOT = 190;
   const lanes = (g) => {
     const room = g.edge - 2 * PAD;
     if (g.W < 1025 || room < 44) return [];
-    const zones = crew ? crew.zones() : [];
-    return [{ x: PAD, w: room }, { x: g.W - g.edge + PAD, w: room }]
-      .filter((l) => !zones.some((z) => l.x < z.x + z.w && z.x < l.x + l.w));
+    return [{ x: PAD, w: room }, { x: g.W - g.edge + PAD, w: room }];
   };
   const slotsPer = (g) => Math.max(2, Math.floor((g.H - TOP - BOTTOM) / SLOT));
   const target = () => { const g = geo(); return lanes(g).length * slotsPer(g); };
@@ -94,29 +91,12 @@
     timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(8, 13) : rnd(11, 16)) * 1000);
   };
 
-  // The 3D crew (crew3d.js): loaded once the page has settled and only when the screen has a right margin wide enough
-  // for them (now, or after a resize), never on Save-Data. Their zone stays free of doodles.
-  let crew = null, wanted = false;
-  const roomy = () => geo().edge >= 84 && innerHeight >= 560;
-  const summon = () => {
-    if (wanted || !roomy()) return;
-    wanted = true;
-    const load = () => import(new URL(layer.dataset.src, document.baseURI).href).then((m) => {
-      crew = m.start(layer, { still });
-      // doodles already sitting where the crew plays make way
-      const zones = crew ? crew.zones() : [];
-      for (const l of live.slice()) {
-        const { x, y, w, h } = l.box;
-        if (zones.some((z) => x < z.x + z.w && z.x < x + w && y < z.y + z.h && z.y < y + h)) l.leave();
-      }
-      fill();
-    }).catch(() => {});
+  // The 3D crew (crew3d.js): loaded once the page has settled, never on Save-Data, and only on pages with a crew band
+  // ([data-crew], in the contact block) for them to play in.
+  if (layer.dataset.src && document.querySelector('[data-crew]') && !navigator.connection?.saveData) {
+    const load = () => import(new URL(layer.dataset.src, document.baseURI).href).then((m) => m.start()).catch(() => {});
     const idle = () => (window.requestIdleCallback ? requestIdleCallback(load, { timeout: 2500 }) : setTimeout(load, 400));
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
-  };
-  if (layer.dataset.src && !navigator.connection?.saveData) {
-    summon();
-    addEventListener('resize', summon);
   }
 
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };
