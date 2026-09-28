@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, icon, head, btn } = require('./helpers');
+const { PUBLIC, esc, pad, caseHref, icon, head, btn } = require('./helpers');
 const { serviceDemo } = require('./demos');
 const { doodle } = require('./doodles');
 const { chevron } = require('./maze');
@@ -78,7 +78,7 @@ const techStack = () => {
 const SVC_MARK = { ai: 'lilac', web: 'sky', ecom: 'tomato', cloud: 'mint' };
 
 // Each service names the projects that show it and links into their case studies (and to all of them, filtered).
-const seenIn = (s) => `<p class="svc-panel__work"><span>Seen in</span>${s.work.slice(0, 4).map((k) => C.projects.find((p) => p.image === k)).map((p) => `<a href="./projects#${p.image}">${esc(p.name)}</a>`).join('')}<a class="svc-panel__all" href="./projects?filter=${s.id}">All ${s.work.length} ${icon.arrow}</a></p>`;
+const seenIn = (s) => `<p class="svc-panel__work"><span>Seen in</span>${s.work.slice(0, 4).map((k) => C.projects.find((p) => p.image === k)).map((p) => `<a href="${caseHref(p)}">${esc(p.name)}</a>`).join('')}<a class="svc-panel__all" href="./projects?filter=${s.id}">All ${s.work.length} ${icon.arrow}</a></p>`;
 
 const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-panel>
   <div class="svc-panel__art">${serviceDemo(s.id)}</div>
@@ -124,7 +124,7 @@ const industries = () => `<section class="section industries" id="industries">
           <div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3><p>${items.length} kinds of systems we build</p></div>
         </div>
         <ul class="ind__list">${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
-        ${work.length ? `<p class="ind__work"><span>Our work here</span>${work.map((p) => `<a href="./projects#${p.image}">${esc(p.name)}</a>`).join('')}</p>` : `<p class="ind__work"><span>Building for ${esc(n.toLowerCase())}?</span><a href="./contact">Tell us about it</a></p>`}
+        ${work.length ? `<p class="ind__work"><span>Our work here</span>${work.map((p) => `<a href="${caseHref(p)}">${esc(p.name)}</a>`).join('')}</p>` : `<p class="ind__work"><span>Building for ${esc(n.toLowerCase())}?</span><a href="./contact">Tell us about it</a></p>`}
       </div>`;
     }).join('')}
     </div>

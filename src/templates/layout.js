@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { SITE_URL, esc, pad, cal, icon, pic } = require('./helpers');
+const { SITE_URL, esc, pad, cal, caseHref, icon, pic } = require('./helpers');
 const { doodle } = require('./doodles');
 const { ambient } = require('./ambient');
 const { svcTile } = require('./shared');
@@ -24,7 +24,7 @@ const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-
     </div>
   </div>`;
 const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
-    <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="./projects#${p.image}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
+    <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="${caseHref(p)}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
     <div class="nav__drop-side">
       <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
       <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
@@ -32,8 +32,10 @@ const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" da
   </div>`;
 const DROPS = { Projects: ['work', dropWork], Services: ['services', dropServices] };
 
-function layout({ title, description, slug, body, noindex = false }) {
-  const current = (h) => (h === './' + slug ? ' aria-current="page"' : '');
+// `section` is the nav entry a page belongs under (a case study sits under Projects); `schema` is its structured data
+// (templates/schema.js), `og` a sharing image other than the site card, `next` the footer's next stop.
+function layout({ title, description, slug, body, noindex = false, section = slug, schema = [], og = null, next = null, reels = slug === 'projects' || !slug }) {
+  const current = (h) => (h === './' + section ? ' aria-current="page"' : '');
   const links = NAV.map(([t, h]) => DROPS[t]
     ? `<a class="nav__trigger" href="${h}"${current(h)} aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${chevronDown}</a>`
     : `<a href="${h}"${current(h)}>${t}</a>`).join('');
@@ -49,18 +51,24 @@ function layout({ title, description, slug, body, noindex = false }) {
 <meta name="theme-color" content="#eef0f6">
 ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
+<link rel="apple-touch-icon" href="./assets/img/icon-180.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Demaze">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:image" content="${SITE_URL}/assets/img/og.png">
+${og ? `<meta property="og:image" content="${og.url}">
+<meta property="og:image:width" content="${og.w}">
+<meta property="og:image:height" content="${og.h}">
+<meta property="og:image:alt" content="${esc(og.alt)}">` : `<meta property="og:image" content="${SITE_URL}/assets/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Demaze: AI products, without the maze. A route through a maze ending in the Demaze chevron.">
+<meta property="og:image:alt" content="Demaze: AI products, without the maze. A route through a maze ending in the Demaze chevron.">`}
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="${SITE_URL}/assets/img/og.png">
+<meta name="twitter:image" content="${og ? og.url : `${SITE_URL}/assets/img/og.png`}">
 <link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
 <script defer src="./assets/boot.js"></script>
@@ -69,9 +77,10 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/site.js"></script>
 <script defer src="./assets/journey.js"></script>
-<script defer src="./assets/ambient.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${slug === 'projects' || !slug ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
+<script defer src="./assets/ambient.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${reels ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
+${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 </head>
-<body class="page-${slug || 'home'}">
+<body class="page-${(slug || 'home').replace(/\//g, '-')}">
 ${ambient()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
@@ -97,7 +106,7 @@ ${ambient()}
 <main id="main">
 ${body}
 </main>
-${footer(slug)}
+${footer(next || C.next[slug] || C.next[''])}
 </body>
 </html>
 `;
@@ -108,8 +117,7 @@ ${footer(slug)}
 const STOPS = [['bulb', 'sun', 'Idea', 24.8, 22.5], ['pencil', 'lilac', 'Design', 46, 67.5, true], ['gear', 'sky', 'Build', 67.1, 32.5], ['rocket', 'tomato', 'Launch', 89, 50, true]];
 
 // The footer opens with the next page on the route through the site (content.js `next`).
-function footer(slug) {
-  const [label, line, href] = C.next[slug] || C.next[''];
+function footer([label, line, href]) {
   return `<footer class="footer">
   <div class="footer__panel">
     <a class="footer__next" href="${href}" data-reveal><small>Next up · ${esc(label)}</small><span>${esc(line)}</span><i class="footer__next-arrow">${doodle('arrow', { color: 'sun' })}</i></a>

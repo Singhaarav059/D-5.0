@@ -1236,6 +1236,41 @@ html.is-filtering::view-transition-group(*) { animation-duration: 460ms; animati
 .pdlg__nav[data-pdlg-step='-1'] svg { transform: rotate(180deg); }
 .pdlg__close svg { transform: rotate(45deg); }
 html:has(.pdlg[open]) { overflow: hidden; }
+.pdlg__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.pdlg__cta .link-arrow { margin-top: 0; }
+
+/* ---------- case study pages (/projects/<case>) ---------- */
+/* The reel stays in view beside the story on wide screens; the story reads like the dialog, one part per rule. */
+.case { padding-top: clamp(24px, 4vw, 48px); }
+.case__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.case__aside { position: sticky; top: 104px; display: grid; gap: 18px; }
+.case__media { aspect-ratio: 16 / 11; }
+.case__media img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+.case__svcs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 0.88rem; }
+.case__svcs span { color: var(--muted); }
+.case__svcs a { font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color var(--t-2) ease; }
+.case__svcs a:hover { text-decoration-color: currentColor; }
+.case__body { display: grid; gap: 28px; }
+.case__part { display: grid; gap: 12px; padding-top: 20px; border-top: 1px solid var(--line); }
+.case__part h2 { font: 500 0.84rem/1 var(--body); letter-spacing: 0; color: var(--muted); }
+.case__part p { font-size: 1.02rem; line-height: 1.65; max-width: 62ch; }
+.case-more { padding-block: 0 clamp(72px, 10vw, 136px); }
+.case-more__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.case-more__card { display: flex; align-items: center; gap: 18px; padding: 12px; padding-right: 22px; border-radius: var(--r-card); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transition: transform var(--t-2) var(--ease), box-shadow var(--t-2) ease; }
+.case-more__card:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px var(--line-2); }
+.case-more__shot { flex: none; width: clamp(96px, 14vw, 150px); aspect-ratio: 16 / 11; display: grid; place-items: center; padding: 8px; border-radius: 12px; background: var(--tint); overflow: hidden; }
+.case-more__shot img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+.case-more__text { display: grid; gap: 4px; min-width: 0; }
+.case-more__text small { font-size: 0.8rem; color: var(--muted); }
+.case-more__text b { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+.case-more__text span { font-size: 0.88rem; color: var(--muted); }
+.case-more__card > svg { flex: none; width: 18px; height: 18px; margin-left: auto; transition: transform var(--t-2) var(--ease); }
+.case-more__card:hover > svg { transform: translateX(3px); }
+@media (max-width: 860px) {
+  .case__grid { grid-template-columns: minmax(0, 1fr); }
+  .case__aside { position: static; }
+  .case-more__row { grid-template-columns: minmax(0, 1fr); }
+}
 
 /* ---------- visit (contact page) ---------- */
 .visit__grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }

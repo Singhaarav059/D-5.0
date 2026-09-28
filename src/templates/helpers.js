@@ -17,6 +17,9 @@ const pad = (n) => String(n).padStart(2, '0');
 
 const cal = `href="${C.calendly}" target="_blank" rel="noopener"`;
 
+// Every project has its own case study page, at /projects/<image key> (templates/case.js).
+const caseHref = (p) => `./projects/${p.image}`;
+
 const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
@@ -67,4 +70,4 @@ const head = ({ label, title, lead = '', side = '', stack = false, cls = '', mar
   </div>
 </header>`;
 
-module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, shot, btn, head };
+module.exports = { PUBLIC, SITE_URL, MANIFEST, esc, pad, cal, caseHref, icon, pic, shot, btn, head };

@@ -4,7 +4,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, icon, pic, shot, btn } = require('./helpers');
+const { esc, pad, caseHref, icon, pic, shot, btn } = require('./helpers');
 
 const reelAttr = (p, i) => (C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : '');
 
@@ -18,7 +18,7 @@ const caseBody = (p, i) => `<div class="pdlg__body">
             <figure class="pdlg__shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '(max-width: 1024px) 92vw, 500px' })}</figure>
             ${p.description ? `<p>${esc(p.description)}</p>` : ''}<ul class="checks checks--list">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul></section>
           <section class="pdlg__part"><h3>The outcome</h3><p>${esc(p.outcome)}</p></section>
-          <div class="pdlg__cta">${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}</div>
+          <div class="pdlg__cta">${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}<a class="link-arrow" href="${caseHref(p)}">Full case study ${icon.arrow}</a></div>
         </div>`;
 
 // Filters: the services each project shows (content.js `services[].work`). ?filter=<service id> preselects one.
@@ -28,7 +28,8 @@ const filters = () => `<div class="pfilter" role="group" aria-label="Show projec
       <button type="button" aria-pressed="false" data-filter="${s.id}">${esc(s.title)} <span>${s.work.length}</span></button>`).join('')}
     </div>`;
 
-// Each card is an anchor target (#<image key>): opening that link opens the case (site.js).
+// Each card is an anchor target (#<image key>): opening that link opens the case (site.js). The title links to the
+// case study page; a plain click opens the dialog instead (a new-tab click, or no JS, follows the link).
 const projectsGrid = () => `<section class="section projects">
   <div class="wrap">
     ${filters()}
@@ -36,7 +37,7 @@ const projectsGrid = () => `<section class="section projects">
       <figure class="pcard__media"${reelAttr(p, i)}>${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
       <div class="pcard__body">
         <p class="pcard__meta"><span class="pcard__num">${pad(i + 1)}</span>${esc(p.sector)}</p>
-        <h2><button type="button" class="pcard__btn" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</button></h2>
+        <h2><a class="pcard__btn" href="${caseHref(p)}" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</a></h2>
         <p>${esc(p.description || p.brief)}</p>
         <span class="pcard__more">View project ${icon.arrow}</span>
       </div>
@@ -56,4 +57,4 @@ const projectsGrid = () => `<section class="section projects">
   </dialog>
 </section>`;
 
-module.exports = { projectsGrid };
+module.exports = { projectsGrid, reelAttr, servicesOf };

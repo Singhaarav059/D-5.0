@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, icon, pic, shot, btn, head } = require('./helpers');
+const { esc, pad, caseHref, icon, pic, shot, btn, head } = require('./helpers');
 const { reasons, quoteHtml } = require('./about');
 
 const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
@@ -13,7 +13,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <h3>${esc(p.title)}</h3>
       <p>${esc(p.description)}</p>
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-      <a class="link-arrow" href="./projects#${p.image}">Read the case study ${icon.arrow}</a>
+      <a class="link-arrow" href="${caseHref(p)}">Read the case study ${icon.arrow}</a>
     </div>
     <figure class="stack-card__media" style="${shot(p.image)}"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
   </div>

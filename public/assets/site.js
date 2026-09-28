@@ -360,7 +360,12 @@
       if (media && window.Reel) window.Reel.mount(media);
       history.replaceState(null, '', '#' + cards[current].id);
     };
-    $$('[data-proj]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.proj); dlg.showModal(); }));
+    $$('[data-proj]').forEach((b) => b.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // a new tab or window gets the case study page
+      e.preventDefault();
+      show(+b.dataset.proj);
+      dlg.showModal();
+    }));
     $$('[data-pdlg-step]', dlg).forEach((b) => b.addEventListener('click', () => show(current + +b.dataset.pdlgStep, +b.dataset.pdlgStep)));
     dlg.addEventListener('keydown', (e) => {
       const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];

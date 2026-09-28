@@ -122,3 +122,21 @@ test('unknown URLs get the branded 404 page with a 404 status', async (t) => {
   assert.equal(hidden.status, 404);
   assert.doesNotMatch(hidden.body, /\[core\]/);
 });
+
+test('a folder of pages without an index leaves its name to the page beside it', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'static-server-'));
+  await fs.writeFile(path.join(root, 'projects.html'), 'all projects');
+  await fs.mkdir(path.join(root, 'projects'));
+  await fs.writeFile(path.join(root, 'projects', 'one.html'), 'one project');
+  await fs.writeFile(path.join(root, '404.html'), 'lost');
+  const server = createStaticServer({ root, notFound: '404.html' });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    await fs.rm(root, { recursive: true, force: true });
+  });
+
+  assert.equal((await request(server, 'GET', '/projects')).body, 'all projects');
+  assert.equal((await request(server, 'GET', '/projects/one')).body, 'one project');
+  assert.equal((await request(server, 'GET', '/projects/two')).status, 404);
+});
