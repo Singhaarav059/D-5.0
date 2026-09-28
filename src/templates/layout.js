@@ -51,7 +51,8 @@ function layout({ title, description, slug, body, noindex = false, section = slu
 <style>@view-transition { navigation: auto; }</style>
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="theme-color" content="#eef0f6">
+<meta name="theme-color" content="#0b0b10">
+<meta name="color-scheme" content="dark">
 ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
 <link rel="apple-touch-icon" href="./assets/img/icon-180.png">
@@ -80,7 +81,8 @@ ${og ? `<meta property="og:image" content="${og.url}">
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/site.js"></script>
 <script defer src="./assets/journey.js"></script>
-<script defer src="./assets/ambient.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${reels ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
+<script defer src="./assets/ambient.js"></script>
+<script defer src="./assets/silk.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${reels ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
 ${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 </head>
 <body class="page-${(slug || 'home').replace(/\//g, '-')}">
