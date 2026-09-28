@@ -48,10 +48,10 @@ const website = () => ({
   publisher: { '@id': ORG },
 });
 
-const faqPage = () => ({
+const faqPage = (limit = C.faq.length) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: C.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  mainEntity: C.faq.slice(0, limit).map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 });
 
 const services = () => ({

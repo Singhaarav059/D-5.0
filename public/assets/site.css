@@ -695,6 +695,42 @@ html:not(.motion) .services__pin { min-height: 0; }
 .checks { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
 .checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.92rem; line-height: 1.4; }
 .checks svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--accent-text); }
+/* "What's included": open on wide screens (no summary), folded on phones (site.js closes it). */
+.svc-panel__more > summary { display: none; }
+.svc-panel__more > summary::-webkit-details-marker { display: none; }
+@media (max-width: 860px) {
+  .svc-panel__more > summary { display: flex; align-items: center; gap: 8px; margin-top: 18px; padding: 12px 0; border-top: 1px solid var(--line); list-style: none; font-weight: 500; cursor: pointer; }
+  .svc-panel__more > summary span { display: grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; background: var(--surface-2); font-size: 0.78rem; }
+  .svc-panel__more > summary::after { content: ''; width: 8px; height: 8px; margin-left: auto; border: solid currentColor; border-width: 0 1.6px 1.6px 0; transform: translateY(-2px) rotate(45deg); transition: transform var(--t-2) var(--ease); }
+  .svc-panel__more[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+  .svc-panel__more .checks { margin-top: 4px; }
+}
+
+/* Home: the four services as tiles, each leading to its panel on the services page. */
+.build__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.build__tile { height: 100%; display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: var(--r-card); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transition: transform var(--t-2) var(--ease), box-shadow var(--t-2) ease; }
+.build__tile:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px var(--line-2), 0 18px 40px -24px rgba(24, 28, 48, 0.35); }
+.build__icon { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 6px; border-radius: 16px; background: color-mix(in srgb, var(--dd) 26%, #fff); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dd) 40%, transparent); transition: transform var(--t-2) var(--ease); }
+.build__icon .dd { width: 38px; height: 38px; }
+.build__tile:hover .build__icon { transform: rotate(-6deg) scale(1.06); }
+.build__tile h3 { font-size: 1.2rem; letter-spacing: -0.02em; }
+.build__tile p { font-size: 0.92rem; line-height: 1.5; color: var(--muted); }
+.build__work { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); }
+.build__more { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 500; }
+.build__more svg { width: 15px; height: 15px; transition: transform var(--t-2) var(--ease); }
+.build__tile:hover .build__more svg { transform: translateX(3px); }
+.build__help { margin-top: 22px; font-size: 0.95rem; color: var(--muted); }
+.build__help b { color: var(--text); font-weight: 600; }
+@media (max-width: 1024px) { .build__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .build__grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .build__tile { display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 16px; }
+  .build__icon { grid-row: span 2; width: 48px; height: 48px; margin: 0; }
+  .build__icon .dd { width: 32px; height: 32px; }
+  .build__tile p { grid-column: 2; }
+  .build__work, .build__more { grid-column: 1 / -1; }
+  .build__work { margin-top: 8px; }
+}
 /* "Seen in": the projects that show the service, linking into their case studies */
 .svc-panel__work { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.88rem; }
 .svc-panel__work span { color: var(--muted); }

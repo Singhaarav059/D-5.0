@@ -3,7 +3,9 @@
 
 const C = require('../content');
 const { esc, pad, caseHref, vt, icon, pic, shot, btn, head } = require('./helpers');
-const { reasons, quoteHtml } = require('./about');
+const { quoteHtml } = require('./about');
+const { SVC_ART } = require('./shared');
+const { doodle } = require('./doodles');
 
 const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
   <div class="stack-card__inner">
@@ -53,8 +55,25 @@ const studio = () => `<section class="section sheet studio" id="about">
         <figcaption>${pic(C.founder.photo, '', { small: true, sizes: '52px' })}<span><a href="${C.founder.href}" target="_blank" rel="noopener">${C.founder.name}</a><small>${C.founder.title}</small></span></figcaption>
       </figure>
     </div>
-    ${reasons()}
   </div>
 </section>`;
 
-module.exports = { work, studio };
+// Home: the four services as tiles (the full panels, demos and tools live on the services page), each with the work
+// that shows it; then a way to ask when it isn't obvious which one fits.
+const build = () => `<section class="section build" id="services">
+  <div class="wrap">
+    ${head({ label: 'Services', title: 'What we <em>build</em>', lead: 'Four kinds of product. Most of what we ship uses two or three together.', side: btn('All services', './services', 'btn--ghost'), mark: ['pencil', 'lilac'] })}
+    <ul class="build__grid" data-stagger>${C.services.map((s) => `
+      <li><a class="build__tile" href="./services#${s.id}" style="--dd:var(--${SVC_ART[s.id][1]})">
+        <span class="build__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span>
+        <h3>${esc(s.title)}</h3>
+        <p>${esc(s.summary)}</p>
+        <span class="build__work">${s.work.length} projects · ${s.work.slice(0, 2).map((k) => esc(C.projects.find((p) => p.image === k).name)).join(', ')}</span>
+        <span class="build__more">Explore ${icon.arrow}</span>
+      </a></li>`).join('')}
+    </ul>
+    <p class="build__help"><b>Not sure which you need?</b> Tell us the problem and we’ll map the route. <a class="link" href="./contact">Start a project</a></p>
+  </div>
+</section>`;
+
+module.exports = { work, studio, build };

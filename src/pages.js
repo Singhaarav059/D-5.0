@@ -9,7 +9,7 @@ const S = require('./templates/schema');
 const { caseHero, caseStory, caseMore } = require('./templates/case');
 const { layout } = require('./templates/layout');
 const { pageHero, faq, contact, band } = require('./templates/shared');
-const { work, studio } = require('./templates/home');
+const { work, studio, build } = require('./templates/home');
 const { journey } = require('./templates/journey');
 const { about, stats, whyUs, founder } = require('./templates/about');
 const { techStack, services, industries } = require('./templates/services');
@@ -21,10 +21,10 @@ const pages = {
     slug: '',
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
-    schema: [S.organization(), S.website(), S.faqPage()],
-    // Home page order: the hero that turns into "how we work", then proof (work), what we do (services) and what we
-    // build it with (the tools map), who we are (studio), questions, contact. Industries live on the services page.
-    body: [journey({ intro: true }), band(), work(), services(), techStack(), studio(), faq(), contact()].join('\n'),
+    schema: [S.organization(), S.website(), S.faqPage(3)],
+    // Home is the summary: the hero that turns into "how we work", proof (work), what we build (four tiles), who we
+    // are, the first questions, contact. The service panels, the tools map and industries live on the services page.
+    body: [journey({ intro: true }), band(), work(), build(), studio(), faq(3), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',

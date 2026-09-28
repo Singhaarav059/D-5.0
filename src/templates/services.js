@@ -85,7 +85,7 @@ const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.description)}</p>
-    <ul class="checks">${s.items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
+    <details class="svc-panel__more" open data-fold><summary>What’s included <span>${s.items.length}</span></summary><ul class="checks">${s.items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul></details>
     ${seenIn(s)}
   </div>
 </article>`;

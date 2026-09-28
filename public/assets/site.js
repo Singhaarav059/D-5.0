@@ -38,6 +38,9 @@
     $$('[data-vt-name]').forEach((el) => { el.style.viewTransitionName = el.dataset.vtName; delete el.dataset.vtName; });
   });
 
+  // Long lists fold on phones (services' "What's included"); they stay open on wider screens.
+  if (matchMedia('(max-width: 860px)').matches) $$('[data-fold]').forEach((d) => { d.open = false; });
+
   // Loops only run in the part of the page you can see: sections off screen are marked idle (site.css pauses them).
   if ('IntersectionObserver' in window) {
     const idle = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-idle', !e.isIntersecting)), { rootMargin: '120px 0px' });
@@ -544,8 +547,9 @@
   // (The home maze below it is journey.js.)
   const hero = $('[data-hero]');
   if (hero) {
-    const title = $('[data-split=hero]', hero);
-    const words = split(title, 'w');
+    // (a case study's title arrives with its card instead, so it isn't split: it only gets its marker)
+    const title = $('[data-split=hero]', hero) || $('h1', hero);
+    const words = title.matches('[data-split]') ? split(title, 'w') : [];
     gsap.timeline({ defaults: { ease: EASE } })
       .call(() => title.classList.add('is-in'), null, 0.7)
       .from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1)

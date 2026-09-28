@@ -44,11 +44,12 @@ const pageHero = (kicker, title, lead, extra = '', art = [], aside = '', titleSt
   </div>
 </section>`;
 
-const faq = () => `<section class="section faq">
+// `limit` shows the first few questions (home) with a way to the rest on the contact page.
+const faq = (limit = C.faq.length) => `<section class="section faq"${limit < C.faq.length ? '' : ' id="faq"'}>
   <div class="wrap faq__grid">
-    ${head({ label: 'FAQ', title: 'Questions, <em>answered</em>', lead: `Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a>`, stack: true, mark: ['question', 'sky'] })}
+    ${head({ label: 'FAQ', title: 'Questions, <em>answered</em>', lead: limit < C.faq.length ? `${C.faq.length - limit} more on the <a class="link" href="./contact#faq">contact page</a>, or ask us at <a class="link" href="mailto:${C.email}">${C.email}</a>` : `Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a>`, stack: true, mark: ['question', 'sky'] })}
     <div class="acc" data-stagger>
-      ${C.faq.map((f, i) => `<div class="acc__item"><h3><button type="button" aria-expanded="false" aria-controls="faq-${i}" id="faq-q-${i}" data-acc><span class="acc__num">${pad(i + 1)}</span><span class="acc__q">${esc(f.q)}</span><i class="acc__icon">${icon.plus}</i></button></h3><div class="acc__a" id="faq-${i}" role="region" aria-labelledby="faq-q-${i}"><div><p>${esc(f.a)}</p></div></div></div>`).join('')}
+      ${C.faq.slice(0, limit).map((f, i) => `<div class="acc__item"><h3><button type="button" aria-expanded="false" aria-controls="faq-${i}" id="faq-q-${i}" data-acc><span class="acc__num">${pad(i + 1)}</span><span class="acc__q">${esc(f.q)}</span><i class="acc__icon">${icon.plus}</i></button></h3><div class="acc__a" id="faq-${i}" role="region" aria-labelledby="faq-q-${i}"><div><p>${esc(f.a)}</p></div></div></div>`).join('')}
     </div>
   </div>
 </section>`;
