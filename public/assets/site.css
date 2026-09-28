@@ -1650,7 +1650,8 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .visit__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
-/* tablet only: the four home projects as a 2 x 2 grid instead of a sideways carousel */
+/* tablet only: the home projects as a two-column grid instead of a sideways carousel; an odd one out at the end
+   takes the whole row as a wide card (image beside the copy), so the grid never ends on a gap */
 @media (min-width: 561px) and (max-width: 1024px) {
   .stack { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .stack-card__inner { grid-template-columns: minmax(0, 1fr); gap: 18px; align-content: start; padding: 14px 14px 22px; }
@@ -1658,6 +1659,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .stack-card__copy { padding-inline: 8px; }
   .stack-card h3 { font-size: 1.35rem; }
   .stack-card p { -webkit-line-clamp: 3; }
+  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 24px; padding: 14px; }
+  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__media { grid-area: 1 / 1; min-width: 0; width: 100%; align-self: center; aspect-ratio: 16 / 11; }
+  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__copy { grid-area: 1 / 2; }
 }
 
 /* =========================================================================
