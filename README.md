@@ -36,7 +36,10 @@ src/
     home.js, about.js, services.js, projects.js, contact.js   sections for each page
     journey.js           the maze scene (home hero + "How we work"), used on home, services and about
     maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
-    doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, hero sparkles
+    stages.js            the four "How we work" stage scenes (the work of each stage, animated by public/assets/journey.js)
+    demos.js             the service demos: each service panel as a small working product (animated by site.js)
+    doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, hero sparkles, one per
+                         service (the moving band), industry and value
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
 scripts/
   check-syntax.js      `npm run check`: syntax-checks every first-party script
@@ -73,7 +76,9 @@ test/                  Automated checks (node --test)
 | The head, nav or footer on every page | `src/templates/layout.js` |
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
-| The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` (markup), `public/assets/journey.js` (scroll), `site.css` ("the journey") |
+| The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), `public/assets/journey.js` (scroll, stage scenes), `site.css` ("the journey") |
+| The service demos | `src/templates/demos.js` (markup), `public/assets/site.js` (their timelines), `site.css` ("service demos") |
+| An industry's drawing, colour or linked projects | `industries` in `src/content.js` (drawings in `src/templates/doodles.js`) |
 | The maze's pitfalls and their labels | `journey.pitfalls` in `src/content.js`; the drawings are in `src/templates/doodles.js` |
 | The contact map | `public/assets/visit3d.js` |
 | Security headers, caching, the 404 | `lib/static-server.js` |
