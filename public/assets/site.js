@@ -593,35 +593,6 @@
     gsap.to(o, { v: end, duration: 1.6, delay: inHero ? 0.6 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
   });
 
-  // Project deck (desktop): the section pins for one screen and each card slides up over the last.
-  const deck = $('[data-deck]');
-  if (deck) {
-    ScrollTrigger.matchMedia({
-      '(min-width: 861px)': () => {
-        const cards = $$('[data-stack-card]', deck);
-        deck.classList.add('is-deck');
-        const tl = gsap.timeline({
-          // On short screens the section is taller than the viewport, so pin by its bottom edge to keep the cards whole.
-          scrollTrigger: {
-            trigger: deck.closest('section'), pin: true, scrub: 0.6, invalidateOnRefresh: true,
-            start: () => (deck.closest('section').offsetHeight > innerHeight ? 'bottom bottom' : 'top top'),
-            end: () => '+=' + innerHeight * 0.45 * (cards.length - 1), // a short hold per card: the work, not the scroll
-          },
-        });
-        cards.forEach((c, i) => {
-          if (!i) return;
-          tl.fromTo(c, { yPercent: 108 }, { yPercent: 0, ease: 'none' }, i - 1)
-            .to($('.stack-card__inner', cards[i - 1]), { scale: 0.94, ease: 'none' }, i - 1)
-            .to($('.stack-card__shade', cards[i - 1]), { opacity: 0.3, ease: 'none' }, i - 1);
-        });
-        return () => {
-          deck.classList.remove('is-deck');
-          gsap.set([...cards, ...$$('.stack-card__inner, .stack-card__shade', deck)], { clearProps: 'all' });
-        };
-      },
-    });
-  }
-
   // Service demos: the active panel's demo builds up and loops while the services are on screen; the others hold their
   // finished picture (the markup). Figures count up, the cursor finds its button wherever layout put it.
   const INK = '#151514', MINT_INK = '#0b7f5b';

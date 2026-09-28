@@ -643,17 +643,26 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 .phero .hero__lead { margin-top: clamp(18px, 3vh, 28px); max-width: 54ch; }
 
 /* ---------- work: the stacked project deck (on a sheet) ---------- */
-.stack { display: grid; gap: 20px; }
+.stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .stack-card { position: relative; }
 .stack-card__inner {
   position: relative; overflow: hidden; height: 100%;
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: center;
   padding: clamp(18px, 2.2vw, 28px); border-radius: 30px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
-  transform-origin: 50% 0; will-change: transform;
 }
-/* each card is washed in its own project's colour (opaque: the deck stacks them), so the three read as three rooms */
+/* A bento of three (Carolina's big coloured work tiles): the first project across the row, its picture beside the
+   words; the other two side by side under it, picture on top. Each card is washed in its own project's colour, so the
+   three read as three rooms. (Phones keep a sideways carousel.) */
+.stack-card:first-child { grid-column: 1 / -1; }
+.stack-card:first-child .stack-card__media { align-self: center; aspect-ratio: 16 / 10; }
+.stack-card:not(:first-child) .stack-card__inner { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; align-items: stretch; gap: 22px; }
+/* the two side by side end on one line, whatever their tag lists */
+.stack-card:not(:first-child) .stack-card__copy { display: flex; flex-direction: column; align-items: flex-start; }
+.stack-card:not(:first-child) .link-arrow { margin-top: auto; padding-top: 22px; }
+.stack-card:not(:first-child) .stack-card__media { order: -1; aspect-ratio: 16 / 10; }
+.stack-card:not(:first-child) h3 { font-size: clamp(1.4rem, 1.9vw, 1.8rem); }
+.stack-card:not(:first-child) p { -webkit-line-clamp: 3; }
 .stack-card .stack-card__inner { background: radial-gradient(90% 120% at 0% 0%, color-mix(in srgb, var(--hue) 34%, transparent), transparent 70%), color-mix(in srgb, var(--hue) 12%, #111117); }
-.stack-card__shade { position: absolute; inset: 0; z-index: 2; background: #000; opacity: 0; pointer-events: none; }
 .stack-card__copy { padding-left: clamp(4px, 1vw, 14px); }
 .stack-card__num { font: 500 0.84rem/1 var(--body); color: var(--muted); font-variant-numeric: tabular-nums; }
 .stack-card h3 { margin-top: 14px; font-size: clamp(1.55rem, 2.3vw, 2.15rem); line-height: 1.06; letter-spacing: -0.035em; }
@@ -667,8 +676,6 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 }
 .tags { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px; }
 .tags li { padding: 7px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-2); font-size: 0.8rem; font-weight: 500; line-height: 1.2; }
-.stack.is-deck { display: block; position: relative; height: clamp(440px, calc(100svh - 330px), 560px); overflow: clip; overflow-clip-margin: 30px; }
-.stack.is-deck .stack-card { position: absolute; inset: 0; }
 
 /* ---------- services: pinned on desktop, scroll picks the service ---------- */
 .services { padding: 0; }
@@ -1681,19 +1688,14 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .visit__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
-/* tablet only: the home projects as a two-column grid instead of a sideways carousel; an odd one out at the end
-   takes the whole row as a wide card (image beside the copy), so the grid never ends on a gap */
+/* tablet: the bento a little tighter */
 @media (min-width: 561px) and (max-width: 1024px) {
-  .stack { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .stack-card__inner { grid-template-columns: minmax(0, 1fr); gap: 18px; align-content: start; padding: 14px 14px 22px; }
-  .stack-card__media { order: -1; aspect-ratio: 16 / 10; }
+  .stack { gap: 14px; }
+  .stack-card__inner { padding: 14px 14px 22px; }
+  .stack-card:first-child .stack-card__inner { gap: 24px; padding: 14px; }
   .stack-card__copy { padding-inline: 8px; }
-  .stack-card h3 { font-size: 1.35rem; }
+  .stack-card h3, .stack-card:not(:first-child) h3 { font-size: 1.35rem; }
   .stack-card p { -webkit-line-clamp: 3; }
-  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 24px; padding: 14px; }
-  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__media { grid-area: 1 / 1; min-width: 0; width: 100%; align-self: center; aspect-ratio: 16 / 11; }
-  .stack:not(.is-deck) .stack-card:last-child:nth-child(odd) .stack-card__copy { grid-area: 1 / 2; }
 }
 
 /* =========================================================================
@@ -1769,7 +1771,6 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .stack-card__inner { grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; padding: 12px 12px 20px; }
   .stack-card__media { order: -1; aspect-ratio: 16 / 11; }
   .stack-card__copy { padding-inline: 6px; }
-  .stack-card__shade { display: none; }
   .stack-card h3 { font-size: 1.3rem; }
   .stack-card p { -webkit-line-clamp: 3; font-size: 0.93rem; }
   .stack-card .tags li:nth-child(n + 3) { display: none; }

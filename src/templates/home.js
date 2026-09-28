@@ -1,4 +1,4 @@
-// Home page sections: the stacked project cards and "Who we are" (the hero and "How we work" are templates/journey.js).
+// Home page sections: the selected work and "Who we are" (the hero and "How we work" are templates/journey.js).
 'use strict';
 
 const C = require('../content');
@@ -8,9 +8,8 @@ const { SVC_ART } = require('./shared');
 const { doodle } = require('./doodles');
 
 // --hue: the project's reel accent, which washes the card (site.css); the pastel --tint stays for the picture's frame
-const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')};--i:${i}" data-stack-card>
+const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')};--i:${i}">
   <div class="stack-card__inner">
-    <i class="stack-card__shade" aria-hidden="true"></i>
     <div class="stack-card__copy">
       <span class="stack-card__num">${pad(i + 1)} / ${pad(total)}</span>
       <h3 style="${vt(p, 'title')}">${esc(p.title)}</h3>
@@ -22,8 +21,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
   </div>
 </article>`;
 
-// The section pins (site.js); the dark sheet sits inside it, because a pinned element with side margins is
-// measured without them and would run off the right edge.
+// The three latest projects as a bento (site.css), each playing its reel.
 const work = () => `<section class="work" id="work">
   <div class="section sheet">
   <div class="wrap">
@@ -34,7 +32,7 @@ const work = () => `<section class="work" id="work">
       side: btn('View all work', './projects', 'btn--ghost'),
       mark: ['star', 'tomato'],
     })}
-    <div class="stack" data-deck>${C.projects.slice(0, 3).map((p, i) => projectCard(p, i, 3)).join('')}</div>
+    <div class="stack">${C.projects.slice(0, 3).map((p, i) => projectCard(p, i, 3)).join('')}</div>
   </div>
   </div>
 </section>`;
