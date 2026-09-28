@@ -26,7 +26,7 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
             <h1 class="hero__title" data-split="hero">${headline(C.hero.headline)}</h1>
             <div class="hero__aside">${doodle('arrow', { color: 'tomato', cls: 'hero__arrow' })}
               <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
-              <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See how we work', '#how', 'btn--ghost')}</div>
+              <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact#form-brief')}${btn('See how we work', '#how', 'btn--ghost')}</div>
             </div>
             ${proof()}
           </div>

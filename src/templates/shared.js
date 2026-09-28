@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, cal, icon, head, pic } = require('./helpers');
+const { esc, pad, cal, icon, head, pic, btn } = require('./helpers');
 const { doodle } = require('./doodles');
 
 // Each service's icon and marker colour (as in the tools map), and a service as a small tile: its icon, name and a
@@ -59,7 +59,7 @@ const faq = (limit = C.faq.length) => `<section class="section sheet sheet--day 
 // in the browser and swaps the form for a thank-you with the next steps. `id` keeps its ids unique on the page.
 const chips = (id, name, legend, options, required = false) => `<fieldset class="chips" data-chips="${name}"${required ? ` aria-describedby="${id}-${name}-err"` : ''}><legend>${legend}</legend><div class="chips__row">${options.map((o) => `<label class="chip"><input type="radio" name="${name}" value="${esc(o)}"${required ? ' required' : ''}><span>${esc(o)}</span></label>`).join('')}</div>${required ? `<p class="form__err" id="${id}-${name}-err" hidden></p>` : ''}</fieldset>`;
 const field = (id, name, label, control, hint = '') => `<div class="form__field"><label for="${id}-${name}">${label}</label>${control}<p class="form__err" id="${id}-${name}-err" hidden></p>${hint}</div>`;
-const brief = (id) => `<div class="form-wrap" data-reveal>
+const brief = (id) => `<div class="form-wrap" id="${id}-brief" data-reveal>
     <form class="form" data-form action="/api/contact" method="post" novalidate aria-labelledby="${id}-form-title">
       <h3 id="${id}-form-title">Start a project</h3>
       ${chips(id, 'subject', 'What do you need?', [...C.services.map((s) => s.title), 'Something else'], true)}
@@ -103,9 +103,19 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
   </div>
 </section>`;
 
+// How every other page closes: the same promise, the two ways to start (the brief on the contact page, or a call)
+// and the email, over the Demaze crew. The full brief form lives on the contact page only.
+const cta = () => `<section class="section sheet sheet--blue contact contact--cta" id="contact">
+  <div class="wrap">
+    <div class="contact__plane" aria-hidden="true" data-reveal><svg class="contact__trail" viewBox="0 0 220 90"><path pathLength="1" d="M4 84C40 80 60 40 96 46s34 36 70 18 40-40 50-56"/></svg>${doodle('plane', { color: 'sun' })}</div>
+    ${head({ label: 'Contact', title: C.closing, lead: 'Tell us what you’re building in a short brief, or talk it over on a 30-minute call.', mark: ['star', 'sun'], side: `<div class="contact__actions">${btn('Start a project', './contact#form-brief', 'btn--primary')}${btn('Book a 30-minute call', C.calendly, 'btn--ghost', 'target="_blank" rel="noopener"')}</div><a class="contact__mail" href="mailto:${C.email}"><i>${icon.mail}</i>${C.email}</a>` })}
+    <div class="crew-band" data-crew aria-hidden="true"></div>
+  </div>
+</section>`;
+
 // The moving band: what we build, each followed by its own drawing, running sideways (faster as you scroll; site.js).
 // Marker colours that read on the tomato strip.
 const FILLS = ['sun', 'sky', 'mint', 'lilac'];
 const band = () => `<div class="band" aria-hidden="true"><div class="band__track">${[0, 1].map(() => `<div class="band__run">${C.band.map(([t, d], i) => `<span>${esc(t)}</span>${doodle(d, { color: FILLS[i % FILLS.length] })}`).join('')}</div>`).join('')}</div></div>`;
 
-module.exports = { pageHero, faq, contact, band, SVC_ART, svcTile };
+module.exports = { pageHero, faq, contact, cta, band, SVC_ART, svcTile };

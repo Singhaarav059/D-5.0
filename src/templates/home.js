@@ -73,7 +73,7 @@ const build = () => `<section class="section sheet sheet--day sheet--mint build"
         <span class="build__more">Explore ${icon.arrow}</span>
       </a></li>`).join('')}
     </ul>
-    <p class="build__help"><b>Not sure which you need?</b> Tell us the problem and we’ll map the route. <a class="link" href="./contact">Start a project</a></p>
+    <p class="build__help"><b>Not sure which you need?</b> Tell us the problem and we’ll map the route. <a class="link" href="./contact#form-brief">Start a project</a></p>
   </div>
 </section>`;
 

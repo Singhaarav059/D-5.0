@@ -8,7 +8,7 @@ const { btn, caseHref } = require('./templates/helpers');
 const S = require('./templates/schema');
 const { caseHero, caseStory, caseMore } = require('./templates/case');
 const { layout } = require('./templates/layout');
-const { pageHero, faq, contact, band } = require('./templates/shared');
+const { pageHero, faq, contact, cta, band } = require('./templates/shared');
 const { work, studio, build } = require('./templates/home');
 const { hero, howWeWork } = require('./templates/journey');
 const { about, stats, whyUs, founder } = require('./templates/about');
@@ -24,7 +24,7 @@ const pages = {
     schema: [S.organization(), S.website(), S.faqPage(3)],
     // Home is the summary: the hero and its maze, how we work, proof (work), what we build (four tiles), who we
     // are, the first questions, contact. The service panels, the tools map and industries live on the services page.
-    body: [hero(), howWeWork(), band(), work(), build(), studio(), faq(3), contact()].join('\n'),
+    body: [hero(), howWeWork(), band(), work(), build(), studio(), faq(3), cta()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
@@ -34,7 +34,7 @@ const pages = {
     body: [
       pageHero('Projects', 'Products we’ve <em>designed and built</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`, '', [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']], 'projects'),
       projectsGrid(),
-      contact(),
+      cta(),
     ].join('\n'),
   }),
   services: layout({
@@ -44,7 +44,7 @@ const pages = {
     schema: [S.organization(), S.services(), S.breadcrumbs([['Home', './'], ['Services', './services']])],
     body: [
       pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline, '', [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']], 'services'),
-      band(), services(false), techStack(), industries(), contact(), // (how we work lives on home and about)
+      band(), services(false), techStack(), industries(), cta(), // (how we work lives on home and about)
     ].join('\n'),
   }),
   'about-us': layout({
@@ -54,7 +54,7 @@ const pages = {
     schema: [S.organization(), S.breadcrumbs([['Home', './'], ['About us', './about-us']])],
     body: [
       pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats(), [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']], 'about'),
-      about(), whyUs(), founder(), howWeWork(), contact(),
+      about(), whyUs(), founder(), howWeWork(), cta(),
     ].join('\n'),
   }),
   404: layout({
@@ -101,7 +101,7 @@ C.projects.forEach((p, i) => {
     reels: true,
     next: ['Next case', next.name, caseHref(next)],
     schema: [S.organization(), S.caseStudy(p, href), S.breadcrumbs([['Home', './'], ['Projects', './projects'], [p.name, href]])],
-    body: [caseHero(p, i), caseStory(p, i), caseMore(i), contact()].join('\n'),
+    body: [caseHero(p, i), caseStory(p, i), caseMore(i), cta()].join('\n'),
   });
 });
 
