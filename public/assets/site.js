@@ -7,6 +7,24 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
   // ---------- UI that works regardless of motion ----------
+  // The motion switch (footer, phone menu): on is the moving site, off the still one. The choice is saved and the page
+  // reloads, because boot.js sets the mode before anything draws (the scroll position comes back with it).
+  $$('[data-motion-switch]').forEach((b) => {
+    b.setAttribute('aria-checked', root.classList.contains('motion'));
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-checked') !== 'true';
+      try { localStorage.setItem('demaze-motion', on ? 'on' : 'off'); } catch {}
+      $$('[data-motion-switch]').forEach((x) => x.setAttribute('aria-checked', on));
+      root.classList.add('is-idle'); // everything stops at once while the page reloads
+      location.reload();
+    });
+  });
+  // Loops only run in the part of the page you can see: sections off screen are marked idle (site.css pauses them).
+  if ('IntersectionObserver' in window) {
+    const idle = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-idle', !e.isIntersecting)), { rootMargin: '120px 0px' });
+    $$('main > *, body > footer').forEach((el) => idle.observe(el));
+  }
+
   const nav = $('[data-nav]');
   const toggle = $('.nav__toggle');
   const menu = $('#menu');
@@ -361,7 +379,9 @@
     stage.addEventListener('tabchange', () => requestAnimationFrame(() => draw(true)));
     if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
       let t = 0;
-      cats.forEach((c) => c.addEventListener('pointerenter', () => { clearTimeout(t); t = setTimeout(() => c.getAttribute('aria-selected') !== 'true' && c.click(), 90); }));
+      // hover intent: a category opens once the pointer rests on it, not while it passes over on the way to the map
+      const rest = (c) => { clearTimeout(t); t = setTimeout(() => c.getAttribute('aria-selected') !== 'true' && c.click(), 180); };
+      cats.forEach((c) => { c.addEventListener('pointerenter', () => rest(c)); c.addEventListener('pointermove', () => rest(c)); c.addEventListener('pointerleave', () => clearTimeout(t)); });
       stage.addEventListener('pointerleave', () => clearTimeout(t));
     }
     new ResizeObserver(() => draw(false)).observe(stage);
@@ -719,6 +739,7 @@
     });
     tabs.forEach((t) => t.addEventListener('click', () => { if (!auto) stop(); }));
     strip.addEventListener('keydown', stop);
+    box.addEventListener('pointerdown', stop); // a tap or click anywhere in it means someone is reading: hold still
   });
 
   // Services: pin on desktop, scroll drives the active service.

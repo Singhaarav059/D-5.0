@@ -12,7 +12,7 @@
 (() => {
   'use strict';
   const root = document.documentElement;
-  if (!root.classList.contains('motion') || !window.gsap || !window.ReelKit || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!root.classList.contains('motion') || !window.gsap || !window.ReelKit) return; // (boot.js: system setting or the switch)
   // Scenes have optional parts (a toast, a sub-line); tweens aimed at a part a scene doesn't have are simply skipped.
   gsap.config({ nullTargetWarn: false });
 

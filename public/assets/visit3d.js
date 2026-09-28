@@ -4,7 +4,7 @@
 // if WebGL or the module is unavailable). Loads only when the card nears the viewport.
 
 const card = document.querySelector('[data-visit3d]');
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduced = !document.documentElement.classList.contains('motion'); // the system setting or the site's switch (boot.js)
 
 // World units, x = east, z = south. The highway leans slightly; Jagatpur Road runs east off it.
 const hwyX = (z) => -9 - z * 0.08;

@@ -11,6 +11,9 @@ const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About', './about-us'], ['Contact', './contact']];
 
+// The motion switch (footer and phone menu): site.js sets its state and saves the choice; boot.js applies it.
+const motionSwitch = `<button type="button" class="motion-switch" role="switch" aria-checked="true" data-motion-switch><span class="motion-switch__track" aria-hidden="true"><i></i></span>Animations</button>`;
+
 const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
 
 // The two menus that open from the bar: what we build (the four services, each with its icon and a line on what it
@@ -71,7 +74,7 @@ ${og ? `<meta property="og:image" content="${og.url}">
 <meta name="twitter:image" content="${og ? og.url : `${SITE_URL}/assets/img/og.png`}">
 <link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
-<script defer src="./assets/boot.js"></script>
+<script src="./assets/boot.js"></script>
 <script defer src="./assets/vendor/gsap.min.js"></script>
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
@@ -100,6 +103,7 @@ ${ambient()}
     <div class="nav__menu-foot" style="--i:${NAV.length + 1}">
       <a class="btn btn--primary" ${cal}><span>Book a call</span><i class="btn__icon">${icon.arrow}</i></a>
       <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>
+      ${motionSwitch}
     </div>
   </div>
 </header>
@@ -141,7 +145,7 @@ function footer([label, line, href]) {
       <svg class="footer__chevron" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg>
       <span class="footer__word">Demaze${doodle('star', { color: 'sun', cls: 'footer__spark' })}${doodle('star', { color: 'pink', cls: 'footer__spark footer__spark--2' })}</span>
     </div>
-    <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><a href="#main" data-top>Back to top ↑</a></div>
+    <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><span class="footer__end">${motionSwitch}<a href="#main" data-top>Back to top ↑</a></span></div>
   </div>
 </footer>`;
 }
