@@ -24,20 +24,57 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); toggle.focus(); } });
   matchMedia('(min-width: 861px)').addEventListener('change', (e) => e.matches && setMenu(false));
 
-  // Desktop links: a single pill glides to the hovered/focused link and rests on the current page.
+  // Desktop links: a glass pill glides to the hovered/focused link (or open menu) and rests on the current page.
   const links = $('[data-nav-links]');
+  let openDrop = null;
   if (links) {
     const pill = $('.nav__pill', links);
-    const current = $('a[aria-current]', links);
+    const current = $('a[aria-current], .nav__trigger.is-current', links);
+    const rest = () => openDrop || current;
     const moveTo = (a) => {
       links.classList.toggle('has-pill', !!a);
-      $$('a', links).forEach((l) => l.classList.toggle('is-pill', l === a));
+      $$('a, button', links).forEach((l) => l.classList.toggle('is-pill', l === a));
       if (a) { pill.style.setProperty('--x', a.offsetLeft + 'px'); pill.style.setProperty('--w', a.offsetWidth + 'px'); }
     };
-    links.addEventListener('pointerover', (e) => { const a = e.target.closest('a'); if (a) moveTo(a); });
-    links.addEventListener('focusin', (e) => moveTo(e.target.closest('a')));
-    links.addEventListener('pointerleave', () => moveTo(current));
-    links.addEventListener('focusout', () => moveTo(current));
+    links.addEventListener('pointerover', (e) => { const a = e.target.closest('a, button'); if (a) moveTo(a); });
+    links.addEventListener('focusin', (e) => moveTo(e.target.closest('a, button')));
+    links.addEventListener('pointerleave', () => moveTo(rest()));
+    links.addEventListener('focusout', () => moveTo(rest()));
+
+    // The menus under the bar (Projects, Services): open on hover with a short grace period so the pointer can travel
+    // into them, on click or Enter for touch and keyboard; Escape, a click elsewhere, focus leaving or the bar hiding
+    // on scroll closes them.
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const triggers = $$('[data-drop]', links);
+    let closing = 0;
+    const setDrop = (btn) => {
+      clearTimeout(closing);
+      openDrop = btn;
+      triggers.forEach((t) => {
+        const on = t === btn;
+        t.setAttribute('aria-expanded', on);
+        document.getElementById(t.getAttribute('aria-controls')).classList.toggle('is-open', on);
+      });
+      nav.classList.toggle('has-drop', !!btn);
+      moveTo(btn || current);
+    };
+    const later = () => { clearTimeout(closing); closing = setTimeout(() => setDrop(null), 220); };
+    triggers.forEach((t) => {
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      // (with a mouse the hover has already opened it, so a click keeps it open rather than toggling it shut)
+      t.addEventListener('click', () => setDrop(openDrop === t && !fine ? null : t));
+      t.addEventListener('focusout', (e) => { if (openDrop === t && !panel.contains(e.relatedTarget)) setDrop(null); });
+      if (fine) {
+        t.addEventListener('pointerenter', () => setDrop(t));
+        t.addEventListener('pointerleave', later);
+        panel.addEventListener('pointerenter', () => clearTimeout(closing));
+        panel.addEventListener('pointerleave', later);
+      }
+      panel.addEventListener('focusout', (e) => { if (!panel.contains(e.relatedTarget) && e.relatedTarget !== t) setDrop(null); });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openDrop) { const t = openDrop; setDrop(null); t.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (openDrop && !e.target.closest('.nav__bar')) setDrop(null); });
+    new MutationObserver(() => { if (nav.classList.contains('is-hidden') && openDrop) setDrop(null); }).observe(nav, { attributes: true, attributeFilter: ['class'] });
     // Place it without animating on load, once the web font has set link widths.
     const place = () => { pill.style.transition = 'none'; moveTo(current); pill.offsetWidth; pill.style.transition = ''; };
     place();

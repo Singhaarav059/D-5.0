@@ -2,16 +2,41 @@
 'use strict';
 
 const C = require('../content');
-const { SITE_URL, esc, pad, cal, icon } = require('./helpers');
+const { SITE_URL, esc, pad, cal, icon, pic } = require('./helpers');
 const { doodle } = require('./doodles');
 const { ambient } = require('./ambient');
+const { svcTile } = require('./shared');
 
 const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="28" height="28"><span>Demaze</span></a>`;
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About', './about-us'], ['Contact', './contact']];
 
+const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
+
+// The two menus that open from the bar: what we build (the four services, each with its icon and a line on what it
+// covers) and the work (the three latest case studies, straight into their stories). Each ends with a way forward.
+const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-panel>
+    <div class="nav__drop-grid">${C.services.map((s) => svcTile(s)).join('')}</div>
+    <div class="nav__drop-side">
+      <p><b>Not sure where to start?</b>Tell us the problem. In 30 minutes we’ll sketch the route through it.</p>
+      <a class="btn btn--primary btn--sm" ${cal}><span>Book a call</span><i class="btn__icon">${icon.arrow}</i></a>
+      <a class="nav__drop-link" href="./services">All services ${icon.arrow}</a>
+    </div>
+  </div>`;
+const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
+    <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="./projects#${p.image}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
+    <div class="nav__drop-side">
+      <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
+      <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
+    </div>
+  </div>`;
+const DROPS = { Projects: ['work', dropWork], Services: ['services', dropServices] };
+
 function layout({ title, description, slug, body, noindex = false }) {
-  const links = NAV.map(([t, h]) => `<a href="${h}"${h === './' + slug ? ' aria-current="page"' : ''}>${t}</a>`).join('');
+  const current = (h) => (h === './' + slug ? ' aria-current="page"' : '');
+  const links = NAV.map(([t, h]) => DROPS[t]
+    ? `<button type="button" class="nav__trigger${h === './' + slug ? ' is-current' : ''}" aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${chevronDown}</button>`
+    : `<a href="${h}"${current(h)}>${t}</a>`).join('');
   const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
 <html lang="en">
@@ -56,11 +81,14 @@ ${ambient()}
     <a class="btn btn--primary btn--sm nav__cta" ${cal}><span>Book a call</span></a>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span></button>
     <i class="nav__progress" aria-hidden="true"></i>
+    ${dropWork()}
+    ${dropServices()}
   </div>
   <div class="nav__scrim" data-nav-scrim hidden></div>
   <div class="nav__menu" id="menu" hidden>
-    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${h === './' + slug ? ' aria-current="page"' : ''}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
-    <div class="nav__menu-foot" style="--i:${NAV.length}">
+    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${current(h)}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
+    <div class="nav__menu-svcs" style="--i:${NAV.length}">${C.services.map((s) => svcTile(s)).join('')}</div>
+    <div class="nav__menu-foot" style="--i:${NAV.length + 1}">
       <a class="btn btn--primary" ${cal}><span>Book a call</span><i class="btn__icon">${icon.arrow}</i></a>
       <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>
     </div>

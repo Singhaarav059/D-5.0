@@ -5,6 +5,11 @@ const C = require('../content');
 const { esc, pad, cal, icon, head } = require('./helpers');
 const { doodle } = require('./doodles');
 
+// Each service's icon and marker colour (as in the tools map), and a service as a small tile: its icon, name and a
+// line on what it covers. Used by the nav's menu and the services hero.
+const SVC_ART = { ai: ['chip', 'lilac'], web: ['browser', 'sky'], ecom: ['bag', 'tomato'], cloud: ['cloud', 'mint'] };
+const svcTile = (s, cls = 'nav__svc') => `<a class="${cls}" href="./services#${s.id}"><span class="nav__svc-icon" style="--dd:var(--${SVC_ART[s.id][1]})">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span><b>${esc(s.title)}</b><small>${esc(s.summary)}</small></span></a>`;
+
 // Subpage heroes share the home hero's type: a label on a hairline, the headline with its quieter second half,
 // and the lead. `title` is HTML (the part in <em> is set in the quieter tone).
 // `art`: up to three [doodle, colour] drawn beside the headline on wide screens; the first colour marks the headline.
@@ -59,4 +64,4 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
 const FILLS = ['sun', 'sky', 'mint', 'lilac'];
 const band = () => `<div class="band" aria-hidden="true"><div class="band__track">${[0, 1].map(() => `<div class="band__run">${C.band.map(([t, d], i) => `<span>${esc(t)}</span>${doodle(d, { color: FILLS[i % FILLS.length] })}`).join('')}</div>`).join('')}</div></div>`;
 
-module.exports = { pageHero, faq, contact, band };
+module.exports = { pageHero, faq, contact, band, SVC_ART, svcTile };
