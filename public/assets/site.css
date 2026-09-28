@@ -1031,7 +1031,6 @@ html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s
 .sheet .stats b { background: none; padding-bottom: 0; }
 .stats small { font-size: 0.9rem; color: var(--muted); }
 .phero .stats { justify-self: stretch; margin-top: clamp(40px, 7vh, 72px); }
-.studio .stats + .reasons { margin-top: clamp(40px, 6vh, 64px); }
 
 /* ---------- about page ---------- */
 .about__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
