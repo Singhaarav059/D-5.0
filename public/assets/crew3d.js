@@ -1,17 +1,16 @@
 // The Demaze crew: plush characters living behind the page, drawn with Three.js on one fixed, full-viewport canvas
-// inside the moving background (.amb, so site.css's mask fades them behind the text column). ambient.js imports this
-// module after the page has loaded (never on Save-Data) and calls start().
+// (with their route drawn as SVG under it). ambient.js imports this module after the page has loaded (never on
+// Save-Data) and calls start().
 //
 // Each character is a little plush: cream-to-marker-coloured fur (shell texturing: every furry part is drawn as a
 // stack of shells, one GPU instance each, and a fragment shader keeps only the strands, hashed from 3D cells on the
 // rest surface, dark at the root and catching light at the tips), a smooth cream face, glossy black eyes, pink cheeks
 // and a small smile. Accessories (a cap, a bow, glasses, headphones) tell them apart.
 //
-// They act rather than idle: two pass a football, a couple type on laptops, one dances in headphones with notes
-// rising, and runners cross the bottom of the screen, faster while the page scrolls. Near the cursor they turn and
-// wave. Wide screens get the whole crew (sitting and music in the side margins, football and runners along the
-// bottom); tablets get the football and runners; phones only the runners. With reduced motion everyone holds one
-// pose and the canvas is drawn once.
+// They work the Demaze process on a maze route down the right margin: an idea is had, designed, built and launched,
+// over and over (see "the journey" below). They watch the idea as it travels, and near the cursor they turn and
+// wave. They play where the right margin has room for them (wide screens); with reduced motion they hold one moment
+// of the journey and the canvas is drawn once.
 //
 // The camera is orthographic in CSS pixels (world y up, 0 at the bottom of the viewport), so placing a character is
 // placing it on the screen.
@@ -30,10 +29,8 @@ const SHELLS = 18;
 
 /* ---------- palette ---------- */
 
-// fur: the cream plush and softened marker colours (site.css --sun, --mint, --lilac, --pink, --sky, --tomato)
-const FUR = {
-  cream: '#eee1cb', honey: '#f1c878', mint: '#93d8bf', lilac: '#c4b3f2', pink: '#f3b1c9', sky: '#a2cfee', tomato: '#f3a287',
-};
+// fur: the cream plush and softened marker colours (site.css --sun, --mint, --lilac)
+const FUR = { cream: '#eee1cb', honey: '#f1c878', mint: '#93d8bf', lilac: '#c4b3f2' };
 const FACE = '#f7efe2';
 const INK = '#1d1c1a';
 
@@ -44,7 +41,7 @@ const FILL_DIR = new Vector3(0.85, 0.05, 0.5).normalize();
 const KEY = new Color('#fff4e6').multiplyScalar(2.5);
 const FILL = new Color('#dfe8ff').multiplyScalar(0.55);
 const SKY = new Color('#fffaf2').multiplyScalar(0.95);
-const GROUND = new Color('#b9ab97').multiplyScalar(0.95);
+const GROUND = new Color('#b4b9c9').multiplyScalar(0.95); // the page's cool light bouncing up
 
 /* ---------- fur ---------- */
 
@@ -170,40 +167,6 @@ function glow(ctx, w, h, stops) {
   ctx.fillRect(0, 0, w, h);
 }
 
-// A football's panels: the truncated icosahedron's faces are the ones whose planes a ray from the centre meets
-// first; the twelve pentagons (at an icosahedron's corners) are black, the twenty hexagons white, seams in between.
-function ballTexture() {
-  const p = (1 + Math.sqrt(5)) / 2;
-  const ico = [];
-  for (const a of [-1, 1]) for (const b of [-p, p]) ico.push([0, a, b], [a, b, 0], [b, 0, a]);
-  const vs = ico.map((v) => new Vector3(...v).normalize());
-  const hex = [];
-  const edge = vs[0].distanceTo(vs.reduce((m, v) => (v !== vs[0] && v.distanceTo(vs[0]) < m.distanceTo(vs[0]) ? v : m), vs[1]));
-  for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) for (let k = j + 1; k < 12; k++) {
-    const ok = (a, b) => Math.abs(vs[a].distanceTo(vs[b]) - edge) < 1e-3;
-    if (ok(i, j) && ok(j, k) && ok(i, k)) hex.push(vs[i].clone().add(vs[j]).add(vs[k]).normalize());
-  }
-  const faces = [...vs.map((n) => [n, 1 / 1.027, true]), ...hex.map((n) => [n, 1, false])];
-  return canvasTexture(256, 128, (ctx, w, h) => {
-    const img = ctx.createImageData(w, h);
-    const dir = new Vector3();
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-      const th = ((y + 0.5) / h) * Math.PI, ph = ((x + 0.5) / w) * TAU;
-      dir.set(-Math.cos(ph) * Math.sin(th), Math.cos(th), Math.sin(ph) * Math.sin(th));
-      let best = -1, second = -1, pent = false;
-      for (const [n, k, isP] of faces) {
-        const s = dir.dot(n) * k;
-        if (s > best) { second = best; best = s; pent = isP; } else if (s > second) second = s;
-      }
-      const seam = best - second < 0.012;
-      const v = seam ? 70 : pent ? 28 : 246;
-      const i = (y * w + x) * 4;
-      img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v - (pent || seam ? 0 : 4); img.data[i + 3] = 255;
-    }
-    ctx.putImageData(img, 0, 0);
-  });
-}
-
 function assets() {
   if (G) return;
   G = {
@@ -221,18 +184,11 @@ function assets() {
   T = {
     blush: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(255,128,150,0.62)'], [0.55, 'rgba(255,140,160,0.28)'], [1, 'rgba(255,150,170,0)']])),
     shadow: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(40,30,20,0.34)'], [0.6, 'rgba(40,30,20,0.14)'], [1, 'rgba(40,30,20,0)']])),
-    note: canvasTexture(64, 64, (c) => {
-      c.fillStyle = '#fff';
-      c.beginPath(); c.ellipse(22, 46, 11, 8, -0.4, 0, TAU); c.fill();
-      c.beginPath(); c.ellipse(46, 40, 11, 8, -0.4, 0, TAU); c.fill();
-      c.fillRect(30, 12, 4, 34); c.fillRect(54, 6, 4, 34);
-      c.beginPath(); c.moveTo(30, 12); c.lineTo(58, 6); c.lineTo(58, 14); c.lineTo(30, 20); c.fill();
-    }),
+    glow: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(255,255,255,1)'], [0.35, 'rgba(255,255,255,0.45)'], [1, 'rgba(255,255,255,0)']])),
     logo: canvasTexture(64, 64, (c) => {
       c.fillStyle = '#f7f4ee';
       c.beginPath(); c.moveTo(18, 14); c.lineTo(50, 32); c.lineTo(18, 50); c.lineTo(27, 32); c.fill();
     }),
-    ball: ballTexture(),
   };
 }
 
@@ -251,9 +207,7 @@ function materials() {
     shadow: new THREE.MeshBasicMaterial({ map: T.shadow, transparent: true, depthWrite: false, toneMapped: false }),
     ink: std(INK, 0.4),
     lens: new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.05, transmission: 0, transparent: true, opacity: 0.16 }),
-    ball: std('#ffffff', 0.45, { map: T.ball }),
     alu: std('#e2dfd9', 0.42),
-    aluDark: std('#8f8c86', 0.5, { metalness: 0.3 }),
     logo: new THREE.MeshBasicMaterial({ map: T.logo, transparent: true, depthWrite: false, toneMapped: false }),
   };
 }
@@ -457,18 +411,6 @@ function blink(c, dt, t) {
 
 /* ---------- props ---------- */
 
-function pouf(color) {
-  const g = new Group();
-  // soft fabric: the marker colour, dusted towards the page
-  const tone = new Color(color).lerp(new Color('#d7d2c8'), 0.35);
-  part(g, G.blob, std(tone, 1), [0, 0.27, 0], [0.9, 0.28, 0.9]);
-  part(g, G.small, std(tone.clone().multiplyScalar(0.8), 1), [0, 0.53, 0], [0.08, 0.03, 0.08]);
-  const sh = part(g, G.plane, M.shadow, [0, 0.01, 0], [2.4, 2.2, 1]);
-  sh.rotation.x = -Math.PI / 2;
-  sh.renderOrder = -1;
-  return g;
-}
-
 function laptop() {
   const g = new Group();
   part(g, new THREE.BoxGeometry(0.96, 0.05, 0.64), M.alu, [0, 0.025, 0]);
@@ -479,342 +421,372 @@ function laptop() {
   part(lid, new THREE.BoxGeometry(0.96, 0.03, 0.64), M.alu, [0, 0.015, -0.32]);
   const logo = part(lid, G.plane, M.logo, [0, 0.032, -0.32], [0.2, 0.2, 1]);
   logo.rotation.x = -Math.PI / 2;
-  return { g, lid };
+  return g;
 }
 
-function football() {
+const halo = (color, size) => {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: T.glow, color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  sp.scale.setScalar(size);
+  return sp;
+};
+
+// A light bulb: the idea, before it is had.
+function bulb() {
   const g = new Group();
-  const ball = part(g, G.blob, M.ball, [0, 0, 0], [0.3, 0.3, 0.3]);
-  const sh = part(g, G.plane, M.shadow, [0, 0, 0], [0.8, 0.5, 1]);
+  const glass = std('#fff8e1', 0.2, { emissive: new Color('#ffcb45'), emissiveIntensity: 0, transparent: true, opacity: 0.92 });
+  part(g, G.small, glass, [0, 0.12, 0], [0.3, 0.32, 0.3]);
+  part(g, new THREE.CylinderGeometry(0.12, 0.1, 0.2, 14), std('#b9bdc8', 0.35, { metalness: 0.4 }), [0, -0.22, 0]);
+  const h = halo('#ffcb45', 1.6);
+  h.position.y = 0.12;
+  g.add(h);
+  return { g, glass, halo: h };
+}
+
+// A pencil for the designer's hand.
+function pencil() {
+  const g = new Group();
+  part(g, new THREE.CylinderGeometry(0.055, 0.055, 0.46, 10), std('#a58bff', 0.5), [0, 0, 0]);
+  part(g, new THREE.ConeGeometry(0.055, 0.14, 10), std('#f3d9b4', 0.7), [0, -0.3, 0]).rotation.x = Math.PI;
+  part(g, new THREE.ConeGeometry(0.022, 0.05, 8), M.ink, [0, -0.36, 0]).rotation.x = Math.PI;
+  return g;
+}
+
+// A small rocket: the product's ride out.
+function rocket() {
+  const g = new Group();
+  const body = new Group();
+  g.add(body);
+  const white = std('#f7f8fb', 0.32), red = std('#ff6242', 0.45);
+  part(body, new THREE.CylinderGeometry(0.25, 0.3, 0.95, 22), white, [0, 0.78, 0]);
+  part(body, new THREE.ConeGeometry(0.25, 0.46, 22), red, [0, 1.48, 0]);
+  const win = part(body, new THREE.CircleGeometry(0.11, 20), std('#62c1ff', 0.15, { emissive: new Color('#62c1ff'), emissiveIntensity: 0.25 }), [0, 0.96, 0.265]);
+  win.rotation.x = -0.05;
+  for (let k = 0; k < 3; k++) {
+    const fin = part(body, new THREE.BoxGeometry(0.05, 0.36, 0.26), red, [0, 0.42, 0]);
+    fin.rotation.y = (k / 3) * TAU + 0.5;
+    fin.translateZ(0.3);
+  }
+  const flame = new Group();
+  flame.position.y = 0.26;
+  body.add(flame);
+  part(flame, new THREE.ConeGeometry(0.17, 0.55, 16), new THREE.MeshBasicMaterial({ color: '#ffcb45', toneMapped: false, transparent: true, opacity: 0.95 }), [0, -0.3, 0]).rotation.x = Math.PI;
+  part(flame, new THREE.ConeGeometry(0.09, 0.32, 12), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }), [0, -0.2, 0.01]).rotation.x = Math.PI;
+  const h = halo('#ff9a4a', 1.4);
+  h.position.y = -0.35;
+  flame.add(h);
+  flame.scale.setScalar(0);
+  return { g, body, flame };
+}
+
+// The idea itself as it travels: a glowing orb; design gives it a ring, build makes it a thing (a cube).
+function idea() {
+  const g = new Group();
+  const core = part(g, G.small, std('#fff4c8', 0.3, { emissive: new Color('#ffcb45'), emissiveIntensity: 1.1 }), null, [0.2, 0.2, 0.2]);
+  const h = halo('#ffcb45', 1.1);
+  g.add(h);
+  const ring = part(g, new THREE.TorusGeometry(0.34, 0.035, 10, 40), std('#a58bff', 0.3, { emissive: new Color('#a58bff'), emissiveIntensity: 0.4 }));
+  ring.rotation.set(1.2, 0.2, 0);
+  const cube = part(g, new THREE.BoxGeometry(0.34, 0.34, 0.34), new THREE.MeshPhysicalMaterial({ color: '#3d5afe', roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.1, emissive: new Color('#3d5afe'), emissiveIntensity: 0.25 }));
+  const sh = part(g, G.plane, M.shadow, null, [0.7, 0.45, 1]);
   sh.rotation.x = -Math.PI / 2;
   sh.renderOrder = -1;
-  return { g, ball, sh };
+  return { g, core, halo: h, ring, cube, sh };
 }
 
-/* ---------- the acts ---------- */
+/* ---------- the journey ---------- */
 
-// Each act owns its characters and props, is laid out in screen pixels and updated every frame.
-// zone() is the screen rectangle (top-left origin) it occupies, which ambient.js keeps its doodles out of.
+// The crew's one act is the Demaze process, run on a maze route down the right margin: at Idea a bulb lights and
+// the idea drops out of it; it rolls along the route to Design, where it is sketched and gains a ring; to Build,
+// where it hops onto a laptop and is coded into a product; to Launch, where it is loaded into a rocket that lifts
+// off, and a new idea is had at the top. Everyone watches the idea travel. Whoever the cursor comes near stops to
+// wave, and if it's their turn, the idea waits for them.
 
-function place(obj, x, y, s, z = 0) {
-  obj.position.set(x, y, z);
-  obj.scale.setScalar(s);
-}
+const STAGES = [
+  { label: 'Idea', mark: '#ffcb45', fur: FUR.cream, acc: 'cap', accColor: '#ffcb45' },
+  { label: 'Design', mark: '#a58bff', fur: FUR.lilac, acc: 'bow', accColor: '#ff85b8' },
+  { label: 'Build', mark: '#62c1ff', fur: FUR.mint, acc: 'headphones', accColor: '#3d5afe' },
+  { label: 'Launch', mark: '#ff6242', fur: FUR.honey, acc: 'glasses' },
+];
 
+// [phase, seconds]: the work at each stage, and the road between them
+const PHASES = [['idea', 3.4], ['road', 2.2], ['design', 3.4], ['road', 2.2], ['build', 3.6], ['road', 2.2], ['launch', 5]];
+const CYCLE = PHASES.reduce((a, [, d]) => a + d, 0);
 
-// Two players passing a football along the bottom.
-class Football {
-  constructor(scene) {
-    this.a = makeCharacter({ fur: FUR.cream, acc: 'cap', accColor: '#ff6242' });
-    this.b = makeCharacter({ fur: FUR.mint, acc: 'bow', accColor: '#ffcb45' });
-    this.ball = football();
-    this.chars = [this.a, this.b];
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (name, attrs = {}) => {
+  const el = document.createElementNS(SVGNS, name);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+};
+
+class Journey {
+  constructor(scene, still) {
     this.group = new Group();
-    this.group.add(this.a.root, this.b.root, this.ball.g);
     scene.add(this.group);
-    this.kicker = 0; // who has the ball
-    this.phase = 'hold';
+    this.still = still;
+    this.crew = STAGES.map((st) => {
+      const c = makeCharacter(st);
+      this.group.add(c.root);
+      return c;
+    });
+    this.chars = this.crew;
+    const [ideaC, designC, buildC] = this.crew;
+    this.bulb = bulb();
+    ideaC.root.add(this.bulb.g);
+    this.bulb.g.position.set(-0.55, 4.05, 0.2);
+    this.bulb.g.scale.setScalar(0.9);
+    this.pencil = pencil();
+    designC.arms[0].add(this.pencil);
+    this.pencil.position.set(0, -0.66, 0.1);
+    this.pencil.rotation.x = -0.5;
+    this.laptop = laptop();
+    buildC.torso.add(this.laptop);
+    this.laptop.position.set(0, 0.27, 0.62);
+    this.rocket = rocket();
+    this.group.add(this.rocket.g);
+    this.orb = idea();
+    this.group.add(this.orb.g);
     this.t = 0;
-    this.u = 0;
-  }
-  layout({ W, s, fx, y }) {
-    this.s = s;
-    this.gap = 7.8 * s;
-    this.x0 = fx;
-    place(this.a.root, fx, y, s, 40);
-    place(this.b.root, fx + this.gap, y, s, 40);
-    this.ball.g.scale.setScalar(s);
-    this.y = y;
-    this.foot = 1.05 * s; // ball rests this far in front of a player
-    if (this.bx === undefined) this.bx = fx + this.foot;
-    this.ball.g.position.set(this.bx, y + 0.3 * s * 0.98, 60);
-    this.W = W;
-  }
-  zone(H) {
-    const s = this.s;
-    return { x: this.x0 - 1.4 * s, y: H - this.y - 4 * s, w: this.gap + 2.8 * s, h: 4.2 * s };
-  }
-  update(t, dt, env) {
-    const s = this.s, A = this.a, B = this.b;
-    const yawA = Math.PI / 2 - 0.62, yawB = -(Math.PI / 2 - 0.62);
-    const from = this.kicker === 0 ? this.x0 + this.foot : this.x0 + this.gap - this.foot;
-    const to = this.kicker === 0 ? this.x0 + this.gap - this.foot : this.x0 + this.foot;
-    const kicker = this.kicker === 0 ? A : B, keeper = this.kicker === 0 ? B : A;
-    this.t += dt;
-    let kick = 0, trap = 0;
-    if (this.phase === 'hold') {
-      this.bx = from;
-      // a player who is waving holds on to the ball
-      if (this.t > 0.9 && kicker.att < 0.2) { this.phase = 'windup'; this.t = 0; }
-    } else if (this.phase === 'windup') {
-      kick = smooth(clamp(this.t / 0.42, 0, 1)); // leg back
-      if (this.t > 0.42) { this.phase = 'strike'; this.t = 0; }
-    } else if (this.phase === 'strike') {
-      kick = 1 - 2.2 * smooth(clamp(this.t / 0.13, 0, 1)); // swing through
-      if (this.t > 0.13) { this.phase = 'roll'; this.t = 0; this.dur = rnd(1.05, 1.35); }
-    } else if (this.phase === 'roll') {
-      const u = clamp(this.t / this.dur, 0, 1);
-      kick = lerp(-1.2, 0, smooth(clamp(this.t / 0.5, 0, 1)));
-      this.bx = lerp(from, to, 1 - (1 - u) * (1 - u) * (1 - 0.35 * u));
-      trap = smooth(clamp((u - 0.72) / 0.28, 0, 1));
-      if (u >= 1) { this.phase = 'trap'; this.t = 0; }
-    } else if (this.phase === 'trap') {
-      trap = 1 - smooth(clamp(this.t / 0.35, 0, 1));
-      this.bx = to;
-      if (this.t > 0.35) { this.kicker = 1 - this.kicker; this.phase = 'hold'; this.t = rnd(-0.4, 0.2); }
-    }
-    // roll the ball: its turn is the distance over its radius
-    const dx = this.bx - this.ball.g.position.x;
-    this.ball.ball.rotation.z -= dx / (0.3 * s);
-    this.ball.g.position.x = this.bx;
-    const hop = this.phase === 'roll' ? Math.max(0, Math.sin(clamp(this.t / 0.34, 0, 1) * Math.PI)) * 0.35 * s : 0;
-    this.ball.g.position.y = this.y + 0.3 * s + hop;
-    this.ball.sh.position.y = -0.3 - hop / s + 0.01;
-    this.ball.sh.scale.set(0.8 - hop / s * 0.4, 0.5 - hop / s * 0.25, 1);
+    this.v = new Vector3();
 
-    for (const c of this.chars) {
-      const mine = c === kicker; // the leg nearer the camera does the kicking
+    // the route, its stations and their names, drawn crisp as SVG under the canvas
+    this.svg = svgEl('svg', { class: 'amb__route', 'aria-hidden': 'true' });
+    this.glowPath = this.svg.appendChild(svgEl('path', { class: 'amb__route-glow', pathLength: '1' }));
+    this.linePath = this.svg.appendChild(svgEl('path', { class: 'amb__route-line' }));
+    this.donePath = this.svg.appendChild(svgEl('path', { class: 'amb__route-done', pathLength: '1' }));
+    this.stops = STAGES.map((st) => {
+      const g = this.svg.appendChild(svgEl('g', { class: 'amb__stop', style: `--mk:${st.mark}` }));
+      const disc = g.appendChild(svgEl('ellipse'));
+      const text = g.appendChild(svgEl('text'));
+      text.textContent = st.label;
+      return { g, disc, text };
+    });
+  }
+
+  // Four stations down the right margin, alternating either side of its middle, as one block centred on the screen.
+  // The route runs down the middle and turns in to each station, like a corridor of the maze; it ends at the rocket.
+  layout({ W, H, edge, s }) {
+    this.W = W; this.H = H; this.s = s; this.edge = edge;
+    const cx = W - edge / 2, off = Math.min(1.3 * s + 6, edge / 2 - 1.15 * s - 6); // whole, inside the margin
+    const gap = clamp((H - 220) / 3.4, 4.6 * s, 7.4 * s);
+    const y0 = H / 2 - 1.5 * gap + 1.4 * s; // the first station's feet (screen y), the block centred
+    this.pts = STAGES.map((_, i) => ({ x: i === 3 ? cx + off : cx + (i % 2 ? off : -off), y: y0 + gap * i }));
+    this.cx = cx;
+    const route = [[this.pts[0].x, this.pts[0].y]], at = [0];
+    for (let i = 0; i < 3; i++) {
+      const p = this.pts[i], n = this.pts[i + 1];
+      route.push([cx, p.y], [cx, n.y]);
+      if (i < 2) route.push([n.x, n.y]);
+      at.push(route.length - 1);
+    }
+    this.route = route.map(([x, y]) => ({ x, y: H - y })); // world (y up)
+    this.segs = [];
+    const dist = [0];
+    for (let i = 1; i < this.route.length; i++) {
+      const a = this.route[i - 1], b = this.route[i], len = Math.hypot(b.x - a.x, b.y - a.y);
+      this.segs.push({ a, b, d0: dist[i - 1], len });
+      dist.push(dist[i - 1] + len);
+    }
+    this.total = dist[dist.length - 1];
+    this.stationD = at.map((k) => dist[k]);
+    const dAttr = route.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
+    for (const p of [this.glowPath, this.linePath, this.donePath]) p.setAttribute('d', dAttr);
+    this.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    this.pts.forEach((p, i) => {
+      const { disc, text } = this.stops[i];
+      disc.setAttribute('cx', p.x); disc.setAttribute('cy', p.y);
+      disc.setAttribute('rx', (1.15 * s).toFixed(1)); disc.setAttribute('ry', (0.38 * s).toFixed(1));
+      text.setAttribute('x', p.x); text.setAttribute('y', (p.y + 0.38 * s + 13).toFixed(1));
+    });
+    this.crew.forEach((c, i) => {
+      place(c.root, this.pts[i].x, H - this.pts[i].y, s, 20 + i * 5);
+      c.face = this.pts[i].x < cx ? 0.38 : -0.38; // turned a little towards the route
+    });
+    this.pad = { x: cx - 0.1 * s, y: H - this.pts[3].y };
+    this.rocket.g.scale.setScalar(s);
+    this.orb.g.scale.setScalar(s);
+    this.top = this.pts[0].y - 4.4 * s;
+  }
+
+  zone() { return { x: this.W - this.edge, y: 0, w: this.edge, h: this.H }; } // the whole right margin is theirs
+
+  at(d) { // a point on the route, d pixels along it
+    d = clamp(d, 0, this.total);
+    for (const sg of this.segs) if (d <= sg.d0 + sg.len) {
+      const u = sg.len ? (d - sg.d0) / sg.len : 0;
+      return { x: lerp(sg.a.x, sg.b.x, u), y: lerp(sg.a.y, sg.b.y, u) };
+    }
+    return this.route[this.route.length - 1];
+  }
+
+  // where the cycle is: phase index, name, seconds into it, and its length
+  phase(t) {
+    let acc = 0;
+    for (let i = 0; i < PHASES.length; i++) {
+      const [name, dur] = PHASES[i];
+      if (t < acc + dur) return { i, name, u: t - acc, dur };
+      acc += dur;
+    }
+    return { i: PHASES.length - 1, name: 'launch', u: PHASES[PHASES.length - 1][1], dur: PHASES[PHASES.length - 1][1] };
+  }
+
+  update(t, dt, env) {
+    const s = this.s, H = this.H;
+    const [ideaC, designC, buildC, launchC] = this.crew;
+    // the cycle's clock: a little faster while the page scrolls; it waits for a station whose worker is waving
+    const ph0 = this.phase(this.t);
+    const worker = { idea: ideaC, design: designC, build: buildC, launch: launchC }[ph0.name];
+    if (!(worker && worker.att > 0.4 && !(ph0.name === 'launch' && ph0.u > 0.8))) this.t = (this.t + dt * (1 + 0.6 * (env.rush - 1))) % CYCLE;
+    const ph = this.phase(this.t);
+    const u = ph.u, st = [0, 0, 1, 1, 2, 2, 3][ph.i]; // the station the idea is at, or has left
+    const o = this.orb;
+    // the idea's rest spot at a station: on the route side of its worker; at Launch, the foot of the rocket
+    const foot = (i) => (i === 3 ? { x: this.pad.x, y: this.pad.y + 0.2 * s } : { x: this.pts[i].x + (this.pts[i].x < this.cx ? 0.62 : -0.62) * s, y: H - this.pts[i].y + 0.2 * s });
+    const wp = (obj) => obj.getWorldPosition(this.v);
+    let pos, floor, show = { core: 1, ring: 0, cube: 0 }, bulbLit = 0, done = 0;
+    let rocketY = 0, flame = 0, rocketIn = 1, shake = 0;
+
+    // how far the idea has come, for the route's lit part
+    const dAt = (i) => this.stationD[i];
+    if (ph.name === 'idea') {
+      // the bulb flickers on, the idea drops out of it
+      const f = u < 0.9 ? 0 : u < 1.3 ? (Math.sin(u * 60) > 0 ? 1 : 0.2) : u < 2.9 ? 1 : 1 - smooth(clamp((u - 2.9) / 0.5, 0, 1));
+      bulbLit = f;
+      const from = wp(this.bulb.g).clone(), to = foot(0);
+      const k = smooth(clamp((u - 1.8) / 0.8, 0, 1));
+      pos = { x: lerp(from.x, to.x, k), y: lerp(from.y, to.y, k) + Math.sin(k * Math.PI) * 0.6 * s };
+      show.core = smooth(clamp((u - 1.5) / 0.4, 0, 1));
+      floor = to.y;
+      done = 0;
+    } else if (ph.name === 'road') {
+      const k = smooth(u / ph.dur);
+      const d = lerp(dAt(st), dAt(st + 1), k);
+      const p = this.at(d);
+      const a = foot(st), b = foot(st + 1);
+      // leave the rest spot onto the route, travel, step off at the next
+      const edge = Math.min(1, Math.min(k, 1 - k) / 0.12);
+      pos = { x: lerp(k < 0.5 ? a.x : b.x, p.x, edge), y: lerp(k < 0.5 ? a.y : b.y, p.y, edge) + 0.22 * s * edge };
+      show = { core: st >= 2 ? 0 : 1, ring: st === 1 ? 1 : 0, cube: st >= 2 ? 1 : 0 };
+      floor = pos.y - 0.22 * s * edge;
+      done = d / this.total;
+    } else if (ph.name === 'design') {
+      // up in front of the designer, sketched, a ring drawn round it, and down again
+      const a = foot(1);
+      const up = smooth(clamp(u / 0.5, 0, 1)) * (1 - smooth(clamp((u - 2.8) / 0.5, 0, 1)));
+      pos = { x: a.x - 0.1 * s, y: a.y + up * 1.3 * s + Math.sin(t * 3) * 0.05 * s * up };
+      show.ring = smooth(clamp((u - 0.7) / 1.8, 0, 1));
+      floor = a.y;
+      done = dAt(1) / this.total;
+    } else if (ph.name === 'build') {
+      // a hop onto the laptop, coded into a thing, a hop back down
+      const a = foot(2), top = wp(this.laptop).clone();
+      const on = smooth(clamp(u / 0.6, 0, 1)) * (1 - smooth(clamp((u - 2.9) / 0.6, 0, 1)));
+      const hop = Math.sin(clamp(u / 0.6, 0, 1) * Math.PI) + Math.sin(clamp((u - 2.9) / 0.6, 0, 1) * Math.PI);
+      pos = { x: lerp(a.x, top.x, on), y: lerp(a.y, top.y + 0.55 * s, on) + hop * 0.45 * s };
+      const m = smooth(clamp((u - 1.5) / 1, 0, 1));
+      show = { core: 1 - m, ring: 1 - m, cube: m };
+      floor = on > 0.5 ? top.y + 0.1 * s : a.y; // on the laptop, its shadow falls on the keys
+      done = dAt(2) / this.total;
+    } else { // launch
+      const a = foot(3), hatch = { x: this.pad.x, y: this.pad.y + 1.1 * s };
+      const k = smooth(clamp(u / 0.7, 0, 1));
+      pos = { x: lerp(a.x, hatch.x, k), y: lerp(a.y, hatch.y, k) + Math.sin(k * Math.PI) * 0.9 * s };
+      show = { core: 0, ring: 0, cube: 1 - smooth(clamp((u - 0.5) / 0.25, 0, 1)) };
+      floor = lerp(a.y, hatch.y, k);
+      shake = u > 0.8 && u < 1.6 ? 1 : 0;
+      flame = smooth(clamp((u - 0.9) / 0.4, 0, 1)) * (u < 3.4 ? 1 : 0);
+      const lift = Math.max(0, u - 1.5);
+      rocketY = 0.5 * 2600 * lift * lift * (s / 30); // accelerating, off the top of the screen by about u = 3.2
+      rocketIn = u < 3.9 ? 1 : 0;
+      if (u >= 3.9) rocketIn = smooth(clamp((u - 4.1) / 0.5, 0, 1)); // a new one rolls out
+      if (u >= 3.9) rocketY = 0;
+      done = 1 - smooth(clamp((u - 2.2) / 1.2, 0, 1));
+    }
+    if (this.still) done = Math.max(done, dAt(2) / this.total);
+
+    // the idea
+    o.g.position.set(pos.x, pos.y, 60);
+    const vis = Math.max(show.core, show.ring, show.cube);
+    o.core.scale.setScalar(0.2 * Math.max(0.001, show.core));
+    o.halo.material.opacity = 0.8 * show.core;
+    o.ring.scale.setScalar(Math.max(0.001, show.ring));
+    o.ring.rotation.z = t * 1.2;
+    o.cube.scale.setScalar(Math.max(0.001, show.cube));
+    o.cube.rotation.set(0.5 + t * 0.4, t * 0.7, 0);
+    o.g.visible = vis > 0.01;
+    // its shadow stays on the ground under it, fainter the higher it is
+    const height = (pos.y - floor) / s;
+    o.sh.position.y = -height - 0.18;
+    o.sh.scale.set(0.7 * vis, 0.45 * vis, 1);
+    o.sh.visible = height < 3;
+
+    // the bulb and the rocket
+    this.bulb.glass.emissiveIntensity = 1.6 * bulbLit;
+    this.bulb.halo.material.opacity = 0.9 * bulbLit;
+    const r = this.rocket;
+    r.g.position.set(this.pad.x + (shake ? Math.sin(t * 70) * 0.03 * s : 0), this.pad.y + rocketY, 10);
+    r.body.scale.setScalar(Math.max(0.001, rocketIn));
+    r.flame.scale.set(flame, flame * (0.85 + 0.25 * Math.sin(t * 40)), flame);
+    r.g.visible = rocketIn > 0.01 && this.pad.y + rocketY < H + 80;
+
+    this.svgProgress = done;
+
+    // the crew: each watches the idea and does their part when it's with them
+    this.crew.forEach((c, i) => {
       const p = pose0();
-      p.yaw = c === A ? yawA : yawB;
-      const breathe = Math.sin(t * 2.1 + (c === A ? 0 : 1.7));
-      p.bob = 0.015 * breathe;
-      p.alz = 0.32; p.arz = -0.32;
-      p.hx = 0.06;
-      if (mine) {
-        const k = kick; // >0 back, <0 through
-        const leg = k * 0.95;
-        if (c === A) p.lrx = leg; else p.llx = leg;
-        p.lean = -k * 0.12;
-        p.alx = -k * 0.6; p.arx = k * 0.5;
-        p.alz = 0.32 + Math.abs(k) * 0.35; p.arz = -0.32 - Math.abs(k) * 0.35;
-        p.bob += -Math.abs(k) * 0.05;
-      } else {
-        const lift = c === keeper ? trap : 0;
-        if (c === A) p.lrx = -0.55 * lift; else p.llx = -0.55 * lift;
-        p.hx = 0.1 + 0.06 * lift;
-        // watches the ball come
-        p.hy = this.phase === 'roll' ? (c === A ? -0.15 : 0.15) : 0;
+      const cw = c.root.position;
+      const headY = cw.y + (NECK_Y + HEAD_UP * 0.6) * s;
+      const tx = (ph.name === 'launch' && u > 1.4 && i === 3) ? r.g.position.x : pos.x;
+      const ty = (ph.name === 'launch' && u > 1.4 && i === 3) ? Math.min(r.g.position.y, H) : pos.y;
+      const lx = clamp((tx - cw.x) / (5 * s), -1, 1), ly = clamp((ty - headY) / (5 * s), -1, 1);
+      p.yaw = c.face;
+      p.hy = clamp(lx * 0.9 - c.face * 0.6, -0.9, 0.9);
+      p.hx = clamp(-ly * 0.45, -0.45, 0.35);
+      p.bob = 0.012 * Math.sin(t * 2.1 + i * 1.3);
+      const mine = st === i && ph.name !== 'road';
+      if (i === 0) { // Idea: points at the bulb, jumps when it lights
+        const lit = ph.name === 'idea' ? smooth(clamp((u - 0.3) / 0.5, 0, 1)) * (1 - smooth(clamp((u - 2.8) / 0.5, 0, 1))) : 0;
+        p.arz = lerp(-0.38, -2.55, lit); p.arx = -0.2 * lit;
+        const jump = ph.name === 'idea' ? Math.max(0, Math.sin(clamp((u - 1.25) / 0.45, 0, 1) * Math.PI)) : 0;
+        p.bob += jump * 0.35;
+        p.alz = 0.38 + jump * 0.9;
+        if (ph.name === 'idea' && u < 1.8) p.hx = -0.35; // looking up at the bulb
+      } else if (i === 1) { // Design: sketches in the air round the idea
+        const work = mine ? smooth(clamp((u - 0.4) / 0.4, 0, 1)) * (1 - smooth(clamp((u - 2.7) / 0.4, 0, 1))) : 0;
+        p.arx = lerp(-0.1, -1.25 + Math.sin(t * 7) * 0.18, work);
+        p.arz = lerp(-0.38, -0.2 + Math.cos(t * 7) * 0.14, work);
+        p.lean = 0.08 * work;
+      } else if (i === 2) { // Build: sits with the laptop, typing in bursts while the idea is on it
+        p.llx = -1.5; p.lrx = -1.5;
+        p.bob = -0.24 + 0.01 * Math.sin(t * 2);
+        p.lean = 0.12;
+        const typing = mine && u > 0.5 && u < 2.9 ? 1 : 0.25 * Math.max(0, Math.sin(t * 0.7));
+        const tap = (k) => Math.max(0, Math.sin(t * 17 + k)) * 0.08 * typing;
+        p.alx = -0.72 - tap(0); p.arx = -0.72 - tap(1.7);
+        p.alz = 0.12; p.arz = -0.12;
+        if (mine) p.hx = Math.max(p.hx, 0.2);
+        this.laptop.rotation.x = 0.05 - p.lean;
+      } else { // Launch: cheers the rocket up, then waves it off
+        const cheer = ph.name === 'launch' ? smooth(clamp((u - 1.4) / 0.4, 0, 1)) * (1 - smooth(clamp((u - 3.4) / 0.5, 0, 1))) : 0;
+        p.alz = lerp(0.38, 2.5 + Math.sin(t * 9) * 0.2, cheer);
+        p.arz = lerp(-0.38, -2.5 - Math.sin(t * 9 + 1) * 0.2, cheer);
+        p.bob += cheer * Math.abs(Math.sin(t * 9)) * 0.08;
       }
       blink(c, dt, t);
       apply(c, wave(c, p, t, env, false));
-    }
-  }
-}
-
-// A couple sitting on poufs with laptops on their laps: typing in bursts, reading, now and then turning to each other.
-class Laptops {
-  constructor(scene) {
-    this.a = makeCharacter({ fur: FUR.lilac, acc: 'glasses', side: 1 });
-    this.b = makeCharacter({ fur: FUR.honey, acc: 'bow', accColor: '#ff85b8', side: -1 });
-    this.chars = [this.a, this.b];
-    this.group = new Group();
-    scene.add(this.group);
-    this.seats = this.chars.map((c, i) => {
-      const seat = new Group();
-      seat.add(pouf(i ? '#62c1ff' : '#2fd0a0'));
-      seat.add(c.root);
-      const lap = laptop();
-      c.torso.add(lap.g); // the laptop sits on the thighs, which ride with the torso here
-      lap.g.position.set(0, 0.27, 0.62);
-      lap.g.rotation.x = 0.05;
-      c.lap = lap;
-      this.group.add(seat);
-      return seat;
-    });
-    for (const c of this.chars) {
-      c.root.position.y = 0;
-      c.shadow.visible = false;
-      c.typing = rnd(0, 2);
-      c.chat = rnd(4, 9);
-    }
-  }
-  // Side by side, a little smaller than the rest of the crew when the margin is narrow.
-  layout({ s, x, y, room }) {
-    s = Math.min(s, room / 4.7);
-    this.s = s;
-    this.x = x;
-    this.y = y;
-    this.seats.forEach((seat, i) => {
-      seat.position.set(x + (i ? 1.2 : -1.2) * s, y, i ? -30 : 20);
-      seat.scale.setScalar(s);
-      seat.rotation.y = i ? -0.42 : 0.42;
-      seat.children[1].position.y = 0.17; // sitting on the pouf
     });
   }
-  zone(H) {
-    const s = this.s;
-    return { x: this.x - 2.4 * s, y: H - this.y - 3.9 * s, w: 4.8 * s, h: 4.1 * s };
-  }
-  update(t, dt, env) {
-    this.chars.forEach((c, i) => {
-      const other = this.chars[1 - i];
-      c.typing -= dt;
-      c.chat -= dt;
-      if (c.typing < -rnd(0.8, 1.6)) c.typing = rnd(1.5, 3.5); // a burst of typing, then a pause to read
-      if (c.chat < 0 && other.chat > 1.5) { c.chat = rnd(7, 12); c.talk = 1.6; }
-      c.talk = Math.max(0, (c.talk || 0) - dt);
-      const typing = c.typing > 0;
-      const p = pose0();
-      p.sit = 1;
-      p.llx = -1.5; p.lrx = -1.5;
-      p.lean = 0.14 + 0.02 * Math.sin(t * 1.3 + i);
-      p.hx = 0.24;
-      const tap = (k) => (typing ? Math.max(0, Math.sin(t * 17 + k + i * 2)) * 0.07 + Math.sin(t * 5.3 + k * 3) * 0.02 : 0);
-      p.alx = -0.72 - tap(0); p.arx = -0.72 - tap(1.7);
-      p.alz = 0.12; p.arz = -0.12;
-      if (!typing) { p.alx = -0.55; p.arx = -0.55; p.hx = 0.18; p.hz = 0.05 * Math.sin(t * 0.8 + i); }
-      // a turn to the other one, with a little laugh
-      const talk = smooth(clamp(Math.min(c.talk, 1.6 - c.talk) / 0.3, 0, 1));
-      if (talk > 0) {
-        p.hy = lerp(p.hy, i ? -0.75 : 0.75, talk);
-        p.hx = lerp(p.hx, -0.05 + Math.sin(t * 16) * 0.03, talk);
-        p.twist = (i ? -0.2 : 0.2) * talk;
-      }
-      const listen = smooth(clamp(Math.min(other.talk || 0, 1.6 - (other.talk || 0)) / 0.4, 0, 1));
-      if (listen > 0) p.hy = lerp(p.hy, i ? -0.35 : 0.35, listen);
-      blink(c, dt, t);
-      c.lap.g.rotation.x = 0.05 - p.lean; // the laptop stays level on the lap
-      const w = wave(c, p, t, env, false);
-      // sitting down, the yaw belongs to the seat
-      c.root.parent.rotation.y = lerp(i ? -0.42 : 0.42, 0, smooth(c.att));
-      w.yaw = 0;
-      apply(c, w);
-    });
-  }
-}
 
-// One dancing in headphones, notes rising.
-class Dancer {
-  constructor(scene) {
-    this.c = makeCharacter({ fur: FUR.pink, acc: 'headphones', accColor: '#62c1ff' });
-    this.chars = [this.c];
-    this.group = new Group();
-    this.group.add(this.c.root);
-    scene.add(this.group);
-    this.notes = [];
-    this.nextNote = 0;
-    this.spin = { at: rnd(6, 10), t: -1 };
-    this.colors = ['#ff6242', '#ffcb45', '#2fd0a0', '#a58bff', '#62c1ff', '#ff85b8'].map((c) => new Color(c));
-  }
-  layout({ s, x, y }) {
-    this.s = s; this.x = x; this.y = y;
-    place(this.c.root, x, y, s, 0);
-  }
-  zone(H) {
-    const s = this.s;
-    return { x: this.x - 2 * s, y: H - this.y - 5.6 * s, w: 4 * s, h: 5.8 * s };
-  }
-  update(t, dt, env) {
-    const c = this.c, s = this.s;
-    const beat = t * (112 / 60) * Math.PI; // half a turn a beat
-    const b = Math.abs(Math.sin(beat));
-    const p = pose0();
-    p.bob = b * 0.16;
-    p.sway = Math.sin(beat) * 0.1;
-    p.twist = Math.sin(beat * 0.5) * 0.25;
-    p.hx = -0.05 + b * 0.1;
-    p.hz = Math.sin(beat) * 0.12;
-    const bar = Math.floor(beat / TAU) % 4; // arms change every two beats
-    const up = Math.max(0, Math.sin(beat));
-    if (bar < 2) { p.alz = 0.5 + 2.1 * up; p.arz = -0.5 - 2.1 * Math.max(0, -Math.sin(beat)); }
-    else { p.alx = -1.2 - 0.3 * up; p.arx = -1.2 - 0.3 * (1 - up); p.alz = 0.5; p.arz = -0.5; }
-    p.llx = Math.sin(beat) * 0.28; p.lrx = -Math.sin(beat) * 0.28;
-    p.yaw = Math.sin(beat * 0.25) * 0.35;
-    // now and then a full spin
-    if (t > this.spin.at && this.spin.t < 0 && c.att < 0.1) this.spin.t = 0;
-    if (this.spin.t >= 0) {
-      this.spin.t += dt;
-      const u = clamp(this.spin.t / 0.9, 0, 1);
-      p.yaw += smooth(u) * TAU;
-      p.bob += Math.sin(u * Math.PI) * 0.15;
-      if (u >= 1) { this.spin.t = -1; this.spin.at = t + rnd(8, 14); }
-    }
-    blink(c, dt, t);
-    apply(c, wave(c, p, t, env, false));
-
-    // notes float up from the headphones, sway and fade
-    if (t > this.nextNote && !env.still) {
-      this.nextNote = t + rnd(0.45, 0.9);
-      const m = new THREE.SpriteMaterial({ map: T.note, color: this.colors[Math.floor(Math.random() * 6)], transparent: true, depthWrite: false, toneMapped: false });
-      const sp = new THREE.Sprite(m);
-      const side = Math.random() < 0.5 ? -1 : 1;
-      sp.userData = { t0: t, x: this.x + side * 1.2 * s, y: this.y + 3.3 * s, dx: side * rnd(0.3, 1.1) * s, sway: rnd(0, TAU), size: rnd(0.34, 0.5) * s };
-      this.group.add(sp);
-      this.notes.push(sp);
-    }
-    for (const n of this.notes.slice()) {
-      const d = n.userData, u = (t - d.t0) / 2.4;
-      if (u >= 1) { this.group.remove(n); n.material.dispose(); this.notes.splice(this.notes.indexOf(n), 1); continue; }
-      n.position.set(d.x + d.dx * u + Math.sin(u * 7 + d.sway) * 0.2 * s, d.y + u * 2.4 * s, 80);
-      n.material.opacity = Math.min(1, u * 6) * (1 - smooth(clamp((u - 0.55) / 0.45, 0, 1)));
-      n.material.rotation = Math.sin(u * 6 + d.sway) * 0.3;
-      n.scale.setScalar(d.size * (0.7 + 0.3 * Math.min(1, u * 4)));
-    }
-  }
-}
-
-// Runners crossing the bottom strip, faster while the page scrolls.
-class Runners {
-  constructor(scene, max) {
-    this.scene = scene;
-    this.max = max;
-    this.pool = [
-      makeCharacter({ fur: FUR.sky, acc: 'cap', accColor: '#ffcb45' }),
-      makeCharacter({ fur: FUR.tomato, acc: 'headphones', accColor: '#2fd0a0' }),
-      makeCharacter({ fur: FUR.cream, acc: 'bow', accColor: '#a58bff' }),
-      makeCharacter({ fur: FUR.honey, acc: 'glasses' }),
-    ];
-    this.live = [];
-    this.next = 0.6;
-  }
-  get chars() { return this.live.map((r) => r.c); }
-  layout({ W, s, y, max }) {
-    this.W = W; this.s = s; this.y = y; this.max = max;
-    for (const r of this.live) { r.c.root.scale.setScalar(s); r.c.root.position.y = y; }
-  }
-  zone(H) { return { x: 0, y: H - this.y - 3.8 * this.s, w: this.W, h: 3.8 * this.s }; }
-  spawn(t, x) {
-    const free = this.pool.filter((c) => !this.live.some((r) => r.c === c));
-    if (!free.length || this.live.length >= this.max) return;
-    const c = free[Math.floor(Math.random() * free.length)];
-    const dir = Math.random() < 0.5 ? 1 : -1;
-    const s = this.s * rnd(0.9, 1.05);
-    c.root.scale.setScalar(s);
-    const start = x ?? (dir > 0 ? -2 * s : this.W + 2 * s);
-    c.root.position.set(start, this.y, -40 - this.live.length * 30);
-    this.scene.add(c.root);
-    this.live.push({ c, dir, speed: rnd(1.9, 2.5), phase: rnd(0, TAU), s });
-  }
-  update(t, dt, env) {
-    if (t > this.next && !env.still) { this.spawn(t); this.next = t + rnd(3.5, 8) * (this.max > 1 ? 1 : 1.6); }
-    for (const r of this.live.slice()) {
-      const { c, dir } = r;
-      const slow = 1 - 0.55 * smooth(c.att);
-      const v = r.speed * 2 * env.rush * slow; // head radii a second
-      c.root.position.x += dir * v * r.s * dt;
-      r.phase += (v * dt / 2.3) * TAU; // a stride covers about 2.3 head radii, so the feet don't slide
-      const ph = r.phase, sw = Math.sin(ph);
-      const p = pose0();
-      p.yaw = dir * (Math.PI / 2 - 0.5);
-      p.bob = Math.abs(Math.cos(ph)) * 0.2 - 0.05;
-      p.lean = 0.22 + 0.06 * (env.rush - 1);
-      p.llx = sw * 0.95; p.lrx = -sw * 0.95;
-      p.alx = -sw * 1.0; p.arx = sw * 1.0;
-      p.alz = 0.18; p.arz = -0.18;
-      p.hx = -0.1;
-      blink(c, dt, t);
-      apply(c, wave(c, p, t, env, true));
-      c.lag.value.set(-dir * 0.9 * env.rush, 0.2, 0);
-      const x = c.root.position.x;
-      if ((dir > 0 && x > this.W + 2.5 * r.s) || (dir < 0 && x < -2.5 * r.s)) {
-        this.scene.remove(c.root);
-        this.live.splice(this.live.indexOf(r), 1);
-      }
-    }
+  draw() { // the route lights up behind the idea as it travels
+    const off = (1 - this.svgProgress).toFixed(4);
+    this.donePath.style.strokeDashoffset = off;
+    this.glowPath.style.strokeDashoffset = off;
   }
 }
 
 /* ---------- the stage ---------- */
+
+const place = (obj, x, y, s, z = 0) => { obj.position.set(x, y, z); obj.scale.setScalar(s); };
 
 export function start(layer, { still = false } = {}) {
   const canvas = document.createElement('canvas');
@@ -842,117 +814,92 @@ export function start(layer, { still = false } = {}) {
   const camera = new THREE.OrthographicCamera(0, 1, 1, 0, -2000, 2000);
   camera.position.z = 1000;
 
-  const acts = { football: new Football(scene), laptops: new Laptops(scene), dancer: new Dancer(scene), runners: new Runners(scene, 2) };
+  const journey = new Journey(scene, still);
   const env = { W: 0, H: 0, still, rush: 1, pointer: { x: -1e4, y: -1e4 } };
-  let active = [];
+  let on = false; // the crew plays only where the right margin has room for them
 
-  // Who plays where, by screen: the side margins of a wide screen hold the couple and the dancer; the bottom holds
-  // the football and the runners; tablets keep the bottom, phones only the runners.
   const layout = () => {
     const W = innerWidth, H = innerHeight;
     env.W = W; env.H = H;
-    const wrap = W <= 560 ? W - 32 : Math.min(1200, W - 48);
-    const edge = (W - wrap) / 2;
-    const tier = W >= 1280 && edge >= 70 ? 'wide' : W >= 861 ? 'mid' : 'narrow';
-    const px = tier === 'wide' ? clamp(edge * 0.95, 96, 128) : tier === 'mid' ? 84 : 64; // a character's height
+    const edge = (W - Math.min(1200, W - 48)) / 2;
+    on = edge >= 84 && H >= 560;
+    canvas.hidden = journey.svg.hidden = !on;
+    if (!on) return;
+    const px = clamp(edge * 0.55, 60, 80); // a character's height
     const s = px / HEIGHT;
     env.s = s;
     // a full-viewport canvas: 1.5 device pixels per CSS pixel at most keeps the GPU's fill cheap; the fur's strands
     // are sized to the pixels they land on
     const dpr = Math.min(devicePixelRatio || 1, 1.5);
-    furShared.uDensity.value = clamp((s * dpr) / 1.5, 18, 44);
+    furShared.uDensity.value = clamp((s * dpr) / 1.2, 18, 44);
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.left = 0; camera.right = W; camera.top = H; camera.bottom = 0;
     camera.updateProjectionMatrix();
-
-    for (const a of Object.values(acts)) a.group && (a.group.visible = false);
-    active = [];
-    if (tier === 'wide') {
-      acts.laptops.layout({ s, x: edge / 2 + 12, y: H * 0.3, room: edge + 30 }); // may reach into the mask's fade
-      acts.dancer.layout({ s, x: W - Math.max(edge * 0.5, 1.8 * s + 6), y: H * 0.5 });
-      active.push(acts.laptops, acts.dancer);
-    }
-    if (tier !== 'narrow') {
-      // in the right margin if it fits there, else as far right as it goes
-      const span = 7.8 * s + 2.8 * s;
-      acts.football.layout({ W, s, fx: (edge >= span + 24 ? W - edge / 2 - span / 2 : W - 12 - span) + 1.4 * s, y: 14 });
-      active.push(acts.football);
-    }
-    acts.runners.layout({ W, s, y: 8, max: tier === 'narrow' ? 1 : 2 });
-    active.push(acts.runners);
-    for (const a of active) if (a.group) a.group.visible = true;
+    journey.layout({ W, H, edge, s });
   };
 
   let last = performance.now() / 1000, t = 0, raf = 0, lastScroll = scrollY, rushAim = 1;
   const frame = (nowMs) => {
     raf = 0;
+    if (!on) return;
     const now = nowMs / 1000;
     const dt = Math.min(0.05, Math.max(0, now - last));
     last = now;
     t += dt;
-    // scroll speed (px/s) hurries the runners; it eases back when the page stops
+    // scroll speed (px/s) hurries the idea along; it eases back when the page stops
     const v = Math.abs(scrollY - lastScroll) / Math.max(dt, 1e-3);
     lastScroll = scrollY;
-    rushAim = damp(rushAim, 1 + Math.min(2.2, v / 650), v > 0 ? 8 : 2, dt);
+    rushAim = damp(rushAim, 1 + Math.min(1.5, v / 900), v > 0 ? 6 : 2, dt);
     env.rush = rushAim;
     step(dt);
     renderer.render(scene, camera);
+    journey.draw();
     if (!still && !document.hidden) raf = requestAnimationFrame(frame);
   };
 
   const step = (dt) => {
-    for (const a of active) {
-      for (const c of a.chars) {
-        const wp = c.root.getWorldPosition(new Vector3());
-        const hx = wp.x, hy = wp.y + (c.hips.position.y + NECK_Y + HEAD_UP * 0.6) * env.s;
-        const dx = env.pointer.x - hx, dy = (env.H - env.pointer.y) - hy;
-        const d = Math.hypot(dx, dy);
-        const near = d < Math.max(120, env.s * 5.2);
-        c.att = damp(c.att, near ? 1 : 0, near ? 5 : 2.5, dt);
-        if (near) { // look towards the cursor, else ease back to the act
-          c.look.x = damp(c.look.x, clamp(dx / 160, -1, 1), 6, dt);
-          c.look.y = damp(c.look.y, clamp(-dy / 160, -1, 1), 6, dt);
-        }
-        // fur tips trail movement a little
-        if (a !== acts.runners) {
-          const vx = (wp.x - c.prev.x) / Math.max(dt, 1e-3) / (env.s * 10);
-          c.lag.value.set(damp(c.lag.value.x, -clamp(vx, -1, 1), 6, dt), 0, 0);
-        }
-        c.prev.copy(wp);
+    for (const c of journey.chars) {
+      const wp = c.root.position;
+      const hx = wp.x, hy = wp.y + (c.hips.position.y + NECK_Y + HEAD_UP * 0.6) * env.s;
+      const dx = env.pointer.x - hx, dy = (env.H - env.pointer.y) - hy;
+      const near = Math.hypot(dx, dy) < Math.max(70, env.s * 4.5);
+      c.att = damp(c.att, near ? 1 : 0, near ? 5 : 2.5, dt);
+      if (near) { // look towards the cursor, else ease back to the act
+        c.look.x = damp(c.look.x, clamp(dx / 120, -1, 1), 6, dt);
+        c.look.y = damp(c.look.y, clamp(-dy / 120, -1, 1), 6, dt);
       }
-      a.update(t, dt, env);
     }
+    journey.update(t, dt, env);
   };
 
   layout();
   if (still) {
-    // one finished frame: everyone mid-act
-    acts.runners.spawn(0, env.W * 0.3);
-    Object.assign(acts.football, { phase: 'roll', t: 0.5, dur: 1.2 });
-    t = 2.35;
+    // one finished frame: the idea mid-journey, on the laptop at Build
+    journey.t = PHASES.slice(0, 4).reduce((a, [, d]) => a + d, 0) + 1.2;
+    t = 2;
     step(0);
   }
-  layer.after(canvas); // its own layer, so narrow screens can show it without the doodles' mask (site.css)
+  layer.after(journey.svg, canvas); // their own layers above the doodles (site.css)
   frame(performance.now());
-  requestAnimationFrame(() => canvas.classList.add('is-in'));
+  requestAnimationFrame(() => { canvas.classList.add('is-in'); journey.svg.classList.add('is-in'); });
 
   let resizing = 0;
   addEventListener('resize', () => {
     clearTimeout(resizing);
-    resizing = setTimeout(() => { layout(); if (still || !raf) frame(performance.now()); }, 150);
+    resizing = setTimeout(() => { layout(); if (on && (still || !raf)) { last = performance.now() / 1000; frame(performance.now()); } }, 150);
   });
   if (!still) {
     addEventListener('pointermove', (e) => { env.pointer.x = e.clientX; env.pointer.y = e.clientY; }, { passive: true });
     document.addEventListener('pointerleave', () => { env.pointer.x = env.pointer.y = -1e4; });
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && !raf) { last = performance.now() / 1000; raf = requestAnimationFrame(frame); }
+      if (!document.hidden && !raf && on) { last = performance.now() / 1000; raf = requestAnimationFrame(frame); }
     });
   }
-  canvas.addEventListener('webglcontextlost', () => { cancelAnimationFrame(raf); canvas.remove(); });
+  canvas.addEventListener('webglcontextlost', () => { cancelAnimationFrame(raf); canvas.remove(); journey.svg.remove(); });
 
   return {
     // screen rectangles (top-left origin) where the crew plays, for ambient.js to keep doodles out of
-    zones: () => active.map((a) => a.zone(env.H)),
+    zones: () => (on ? [journey.zone()] : []),
   };
 }

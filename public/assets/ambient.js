@@ -1,7 +1,7 @@
 /* The moving background (src/templates/ambient.js): behind every page, a few doodles of the work keep appearing in
-   free spots, drawing themselves on, floating, and after a while giving way to others. They lean with the cursor (each
-   at its own depth), drift against the scroll, and perk up when the pointer comes near. Wide screens keep most of them
-   in the margins, where sketches of the work appear too; site.css fades whatever sits behind the text column. Once the
+   the side margins, one to a slot, drawing themselves on, floating, and after a while giving way to others. They lean
+   with the cursor (each at its own depth), drift a little against the scroll, and perk up when the pointer comes near;
+   wide margins get sketches of the work too. Screens without margins get none. Once the
    page has loaded, this also brings in the 3D crew (crew3d.js), and the doodles keep out of its way. With reduced
    motion a few rest in place, drawn, and the crew holds a pose. Decoration only: the layer is aria-hidden and never
    takes the pointer. */
@@ -26,48 +26,40 @@
     const wrap = W <= 560 ? W - 32 : Math.min(1200, W - 48);
     return { W, H, edge: (W - wrap) / 2 };
   };
-  const target = () => (innerWidth >= 1400 ? 7 : innerWidth >= 1025 ? 5 : 3);
 
-  // What to draw next, and how big. Everything prefers the margins, sized to fit them; a few go behind the text
-  // column (faded there, site.css), and on narrow screens they sit at the edges, partly off-screen.
-  const choose = ({ edge, W }) => {
+  // Where doodles go: a lane down each side margin wide enough for one (not the crew's), split into evenly spaced
+  // slots, one item to a slot, each kept whole on screen, clear of the edge and the text column even as it leans and
+  // drifts. Narrower screens, where the text runs to the edges, get none.
+  const PAD = 18, TOP = 96, BOTTOM = 24, SLOT = 190;
+  const lanes = (g) => {
+    const room = g.edge - 2 * PAD;
+    if (g.W < 1025 || room < 44) return [];
+    const zones = crew ? crew.zones() : [];
+    return [{ x: PAD, w: room }, { x: g.W - g.edge + PAD, w: room }]
+      .filter((l) => !zones.some((z) => l.x < z.x + z.w && z.x < l.x + l.w));
+  };
+  const slotsPer = (g) => Math.max(2, Math.floor((g.H - TOP - BOTTOM) / SLOT));
+  const target = () => { const g = geo(); return lanes(g).length * slotsPer(g); };
+
+  // What to draw in a lane, sized to it: a sketch if it is wide, a sticker if one fits, else a doodle.
+  const choose = (lane) => {
     const r = Math.random();
     const busy = new Set(live.map((l) => l.used));
     const fresh = (list) => list.filter((el) => !busy.has(el));
-    const big = W >= 861, room = edge - 24; // what fits in a margin
-    const inMargin = (w) => room >= w * 0.85 && Math.random() < 0.85;
-    if (room >= 170 && r < 0.2) return { src: pick(fresh(kinds.sketch)), kind: 'sketch', w: Math.min(230, room - 12), margin: true };
-    // stickers need a margin or a wide screen's edge; on tablets and phones the text runs too close to the edge
-    if (r < 0.45 && W >= 1025) return { src: pick(fresh(kinds.tag)), kind: 'tag', w: 0, margin: room >= 150, edgy: room < 150 };
-    const w = Math.round(big ? Math.min(rnd(46, 82), Math.max(room - 10, 40)) : rnd(36, 54));
-    return { src: pick(fresh(kinds.doodle)), kind: 'doodle', w, margin: inMargin(w) };
-  };
-
-  // A free spot for a box of w x h: in a margin (a little over the screen edge if it must), at a screen edge (`edgy`),
-  // or anywhere; never on top of another.
-  const place = (g, w, h, margin, edgy) => {
-    for (let i = 0; i < 40; i++) {
-      let x;
-      const left = Math.random() < 0.5;
-      if (margin) {
-        const lo = left ? Math.min(10, g.edge - w - 8) : g.W - g.edge + 8, hi = left ? g.edge - w - 8 : Math.max(g.W - w - 10, g.W - g.edge + 8);
-        x = rnd(Math.min(lo, hi), Math.max(lo, hi));
-      } else if (edgy || g.W < 861) x = left ? rnd(-w * 0.35, 4) : rnd(g.W - w * 0.65, g.W - w - 4);
-      else x = rnd(10, g.W - w - 10);
-      const y = rnd(84, g.H - h - 24);
-      const box = { x, y, w, h };
-      const zones = crew ? crew.zones() : [];
-      if (zones.some((z) => x < z.x + z.w + 16 && z.x < x + w + 16 && y < z.y + z.h + 16 && z.y < y + h + 16)) continue;
-      const clear = live.every(({ box: b }) => x + w + 28 < b.x || b.x + b.w + 28 < x || y + h + 28 < b.y || b.y + b.h + 28 < y);
-      if (clear) return box;
-    }
-    return null;
+    if (lane.w >= 170 && r < 0.25) return { src: pick(fresh(kinds.sketch)), kind: 'sketch', w: Math.min(210, lane.w) };
+    if (lane.w >= 140 && r < 0.5) return { src: pick(fresh(kinds.tag)), kind: 'tag', w: 0 };
+    return { src: pick(fresh(kinds.doodle)), kind: 'doodle', w: Math.round(Math.min(rnd(44, 64), lane.w)) };
   };
 
   const spawn = () => {
     if (live.length >= target()) return;
     const g = geo();
-    const c = choose(g);
+    const n = slotsPer(g), sh = (g.H - TOP - BOTTOM) / n;
+    const free = [];
+    lanes(g).forEach((lane, li) => { for (let k = 0; k < n; k++) if (!live.some((l) => l.lane === li && l.slot === k)) free.push([lane, li, k]); });
+    if (!free.length) return;
+    const [lane, li, k] = pick(free);
+    const c = choose(lane);
     if (!c.src) return;
     const el = document.createElement('div');
     el.className = `amb__item amb__item--${c.kind}`;
@@ -78,13 +70,15 @@
     if (c.w) el.style.width = c.w + 'px';
     layer.append(el);
     const w = el.offsetWidth, h = el.offsetHeight;
-    const box = place(g, w, h, c.margin, c.edgy);
-    if (!box) { el.remove(); return; }
-    const d = c.kind === 'sketch' ? rnd(0.3, 0.6) : rnd(0.5, 1.3); // nearer things move more
-    el.style.cssText += `;left:${box.x.toFixed(0)}px;top:${box.y.toFixed(0)}px;--r:${rnd(-9, 9).toFixed(1)}deg;--d:${d.toFixed(2)}`;
+    if (w > lane.w || h > sh - 16) { el.remove(); return; } // doesn't fit whole; the next try picks again
+    const jx = Math.min(10, (lane.w - w) / 2), jy = Math.min(14, (sh - h) / 2 - 8);
+    const box = { x: lane.x + (lane.w - w) / 2 + rnd(-jx, jx), y: TOP + k * sh + (sh - h) / 2 + rnd(-jy, jy), w, h };
+    const d = c.kind === 'sketch' ? rnd(0.3, 0.6) : rnd(0.5, 1); // nearer things move more
+    const tilt = c.kind === 'doodle' ? 8 : 4;
+    el.style.cssText += `;left:${box.x.toFixed(0)}px;top:${box.y.toFixed(0)}px;--r:${rnd(-tilt, tilt).toFixed(1)}deg;--d:${d.toFixed(2)}`;
     float.style.cssText = `--dur:${rnd(5, 9).toFixed(1)}s;--delay:${rnd(-6, 0).toFixed(1)}s`;
-    const item = { el, box, d, used: c.src, born: scrollY };
-    // it leaves (after a while, or early to make way), and something else appears somewhere else
+    const item = { el, box, d, used: c.src, born: scrollY, lane: li, slot: k };
+    // it leaves (after a while, or early to make way), and something else appears in a free slot
     let timer = 0;
     item.leave = () => {
       if (!live.includes(item)) return;
@@ -97,12 +91,16 @@
     live.push(item);
     if (still) { el.classList.add('is-in'); return; }
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
-    timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(7, 12) : rnd(10, 16)) * 1000);
+    timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(8, 13) : rnd(11, 16)) * 1000);
   };
 
-  // The 3D crew (crew3d.js): loaded once the page has settled, never on Save-Data. Its zones stay free of doodles.
-  let crew = null;
-  if (layer.dataset.src && !navigator.connection?.saveData) {
+  // The 3D crew (crew3d.js): loaded once the page has settled and only when the screen has a right margin wide enough
+  // for them (now, or after a resize), never on Save-Data. Their zone stays free of doodles.
+  let crew = null, wanted = false;
+  const roomy = () => geo().edge >= 84 && innerHeight >= 560;
+  const summon = () => {
+    if (wanted || !roomy()) return;
+    wanted = true;
     const load = () => import(new URL(layer.dataset.src, document.baseURI).href).then((m) => {
       crew = m.start(layer, { still });
       // doodles already sitting where the crew plays make way
@@ -111,19 +109,24 @@
         const { x, y, w, h } = l.box;
         if (zones.some((z) => x < z.x + z.w && z.x < x + w && y < z.y + z.h && z.y < y + h)) l.leave();
       }
+      fill();
     }).catch(() => {});
     const idle = () => (window.requestIdleCallback ? requestIdleCallback(load, { timeout: 2500 }) : setTimeout(load, 400));
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+  };
+  if (layer.dataset.src && !navigator.connection?.saveData) {
+    summon();
+    addEventListener('resize', summon);
   }
 
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };
   fill();
+  // a new size means new lanes: start over
   let resizing = 0;
   addEventListener('resize', () => {
     clearTimeout(resizing);
     resizing = setTimeout(() => {
-      const { W, H } = geo();
-      live.slice().forEach((l) => { if (l.box.x > W || l.box.y > H) { l.el.remove(); live.splice(live.indexOf(l), 1); } });
+      live.splice(0).forEach((l) => l.el.remove());
       fill();
     }, 250);
   });
@@ -140,7 +143,7 @@
     layer.style.setProperty('--px', now.x.toFixed(3));
     layer.style.setProperty('--py', now.y.toFixed(3));
     for (const l of live) {
-      l.el.style.setProperty('--sy', ((l.born - scrollY) * l.d * 0.14).toFixed(1) + 'px');
+      l.el.style.setProperty('--sy', Math.max(-14, Math.min(14, (l.born - scrollY) * l.d * 0.05)).toFixed(1) + 'px'); // a little, never out of its slot
       if (fine) {
         const cx = l.box.x + l.box.w / 2, cy = l.box.y + l.box.h / 2;
         l.el.classList.toggle('is-near', Math.hypot(pointer.x - cx, pointer.y - cy) < Math.max(90, l.box.w * 0.75));

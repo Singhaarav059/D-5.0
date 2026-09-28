@@ -57,8 +57,8 @@ public/                Everything a visitor can load (the only folder the server
     reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
     journey.js         The maze scene: the home hero turning into "How we work" as you scroll
     ambient.js         The moving background: doodles coming and going behind every page; loads crew3d.js
-    crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) playing football, typing,
-                       dancing and running behind every page; they wave when the cursor comes near
+    crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) working an idea through
+                       Idea, Design, Build and Launch on a route down the right margin; they wave when the cursor comes near
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
@@ -83,7 +83,7 @@ test/                  Automated checks (node --test)
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
 | The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), `public/assets/journey.js` (scroll, stage scenes), `site.css` ("the journey") |
-| The background crew | `public/assets/crew3d.js` (the characters, their fur and faces, the acts, who plays where on each screen size) |
+| The background crew | `public/assets/crew3d.js` (the characters, their fur and faces, the journey and its timing, when they play), `site.css` ("the moving background": the route) |
 | The background doodles and stickers | `src/templates/ambient.js` (the set), `public/assets/ambient.js` (how many, where, how long), `site.css` ("the moving background") |
 | The page tone and the glass | the tokens at the top of `site.css` (`--page`, `--glass`) and the aura on `html::before` |
 | The service demos | `src/templates/demos.js` (markup), `public/assets/site.js` (their timelines), `site.css` ("service demos") |
