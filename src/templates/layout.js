@@ -21,7 +21,7 @@ function layout({ title, description, slug, body, noindex = false }) {
 <style>@view-transition { navigation: auto; }</style>
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="theme-color" content="#d7d2c8">
+<meta name="theme-color" content="#eef0f6">
 ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">

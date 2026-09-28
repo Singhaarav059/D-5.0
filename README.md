@@ -85,7 +85,7 @@ test/                  Automated checks (node --test)
 | The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), `public/assets/journey.js` (scroll, stage scenes), `site.css` ("the journey") |
 | The background crew | `public/assets/crew3d.js` (the characters, their fur and faces, the acts, who plays where on each screen size) |
 | The background doodles and stickers | `src/templates/ambient.js` (the set), `public/assets/ambient.js` (how many, where, how long), `site.css` ("the moving background") |
-| The page tone and the glass | the tokens at the top of `site.css` (`--page`, `--glass`) |
+| The page tone and the glass | the tokens at the top of `site.css` (`--page`, `--glass`) and the aura on `html::before` |
 | The service demos | `src/templates/demos.js` (markup), `public/assets/site.js` (their timelines), `site.css` ("service demos") |
 | An industry's drawing, colour or linked projects | `industries` in `src/content.js` (drawings in `src/templates/doodles.js`) |
 | The maze's pitfalls and their labels | `journey.pitfalls` in `src/content.js`; the drawings are in `src/templates/doodles.js` |

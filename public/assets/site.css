@@ -44,19 +44,20 @@
   --mint-ink: #0b7f5b;
   --lilac-ink: #6a4ee0;
   --pink-ink: #c42c6c;
-  /* the page: a warm stone a few shades deeper than paper, so light glass and paper objects stand off it */
-  --page: #d7d2c8;
-  /* glass (panels over the moving background): translucent paper, frosted, with a bright top edge */
-  --glass: rgba(250, 248, 243, 0.52);
-  --glass-strong: rgba(250, 248, 243, 0.72);
-  --glass-blur: blur(22px) saturate(1.5);
-  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 0 0 1px rgba(21, 21, 20, 0.07), 0 24px 48px -30px rgba(21, 21, 20, 0.5);
+  /* the page: a cool, bright white lit by a soft aura of the brand blue and its marker neighbours (html::before),
+     so frosted glass has colour to catch */
+  --page: #eef0f6;
+  /* glass (panels over the moving background): clear white, frosted, with a bright top edge */
+  --glass: rgba(255, 255, 255, 0.56);
+  --glass-strong: rgba(255, 255, 255, 0.76);
+  --glass-blur: blur(24px) saturate(1.8);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 0 1px rgba(28, 36, 84, 0.07), 0 24px 48px -30px rgba(28, 36, 84, 0.38);
   /* context tokens: what components use; .sheet redefines them for dark sections */
   --bg: var(--page);
   --text: var(--ink);
-  --muted: #56534c;
-  --line: rgba(21, 21, 20, 0.13);
-  --line-2: rgba(21, 21, 20, 0.26);
+  --muted: #535869;
+  --line: rgba(24, 28, 48, 0.12);
+  --line-2: rgba(24, 28, 48, 0.24);
   --surface: var(--glass);
   --surface-2: var(--glass-strong);
   --accent-text: #2d45d6; /* brand blue, deep enough for small text on paper */
@@ -76,9 +77,17 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-/* The paper: warm stock with a faint grain, and a maze under everything (a seamless tile drawn by
-   scripts/maze-tile.js, on body::before below). The hero and "How we work" solve the maze; the rest of the site is
-   written on it. */
+/* The page: bright stock under a fixed aura of brand colour, a faint grain, and a maze under everything (a seamless
+   tile drawn by scripts/maze-tile.js, on body::before below). The hero and "How we work" solve the maze; the rest of
+   the site is written on it. */
+html::before {
+  content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(58vw 48vw at 100% 0%, rgb(61 90 254 / 0.22), transparent 70%),
+    radial-gradient(46vw 44vw at 0% 30%, rgb(165 139 255 / 0.17), transparent 70%),
+    radial-gradient(54vw 44vw at 12% 100%, rgb(98 193 255 / 0.2), transparent 70%),
+    radial-gradient(40vw 34vw at 92% 88%, rgb(255 133 184 / 0.11), transparent 70%);
+}
 html { -webkit-text-size-adjust: 100%; background-color: var(--page); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), var(--page); }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
@@ -92,7 +101,7 @@ body { position: relative; }
 body::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   --edge: max(0px, calc((100% - var(--wrap)) / 2));
-  background: url(img/maze-tile.svg) -20px -20px / 800px 800px; opacity: 0.4;
+  background: url(img/maze-tile.svg) -20px -20px / 800px 800px; opacity: 0.3;
   -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--edge) - 20px), rgb(0 0 0 / 0.5) calc(var(--edge) + 110px), rgb(0 0 0 / 0.5) calc(100% - var(--edge) - 110px), #000 calc(100% - var(--edge) + 20px));
   mask-image: linear-gradient(90deg, #000 calc(var(--edge) - 20px), rgb(0 0 0 / 0.5) calc(var(--edge) + 110px), rgb(0 0 0 / 0.5) calc(100% - var(--edge) - 110px), #000 calc(100% - var(--edge) + 20px));
 }
