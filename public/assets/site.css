@@ -476,19 +476,14 @@ html.menu-open { overflow: hidden; }
    (.is-live) the track is tall and the stage sticks while the scene plays; the hero copy and the heading share one
    slot, and journey.js drives the hand-over, the maze and the stages from the scroll position. */
 .journey { position: relative; isolation: isolate; padding-block: clamp(72px, 10vw, 136px); }
-/* "How we work" is a day room: lilac under dark ink, like the day sheets. On home the scene starts as the night hero,
-   so journey.js sets --day from 0 to 1 while the heading takes over: the ground fades in and the ink blends from light
-   to dark with the scroll. Elsewhere it is lilac from the start. */
-.journey { --day: 1; --day-a: #f7f3ff; --day-b: #dcd0ff;
-  --text: color-mix(in srgb, #151514 calc(var(--day) * 100%), #f4f1ea);
-  --muted: color-mix(in srgb, #45443f calc(var(--day) * 100%), #c3c5cf);
-  --line: color-mix(in srgb, rgb(21 21 20 / 0.12) calc(var(--day) * 100%), rgb(244 241 234 / 0.12));
-  --line-2: color-mix(in srgb, rgb(21 21 20 / 0.28) calc(var(--day) * 100%), rgb(244 241 234 / 0.26));
-  --accent-text: color-mix(in srgb, #2b42e6 calc(var(--day) * 100%), #9aabff);
-  --draw: var(--text); color: var(--text); }
+/* "How we work" is a violet room: a deep, saturated ground under the night's light ink, so the paper stage scenes and
+   the marker colours stand out on it (a pale wash left them faded), and it stays apart from the blue contact block
+   that follows it on about. On home the scene starts as the night hero, so journey.js sets --day from 0 to 1 while
+   the heading takes over and the ground fades in; the ink never changes. Elsewhere it is violet from the start. */
+.journey { --day: 1; }
 .journey--home { --day: 0; }
 .journey::before { content: ''; position: absolute; inset: 0 10px; z-index: -1; pointer-events: none; border-radius: var(--r-sheet); opacity: var(--day);
-  background: radial-gradient(70% 80% at 88% 0%, var(--day-a), transparent 70%), radial-gradient(60% 70% at 0% 100%, color-mix(in srgb, var(--day-b) 70%, #fff), transparent 70%), var(--day-b); }
+  background: radial-gradient(60% 75% at 88% 0%, #8a3df0, transparent 70%), radial-gradient(70% 80% at 0% 100%, #5c1a8f, transparent 70%), #2a0f55; }
 .journey__sticky { isolation: isolate; }
 .journey--home { padding-top: clamp(112px, 15vh, 160px); }
 .journey__stage { display: grid; gap: clamp(36px, 6vh, 64px); }

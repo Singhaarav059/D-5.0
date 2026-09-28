@@ -238,7 +238,7 @@
         caption.inert = c < 0.5;
         // the headline's marker swipe and doodle play as the heading takes over from the hero
         capTitle?.classList.toggle('is-in', c > 0.6);
-        // the night hero turns into the lilac "How we work" room with the heading (site.css, .journey --day)
+        // the night hero turns into the violet "How we work" room with the heading (site.css, .journey --day)
         sec.style.setProperty('--day', c.toFixed(3));
       }
       const s = { walls: span(p, P.walls), morph: span(p, P.morph), stops: span(p, P.stops), travel: span(p, P.travel) };
