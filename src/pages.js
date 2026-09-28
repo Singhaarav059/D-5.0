@@ -18,9 +18,9 @@ const pages = {
     slug: '',
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: C.tagline,
-    // Home page order: the hero that turns into "how we work", then proof (work), what we do (services), who we
-    // are (studio), questions, contact. The tools map and industries live on the services page.
-    body: [journey({ intro: true }), band(), work(), services(), studio(), faq(), contact()].join('\n'),
+    // Home page order: the hero that turns into "how we work", then proof (work), what we do (services) and what we
+    // build it with (the tools map), who we are (studio), questions, contact. Industries live on the services page.
+    body: [journey({ intro: true }), band(), work(), services(), techStack(), studio(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
