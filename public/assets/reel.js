@@ -92,7 +92,7 @@
         return `<section class="reel__scene reel__hero reel__hero--car reel__hero--service"><div class="reel__inner">
           <div class="reel__bay">${side}
             <div class="reel__ticket"><small>${esc(h.ticketTitle || 'Service ticket')}</small>${(h.ticket || []).map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div></div>
-          <ul class="reel__tags">${h.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></section>`;
+          <ul class="reel__tags">${h.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>${example(h.ticket)}</section>`;
       }
       // Carzup: a dark showroom; the car starts, its lamps come on, it rolls forward and brakes, then is valued
       return `<section class="reel__scene reel__hero reel__hero--car reel__hero--showroom"><div class="reel__inner">
@@ -101,16 +101,21 @@
             ${car.lamps.map((l, i) => pin(l, `reel__lamp${i ? ' reel__lamp--far' : ''}`, '<b></b>')).join('')}</div></div>
           ${side}
         ${h.value ? `<div class="reel__price"><small>${esc(h.value.label || 'Valuation')}</small><b>${esc(h.value.prefix || '')}<span data-r="val">0</span>${esc(h.value.suffix || '')}</b></div>` : ''}</div>
-        <ul class="reel__tags">${h.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></section>`;
+        <ul class="reel__tags">${h.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>${example(h.value)}</section>`;
     }
     return `<section class="reel__scene reel__hero reel__hero--side"><div class="reel__inner">
       <div class="reel__view"><div class="reel__fallback">${art(FALLBACK[h.kind] || 'sparkle')}</div><canvas class="reel__gl"></canvas></div>
       <div class="reel__spec"><b class="reel__spec-title">${esc(h.title || 'The product')}</b><ul class="reel__tags">${h.tags.map((t) => `<li><i></i>${esc(t)}</li>`).join('')}</ul></div></div></section>`;
   }
 
+  // Figures in the reels (KPIs, prices, amounts) show what the product does, not the client's real numbers, so every
+  // scene that shows them says so. A scene can opt in or out with `example: true | false` in content.js.
+  const EXAMPLE = new Set(['dashboard', 'bars', 'pricing', 'currency', 'auction', 'apps', 'pipeline']);
+  const example = (on) => (on ? '<small class="reel__example">Example data</small>' : '');
+
   function markup(d, plan) {
     const size = Math.min(112, Math.round(560 / (d.name.length * 0.56)));
-    const scenes = d.scenes.map((sc) => `<section class="reel__scene rk rk--${sc.type}"><div class="reel__inner">${TYPES[sc.type].html(sc)}</div></section>`).join('');
+    const scenes = d.scenes.map((sc) => `<section class="reel__scene rk rk--${sc.type}"><div class="reel__inner">${TYPES[sc.type].html(sc)}</div>${example(sc.example ?? EXAMPLE.has(sc.type))}</section>`).join('');
     return `<div class="reel__bg">${RINGS}</div><i class="reel__flash"></i>
     <div class="reel__stage">
       <header class="reel__head"><span class="reel__chap"><b data-r="num">01</b><em>/ ${pad(plan.length)}</em><span data-r="chap">${esc(plan[0].label)}</span></span><span class="reel__name">${esc(d.name)}</span></header>
