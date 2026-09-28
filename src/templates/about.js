@@ -4,7 +4,6 @@
 const C = require('../content');
 const { esc, pad, pic, head } = require('./helpers');
 const { doodle, doodleAt } = require('./doodles');
-const { sketch } = require('./sketches');
 const { chevron, tag } = require('./maze');
 
 // What drives us, drawn: the four values as stations on a Demaze route (the maze's way through), each in the colour of
@@ -19,7 +18,6 @@ const valuesMap = () => `<svg class="values" viewBox="0 0 600 272" aria-hidden="
 
 // About page: "Who we are" beside the four "What drives us" values (the founding line is the page hero's lead).
 const about = () => `<section class="section about" id="about">
-  ${sketch('kanban', { side: 'right', color: 'sun', tilt: 2 })}
   <div class="wrap">
     ${head({ label: 'About', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
     <div class="about__grid">
@@ -41,7 +39,6 @@ const stats = () => `<ul class="stats" data-stagger>${C.metrics.map((m) => `<li>
 const reasons = () => `<ol class="reasons" data-stagger>${C.whyUs.map((w, i) => `<li class="reason"><span class="reason__num">${pad(i + 1)}</span><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></li>`).join('')}</ol>`;
 
 const whyUs = () => `<section class="section why">
-  ${sketch('chart', { color: 'mint', tilt: -2 })}
   <div class="wrap">
     ${head({ label: 'Why us', title: 'Why teams <em>choose us</em>', mark: ['star', 'sun'] })}
     ${reasons()}

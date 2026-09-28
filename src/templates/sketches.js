@@ -1,8 +1,7 @@
-// Margin sketches: the work itself, pencilled in the page margins beside the sections (a wireframe, a bezier curve,
-// code, a git graph, a chart, sticky notes, a kanban board...). Technical drawings rather than cartoons, so the paper
-// reads like a working notebook. Each is ink on a 200 x 160 sheet with one touch of marker colour and a small mono
-// annotation; ink paths carry pathLength="1" so CSS can draw them on when they come into view (site.css, "margin
-// sketches"). Always decoration: aria-hidden, and hidden where the margins are too narrow to hold them.
+// Sketches of the work itself (a wireframe, a bezier curve, code, a git graph, a chart, sticky notes, a kanban
+// board...): technical drawings rather than cartoons, so the page reads like a working notebook. Each is ink on a
+// 200 x 160 sheet with one touch of marker colour and a small mono annotation; ink paths carry pathLength="1" so CSS
+// can draw them on. The moving background (templates/ambient.js) plays them in the page margins. Decoration only.
 'use strict';
 
 const { esc } = require('./helpers');
@@ -86,9 +85,7 @@ const layers = (name) => {
   return `<g class="sk__fill">${s.fill || ''}</g><g class="sk__ink">${ink}</g>${s.dots ? `<g class="sk__dots">${s.dots}</g>` : ''}<g class="sk__text">${text}</g>`;
 };
 
-// A sketch in the page margin beside a section. `side` is left or right; `color` a marker token; `top` where it sits
-// (from the top of its section; default: level with the section's header).
-const sketch = (name, { side = 'left', color = 'sun', top = '', tilt = 0 } = {}) =>
-  `<div class="marg marg--${side}" aria-hidden="true" style="--dd:var(--${color})${top ? `;top:${top}` : ''}${tilt ? `;rotate:${tilt}deg` : ''}" data-marg><svg class="sk" viewBox="0 0 200 160" focusable="false">${layers(name)}</svg></div>`;
+// One sketch as a standalone SVG (the moving background plays them, templates/ambient.js).
+const sketchSvg = (name) => `<svg class="sk" viewBox="0 0 200 160" aria-hidden="true" focusable="false">${layers(name)}</svg>`;
 
-module.exports = { sketch, NAMES };
+module.exports = { sketchSvg, NAMES };

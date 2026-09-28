@@ -390,12 +390,6 @@
     y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 55%', scrub: true },
   }));
 
-  // Margin sketches draw themselves on as they arrive, and drift a little against the page as it scrolls.
-  $$('[data-marg]').forEach((el) => {
-    ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => el.classList.add('is-in') });
-    gsap.fromTo(el, { y: 36 }, { y: -36, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
-  });
-
   // The footer's route draws itself into the chevron when the footer arrives.
   $$('[data-draw]').forEach((el) => ScrollTrigger.create({ trigger: el, start: 'top 94%', once: true, onEnter: () => el.classList.add('is-drawn') }));
 

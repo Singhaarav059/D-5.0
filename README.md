@@ -38,7 +38,9 @@ src/
     maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
     stages.js            the four "How we work" stage scenes (the work of each stage, animated by public/assets/journey.js)
     demos.js             the service demos: each service panel as a small working product (animated by site.js)
-    sketches.js          margin sketches: the work pencilled in the page margins beside sections (wide screens)
+    ambient.js           the moving background's set: the crew, doodles, task stickers and sketches (played by assets/ambient.js)
+    characters.js        the Demaze crew: the plush characters who live in the background, each at their own task
+    sketches.js          sketches of the work (a wireframe, code, a git graph...) that the background plays in the margins
     doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, hero sparkles, one per
                          service (the moving band), industry and value
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
@@ -55,6 +57,7 @@ public/                Everything a visitor can load (the only folder the server
     reel-kit.js        The reels' scene types and illustrations
     reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
     journey.js         The maze scene: the home hero turning into "How we work" as you scroll
+    ambient.js         The moving background: the crew and doodles coming and going behind every page
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
@@ -79,6 +82,8 @@ test/                  Automated checks (node --test)
 | Colours, fonts, spacing, layout | `public/assets/site.css` (tokens at the top, then one block per section; see its contents list) |
 | Scroll motion and interactions | `public/assets/site.js` |
 | The home hero and "How we work" scene | `src/templates/journey.js` + `maze.js` + `stages.js` (markup), `public/assets/journey.js` (scroll, stage scenes), `site.css` ("the journey") |
+| The background crew, doodles and stickers | `src/templates/characters.js` (the crew), `src/templates/ambient.js` (the set), `public/assets/ambient.js` (how many, where, how long), `site.css` ("the moving background", "the crew") |
+| The page tone and the glass | the tokens at the top of `site.css` (`--page`, `--glass`) |
 | The service demos | `src/templates/demos.js` (markup), `public/assets/site.js` (their timelines), `site.css` ("service demos") |
 | An industry's drawing, colour or linked projects | `industries` in `src/content.js` (drawings in `src/templates/doodles.js`) |
 | The maze's pitfalls and their labels | `journey.pitfalls` in `src/content.js`; the drawings are in `src/templates/doodles.js` |

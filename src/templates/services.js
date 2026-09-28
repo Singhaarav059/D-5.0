@@ -8,7 +8,6 @@ const { PUBLIC, esc, pad, icon, head } = require('./helpers');
 const { serviceDemo } = require('./demos');
 const { doodle } = require('./doodles');
 const { chevron } = require('./maze');
-const { sketch } = require('./sketches');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries each tool's role).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
@@ -53,7 +52,6 @@ const techStack = () => {
   const tabs = stackTabs();
   const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
   return `<section class="section kmap" id="tools" data-kmap>
-  ${sketch('code', { color: 'mint', tilt: -3 })}${sketch('git', { side: 'right', color: 'sun', top: 'calc(clamp(72px, 10vw, 136px) + 240px)', tilt: 2 })}
   <div class="wrap">
     ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead), mark: ['gear', 'mint'] })}
     <div class="kmap__stage" style="--mk:var(--${kmapArt(tabs[0].tab)[1]})" data-tabs data-kmap-stage data-reveal>
@@ -94,7 +92,6 @@ const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active
 
 const services = (withHead = true) => `<section class="section services" data-services>
   <div class="services__pin">
-    ${sketch('pen', { side: 'right', color: 'lilac', top: '22%', tilt: 3 })}
     <div class="wrap services__grid">
       <div class="services__side">
         ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true, mark: ['pencil', 'lilac'] } : { label: 'Services', title: 'What we <em>build</em>', stack: true, mark: ['pencil', 'lilac'] })}
@@ -110,7 +107,6 @@ const services = (withHead = true) => `<section class="section services" data-se
 // itself, a bar filling on the current tile, until the visitor picks one (site.js).
 const workIn = (keys) => keys.map((k) => C.projects.find((p) => p.image === k)).filter(Boolean);
 const industries = () => `<section class="section industries" id="industries">
-  ${sketch('chart', { color: 'tomato', tilt: -2 })}
   <div class="wrap">
     ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.`, mark: ['star', 'sky'] })}
   </div>

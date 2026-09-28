@@ -4,14 +4,11 @@
 const C = require('../content');
 const { esc, pad, cal, icon, head } = require('./helpers');
 const { doodle } = require('./doodles');
-const { sketch } = require('./sketches');
 
 // Subpage heroes share the home hero's type: a label on a hairline, the headline with its quieter second half,
 // and the lead. `title` is HTML (the part in <em> is set in the quieter tone).
 // `art`: up to three [doodle, colour] drawn beside the headline on wide screens; the first colour marks the headline.
-// `sk`: [sketch, colour] pencilled in the left margin (templates/sketches.js).
-const pageHero = (kicker, title, lead, extra = '', art = [], sk = null) => `<section class="phero" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
-  ${sk ? sketch(sk[0], { color: sk[1], top: 'clamp(120px, 17vh, 176px)', tilt: -3 }) : ''}
+const pageHero = (kicker, title, lead, extra = '', art = []) => `<section class="phero" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
   ${art.length ? `<div class="phero__art" aria-hidden="true">${art.map(([n, c], i) => doodle(n, { color: c, cls: `phero__dd phero__dd--${i + 1}` })).join('')}</div>` : ''}
   <div class="wrap phero__content">
     <p class="hero__label" data-hero-fade>${esc(kicker)}</p>
@@ -22,7 +19,6 @@ const pageHero = (kicker, title, lead, extra = '', art = [], sk = null) => `<sec
 </section>`;
 
 const faq = () => `<section class="section faq">
-  ${sketch('chat', { color: 'sky', tilt: -2 })}
   <div class="wrap faq__grid">
     ${head({ label: 'FAQ', title: 'Questions, <em>answered</em>', lead: `Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a>`, stack: true, mark: ['question', 'sky'] })}
     <div class="acc" data-stagger>

@@ -4,6 +4,7 @@
 const C = require('../content');
 const { SITE_URL, esc, pad, cal, icon } = require('./helpers');
 const { doodle } = require('./doodles');
+const { ambient } = require('./ambient');
 
 const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="28" height="28"><span>Demaze</span></a>`;
 
@@ -19,7 +20,7 @@ function layout({ title, description, slug, body, noindex = false }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="theme-color" content="#f4f1ea">
+<meta name="theme-color" content="#d7d2c8">
 ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
 <meta property="og:title" content="${esc(title)}">
@@ -41,9 +42,11 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/site.js"></script>
-<script defer src="./assets/journey.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${slug === 'projects' || !slug ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
+<script defer src="./assets/journey.js"></script>
+<script defer src="./assets/ambient.js"></script>${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${slug === 'projects' || !slug ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
 </head>
 <body class="page-${slug || 'home'}">
+${ambient()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
   <div class="nav__bar">
