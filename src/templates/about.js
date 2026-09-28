@@ -13,7 +13,7 @@ const valuesMap = () => `<svg class="values" viewBox="0 0 600 272" aria-hidden="
   <circle class="values__start" cx="22" cy="74" r="7"/>
   <path class="values__route" d="M22 74H190V196H330V74H450V196H566" pathLength="1"/>
   <path class="values__mark" d="${chevron(582, 196, 30)}"/>
-  ${VALUES.map(([d, c, label, x, y, side], i) => `<g class="values__stop" data-v="${i}" style="--i:${i}"><g class="values__pop"><circle class="values__halo" style="--dd:var(--${c})" cx="${x}" cy="${y}" r="38"/><circle class="values__disc" cx="${x}" cy="${y}" r="30"/>${doodleAt(d, x, y, 50, { color: c })}${tag(label, x, y + side * 54, 13, c, side * 4)}</g></g>`).join('')}
+  ${VALUES.map(([d, c, label, x, y, side], i) => `<g class="values__stop" data-v="${i}" style="--i:${i}"><g class="values__pop"><circle class="values__halo" style="--dd:var(--${c})" cx="${x}" cy="${y}" r="38"/><circle class="values__disc" cx="${x}" cy="${y}" r="30"/>${doodleAt(d, x, y, 50, { color: c })}${tag(label, x, y + side * 58, 16, c, side * 4, 4)}</g></g>`).join('')}
 </svg>`;
 
 // About page: "Who we are" beside the four "What drives us" values (the founding line is the page hero's lead).

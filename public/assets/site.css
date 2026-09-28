@@ -874,7 +874,8 @@ html.motion.js .values:not(.is-in) :is(.values__stop, .values__mark, .values__st
 html.motion.js .values.is-in .values__start { transform-box: fill-box; transform-origin: center; animation: dd-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 html.motion.js .values.is-in .values__mark { animation: maze-mark 700ms var(--ease) 1.95s both; }
 html.motion.js .values.is-in .values__stop { animation: dd-pop 560ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.55s + var(--i) * 0.38s) both; }
-html.motion.js .values.is-in .values__stop .dd { animation: dd-boil 1.7s steps(1) calc(2.4s + var(--i) * 0.3s) infinite; }
+/* (the jitter goes on the doodle's layers: the doodle itself is placed by a transform attribute a CSS animation would replace) */
+html.motion.js .values.is-in .values__stop .dd > * { transform-box: fill-box; transform-origin: center; animation: dd-boil 1.7s steps(1) calc(2.4s + var(--i) * 0.3s) infinite; }
 .drive { transition: background-color 300ms ease; }
 .drive.is-lit { background: color-mix(in srgb, var(--mk) 16%, transparent); }
 
@@ -1352,7 +1353,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .stack-card p { -webkit-line-clamp: 3; font-size: 0.93rem; }
   .stack-card .tags li:nth-child(n + 3) { display: none; }
 
-  .checks, .ind__list, .drives__grid { grid-template-columns: minmax(0, 1fr); }
+  .checks, .ind__list, .drives__grid, .journey:not(.is-live) .journey__steps { grid-template-columns: minmax(0, 1fr); }
   .drive, .drive:nth-child(odd), .drive:nth-child(even) { padding: 20px 0 22px; border-right: 0; }
   .svc-panel__art { height: 214px; }
   .svc-panel__body { padding: 22px 20px; }
