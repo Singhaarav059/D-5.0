@@ -147,52 +147,110 @@
     if (window.ScrollTrigger) setTimeout(() => ScrollTrigger.refresh(), 450);
   }));
 
-  // Contact form: use the protected API when configured, with mail fallback for local preview.
-  $$('[data-form]').forEach((form) => form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // Contact form (the project brief): each field says what's wrong under itself (and is tied to it for screen readers),
+  // checked on submit and then as they type; an unsent draft is kept in this browser; a sent message swaps the form
+  // for a thank-you with the next steps. If delivery fails, the note offers email instead of opening a mail app.
+  $$('[data-form]').forEach((form) => {
+    const wrap = form.closest('.form-wrap');
+    const done = $('[data-form-done]', wrap);
     const note = $('[data-form-note]', form);
-    let bad = null;
-    ['name', 'email', 'message'].forEach((n) => {
-      const f = form.elements[n];
-      const ok = f.value.trim() && (n !== 'email' || /^\S+@\S+\.\S+$/.test(f.value));
-      f.setAttribute('aria-invalid', !ok);
-      if (!ok && !bad) bad = f;
-    });
-    if (bad) { note.textContent = 'Please fill in your name, a valid email and a message.'; bad.focus(); return; }
-    const d = Object.fromEntries(new FormData(form));
-    const body = `${d.message}\n\nFrom ${d.name} (${d.email})`;
     const submit = $('button[type=submit]', form);
-    submit.disabled = true;
-    note.textContent = 'Sending your message…';
+    const noteText = note.textContent;
+    const KEY = 'demaze-brief';
+    const RULES = {
+      subject: (f) => (f.value ? '' : 'Pick what you need, or “Something else”.'),
+      name: (f) => (f.value.trim().length >= 2 ? '' : 'Please tell us your name.'),
+      email: (f) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) ? '' : 'Please enter an email we can reply to, like name@company.com.'),
+      message: (f) => (f.value.trim().length >= 10 ? '' : 'A sentence or two about the project, please (at least 10 characters).'),
+    };
+    let tried = false;
+    const check = (n) => {
+      const f = form.elements[n];
+      const msg = RULES[n](f);
+      const err = $(`[id$="-${n}-err"]`, form);
+      err.textContent = msg;
+      err.hidden = !msg;
+      // a chip group marks every chip (and the group, for its style); a field marks itself
+      (f instanceof RadioNodeList ? [...f] : [f]).forEach((x) => x.setAttribute('aria-invalid', !!msg));
+      if (f instanceof RadioNodeList) $(`[data-chips="${n}"]`, form).classList.toggle('is-invalid', !!msg);
+      return !msg;
+    };
+    const save = () => {
+      try {
+        const d = Object.fromEntries(new FormData(form));
+        delete d.website;
+        localStorage.setItem(KEY, JSON.stringify(d));
+      } catch {}
+    };
     try {
-      const response = await fetch(form.action || '/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(d),
-        credentials: 'same-origin',
+      const d = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (d) Object.entries(d).forEach(([n, v]) => {
+        const f = form.elements[n];
+        if (f instanceof RadioNodeList) { const r = [...f].find((x) => x.value === v); if (r) r.checked = true; } else if (f && f.name !== 'website') f.value = v;
       });
-      if (response.ok) {
-        form.reset();
-        note.textContent = 'Thanks — your message was sent successfully.';
+    } catch {}
+    form.addEventListener('input', (e) => {
+      save();
+      if (tried && RULES[e.target.name]) check(e.target.name);
+    });
+    form.addEventListener('focusout', (e) => { if (tried && RULES[e.target.name] && e.target.type !== 'radio') check(e.target.name); });
+
+    const say = (html) => { note.innerHTML = html; };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      tried = true;
+      const bad = Object.keys(RULES).filter((n) => !check(n));
+      if (bad.length) {
+        say(bad.length === 1 ? 'One thing to fix above.' : `${bad.length} things to fix above.`);
+        const f = form.elements[bad[0]];
+        (f instanceof RadioNodeList ? f[0] : f).focus();
         return;
       }
-      if (response.status === 400) {
-        note.textContent = 'Please check the form fields and try again.';
-        return;
+      const d = Object.fromEntries(new FormData(form));
+      submit.disabled = true;
+      say('Sending your message…');
+      try {
+        const response = await fetch(form.action || '/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(d),
+          credentials: 'same-origin',
+        });
+        if (response.ok) {
+          try { localStorage.removeItem(KEY); } catch {}
+          const first = d.name.trim().split(/\s+/)[0];
+          $('[data-form-done-title]', done).textContent = `Thanks, ${first}. Your message is on its way.`;
+          $('[data-form-done-lead]', done).textContent = `We’ll reply to ${d.email.trim()}. Here’s what happens next:`;
+          form.hidden = true;
+          done.hidden = false;
+          done.focus();
+          if (window.ScrollTrigger) ScrollTrigger.refresh();
+          return;
+        }
+        if (response.status === 429) { say('Too many messages from here just now. Please wait a few minutes and try again.'); return; }
+        if (response.status === 400) { say('Something in the form didn’t go through. Please check it and try again.'); return; }
+        throw new Error('contact delivery failed');
+      } catch {
+        // Delivery is down (or this is a preview without it): the message is kept, and email is one click away.
+        const body = `${d.message}\n\nBudget: ${d.budget || '-'}\nTimeline: ${d.timeline || '-'}\n\nFrom ${d.name} (${d.email})`;
+        const href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(`${d.subject} | ${d.name}`)}&body=${encodeURIComponent(body)}`;
+        say(`We couldn’t send that just now. Your message is saved here: try again, or <a class="link" href="${href}">email it to us instead</a>.`);
+      } finally {
+        submit.disabled = false;
       }
-      if (response.status === 429) {
-        note.textContent = 'Too many attempts. Please wait a few minutes and try again.';
-        return;
-      }
-      throw new Error('contact delivery failed');
-    } catch (error) {
-      // A local preview or an unconfigured deployment can still open the visitor's mail app.
-      location.href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(d.subject + ' | ' + d.name)}&body=${encodeURIComponent(body)}`;
-      note.textContent = 'Your email app should open with the message ready to send.';
-    } finally {
-      submit.disabled = false;
-    }
-  }));
+    });
+    $('[data-form-again]', done).addEventListener('click', () => {
+      form.reset();
+      tried = false;
+      $$('.form__err', form).forEach((x) => { x.hidden = true; });
+      $$('[aria-invalid]', form).forEach((x) => x.removeAttribute('aria-invalid'));
+      say(noteText);
+      done.hidden = true;
+      form.hidden = false;
+      form.elements.name.focus();
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+  });
 
   // Services list buttons (also used when motion is off). `onSvc` lets the demos (below) follow the active panel.
   const svcBtns = $$('[data-svc-btn]');

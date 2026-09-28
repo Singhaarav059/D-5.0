@@ -10,6 +10,10 @@ const { doodle } = require('./doodles');
 const SVC_ART = { ai: ['chip', 'lilac'], web: ['browser', 'sky'], ecom: ['bag', 'tomato'], cloud: ['cloud', 'mint'] };
 const svcTile = (s, cls = 'nav__svc') => `<a class="${cls}" href="./services#${s.id}"><span class="nav__svc-icon" style="--dd:var(--${SVC_ART[s.id][1]})">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span><b>${esc(s.title)}</b><small>${esc(s.summary)}</small></span></a>`;
 
+// What follows a message: the contact hero lists these after "you tell us", and the form's thank-you repeats them.
+const NEXT_STEPS = `<li><b>We talk it through</b>A 30-minute call to understand the goal, the users and what stands in the way.</li>
+    <li><b>You get a route</b>A plan for the first release: scope, stages and the team who will build it.</li>`;
+
 // What sits beside each subpage's headline: something real from the page, on glass (the doodles ride on it).
 const SECTORS = new Set(C.projects.map((p) => p.sector)).size;
 const heroAside = {
@@ -20,8 +24,7 @@ const heroAside = {
     <figcaption><b>Founder-led</b>${esc(C.founder.name)}, ${esc(C.founder.title)}, with a team of ${C.metrics.find((m) => /team/i.test(m.label)).value}+ in Ahmedabad</figcaption></figure>`,
   contact: () => `<div class="phero__show phero-next" data-hero-fade><p class="phero-next__label">What happens next</p><ol>
     <li><b>You tell us what you’re building</b>By email, the form below or a call: whatever is easiest.</li>
-    <li><b>We talk it through</b>A 30-minute call to understand the goal, the users and what stands in the way.</li>
-    <li><b>You get a route</b>A plan for the first release: scope, stages and the team who will build it.</li></ol></div>`,
+    ${NEXT_STEPS}</ol></div>`,
 };
 
 // Subpage heroes share the home hero's type: a label on a hairline, the headline with its quieter second half,
@@ -50,6 +53,37 @@ const faq = () => `<section class="section faq">
   </div>
 </section>`;
 
+// The project brief: what they need, a rough budget and timeline (optional pick-one chips), then who they are and
+// the project. Each field has its own error, tied to it for screen readers; site.js validates, keeps an unsent draft
+// in the browser and swaps the form for a thank-you with the next steps. `id` keeps its ids unique on the page.
+const chips = (id, name, legend, options, required = false) => `<fieldset class="chips" data-chips="${name}"${required ? ` aria-describedby="${id}-${name}-err"` : ''}><legend>${legend}</legend><div class="chips__row">${options.map((o) => `<label class="chip"><input type="radio" name="${name}" value="${esc(o)}"${required ? ' required' : ''}><span>${esc(o)}</span></label>`).join('')}</div>${required ? `<p class="form__err" id="${id}-${name}-err" hidden></p>` : ''}</fieldset>`;
+const field = (id, name, label, control, hint = '') => `<div class="form__field"><label for="${id}-${name}">${label}</label>${control}<p class="form__err" id="${id}-${name}-err" hidden></p>${hint}</div>`;
+const brief = (id) => `<div class="form-wrap" data-reveal>
+    <form class="form" data-form action="/api/contact" method="post" novalidate aria-labelledby="${id}-form-title">
+      <h3 id="${id}-form-title">Start a project</h3>
+      ${chips(id, 'subject', 'What do you need?', [...C.services.map((s) => s.title), 'Something else'], true)}
+      ${chips(id, 'budget', 'Rough budget <small>optional</small>', C.brief.budgets)}
+      ${chips(id, 'timeline', 'When do you want to start? <small>optional</small>', C.brief.timelines)}
+      <div class="form__row">
+        ${field(id, 'name', 'Name', `<input id="${id}-name" name="name" autocomplete="name" maxlength="120" required aria-describedby="${id}-name-err">`)}
+        ${field(id, 'email', 'Email', `<input id="${id}-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="${id}-email-err">`)}
+      </div>
+      ${field(id, 'message', 'What are you building?', `<textarea id="${id}-message" name="message" rows="4" maxlength="5000" required aria-describedby="${id}-message-err ${id}-message-hint"></textarea>`, `<p class="form__hint" id="${id}-message-hint">The goal, who it’s for, and anything you already have. A few sentences is plenty.</p>`)}
+      <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+      <div class="form__foot">
+        <button class="btn btn--primary" type="submit"><span>Send message</span><i class="btn__icon">${icon.arrow}</i></button>
+        <p class="form__note" data-form-note role="status">We only use your details to reply to you.</p>
+      </div>
+    </form>
+    <div class="form-done" data-form-done tabindex="-1" hidden>
+      <span class="form-done__mark" aria-hidden="true">${doodle('star', { color: 'sun' })}</span>
+      <h3 data-form-done-title>Thanks, your message is on its way.</h3>
+      <p data-form-done-lead>We’ll reply by email.</p>
+      <ol class="form-done__steps">${NEXT_STEPS}</ol>
+      <div class="form-done__actions"><a class="btn btn--primary" ${cal}><span>Book a call now</span><i class="btn__icon">${icon.arrow}</i></a><button class="btn btn--ghost" type="button" data-form-again><span>Send another message</span></button></div>
+    </div>
+  </div>`;
+
 // `C.closing` is trusted HTML from content.js (its <em> sets the quieter half).
 // The crew band stays empty and hidden unless crew3d.js puts the Demaze crew there.
 const contact = (id = 'contact') => `<section class="section sheet sheet--blue contact" id="${id}">
@@ -64,16 +98,7 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
       </ul>
       <div class="crew-band" data-crew aria-hidden="true"></div>
     </div>
-    <form class="form" data-form data-reveal action="/api/contact" method="post" novalidate>
-      <h3>Tell us about your project</h3>
-      <div class="form__row"><label>Name<input name="name" autocomplete="name" maxlength="120" required></label>
-      <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>
-      <label>Subject of interest<select name="subject"><option>General enquiry</option>${C.services.map((s) => `<option>${esc(s.title)}</option>`).join('')}</select></label>
-      <label>How can we help?<textarea name="message" rows="4" maxlength="5000" minlength="10" required></textarea></label>
-      <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
-      <button class="btn btn--primary" type="submit"><span>Send message</span><i class="btn__icon">${icon.arrow}</i></button>
-      <p class="form__note" data-form-note aria-live="polite">We only use your details to reply to you. Prefer email? Write to ${esc(C.email)}.</p>
-    </form>
+    ${brief(id)}
   </div>
 </section>`;
 

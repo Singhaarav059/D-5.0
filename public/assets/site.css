@@ -1135,6 +1135,40 @@ html.motion.js .quote__star { animation: dd-boil 1.8s steps(1) infinite; }
 .form .btn:disabled { cursor: progress; opacity: 0.6; }
 .form__trap { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .form__note { font-size: 0.82rem; color: var(--muted); }
+.form__note .link { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+/* The brief: pick-one chips (real radios, so arrow keys move between them), fields with their own errors, and the
+   thank-you that replaces the form once it's sent. */
+.form__field { display: grid; gap: 7px; }
+.form__field > label { font-size: 0.86rem; font-weight: 500; color: var(--muted); }
+.form__hint { font-size: 0.8rem; color: var(--muted); }
+.form__err { display: flex; gap: 6px; align-items: baseline; font-size: 0.82rem; font-weight: 500; color: #ffd2cb; }
+.form__err::before { content: '!'; flex: none; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: #ff7a6b; color: #151514; font-size: 0.7rem; font-weight: 700; transform: translateY(2px); }
+.form__foot { display: grid; gap: 10px; }
+.form__foot .btn { margin-top: 6px; }
+.chips { display: grid; gap: 9px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.chips legend { margin-bottom: 9px; padding: 0; font-size: 0.86rem; font-weight: 500; color: var(--muted); }
+.chips legend small { margin-left: 6px; font-size: 0.78rem; font-weight: 400; opacity: 0.8; }
+.chips__row { display: flex; flex-wrap: wrap; gap: 8px; }
+.form .chip { position: relative; display: block; gap: 0; color: var(--text); cursor: pointer; }
+.chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.chip span { display: block; padding: 9px 14px; border-radius: 999px; font-size: 0.88rem; font-weight: 500; box-shadow: inset 0 0 0 1px var(--line-2); transition: background-color var(--t-1) ease, color var(--t-1) ease, box-shadow var(--t-1) ease, transform var(--t-1) var(--ease); }
+.chip:hover span { background: var(--surface-2); }
+.chip:active span { transform: scale(0.96); }
+.chip input:checked + span { background: #fff; color: #1d2fb8; box-shadow: none; }
+.chip input:focus-visible + span { outline: 2px solid #fff; outline-offset: 2px; }
+.chips.is-invalid .chip span { box-shadow: inset 0 0 0 1.5px #ff7a6b; }
+.form-wrap { min-width: 0; }
+.form-done { display: grid; gap: 14px; align-content: start; padding: clamp(22px, 2.6vw, 32px); border-radius: 26px; background: var(--surface); outline: none; }
+.form-done__mark .dd { width: 52px; height: 52px; }
+.form-done h3 { font-size: 1.55rem; letter-spacing: -0.03em; }
+.form-done > p { color: var(--muted); }
+.form-done__steps { display: grid; gap: 12px; margin: 6px 0; padding: 16px 0; border-block: 1px solid var(--line); list-style: none; counter-reset: step; }
+.form-done__steps li { display: grid; gap: 3px; padding-left: 38px; position: relative; font-size: 0.92rem; color: var(--muted); counter-increment: step; }
+.form-done__steps li::before { content: counter(step); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); color: var(--text); font-size: 0.8rem; font-weight: 600; }
+.form-done__steps b { color: var(--text); font-weight: 600; }
+.form-done__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+html.motion .form-done:not([hidden]) { animation: form-done 520ms var(--ease) both; }
+@keyframes form-done { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
 
 /* ---------- projects page: open cards (no boxes), the first one featured ---------- */
 .projects { padding-top: clamp(32px, 5vw, 64px); }

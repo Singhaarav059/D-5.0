@@ -25,12 +25,12 @@
 <meta name="twitter:description" content="Automate the preparation of Credit Monitoring Arrangement reports, from data tables to the final PDF. Detailed CMA reports, prepared and finalised efficiently in the cloud.">
 <meta name="twitter:image" content="https://demazetech.com/assets/img/work/cma-report-generation-software-720.png">
 <link rel="stylesheet" href="../assets/fonts.css?v=d60b04fbc9">
-<link rel="stylesheet" href="../assets/site.css?v=ba6a184348">
+<link rel="stylesheet" href="../assets/site.css?v=1b58e84ae8">
 <script defer src="../assets/boot.js?v=5d9461eb3e"></script>
 <script defer src="../assets/vendor/gsap.min.js?v=2d26f4c060"></script>
 <script defer src="../assets/vendor/ScrollTrigger.min.js?v=489bcf6d9c"></script>
 <script defer src="../assets/vendor/lenis.min.js?v=44dcd10f2a"></script>
-<script defer src="../assets/site.js?v=a3052b70ae"></script>
+<script defer src="../assets/site.js?v=7cfb068708"></script>
 <script defer src="../assets/journey.js?v=b0e82269a8"></script>
 <script defer src="../assets/ambient.js?v=593f29f416"></script>
 <script defer src="../assets/reel-kit.js?v=9eb4ddf8e4"></script>
@@ -125,16 +125,32 @@
       </ul>
       <div class="crew-band" data-crew aria-hidden="true"></div>
     </div>
-    <form class="form" data-form data-reveal action="/api/contact" method="post" novalidate>
-      <h3>Tell us about your project</h3>
-      <div class="form__row"><label>Name<input name="name" autocomplete="name" maxlength="120" required></label>
-      <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>
-      <label>Subject of interest<select name="subject"><option>General enquiry</option><option>AI &amp; ML</option><option>Web / Mobile App / SaaS</option><option>E-commerce</option><option>Cloud</option></select></label>
-      <label>How can we help?<textarea name="message" rows="4" maxlength="5000" minlength="10" required></textarea></label>
+    <div class="form-wrap" data-reveal>
+    <form class="form" data-form action="/api/contact" method="post" novalidate aria-labelledby="contact-form-title">
+      <h3 id="contact-form-title">Start a project</h3>
+      <fieldset class="chips" data-chips="subject" aria-describedby="contact-subject-err"><legend>What do you need?</legend><div class="chips__row"><label class="chip"><input type="radio" name="subject" value="AI &amp; ML" required><span>AI &amp; ML</span></label><label class="chip"><input type="radio" name="subject" value="Web / Mobile App / SaaS" required><span>Web / Mobile App / SaaS</span></label><label class="chip"><input type="radio" name="subject" value="E-commerce" required><span>E-commerce</span></label><label class="chip"><input type="radio" name="subject" value="Cloud" required><span>Cloud</span></label><label class="chip"><input type="radio" name="subject" value="Something else" required><span>Something else</span></label></div><p class="form__err" id="contact-subject-err" hidden></p></fieldset>
+      <fieldset class="chips" data-chips="budget"><legend>Rough budget <small>optional</small></legend><div class="chips__row"><label class="chip"><input type="radio" name="budget" value="Under $10k"><span>Under $10k</span></label><label class="chip"><input type="radio" name="budget" value="$10k–25k"><span>$10k–25k</span></label><label class="chip"><input type="radio" name="budget" value="$25k–50k"><span>$25k–50k</span></label><label class="chip"><input type="radio" name="budget" value="$50k+"><span>$50k+</span></label><label class="chip"><input type="radio" name="budget" value="Not sure yet"><span>Not sure yet</span></label></div></fieldset>
+      <fieldset class="chips" data-chips="timeline"><legend>When do you want to start? <small>optional</small></legend><div class="chips__row"><label class="chip"><input type="radio" name="timeline" value="As soon as possible"><span>As soon as possible</span></label><label class="chip"><input type="radio" name="timeline" value="In 1–3 months"><span>In 1–3 months</span></label><label class="chip"><input type="radio" name="timeline" value="In 3–6 months"><span>In 3–6 months</span></label><label class="chip"><input type="radio" name="timeline" value="Just exploring"><span>Just exploring</span></label></div></fieldset>
+      <div class="form__row">
+        <div class="form__field"><label for="contact-name">Name</label><input id="contact-name" name="name" autocomplete="name" maxlength="120" required aria-describedby="contact-name-err"><p class="form__err" id="contact-name-err" hidden></p></div>
+        <div class="form__field"><label for="contact-email">Email</label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-err"><p class="form__err" id="contact-email-err" hidden></p></div>
+      </div>
+      <div class="form__field"><label for="contact-message">What are you building?</label><textarea id="contact-message" name="message" rows="4" maxlength="5000" required aria-describedby="contact-message-err contact-message-hint"></textarea><p class="form__err" id="contact-message-err" hidden></p><p class="form__hint" id="contact-message-hint">The goal, who it’s for, and anything you already have. A few sentences is plenty.</p></div>
       <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
-      <button class="btn btn--primary" type="submit"><span>Send message</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
-      <p class="form__note" data-form-note aria-live="polite">We only use your details to reply to you. Prefer email? Write to contact@demazetech.com.</p>
+      <div class="form__foot">
+        <button class="btn btn--primary" type="submit"><span>Send message</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
+        <p class="form__note" data-form-note role="status">We only use your details to reply to you.</p>
+      </div>
     </form>
+    <div class="form-done" data-form-done tabindex="-1" hidden>
+      <span class="form-done__mark" aria-hidden="true"><svg class="dd dd--star" viewBox="0 0 64 64" style="--dd:var(--sun)" aria-hidden="true" focusable="false"><g class="dd__fill"><path d="M34 8c2 14 8 22 22 24-14 2-20 10-22 24-2-14-8-22-22-24 14-2 20-10 22-24z"/></g><g class="dd__ink"><path pathLength="1" d="M32 6c2 14 8 22 22 24-14 2-20 10-22 24-2-14-8-22-22-24 14-2 20-10 22-24z"/></g></svg></span>
+      <h3 data-form-done-title>Thanks, your message is on its way.</h3>
+      <p data-form-done-lead>We’ll reply by email.</p>
+      <ol class="form-done__steps"><li><b>We talk it through</b>A 30-minute call to understand the goal, the users and what stands in the way.</li>
+    <li><b>You get a route</b>A plan for the first release: scope, stages and the team who will build it.</li></ol>
+      <div class="form-done__actions"><a class="btn btn--primary" href="https://calendly.com/krupal-demazetech/30min" target="_blank" rel="noopener"><span>Book a call now</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a><button class="btn btn--ghost" type="button" data-form-again><span>Send another message</span></button></div>
+    </div>
+  </div>
   </div>
 </section>
 </main>

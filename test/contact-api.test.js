@@ -42,6 +42,13 @@ test('contact API validates submissions and never exposes delivery internals', a
   const bot = await request(server, 'POST', '/api/contact', JSON.stringify({ name: 'Bot', email: 'bot@example.com', subject: 'Spam', message: 'A sufficiently detailed message.', website: 'filled' }), headers);
   assert.equal(bot.status, 400);
 
+  // the brief's budget and timeline are optional, but only the offered values get through
+  const brief = { name: 'Ada Lovelace', email: 'ada@example.com', subject: 'AI & ML', message: 'A sufficiently detailed project enquiry.', website: '' };
+  const offered = await request(server, 'POST', '/api/contact', JSON.stringify({ ...brief, budget: '$10k–25k', timeline: 'Just exploring' }), headers);
+  assert.equal(offered.status, 503);
+  const madeUp = await request(server, 'POST', '/api/contact', JSON.stringify({ ...brief, budget: '<script>' }), headers);
+  assert.equal(madeUp.status, 400);
+
   const wrongType = await request(server, 'POST', '/api/contact', valid, { 'Content-Type': 'text/plain' });
   assert.equal(wrongType.status, 415);
 
