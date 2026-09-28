@@ -550,10 +550,10 @@
     // (a case study's title arrives with its card instead, so it isn't split: it only gets its marker)
     const title = $('[data-split=hero]', hero) || $('h1', hero);
     const words = title.matches('[data-split]') ? split(title, 'w') : [];
-    gsap.timeline({ defaults: { ease: EASE } })
-      .call(() => title.classList.add('is-in'), null, 0.7)
-      .from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1)
-      .fromTo($$('[data-hero-fade]', hero), { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
+    const fades = $$('[data-hero-fade]', hero);
+    const tl = gsap.timeline({ defaults: { ease: EASE } }).call(() => title.classList.add('is-in'), null, 0.7);
+    if (words.length) tl.from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1);
+    if (fades.length) tl.fromTo(fades, { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
   }
 
   // Everything else enters the same way: a short rise and fade, once.
