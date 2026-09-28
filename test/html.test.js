@@ -124,3 +124,11 @@ test('the web app manifest names its icons, and they exist', () => {
   assert.ok(manifest.icons.some((i) => i.sizes === '512x512' && i.purpose === 'maskable'));
   for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(root, 'public', i.src)), `${i.src} is missing`);
 });
+
+test('transition names are unique on every page (a duplicate cancels the card-to-page transition)', () => {
+  for (const page of pages) {
+    const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
+    const names = [...html.matchAll(/view-transition-name:\s*([\w-]+)/g)].map((m) => m[1]).filter((n) => n !== 'none');
+    assert.equal(new Set(names).size, names.length, `${page} repeats a view-transition-name`);
+  }
+});

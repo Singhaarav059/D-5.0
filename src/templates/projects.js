@@ -4,7 +4,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, icon, pic, shot, btn } = require('./helpers');
+const { esc, pad, caseHref, vt, icon, pic, shot, btn } = require('./helpers');
 
 const reelAttr = (p, i) => (C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : '');
 
@@ -34,10 +34,10 @@ const projectsGrid = () => `<section class="section projects">
   <div class="wrap">
     ${filters()}
     <div class="pgrid" data-pgrid>${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" id="${p.image}" style="--tint:${p.tint};${shot(p.image)};view-transition-name:pcard-${i}" data-services="${servicesOf(p)}" data-reveal>
-      <figure class="pcard__media"${reelAttr(p, i)}>${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
+      <figure class="pcard__media" style="${vt(p, 'media')}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
       <div class="pcard__body">
         <p class="pcard__meta"><span class="pcard__num">${pad(i + 1)}</span>${esc(p.sector)}</p>
-        <h2><a class="pcard__btn" href="${caseHref(p)}" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</a></h2>
+        <h2 style="${vt(p, 'title')}"><a class="pcard__btn" href="${caseHref(p)}" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</a></h2>
         <p>${esc(p.description || p.brief)}</p>
         <span class="pcard__more">View project ${icon.arrow}</span>
       </div>

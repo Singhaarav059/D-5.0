@@ -19,6 +19,25 @@
       location.reload();
     });
   });
+  // Card to case study: a project's image and title share transition names across pages (helpers.js `vt`). Leaving a
+  // page, only the destination's pair keeps its names, so the browser grows that one card into the page and every
+  // other named element simply goes with the page (and costs nothing). Back from the cache, the names return.
+  addEventListener('pageswap', (e) => {
+    if (!e.viewTransition || !e.activation) return;
+    const key = new URL(e.activation.entry.url).pathname.match(/^\/projects\/([\w-]+)/)?.[1];
+    $$('[style*="view-transition-name"]').forEach((el) => {
+      const name = el.style.viewTransitionName;
+      if (name === `media-${key}` || name === `title-${key}`) return;
+      if (!el.dataset.vtName) el.dataset.vtName = name;
+      el.style.viewTransitionName = 'none';
+    });
+  });
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    $$('.pdlg [style*="view-transition-name"]').forEach((el) => { el.style.viewTransitionName = ''; }); // (the dialog lends them)
+    $$('[data-vt-name]').forEach((el) => { el.style.viewTransitionName = el.dataset.vtName; delete el.dataset.vtName; });
+  });
+
   // Loops only run in the part of the page you can see: sections off screen are marked idle (site.css pauses them).
   if ('IntersectionObserver' in window) {
     const idle = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-idle', !e.isIntersecting)), { rootMargin: '120px 0px' });
@@ -462,6 +481,17 @@
     addEventListener('DOMContentLoaded', fromHash);
     addEventListener('hashchange', fromHash);
     $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
+    // "Full case study": the open case's film and title take the card's transition names, so they grow into the page
+    body.addEventListener('click', (e) => {
+      if (!e.target.closest('.pdlg__cta a[href^="./projects/"]')) return;
+      const card = cards[current];
+      [[$('.pcard__media', card), $('.pdlg__media', body)], [$('h2', card), $('h2', body)]].forEach(([from, to]) => {
+        to.style.viewTransitionName = from.style.viewTransitionName;
+        to.style.viewTransitionClass = from.style.viewTransitionClass;
+        from.dataset.vtName = from.style.viewTransitionName;
+        from.style.viewTransitionName = 'none';
+      });
+    });
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }
 

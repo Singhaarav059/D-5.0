@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, icon, pic, shot, btn, head } = require('./helpers');
+const { esc, pad, caseHref, vt, icon, pic, shot, btn, head } = require('./helpers');
 const { reasons, quoteHtml } = require('./about');
 
 const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
@@ -10,12 +10,12 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
     <i class="stack-card__shade" aria-hidden="true"></i>
     <div class="stack-card__copy">
       <span class="stack-card__num">${pad(i + 1)} / ${pad(total)}</span>
-      <h3>${esc(p.title)}</h3>
+      <h3 style="${vt(p, 'title')}">${esc(p.title)}</h3>
       <p>${esc(p.description)}</p>
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
       <a class="link-arrow" href="${caseHref(p)}">Read the case study ${icon.arrow}</a>
     </div>
-    <figure class="stack-card__media" style="${shot(p.image)}"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
+    <figure class="stack-card__media" style="${shot(p.image)};${vt(p, 'media')}"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
   </div>
 </article>`;
 

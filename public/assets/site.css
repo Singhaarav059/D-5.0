@@ -1528,6 +1528,12 @@ html.rm::view-transition-group(*), html.rm::view-transition-old(*), html.rm::vie
 html.motion .nav__bar { view-transition-name: nav; }
 html.motion::view-transition-old(root) { animation: 160ms ease-out both vt-out; }
 html.motion::view-transition-new(root) { animation: 440ms var(--ease) 60ms both vt-in; }
+/* Card to case study (site.js): the image grows into its new place on the same curve as everything else; the
+   title cross-fades as it travels, anchored top-left so it never stretches between sizes. */
+html.motion::view-transition-group(.case-media), html.motion::view-transition-group(.case-title) { animation-duration: 560ms; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+html.motion::view-transition-group(.case-media) { border-radius: var(--r-card); overflow: hidden; }
+::view-transition-old(.case-media), ::view-transition-new(.case-media) { height: 100%; object-fit: cover; }
+::view-transition-old(.case-title), ::view-transition-new(.case-title) { width: auto; height: 100%; object-fit: none; object-position: left top; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
 

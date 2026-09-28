@@ -31,12 +31,12 @@ const heroAside = {
 // and the lead. `title` is HTML (the part in <em> is set in the quieter tone).
 // `art`: up to three [doodle, colour]; the first colour marks the headline. `aside`: a heroAside key; with one, the
 // hero is two columns and the doodles sit around it; without, they are drawn beside the headline on wide screens.
-const pageHero = (kicker, title, lead, extra = '', art = [], aside = '') => `<section class="phero${aside ? ' phero--aside' : ''}" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
+const pageHero = (kicker, title, lead, extra = '', art = [], aside = '', titleStyle = '') => `<section class="phero${aside ? ' phero--aside' : ''}" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
   ${art.length ? `<div class="phero__art" aria-hidden="true">${art.map(([n, c], i) => doodle(n, { color: c, cls: `phero__dd phero__dd--${i + 1}` })).join('')}</div>` : ''}
   <div class="wrap phero__content">
     <p class="hero__label" data-hero-fade>${esc(kicker)}</p>
     <div class="phero__copy">
-      <h1 class="phero__title" data-split="hero">${title}</h1>
+      ${titleStyle ? `<h1 class="phero__title" style="${titleStyle}">${title}</h1>` : `<h1 class="phero__title" data-split="hero">${title}</h1>`}
       <p class="hero__lead" data-hero-fade>${esc(lead)}</p>
       ${extra}
     </div>
