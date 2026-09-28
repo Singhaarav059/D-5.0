@@ -38,6 +38,7 @@ src/
     maze.js              the maze itself: a seeded maze and its route, drawn as SVG at build time
     stages.js            the four "How we work" stage scenes (the work of each stage, animated by public/assets/journey.js)
     demos.js             the service demos: each service panel as a small working product (animated by site.js)
+    sketches.js          margin sketches: the work pencilled in the page margins beside sections (wide screens)
     doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, hero sparkles, one per
                          service (the moving band), industry and value
   build.js             Renders pages.js into public/*.html and fingerprints asset URLs
@@ -60,7 +61,8 @@ public/                Everything a visitor can load (the only folder the server
     img/work/          Project screens + founder photo (WebP + PNG/JPEG fallback) and manifest.json
     img/tech/          Technology logos used in the tools map
     img/logo.png, og.png  Brand mark and the social share image (1200x630)
-    img/maze-tile*.svg     The background: a seamless dotted maze under the paper and the sheets (scripts/maze-tile.js)
+    img/maze-tile*.svg     The background: a seamless dotted maze under the paper and the sheets (scripts/maze-tile.js);
+                           site.css sets how strongly it shows (clear in the margins, lighter behind the text)
   robots.txt, sitemap.xml
 test/                  Automated checks (node --test)
 .github/workflows/     CI on every push and pull request: build, generated pages committed, syntax, tests, audit

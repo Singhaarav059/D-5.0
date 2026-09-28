@@ -5,6 +5,7 @@
 
 const C = require('../content');
 const { esc, pad, icon, pic, shot, btn } = require('./helpers');
+const { sketch } = require('./sketches');
 
 const reelAttr = (p, i) => (C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : '');
 
@@ -30,6 +31,7 @@ const filters = () => `<div class="pfilter" role="group" aria-label="Show projec
 
 // Each card is an anchor target (#<image key>): opening that link opens the case (site.js).
 const projectsGrid = () => `<section class="section projects">
+  ${sketch('phone', { side: 'right', color: 'mint', top: '9%', tilt: 3 })}${sketch('db', { color: 'sky', top: '34%', tilt: -2 })}${sketch('flow', { side: 'right', color: 'sun', top: '58%', tilt: -2 })}${sketch('git', { color: 'pink', top: '82%', tilt: 2 })}
   <div class="wrap">
     ${filters()}
     <div class="pgrid" data-pgrid>${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" id="${p.image}" style="--tint:${p.tint};${shot(p.image)};view-transition-name:pcard-${i}" data-services="${servicesOf(p)}" data-reveal>

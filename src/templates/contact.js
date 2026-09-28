@@ -4,8 +4,10 @@
 
 const C = require('../content');
 const { esc, btn, head } = require('./helpers');
+const { sketch } = require('./sketches');
 
 const visit = () => `<section class="section visit">
+  ${sketch('map', { side: 'right', color: 'tomato', tilt: 2 })}
   <div class="wrap visit__grid">
     <a class="visit__map" href="${C.mapUrl}" target="_blank" rel="noopener" aria-label="Open the Demaze office location in Google Maps" data-reveal data-visit3d>
       <svg viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

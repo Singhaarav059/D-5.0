@@ -51,9 +51,10 @@ for (let y = 0; y < N; y++) { // horizontal walls on the line y (the top side of
   }
 }
 
-// Ink dots for the paper, and light dots for the dark and blue sheets.
-const tile = (color, opacity) => `<svg xmlns="http://www.w3.org/2000/svg" width="${T}" height="${T}" viewBox="0 0 ${T} ${T}"><path d="${runs.join('')}" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="0 8"/></svg>\n`;
-for (const [name, svg] of [['maze-tile.svg', tile('#151514', 0.2)], ['maze-tile-light.svg', tile('#f4f1ea', 0.12)]]) {
+// Ink dots for the paper (full strength: site.css sets how much shows where), and light dots for the dark and blue
+// sheets.
+const tile = (color, opacity) => `<svg xmlns="http://www.w3.org/2000/svg" width="${T}" height="${T}" viewBox="0 0 ${T} ${T}"><path d="${runs.join('')}" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0 7"/></svg>\n`;
+for (const [name, svg] of [['maze-tile.svg', tile('#151514', 1)], ['maze-tile-light.svg', tile('#f4f1ea', 0.15)]]) {
   const out = path.join(__dirname, '..', 'public', 'assets', 'img', name);
   fs.writeFileSync(out, svg);
   console.log(`wrote ${path.relative(process.cwd(), out)} (${(svg.length / 1024).toFixed(1)} KB, ${T}px tile)`);

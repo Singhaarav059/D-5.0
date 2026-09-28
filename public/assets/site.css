@@ -69,14 +69,25 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-/* The paper: warm stock with a faint grain, and under everything a whisper of a maze (a seamless tile drawn by
-   scripts/maze-tile.js). The hero and "How we work" solve the maze; the rest of the site is written on it. */
-html { -webkit-text-size-adjust: 100%; background: url(img/maze-tile.svg) -20px -20px / 800px 800px, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), var(--paper); }
+/* The paper: warm stock with a faint grain, and a maze under everything (a seamless tile drawn by
+   scripts/maze-tile.js, on body::before below). The hero and "How we work" solve the maze; the rest of the site is
+   written on it. */
+html { -webkit-text-size-adjust: 100%; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), var(--paper); }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 body {
   margin: 0; color: var(--text);
   font: 400 1rem/1.6 var(--body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip;
+}
+/* The maze is clearly drawn in the page margins and fades to a lighter tone behind the content column, so the paper
+   never reads as empty and text stays clean. */
+body { position: relative; }
+body::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  --edge: max(0px, calc((100% - var(--wrap)) / 2));
+  background: url(img/maze-tile.svg) -20px -20px / 800px 800px; opacity: 0.56;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--edge) - 20px), rgb(0 0 0 / 0.5) calc(var(--edge) + 110px), rgb(0 0 0 / 0.5) calc(100% - var(--edge) - 110px), #000 calc(100% - var(--edge) + 20px));
+  mask-image: linear-gradient(90deg, #000 calc(var(--edge) - 20px), rgb(0 0 0 / 0.5) calc(var(--edge) + 110px), rgb(0 0 0 / 0.5) calc(100% - var(--edge) - 110px), #000 calc(100% - var(--edge) + 20px));
 }
 main { overflow-x: clip; counter-reset: shead; }
 img { display: block; max-width: 100%; height: auto; }
@@ -147,6 +158,31 @@ html.motion.js .scribble__loop path { stroke-dasharray: 1 1.01; stroke-dashoffse
 .w { display: inline-block; overflow: clip; overflow-clip-margin: 0.14em; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .w > span { display: inline-block; }
 .sw { transition: opacity 0.1s linear; }
+
+/* ---------- margin sketches (templates/sketches.js): the work, pencilled in the page margins ----------
+   Each sits in the margin beside its section (level with the header unless told otherwise), sized to fit the margin
+   whole, draws itself on when it comes into view and drifts a little with the scroll (site.js). Hidden where the
+   margins are too narrow to hold one. */
+.marg { position: absolute; top: clamp(72px, 10vw, 136px); z-index: 0; width: min(250px, (100% - var(--wrap)) / 2 - 36px); pointer-events: none; }
+.marg--left { right: calc(50% + var(--wrap) / 2 + 18px); }
+.marg--right { left: calc(50% + var(--wrap) / 2 + 18px); }
+.sk { display: block; width: 100%; height: auto; overflow: visible; }
+.sk__ink > * { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62; }
+.sk__fill > * { fill: color-mix(in srgb, var(--dd) 70%, transparent); }
+.sk__dots > * { fill: var(--ink); opacity: 0.62; }
+.sk__text text { font: 500 8.5px/1 ui-monospace, 'SF Mono', Menlo, monospace; fill: var(--ink); opacity: 0.55; letter-spacing: 0.02em; }
+html.motion.js .marg .sk__ink > :not([stroke-dasharray]) { stroke-dasharray: 1 1.01; stroke-dashoffset: 1.005; }
+/* dashed lines (routes, links) keep their dashes: they fade in with the colour instead of drawing on */
+html.motion.js .marg .sk__ink > [stroke-dasharray] { opacity: 0; transition: opacity 600ms ease; }
+html.motion.js .marg.is-in .sk__ink > [stroke-dasharray] { opacity: 0.62; transition-delay: 1.1s; }
+html.motion.js .marg :is(.sk__fill, .sk__dots, .sk__text) { opacity: 0; transition: opacity 600ms ease; }
+html.motion.js .marg.is-in .sk__ink > :not([stroke-dasharray]) { animation: dd-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+html.motion.js .marg.is-in .sk__ink > :nth-child(3n + 2) { animation-delay: 0.15s; }
+html.motion.js .marg.is-in .sk__ink > :nth-child(3n) { animation-delay: 0.3s; }
+html.motion.js .marg.is-in :is(.sk__fill, .sk__dots, .sk__text) { opacity: 1; transition-delay: 1.1s; }
+/* a section that follows another paper section starts closer (see .section), so its sketch does too */
+.section:not(.sheet) + .section:not(.sheet) > .marg:not([style*='top']) { top: clamp(16px, 3vw, 40px); }
+@media (max-width: 1399px) { .marg { display: none; } }
 
 /* ---------- buttons: solid or outline, both follow the context colours ---------- */
 .btn {
