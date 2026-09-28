@@ -247,12 +247,12 @@
         if (capWords[to].length) tl.fromTo(capWords[to], { yPercent: -110 }, { yPercent: 0, duration: 0.55, stagger: 0.045, ease: 'expo.out', immediateRender: false }, t + 0.2);
       };
 
-      // Loop start: everything back to the first frame.
-      tl.set(scenes, { autoAlpha: 0 }, 0).set(scenes[0], { autoAlpha: 1 }, 0).set(inners, { opacity: 1, scale: 1, x: 0, clipPath: 'inset(0% 0% 0% 0%)' }, 0).set(flash, { opacity: 0 }, 0)
+      // Loop start: everything back to the first frame. No two sets at 0 may touch the same element: seeking back
+      // onto 0 replays them in reverse order, so the earlier one would win (a blank title chapter, sunken letters).
+      tl.set(scenes.slice(1), { autoAlpha: 0 }, 0).set(scenes[0], { autoAlpha: 1 }, 0).set(inners, { opacity: 1, scale: 1, x: 0, clipPath: 'inset(0% 0% 0% 0%)' }, 0).set(flash, { opacity: 0 }, 0)
         .set(capWords.flat(), { yPercent: -110 }, 0).set([num, chap], { yPercent: 0, opacity: 1 }, 0).set(bar, { scaleX: 0 }, 0)
         .call(() => { num.textContent = '01'; chap.textContent = plan[0].label; }, null, 0.001)
         .set(st, { enter: 0, pitch: 0, lights: 0, open: 0, orbit: 0, focus: 0 }, 0)
-        .set('.reel__title h3 b', { yPercent: 135 }, 0)
         .set('.reel__title .reel__tagline b', { yPercent: 135 }, 0)
         .set('.reel__title .reel__inner > small', { opacity: 0, y: 10 }, 0)
         .set('.reel__outro .reel__inner > *:not(.reel__underline)', { opacity: 0, y: 24 }, 0);
@@ -335,7 +335,7 @@
           // a policy seal draws itself around the name, then a 'covered' mark lands on it
           const ring = $('.reel__seal circle');
           ring.forEach((c) => { const L = c.getTotalLength(); c.style.strokeDasharray = c.classList.contains('reel__seal-dash') ? '3 7' : L; if (!c.classList.contains('reel__seal-dash')) tl.set(c, { strokeDashoffset: L }, 0); });
-          tl.to(ring[0], { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, s)
+          tl.set(L, { yPercent: 135 }, 0).to(ring[0], { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, s)
             .fromTo(ring[1], { opacity: 0, rotation: -40, svgOrigin: '100 100' }, { opacity: 1, rotation: 0, duration: 1.2, ease: 'power2.out', immediateRender: false }, s + 0.3)
             .to(L, { yPercent: 0, duration: 0.8, stagger: 0.035, ease: 'expo.out' }, s + 0.35)
             .set($('.reel__covered'), { opacity: 0 }, 0)
@@ -354,7 +354,7 @@
           land = s + 1.6;
         } else {
           // rise: a disc of the project's colour comes up behind the name as its letters rise
-          tl.fromTo($('.reel__sun'), { yPercent: 60, scale: 0.7, opacity: 0 }, { yPercent: 0, scale: 1, opacity: 1, duration: 1.4, ease: 'power3.out', immediateRender: false }, s)
+          tl.set(L, { yPercent: 135 }, 0).fromTo($('.reel__sun'), { yPercent: 60, scale: 0.7, opacity: 0 }, { yPercent: 0, scale: 1, opacity: 1, duration: 1.4, ease: 'power3.out', immediateRender: false }, s)
             .to(L, { yPercent: 0, duration: 0.8, stagger: 0.035, ease: 'expo.out' }, s + 0.25);
           land = s + 0.9;
         }
