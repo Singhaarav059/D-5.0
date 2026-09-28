@@ -629,10 +629,10 @@ html.motion.js .maze.is-seen .maze__mark { transform-box: fill-box; transform-or
 @keyframes maze-mark { from { opacity: 0; transform: translateX(-14px) scale(0.5); } to { opacity: 1; transform: none; } }
 @keyframes maze-arrive { 40% { transform: translateX(6px); } }
 
-/* Maze decoration: a highlighter under the way through, the pitfalls in the dead ends (a doodle and a sticker label
+/* Maze decoration: a soft blue halo under the way through, the pitfalls in the dead ends (a doodle and a sticker label
    each), the idea at the entrance and the rocket at the exit. They pop in after the route has drawn itself, then
    boil gently; on scroll (journey.js) the pitfalls fall away with the walls and the rocket takes off on arrival. */
-.maze__glow { fill: none; stroke: var(--sun); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; mix-blend-mode: multiply; }
+.maze__glow { fill: none; stroke: color-mix(in srgb, var(--blue) 35%, #fff); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; mix-blend-mode: multiply; }
 .maze.is-morphing .maze__glow { visibility: hidden; }
 /* (the tag inside: the group itself holds its pop-in animation, which would win over this) */
 .maze__finish .maze__tag { transition: opacity 300ms ease; }
@@ -1754,7 +1754,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .maze--narrow { display: block; }
   .maze__route, .maze__line, .maze__trail { stroke-width: 4.4; }
   .maze__stop { r: 9; }
-  .maze__glow { stroke-width: 24; }
+  .maze__glow { stroke-width: 16; }
 }
 
 /* =========================================================================
