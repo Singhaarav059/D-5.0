@@ -68,6 +68,16 @@ test('static server protects the root and serves safe routes', async (t) => {
   const cached = await request(server, 'GET', '/about.html', { 'If-None-Match': compressed.headers.etag });
   assert.equal(cached.status, 304);
 
+  // A page rewritten within the same second as the browser's copy is still served in full: its ETag has changed,
+  // and the date (which only has whole seconds) must not override that.
+  const before = await request(server, 'GET', '/about.html');
+  await fs.writeFile(path.join(root, 'about.html'), 'about, rebuilt');
+  const now = new Date(before.headers['last-modified']);
+  await fs.utimes(path.join(root, 'about.html'), now, new Date(now.getTime() + 400));
+  const rebuilt = await request(server, 'GET', '/about.html', { 'If-None-Match': before.headers.etag, 'If-Modified-Since': before.headers['last-modified'] });
+  assert.equal(rebuilt.status, 200);
+  assert.equal(rebuilt.body, 'about, rebuilt');
+
   const post = await request(server, 'POST', '/');
   assert.equal(post.status, 405);
   assert.equal(post.headers.allow, 'GET, HEAD');
