@@ -17,6 +17,7 @@ const LOOP = '<svg class="scribble__loop" viewBox="0 0 300 100" preserveAspectRa
 const headline = (h) => h.replace(/<mark>(.*?)<\/mark>/, `<span class="scribble">$1${LOOP}${doodle('star', { color: 'sun', cls: 'hero__star' })}${doodle('star', { color: 'pink', cls: 'hero__star hero__star--2' })}</span>`);
 
 // The record, right under the promise: the four figures (content.js `metrics`), each with a marker line in its colour.
+// It sits under the headline only, leaving the cell under the actions free for the arrow down to the maze.
 const PROOF_MK = ['sun', 'pink', 'mint', 'sky'];
 const proof = () => `<ul class="hero__proof" data-hero-fade>${C.metrics.map((m, i) => `<li style="--mk:var(--${PROOF_MK[i % 4]})"><b>${m.prefix}${m.value}${m.suffix}</b>${esc(m.label.toLowerCase())}</li>`).join('')}</ul>`;
 
@@ -28,8 +29,8 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
               <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
               <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See how we work', '#how', 'btn--ghost')}</div>
             </div>
+            ${proof()}
           </div>
-          ${proof()}
         </div>`;
 
 const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead), mark: ['bulb', 'sun'] })}</div>`;

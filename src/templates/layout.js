@@ -35,7 +35,7 @@ const DROPS = { Projects: ['work', dropWork], Services: ['services', dropService
 function layout({ title, description, slug, body, noindex = false }) {
   const current = (h) => (h === './' + slug ? ' aria-current="page"' : '');
   const links = NAV.map(([t, h]) => DROPS[t]
-    ? `<button type="button" class="nav__trigger${h === './' + slug ? ' is-current' : ''}" aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${chevronDown}</button>`
+    ? `<a class="nav__trigger" href="${h}"${current(h)} aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${chevronDown}</a>`
     : `<a href="${h}"${current(h)}>${t}</a>`).join('');
   const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
