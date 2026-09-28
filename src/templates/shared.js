@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, cal, icon, head } = require('./helpers');
+const { esc, pad, cal, icon, head, pic } = require('./helpers');
 const { doodle } = require('./doodles');
 
 // Each service's icon and marker colour (as in the tools map), and a service as a small tile: its icon, name and a
@@ -10,16 +10,34 @@ const { doodle } = require('./doodles');
 const SVC_ART = { ai: ['chip', 'lilac'], web: ['browser', 'sky'], ecom: ['bag', 'tomato'], cloud: ['cloud', 'mint'] };
 const svcTile = (s, cls = 'nav__svc') => `<a class="${cls}" href="./services#${s.id}"><span class="nav__svc-icon" style="--dd:var(--${SVC_ART[s.id][1]})">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span><b>${esc(s.title)}</b><small>${esc(s.summary)}</small></span></a>`;
 
+// What sits beside each subpage's headline: something real from the page, on glass (the doodles ride on it).
+const SECTORS = new Set(C.projects.map((p) => p.sector)).size;
+const heroAside = {
+  projects: () => `<div class="phero__show phero-fan" data-hero-fade>${C.projects.slice(0, 3).map((p, i) => `<a class="phero-fan__card" href="./projects#${p.image}" style="--i:${i};--tint:${p.tint}">${pic(p.image, p.name, { sizes: '300px', cls: 'phero-fan__img' })}<span>${esc(p.name)}<small>${esc(p.sector)}</small></span></a>`).join('')}
+    <p class="phero-chip"><b>${C.projects.length}</b> products · <b>${SECTORS}</b> sectors</p></div>`,
+  services: () => `<div class="phero__show phero-svcs" data-hero-fade>${C.services.map((s) => svcTile(s, 'nav__svc phero-svcs__tile')).join('')}</div>`,
+  about: () => `<figure class="phero__show phero-team" data-hero-fade>${pic(C.founder.photo, `${C.founder.name}, ${C.founder.title}`, { sizes: '420px', cls: 'phero-team__img' })}
+    <figcaption><b>Founder-led</b>${esc(C.founder.name)}, ${esc(C.founder.title)}, with a team of ${C.metrics.find((m) => /team/i.test(m.label)).value}+ in Ahmedabad</figcaption></figure>`,
+  contact: () => `<div class="phero__show phero-next" data-hero-fade><p class="phero-next__label">What happens next</p><ol>
+    <li><b>You tell us what you’re building</b>By email, the form below or a call: whatever is easiest.</li>
+    <li><b>We talk it through</b>A 30-minute call to understand the goal, the users and what stands in the way.</li>
+    <li><b>You get a route</b>A plan for the first release: scope, stages and the team who will build it.</li></ol></div>`,
+};
+
 // Subpage heroes share the home hero's type: a label on a hairline, the headline with its quieter second half,
 // and the lead. `title` is HTML (the part in <em> is set in the quieter tone).
-// `art`: up to three [doodle, colour] drawn beside the headline on wide screens; the first colour marks the headline.
-const pageHero = (kicker, title, lead, extra = '', art = []) => `<section class="phero" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
+// `art`: up to three [doodle, colour]; the first colour marks the headline. `aside`: a heroAside key; with one, the
+// hero is two columns and the doodles sit around it; without, they are drawn beside the headline on wide screens.
+const pageHero = (kicker, title, lead, extra = '', art = [], aside = '') => `<section class="phero${aside ? ' phero--aside' : ''}" data-hero${art.length ? ` style="--mk:var(--${art[0][1]})"` : ''}>
   ${art.length ? `<div class="phero__art" aria-hidden="true">${art.map(([n, c], i) => doodle(n, { color: c, cls: `phero__dd phero__dd--${i + 1}` })).join('')}</div>` : ''}
   <div class="wrap phero__content">
     <p class="hero__label" data-hero-fade>${esc(kicker)}</p>
-    <h1 class="phero__title" data-split="hero">${title}</h1>
-    <p class="hero__lead" data-hero-fade>${esc(lead)}</p>
-    ${extra}
+    <div class="phero__copy">
+      <h1 class="phero__title" data-split="hero">${title}</h1>
+      <p class="hero__lead" data-hero-fade>${esc(lead)}</p>
+      ${extra}
+    </div>
+    ${aside ? heroAside[aside]() : ''}
   </div>
 </section>`;
 

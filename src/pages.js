@@ -27,7 +27,7 @@ const pages = {
     title: 'Projects | Demaze Technologies',
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     body: [
-      pageHero('Projects', 'Products we’ve <em>designed and built</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`, '', [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']]),
+      pageHero('Projects', 'Products we’ve <em>designed and built</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`, '', [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']], 'projects'),
       projectsGrid(),
       contact(),
     ].join('\n'),
@@ -37,7 +37,7 @@ const pages = {
     title: 'Services | AI & ML, Web, Mobile, SaaS, eCommerce, Cloud | Demaze Technologies',
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     body: [
-      pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline, '', [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']]),
+      pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline, '', [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']], 'services'),
       band(), services(false), techStack(), industries(), journey(), contact(),
     ].join('\n'),
   }),
@@ -46,7 +46,7 @@ const pages = {
     title: 'About Us | Demaze Technologies',
     description: C.about.whoWeAre[0],
     body: [
-      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats(), [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']]),
+      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats(), [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']], 'about'),
       about(), whyUs(), founder(), journey(), contact(),
     ].join('\n'),
   }),
@@ -64,7 +64,7 @@ const pages = {
     description: `Email ${C.email}, book a call, or visit us in Ahmedabad.`,
     body: [
       pageHero('Contact', 'Let’s talk about <em>what you’re building</em>', 'Email us with any question, or book a 30-minute call if that’s easier.',
-        `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--ghost')}</div>`, [['cup', 'tomato'], ['heart', 'pink'], ['star', 'sky']]),
+        `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--ghost')}</div>`, [['cup', 'tomato'], ['heart', 'pink'], ['star', 'sky']], 'contact'),
       contact('form'), visit(), faq(),
     ].join('\n'),
   }),
