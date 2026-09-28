@@ -11,7 +11,7 @@
   const page = document.createElement('div');
   page.className = 'silk silk--page';
   document.body.prepend(page);
-  const sheets = [page, ...document.querySelectorAll('.sheet, .footer__panel')];
+  const sheets = [page, ...document.querySelectorAll('.sheet:not(.sheet--day), .footer__panel')];
 
   const THREADS = 42, STEP = 10, SCALE = 0.5;
   const GLOW = 'filter' in CanvasRenderingContext2D.prototype; // canvas blur; without it, the sheet's CSS glow

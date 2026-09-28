@@ -38,7 +38,7 @@ const stats = () => `<ul class="stats" data-stagger>${C.metrics.map((m) => `<li>
 
 const reasons = () => `<ol class="reasons" data-stagger>${C.whyUs.map((w, i) => `<li class="reason"><span class="reason__num">${pad(i + 1)}</span><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p></li>`).join('')}</ol>`;
 
-const whyUs = () => `<section class="section why">
+const whyUs = () => `<section class="section sheet sheet--day sheet--sky why">
   <div class="wrap">
     ${head({ label: 'Why us', title: 'Why teams <em>choose us</em>', mark: ['star', 'sun'] })}
     ${reasons()}

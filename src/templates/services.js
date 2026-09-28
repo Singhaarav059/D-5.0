@@ -107,7 +107,7 @@ const services = (withHead = true) => `<section class="section services" data-se
 // systems we build for it and links to our case studies in that sector. While it is on screen the index moves on by
 // itself, a bar filling on the current tile, until the visitor picks one (site.js).
 const workIn = (keys) => keys.map((k) => C.projects.find((p) => p.image === k)).filter(Boolean);
-const industries = () => `<section class="section industries" id="industries">
+const industries = () => `<section class="section sheet sheet--day sheet--lilac industries" id="industries">
   <div class="wrap">
     ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.`, mark: ['star', 'sky'] })}
   </div>

@@ -45,7 +45,7 @@ const pageHero = (kicker, title, lead, extra = '', art = [], aside = '', titleSt
 </section>`;
 
 // `limit` shows the first few questions (home) with a way to the rest on the contact page.
-const faq = (limit = C.faq.length) => `<section class="section faq"${limit < C.faq.length ? '' : ' id="faq"'}>
+const faq = (limit = C.faq.length) => `<section class="section sheet sheet--day sheet--sun faq"${limit < C.faq.length ? '' : ' id="faq"'}>
   <div class="wrap faq__grid">
     ${head({ label: 'FAQ', title: 'Questions, <em>answered</em>', lead: limit < C.faq.length ? `${C.faq.length - limit} more on the <a class="link" href="./contact#faq">contact page</a>, or ask us at <a class="link" href="mailto:${C.email}">${C.email}</a>` : `Still curious? <a class="link" href="mailto:${C.email}">${C.email}</a>`, stack: true, mark: ['question', 'sky'] })}
     <div class="acc" data-stagger>

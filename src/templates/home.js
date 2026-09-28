@@ -60,7 +60,7 @@ const studio = () => `<section class="section sheet studio" id="about">
 
 // Home: the four services as tiles (the full panels, demos and tools live on the services page), each with the work
 // that shows it; then a way to ask when it isn't obvious which one fits.
-const build = () => `<section class="section build" id="services">
+const build = () => `<section class="section sheet sheet--day sheet--mint build" id="services">
   <div class="wrap">
     ${head({ label: 'Services', title: 'What we <em>build</em>', lead: 'Four kinds of product. Most of what we ship uses two or three together.', side: btn('All services', './services', 'btn--ghost'), mark: ['pencil', 'lilac'] })}
     <ul class="build__grid" data-stagger>${C.services.map((s) => `
