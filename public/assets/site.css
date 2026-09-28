@@ -1157,18 +1157,26 @@ html.motion.js .quote__star { animation: dd-boil 1.8s steps(1) infinite; }
 /* the reel's pause button sits above the card-wide link */
 .pcard .reel__toggle { z-index: 2; }
 
-/* filters: a row of service chips; a filtered grid treats the featured card like the others */
-.pfilter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: clamp(32px, 5vw, 56px); }
+/* segmented controls ([data-seg], site.js): a liquid-glass track whose raised white thumb glides to the choice */
+[data-seg] { position: relative; isolation: isolate; }
+.seg__thumb { position: absolute; left: 0; top: 0; z-index: -1; border-radius: 999px; background: #fff; box-shadow: inset 0 1px 0 #fff, 0 0 0 0.5px rgba(28, 36, 84, 0.12), 0 3px 10px -3px rgba(28, 36, 84, 0.28); opacity: 0; pointer-events: none; }
+[data-seg].has-thumb .seg__thumb { opacity: 1; }
+@media (min-width: 1025px) { :is(.svc-list, .kmap__cats) > .seg__thumb { display: none; } }
+[data-seg].seg--ready .seg__thumb { transition: transform 460ms var(--ease), width 460ms var(--ease), height 460ms var(--ease), opacity var(--t-2) ease; }
+
+/* filters: the services as one segmented control; a filtered grid treats the featured card like the others */
+.pfilter { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 5px; margin-bottom: clamp(32px, 5vw, 56px); border-radius: 999px; background: var(--lg-bg); box-shadow: var(--lg-rim), var(--lg-drop); -webkit-backdrop-filter: var(--lg-blur); backdrop-filter: var(--lg-blur); }
 .pfilter button {
-  display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border: 0; border-radius: 999px; cursor: pointer;
-  background: none; color: var(--text); font-size: 0.9rem; font-weight: 500; box-shadow: inset 0 0 0 1px var(--line-2);
-  transition: background-color var(--t-2) var(--ease), color var(--t-2) var(--ease), box-shadow var(--t-2) var(--ease), transform var(--t-1) var(--ease);
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 0; border-radius: 999px; cursor: pointer;
+  background: none; color: var(--muted); font-size: 0.9rem; font-weight: 500;
+  transition: color var(--t-2) var(--ease), transform var(--t-1) var(--ease);
 }
-.pfilter button span { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; transition: color var(--t-2) ease; }
-.pfilter button:hover { background: var(--surface); }
+.pfilter button span { min-width: 22px; padding: 2px 6px; border-radius: 999px; background: rgba(28, 36, 84, 0.06); font-size: 0.74rem; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; transition: background-color var(--t-2) ease, color var(--t-2) ease; }
+.pfilter button:hover { color: var(--text); }
 .pfilter button:active { transform: scale(0.96); }
-.pfilter button[aria-pressed='true'] { background: var(--text); color: var(--bg); box-shadow: none; }
-.pfilter button[aria-pressed='true'] span { color: color-mix(in srgb, var(--bg) 70%, var(--text)); }
+.pfilter button[aria-pressed='true'] { color: var(--text); }
+.pfilter button[aria-pressed='true'] span { background: var(--blue); color: #fff; }
+html:not(.js) .pfilter button[aria-pressed='true'] { background: #fff; }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide { grid-column: auto; display: flex; gap: 20px; }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide .pcard__media { aspect-ratio: 16 / 11; }
 .pgrid[data-filter]:not([data-filter='all']) .pcard--wide h2 { font-size: clamp(1.3rem, 1.6vw, 1.5rem); line-height: 1.12; letter-spacing: -0.03em; }
@@ -1404,7 +1412,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .svc-list::-webkit-scrollbar { display: none; }
   .svc-list li { flex: none; }
   .svc-list__btn { width: auto; padding: 10px 16px; border-radius: 999px; font: 500 0.92rem/1 var(--body); letter-spacing: 0; white-space: nowrap; color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); }
-  .svc-list__btn.is-active { background: var(--text); color: var(--bg); box-shadow: none; }
+  /* the services and the tools' categories: glass segmented rows, the white thumb gliding to the choice (site.js) */
+  .services .svc-list, .kmap__stage .kmap__cats { margin-inline: 0; padding: 5px; gap: 2px; border-radius: 999px; background: var(--lg-bg); box-shadow: var(--lg-rim), var(--lg-drop); -webkit-backdrop-filter: var(--lg-blur); backdrop-filter: var(--lg-blur); }
+  .svc-list__btn, .kmap__cat { background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .svc-list__btn.is-active { color: var(--text); }
   .svc-list__num, .svc-list__bar { display: none; }
   .services__stage { margin-top: 20px; }
   .svc-panel { transform: none; transition: opacity var(--t-2) ease, visibility 0s var(--t-2); }
@@ -1425,7 +1436,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .kmap__icon { width: 30px; height: 30px; border-radius: 50%; }
   .kmap__icon .dd { width: 22px; height: 22px; }
   .kmap__name { font-size: 0.92rem; }
-  .kmap__count { font-size: 0.72rem; }
+  .kmap__count { font-size: 0.75rem; }
   .kmap__count b { font-size: 0.82rem; }
   .kmap__lists { align-items: start; }
   .kmap__list { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px 20px; }
@@ -1556,7 +1567,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .ind__top { gap: 14px; }
   .ind__art { width: 76px; height: 76px; border-radius: 18px; }
   .ind__tile { width: 116px; }
-  .pfilter { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
+  .pfilter { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
   .pfilter::-webkit-scrollbar { display: none; }
   .pfilter button { flex: none; }
   .acc button { gap: 14px; }

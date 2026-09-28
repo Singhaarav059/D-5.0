@@ -23,7 +23,7 @@ const caseBody = (p, i) => `<div class="pdlg__body">
 
 // Filters: the services each project shows (content.js `services[].work`). ?filter=<service id> preselects one.
 const servicesOf = (p) => C.services.filter((s) => s.work.includes(p.image)).map((s) => s.id).join(' ');
-const filters = () => `<div class="pfilter" role="group" aria-label="Show projects by service" data-reveal>
+const filters = () => `<div class="pfilter" role="group" aria-label="Show projects by service" data-seg data-reveal>
       <button type="button" aria-pressed="true" data-filter="all">All <span>${C.projects.length}</span></button>${C.services.map((s) => `
       <button type="button" aria-pressed="false" data-filter="${s.id}">${esc(s.title)} <span>${s.work.length}</span></button>`).join('')}
     </div>`;

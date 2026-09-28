@@ -81,6 +81,25 @@
     document.fonts && document.fonts.ready.then(place);
   }
 
+  // Segmented controls ([data-seg]): a raised glass thumb glides to the chosen option (aria-pressed, aria-selected or
+  // .is-active), however the row wraps or scrolls; it is measured, so it follows resizes and font loading too.
+  $$('[data-seg]').forEach((box) => {
+    const thumb = document.createElement('i');
+    thumb.className = 'seg__thumb';
+    thumb.setAttribute('aria-hidden', 'true');
+    box.prepend(thumb);
+    const place = () => {
+      const on = box.querySelector('[aria-pressed="true"], [aria-selected="true"], .is-active');
+      box.classList.toggle('has-thumb', !!on);
+      if (!on) return;
+      thumb.style.cssText = `width:${on.offsetWidth}px;height:${on.offsetHeight}px;transform:translate(${on.offsetLeft}px,${on.offsetTop}px)`;
+    };
+    new MutationObserver(place).observe(box, { subtree: true, attributes: true, attributeFilter: ['aria-pressed', 'aria-selected', 'class'] });
+    new ResizeObserver(place).observe(box);
+    place();
+    requestAnimationFrame(() => box.classList.add('seg--ready')); // glide from now on, not on the first placement
+  });
+
   // Tabs (industries, tools): roving tabindex + arrow keys.
   $$('[data-tabs]').forEach((box) => {
     const tabs = $$('[role=tab]', box);

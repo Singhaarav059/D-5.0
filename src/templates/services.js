@@ -61,7 +61,7 @@ const techStack = () => {
         <p class="kmap__title">The Demaze stack</p>
         <p class="kmap__sub"><b>${tabs.length}</b> layers · <b>${total}</b> tools</p>
       </div>
-      <div class="kmap__cats" role="tablist" aria-label="Technology categories" aria-orientation="vertical">${tabs.map((t, i) => `
+      <div class="kmap__cats" data-seg role="tablist" aria-label="Technology categories" aria-orientation="vertical">${tabs.map((t, i) => `
         <button class="kmap__cat" role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--mk:var(--${kmapArt(t.tab)[1]})" data-kmap-cat>
           <span class="kmap__icon">${doodle(kmapArt(t.tab)[0], { color: kmapArt(t.tab)[1] })}</span><span class="kmap__name">${esc(t.tab)}</span><span class="kmap__count"><b>${t.items.length}</b> tools</span>
         </button>`).join('')}
@@ -95,7 +95,7 @@ const services = (withHead = true) => `<section class="section services" data-se
     <div class="wrap services__grid">
       <div class="services__side">
         ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true, mark: ['pencil', 'lilac'] } : { label: 'Services', title: 'What we <em>build</em>', stack: true, mark: ['pencil', 'lilac'] })}
-        <ol class="svc-list" role="list">${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
+        <ol class="svc-list" role="list" data-seg>${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
       </div>
       <div class="services__stage">${C.services.map(servicePanel).join('')}</div>
     </div>
