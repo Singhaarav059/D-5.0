@@ -58,6 +58,12 @@
         if (on) box.dispatchEvent(new CustomEvent('tabchange', { bubbles: true, detail: panel }));
       });
       if (focus) tab.focus();
+      // a sideways strip of tabs (tablet, phone) keeps the picked one in view, without moving the page
+      const strip = tab.parentElement;
+      if (strip.scrollWidth > strip.clientWidth) {
+        const x = tab.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+        strip.scrollTo({ left: x - 16, behavior: motion ? 'smooth' : 'auto' });
+      }
     };
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => select(t));
@@ -313,7 +319,13 @@
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
   }
 
-  if (!motion) return;
+  if (!motion) {
+    // without motion the nav still turns to frosted paper once the page moves, so it never sits bare over the text
+    const tint = () => nav.classList.toggle('is-scrolled', scrollY > 40);
+    addEventListener('scroll', tint, { passive: true });
+    tint();
+    return;
+  }
 
   // ---------- motion ----------
   gsap.registerPlugin(ScrollTrigger);
@@ -584,8 +596,6 @@
       if (e.animationName !== 'ind-timer' || stopped) return;
       const next = tabs[(tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') + 1) % tabs.length];
       auto = true; next.click(); auto = false;
-      // a sideways strip (tablet, phone) keeps the current tile in view, without moving the page
-      if (strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: next.offsetLeft - strip.offsetLeft - 16, behavior: 'smooth' });
     });
     tabs.forEach((t) => t.addEventListener('click', () => { if (!auto) stop(); }));
     strip.addEventListener('keydown', stop);
