@@ -26,7 +26,7 @@ const discover = () => `${sheet}
   ${NOTES.map(([t, c, x, y, r], i) => `<g class="ja-note" data-i="${i}"><g transform="translate(${x} ${y}) rotate(${r} 21 18)">
     <rect class="jart__note-shadow" x="1.5" y="2" width="42" height="37" rx="2.5"/><rect class="jart__note" style="--c:var(--${c})" width="42" height="37" rx="2.5"/>
     <text class="jart__label" x="7" y="14">${t}</text><path class="jart__scrawl" d="M7 22.5h26M7 29h17"/></g></g>`).join('')}
-  <g class="ja-lens"><g transform="translate(38 36)"><circle class="jart__glass" r="12.5"/><path class="jart__ink" d="M9 9l9.5 9.5"/></g></g>
+  <g class="ja-lens"><g transform="translate(46 46)"><circle class="jart__glass" r="12.5"/><path class="jart__ink" d="M9 9l9.5 9.5"/></g></g>
   <path class="ja-arrow jart__flow" d="M112 76c14 2 22-4 40-12" pathLength="1"/><path class="ja-arrow-head jart__ink" d="M146 60l7 3.5-5 6"/>
   <g class="ja-doc">
     <rect class="jart__paper" x="162" y="15" width="82" height="108" rx="8"/>
@@ -74,7 +74,7 @@ const design = () => `${sheet}
     </g>
     <rect class="jart__notch" x="207" y="19.5" width="16" height="3.5" rx="1.75"/>
   </g>
-  <g class="ja-cursor"><g transform="translate(47 111)"><path class="jart__cursor" d="M0 0v15l4-3.6 3 6.6 3-1.4-3-6.4h5.4z"/></g></g>`;
+  <g class="ja-cursor"><g transform="translate(66 115)"><path class="jart__cursor" d="M0 0v15l4-3.6 3 6.6 3-1.4-3-6.4h5.4z"/></g></g>`;
 
 // 03 Build & Integrate: code is typed into the editor, the services it talks to light up as data runs down the wires,
 // and the tests go green.

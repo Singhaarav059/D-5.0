@@ -28,9 +28,10 @@
       const lens = $('.ja-lens');
       tl.from($('.ja-doc'), { opacity: 0, x: 10, duration: 0.5 }, 0.3)
         .from($('.ja-note'), { opacity: 0, scale: 0.55, rotation: -10, transformOrigin: '50% 50%', duration: 0.5, stagger: 0.2, ease: 'back.out(2)' }, 0.2)
-        .from(lens, { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.3 }, 1.1)
+        .set(lens, { opacity: 0 }, 0)
+        .fromTo(lens, { x: -8, y: -10, opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, transformOrigin: '50% 50%', duration: 0.3, immediateRender: false }, 1.1)
         // the lens reads each note in turn, then leaves toward the brief
-        .to(lens, { keyframes: [{ x: 45, y: -3, duration: 0.45 }, { x: 4, y: 44, duration: 0.55 }, { x: 49, y: 42, duration: 0.45 }, { x: 96, y: 34, opacity: 0, duration: 0.45 }], ease: 'power2.inOut' }, 1.4)
+        .to(lens, { keyframes: [{ x: 37, y: -13, duration: 0.45 }, { x: -4, y: 34, duration: 0.55 }, { x: 41, y: 32, duration: 0.45 }, { x: 88, y: 24, opacity: 0, duration: 0.45 }], ease: 'power2.inOut' }, 1.4)
         .fromTo($('.ja-arrow'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.inOut' }, 3.1)
         .from($('.ja-arrow-head'), { opacity: 0, scale: 0.4, transformOrigin: '50% 50%', duration: 0.25 }, 3.55)
         .from($('.ja-goal'), { scaleX: 0, transformOrigin: '0% 50%', duration: 0.4 }, 3.6)
@@ -50,7 +51,7 @@
         .from($('.ja-screen-a'), { opacity: 0, duration: 0.5 }, 1.9)
         .to(wire, { opacity: 0, duration: 0.3 }, 2.4)
         // the cursor comes in, clicks the button, and the prototype moves on
-        .from(cursor, { x: 118, y: -46, opacity: 0, duration: 0.9, ease: 'power3.out' }, 2.6)
+        .from(cursor, { x: 104, y: -50, opacity: 0, duration: 0.9, ease: 'power3.out' }, 2.6)
         .to(cursor, { scale: 0.86, transformOrigin: '0% 0%', duration: 0.09, yoyo: true, repeat: 1 }, 3.55)
         .to(btn, { scale: 0.93, transformOrigin: '50% 50%', duration: 0.09, yoyo: true, repeat: 1 }, 3.58)
         .fromTo($('.ja-ripple'), { opacity: 0.9, scale: 0.3, transformOrigin: '50% 50%' }, { opacity: 0, scale: 1.7, duration: 0.6, ease: 'power2.out' }, 3.6)

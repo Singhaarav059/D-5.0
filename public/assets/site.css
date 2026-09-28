@@ -98,7 +98,7 @@ figure { margin: 0; }
 .wrap { width: var(--wrap); margin-inline: auto; }
 .section { position: relative; padding-block: clamp(72px, 10vw, 136px); }
 /* two paper sections in a row: the next one's header hairline already separates them, so they sit closer */
-.section:not(.sheet) + .section:not(.sheet) { padding-top: clamp(16px, 3vw, 40px); }
+.section:not(.sheet) + :is(.section, .journey:not(.is-live)):not(.sheet) { padding-top: clamp(16px, 3vw, 40px); }
 
 /* ---------- type ---------- */
 .h2 { font: 380 clamp(2.2rem, 4.4vw, 3.9rem)/1.02 var(--display); letter-spacing: -0.042em; text-wrap: balance; }
@@ -495,6 +495,8 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 /* ---------- services: pinned on desktop, scroll picks the service ---------- */
 .services { padding: 0; }
 .services__pin { position: relative; min-height: 100svh; display: flex; align-items: center; padding-block: clamp(88px, 11vh, 112px) clamp(32px, 5vh, 56px); }
+/* without motion nothing pins, so the section need not fill the screen (on a tall one it would float in blank paper) */
+html:not(.motion) .services__pin { min-height: 0; }
 .services__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
 .services .shead { margin-bottom: clamp(20px, 3vh, 32px); }
 .svc-list { display: grid; }
