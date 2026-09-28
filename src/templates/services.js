@@ -7,6 +7,7 @@ const C = require('../content');
 const { PUBLIC, esc, pad, icon, head } = require('./helpers');
 const { serviceDemo } = require('./demos');
 const { doodle } = require('./doodles');
+const { chevron } = require('./maze');
 const { sketch } = require('./sketches');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
@@ -24,18 +25,27 @@ const stackTabs = () => C.tools.map((t, i) => ({
     : t.items.map(([name, slug]) => ({ name, logo: techIcon(slug) })),
 }));
 
-// Knowledge map (after a "knowledge index" UI): the Demaze sphere wires into six discipline cards, and the
-// active card fans out to its tools. All six lists ship in the HTML as tab panels; site.js draws the wires.
-const KMAP_ICONS = {
-  'AI & ML': '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1"/><circle cx="12" cy="12" r="3"/>',
-  Web: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
-  'Mobile App': '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
-  'UI/UX': '<path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/>',
-  eCommerce: '<path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8z"/><path d="M9 8V6.5a3 3 0 016 0V8"/>',
-  Cloud: '<path d="M7 18h10.5a4 4 0 00.6-7.96A6 6 0 006.3 9.5 4.3 4.3 0 007 18z"/>',
-};
+// The tools map: the Demaze stack drawn as a pile of six layers, one per discipline, each wired into its card. Picking
+// a discipline pulls its layer out of the pile in its marker colour and lays a line from its card to each of its
+// tools (site.js). All six lists ship in the HTML as tab panels. Each discipline has the drawing it has on the moving
+// band (templates/doodles.js).
+const KMAP_ART = { 'AI & ML': ['chip', 'lilac'], Web: ['browser', 'sky'], 'Mobile App': ['phone', 'sun'], 'UI/UX': ['pen', 'pink'], eCommerce: ['bag', 'tomato'], Cloud: ['cloud', 'mint'] };
+const kmapArt = (tab) => KMAP_ART[tab] || ['layers', 'sky'];
 
-const kmapIcon = (tab) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${KMAP_ICONS[tab] || KMAP_ICONS.Web}</svg>`;
+// The pile, in isometric: plate i's top face is a rhombus centred on (CX, y_i), with a thin edge below it. Drawn from
+// the bottom up so each plate covers the ones under it. A port past each plate's right corner is where its wire starts.
+const CX = 104, HW = 84, HH = 33, T = 9;
+const plateY = (i) => 58 + i * 28;
+const stackArt = (tabs) => `<svg class="kmap__stack" viewBox="0 0 250 250" aria-hidden="true" focusable="false">
+  ${tabs.map((t, i) => {
+    const y = plateY(i);
+    const top = `M${CX} ${y - HH}L${CX + HW} ${y}L${CX} ${y + HH}L${CX - HW} ${y}Z`;
+    const left = `M${CX - HW} ${y}L${CX} ${y + HH}V${y + HH + T}L${CX - HW} ${y + T}Z`;
+    const right = `M${CX} ${y + HH}L${CX + HW} ${y}V${y + T}L${CX} ${y + HH + T}Z`;
+    return { i, svg: `<g class="kmap__plate${i === 0 ? ' is-on' : ''}" style="--mk:var(--${kmapArt(t.tab)[1]})" data-kmap-plate="${i}"><path class="kmap__side is-left" d="${left}"/><path class="kmap__side" d="${right}"/><path class="kmap__face" d="${top}"/>${i === 0 ? `<path class="kmap__logo" d="${chevron(CX, y, 26)}"/>` : `<path class="kmap__lines" d="M${CX - 34} ${y - 2}l22 11M${CX - 22} ${y - 8}l34 17"/>`}</g>` };
+  }).reverse().map((p) => p.svg).join('')}
+  ${tabs.map((_, i) => `<path class="kmap__stub" d="M${CX + HW} ${plateY(i) + T / 2}H${CX + HW + 26}"/><circle class="kmap__port" cx="${CX + HW + 28}" cy="${plateY(i) + T / 2}" r="3.4" data-kmap-port="${i}"/>`).join('')}
+</svg>`;
 
 const kmapItem = (t) => `<li class="kmap__item"><i class="kmap__dot" data-kmap-dot></i>${t.logo ? `<img src="${t.logo}" alt="" width="22" height="22" loading="lazy">` : `<b class="kmap__mono">${esc(t.name.slice(0, 2))}</b>`}<span>${esc(t.name)}</span>${t.role ? `<small>${esc(t.role)}</small>` : ''}</li>`;
 
@@ -46,17 +56,16 @@ const techStack = () => {
   ${sketch('code', { color: 'mint', tilt: -3 })}${sketch('git', { side: 'right', color: 'sun', top: 'calc(clamp(72px, 10vw, 136px) + 240px)', tilt: 2 })}
   <div class="wrap">
     ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead), mark: ['gear', 'mint'] })}
-    <div class="kmap__stage" data-tabs data-kmap-stage data-reveal>
+    <div class="kmap__stage" style="--mk:var(--${kmapArt(tabs[0].tab)[1]})" data-tabs data-kmap-stage data-reveal>
       <svg class="kmap__wires" aria-hidden="true" data-kmap-wires></svg>
       <div class="kmap__core" aria-hidden="true">
-        <p class="kmap__title">Demaze stack</p>
-        <p class="kmap__sub"><b>${tabs.length}</b> disciplines · <b>${total}</b> tools</p>
-        <canvas class="kmap__sphere" width="440" height="440" data-kmap-sphere></canvas>
-        <p class="kmap__live"><i></i>Stack index</p>
+        ${stackArt(tabs)}
+        <p class="kmap__title">The Demaze stack</p>
+        <p class="kmap__sub"><b>${tabs.length}</b> layers · <b>${total}</b> tools</p>
       </div>
       <div class="kmap__cats" role="tablist" aria-label="Technology categories" aria-orientation="vertical">${tabs.map((t, i) => `
-        <button class="kmap__cat" role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-kmap-cat>
-          <span class="kmap__icon">${kmapIcon(t.tab)}</span><span class="kmap__name">${esc(t.tab)}</span><span class="kmap__count"><b>${t.items.length}</b> tools</span>
+        <button class="kmap__cat" role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--mk:var(--${kmapArt(t.tab)[1]})" data-kmap-cat>
+          <span class="kmap__icon">${doodle(kmapArt(t.tab)[0], { color: kmapArt(t.tab)[1] })}</span><span class="kmap__name">${esc(t.tab)}</span><span class="kmap__count"><b>${t.items.length}</b> tools</span>
         </button>`).join('')}
       </div>
       <div class="kmap__lists">${tabs.map((t, i) => `

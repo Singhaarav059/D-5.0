@@ -176,42 +176,59 @@
   // Services click works without motion; with motion it scrolls to the pinned step (below).
   svcBtns.forEach((b, i) => b.addEventListener('click', () => setSvc(i)));
 
-  // Knowledge map: wires from the Demaze sphere to every discipline card, and a fan from the active card
-  // to each of its tools. Hovering a card (fine pointers) selects it like a click; the tab code above
-  // swaps the panel and fires 'tabchange', after which the fan is redrawn and drawn in.
+  // Tools map: the Demaze stack wired to its six discipline cards, and the active card to each of its tools. Wires run
+  // like the maze's route, in straight runs with rounded corners. Picking a discipline (hovering a card, with a fine
+  // pointer, selects it like a click) pulls its layer out of the stack, colours the stage (--mk) and draws its lines
+  // to its tools in; the tab code above swaps the panel and fires 'tabchange'.
   $$('[data-kmap-stage]').forEach((stage) => {
     const svg = $('[data-kmap-wires]', stage);
-    const core = $('.kmap__sphere', stage);
     const cats = $$('[data-kmap-cat]', stage);
+    const plates = []; // by layer (the pile is drawn bottom up, so page order is reversed)
+    $$('[data-kmap-plate]', stage).forEach((p) => { plates[+p.dataset.kmapPlate] = p; });
+    const ports = $$('[data-kmap-port]', stage);
     const NS = 'http://www.w3.org/2000/svg';
-    const wide = matchMedia('(min-width: 961px)');
-    const wire = (x1, y1, x2, y2, cls) => {
+    const wide = matchMedia('(min-width: 1025px)');
+    // a route from (x1, y1) to (x2, y2): across to `bend`, up or down, across again, corners rounded
+    const route = (x1, y1, x2, y2, bend = (x1 + x2) / 2) => {
+      const dy = y2 - y1, r = Math.min(10, Math.abs(dy) / 2, Math.abs(bend - x1), Math.abs(x2 - bend)), s = Math.sign(dy);
+      if (!s || r < 1) return `M${x1} ${y1}H${bend}V${y2}H${x2}`;
+      return `M${x1} ${y1}H${bend - r}Q${bend} ${y1} ${bend} ${y1 + s * r}V${y2 - s * r}Q${bend} ${y2} ${bend + r} ${y2}H${x2}`;
+    };
+    // (`unit`: measure the path as 1, for lines that draw on or carry a pulse; dotted wires keep real lengths)
+    const path = (d, cls, unit = true) => {
       const p = document.createElementNS(NS, 'path');
-      const dx = (x2 - x1) * 0.55;
-      p.setAttribute('d', `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`);
+      p.setAttribute('d', d);
       p.setAttribute('class', cls);
-      p.setAttribute('pathLength', '1');
+      if (unit) p.setAttribute('pathLength', '1');
       return p;
     };
     const draw = (animate) => {
+      const on = Math.max(0, cats.findIndex((c) => c.getAttribute('aria-selected') === 'true'));
+      stage.style.setProperty('--mk', cats[on].style.getPropertyValue('--mk'));
+      plates.forEach((p, i) => p.classList.toggle('is-on', i === on));
+      ports.forEach((p, i) => p.classList.toggle('is-on', i === on));
       if (!wide.matches) { svg.replaceChildren(); return; }
       const box = stage.getBoundingClientRect();
       svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
       const at = (el, side) => { const r = el.getBoundingClientRect(); return [(side === 'l' ? r.left : side === 'r' ? r.right : r.left + r.width / 2) - box.left, r.top + r.height / 2 - box.top]; };
-      const [cx, cy] = at(core, 'c');
-      const cr = core.getBoundingClientRect().width / 2;
-      const active = cats.find((c) => c.getAttribute('aria-selected') === 'true');
-      const paths = cats.map((c) => { const [x, y] = at(c, 'l'); return wire(cx + cr * 0.92, cy, x, y, 'kmap__wire' + (c === active ? ' is-on' : '')); });
-      const panel = active && document.getElementById(active.getAttribute('aria-controls'));
-      if (panel) {
-        const [ax, ay] = at(active, 'r');
-        $$('[data-kmap-dot]', panel).forEach((d, i) => {
-          const [x, y] = at(d, 'c');
-          const p = wire(ax, ay, x, y, 'kmap__fan' + (animate ? ' is-drawing' : ''));
-          p.style.animationDelay = i * 22 + 'ms';
-          paths.push(p);
-        });
-      }
+      // each layer's wire bends at its own distance, so the six runs never lie on top of each other
+      const first = at(cats[0], 'l')[0];
+      const paths = [];
+      cats.forEach((c, i) => {
+        const [x1, y1] = at(ports[i], 'c'), [x2, y2] = at(c, 'l');
+        const d = route(x1 + 4, y1, x2, y2, x1 + (first - x1) * (0.25 + i * 0.1));
+        if (i === on) paths.push(path(d, 'kmap__wire is-on'), path(d, 'kmap__pulse'));
+        else paths.unshift(path(d, 'kmap__wire', false));
+      });
+      // the active card's line to each of its tools: one run out of the card, then a branch to each
+      const panel = document.getElementById(cats[on].getAttribute('aria-controls'));
+      const [ax, ay] = at(cats[on], 'r');
+      $$('[data-kmap-dot]', panel).forEach((dot, i) => {
+        const [x, y] = at(dot, 'l');
+        const p = path(route(ax, ay, x - 1, y, ax + (x - ax) * 0.45), 'kmap__fan' + (animate ? ' is-drawing' : ''));
+        p.style.animationDelay = i * 28 + 'ms';
+        paths.push(p);
+      });
       svg.replaceChildren(...paths);
     };
     stage.addEventListener('tabchange', () => requestAnimationFrame(() => draw(true)));
@@ -223,32 +240,6 @@
     new ResizeObserver(() => draw(false)).observe(stage);
     wide.addEventListener('change', () => draw(false));
     if (document.fonts) document.fonts.ready.then(() => draw(false));
-
-    // The sphere: a few hundred dots on a slowly turning ball, drawn in 2D (no WebGL needed here).
-    const ctx = core.getContext('2d');
-    const DOTS = 420;
-    const pts = Array.from({ length: DOTS }, (_, i) => {
-      const y = 1 - (i + 0.5) / DOTS * 2, r = Math.sqrt(1 - y * y), th = i * 2.399963;
-      return [Math.cos(th) * r, y, Math.sin(th) * r];
-    });
-    let spin = 0.6, raf = 0, seen = false;
-    const paint = () => {
-      const S = core.width, R = S * 0.4, c = Math.cos(spin), s = Math.sin(spin);
-      ctx.clearRect(0, 0, S, S);
-      for (const [x, y, z] of pts) {
-        const X = x * c + z * s, Z = -x * s + z * c;
-        const Y = y * 0.96 + Z * 0.28, Z2 = Z * 0.96 - y * 0.28; // slight tilt toward the viewer
-        const f = (Z2 + 1) / 2;
-        ctx.globalAlpha = 0.06 + f * f * 0.7;
-        ctx.fillStyle = '#151514';
-        ctx.beginPath(); ctx.arc(S / 2 + X * R, S / 2 - Y * R, 1.4 + f * 2.6, 0, 6.283); ctx.fill();
-      }
-    };
-    const loop = () => { spin += 0.004; paint(); raf = seen ? requestAnimationFrame(loop) : 0; };
-    paint();
-    if (motion && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(loop); }).observe(core);
-    }
   });
 
   // Projects page: filter the cards by service (?filter=<id> preselects). Cards that come and go glide into place
