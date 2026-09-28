@@ -60,7 +60,7 @@
   /* context tokens: what components use; .sheet redefines them for its own ground */
   --bg: var(--page);
   --text: #f4f1ea;
-  --muted: #a6a8b4;
+  --muted: #c3c5cf;
   --line: rgba(244, 241, 234, 0.12);
   --line-2: rgba(244, 241, 234, 0.26);
   --surface: var(--glass);
@@ -99,7 +99,7 @@ html::before {
 }
 html { -webkit-text-size-adjust: 100%; background-color: var(--page); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), var(--page); }
 /* the page's silk: fixed behind everything, quieter than a sheet's, fading out under the top of the screen */
-.silk.silk--page { position: fixed; inset: 0; z-index: -2; opacity: 0.6; border-radius: 0;
+.silk.silk--page { position: fixed; inset: 0; z-index: -2; opacity: 0.42; border-radius: 0;
   -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 70%); mask-image: linear-gradient(180deg, transparent 10%, #000 70%); }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
@@ -140,7 +140,7 @@ figure { margin: 0; }
 .section:not(.sheet) + :is(.section, .journey:not(.is-live)):not(.sheet) { padding-top: clamp(16px, 3vw, 40px); }
 
 /* ---------- type ---------- */
-.h2 { font: 380 clamp(2.2rem, 4.4vw, 3.9rem)/1.02 var(--display); letter-spacing: -0.042em; text-wrap: balance; }
+.h2 { font: 440 clamp(2.2rem, 4.4vw, 3.9rem)/1.02 var(--display); letter-spacing: -0.042em; text-wrap: balance; }
 .h2 em, .hero__title em, .phero__title em { font-style: normal; color: var(--muted); }
 /* the headline's second half: a solid marker line in the section's colour (--mk, set by head()) drawn under the
    words when the headline arrives (at night a translucent highlighter would muddy the colour); a doodle follows */
@@ -292,7 +292,7 @@ html.motion.js .amb__item.is-in :is(.amb__dd, .amb__sk) :is(.dd__fill, .dd__dots
   color-scheme: dark;
   --bg: var(--ink);
   --text: #f4f1ea;
-  --muted: #a8a49a;
+  --muted: #c7c3b9;
   --line: rgba(244, 241, 234, 0.13);
   --line-2: rgba(244, 241, 234, 0.26);
   --surface: var(--ink-2);
@@ -316,10 +316,15 @@ html.motion.js .amb__item.is-in :is(.amb__dd, .amb__sk) :is(.dd__fill, .dd__dots
 }
 /* the silk canvas sits under the sheet's content, and quiets behind the top where headlines are */
 .silk { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; border-radius: inherit;
-  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.35), #000 55%); mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.35), #000 55%); }
+  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.8) 60%); mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.8) 60%); }
+/* on the blue sheet the silk adds light to an already bright ground: kept low, and the text gets a soft shadow of the
+   sheet's own blue so it stays crisp where the ribbon crosses it */
+.sheet--blue > .silk { opacity: 0.45; }
+.sheet--blue { text-shadow: 0 1px 14px rgb(24 36 170 / 0.55); }
+.sheet--blue :is(.btn, .chip, input, textarea, select, .crew-band) { text-shadow: none; }
 .sheet { margin-inline: 10px; border-radius: var(--r-sheet); transform-origin: 50% 0; }
 /* the brand-blue sheet (the contact block that closes every page) */
-.sheet--blue { --bg: #2b42e6; --text: #fff; --muted: rgba(255, 255, 255, 0.76); --line: rgba(255, 255, 255, 0.22); --line-2: rgba(255, 255, 255, 0.42); --surface: rgba(255, 255, 255, 0.1); --surface-2: rgba(255, 255, 255, 0.16); --accent-text: #ffe08a;
+.sheet--blue { --bg: #2b42e6; --text: #fff; --muted: rgba(255, 255, 255, 0.9); --line: rgba(255, 255, 255, 0.22); --line-2: rgba(255, 255, 255, 0.42); --surface: rgba(255, 255, 255, 0.1); --surface-2: rgba(255, 255, 255, 0.16); --accent-text: #ffe08a;
   --silk-a: #62c1ff; --silk-b: #ff85b8;
   background: url(img/maze-tile-light.svg) -20px -20px / 800px 800px, radial-gradient(70% 90% at 95% 0%, #5468ff, transparent 62%), radial-gradient(60% 70% at 0% 100%, #1f33c9, transparent 70%), color-mix(in srgb, var(--bg) 90%, transparent); }
 .sheet + .sheet { margin-top: 10px; }
@@ -572,7 +577,7 @@ html.menu-open { overflow: hidden; }
 
 /* hero copy (the start of the home journey) */
 .hero__grid { margin-top: clamp(28px, 5vh, 52px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 32px clamp(40px, 5vw, 88px); align-items: end; }
-.hero__title { font: 360 clamp(2.9rem, min(6.1vw, 9.6vh), 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
+.hero__title { font: 430 clamp(2.9rem, min(6.1vw, 9.6vh), 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
 .hero__title em { display: block; color: #7d90ff; }
 /* hero doodles: two sparkles by the looped word, an arrow from the actions down to the maze (clear of the proof line) */
 .hero__star { position: absolute; width: 0.34em; height: 0.34em; right: -0.42em; top: -0.18em; }
@@ -657,7 +662,7 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 .phero__content { display: grid; justify-items: start; }
 .phero .hero__label { justify-self: stretch; }
 .page-404 .phero { padding-bottom: clamp(72px, 12vw, 144px); }
-.phero__title { margin-top: clamp(28px, 5vh, 52px); max-width: 15ch; font: 360 clamp(2.7rem, 5.6vw, 5.4rem)/0.97 var(--display); letter-spacing: -0.05em; text-wrap: balance; }
+.phero__title { margin-top: clamp(28px, 5vh, 52px); max-width: 15ch; font: 430 clamp(2.7rem, 5.6vw, 5.4rem)/0.97 var(--display); letter-spacing: -0.05em; text-wrap: balance; }
 .phero .hero__lead { margin-top: clamp(18px, 3vh, 28px); max-width: 54ch; }
 
 /* ---------- work: the stacked project deck (on a sheet) ---------- */
@@ -1056,12 +1061,12 @@ html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s
 
 /* ---------- studio ("Who we are", home) and the reasons ---------- */
 .studio__top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 6vw, 96px); align-items: stretch; }
-.about__text { font: 380 clamp(1.5rem, 2.5vw, 2.3rem)/1.2 var(--display); letter-spacing: -0.03em; text-wrap: pretty; }
+.about__text { font: 440 clamp(1.5rem, 2.5vw, 2.3rem)/1.2 var(--display); letter-spacing: -0.03em; text-wrap: pretty; }
 .about__sub { margin-top: 18px; max-width: 52ch; color: var(--muted); }
 /* the founder's card runs the full height of the story beside it: the mark at the top, the words, the name at the foot */
 .studio__quote { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: clamp(24px, 2.8vw, 36px); border-radius: 26px; background: var(--glass); box-shadow: var(--glass-shadow); }
 .studio__quote .quote__mark { margin-bottom: 0; font-size: clamp(4rem, 6vw, 5.6rem); }
-.studio__quote blockquote { font: 380 clamp(1.25rem, 1.7vw, 1.55rem)/1.3 var(--display); letter-spacing: -0.025em; }
+.studio__quote blockquote { font: 440 clamp(1.25rem, 1.7vw, 1.55rem)/1.3 var(--display); letter-spacing: -0.025em; }
 .studio__quote figcaption { display: flex; align-items: center; gap: 14px; padding-top: 20px; border-top: 1px solid var(--line); }
 .studio__quote img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 .studio__quote figcaption span { display: grid; gap: 2px; }
@@ -1080,7 +1085,7 @@ html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s
 .stats { margin-top: clamp(44px, 7vh, 80px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 .stats li { display: grid; gap: 8px; padding: 20px 20px 0 0; }
 .stats li + li { padding-left: 20px; border-left: 1px solid var(--line); }
-.stats b { font: 360 clamp(2.1rem, 3.4vw, 3.1rem)/1 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
+.stats b { font: 430 clamp(2.1rem, 3.4vw, 3.1rem)/1 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
 /* each figure, reason and value has its own marker colour: the figure itself on a dark sheet, a marker line under it
    on paper; the numbers of reasons and values sit in a chip of that colour */
 .stats li:nth-child(4n + 1), .reason:nth-child(4n + 1), .drive:nth-child(4n + 1) { --mk: var(--sun); }
@@ -1134,7 +1139,7 @@ html.motion.js .values.is-in .values__stop .dd > * { transform-box: fill-box; tr
 /* a big opening mark in marker pink, and a marker line drawn under the promise at the heart of the quote */
 .quote__mark { display: block; height: 0.52em; margin: 0 0 clamp(8px, 1.4vw, 16px) -0.04em; font: 400 clamp(5rem, 9vw, 8rem)/0.9 var(--display); color: var(--pink); user-select: none; }
 .quote blockquote, .studio__quote blockquote { margin: 0; }
-.quote blockquote p { font: 360 clamp(1.6rem, 2.9vw, 2.7rem)/1.16 var(--display); letter-spacing: -0.035em; max-width: 26ch; text-wrap: pretty; }
+.quote blockquote p { font: 430 clamp(1.6rem, 2.9vw, 2.7rem)/1.16 var(--display); letter-spacing: -0.035em; max-width: 26ch; text-wrap: pretty; }
 :is(.quote, .studio__quote) blockquote mark { color: inherit; background: linear-gradient(var(--pink), var(--pink)) no-repeat 0 96% / 100% 0.09em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 html.motion.js :is(.quote blockquote, .studio__quote):not(.is-in) mark { background-size: 0% 0.09em; }
 html.motion.js :is(.quote blockquote, .studio__quote) mark { transition: background-size 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.6s; }
@@ -1180,12 +1185,12 @@ html.motion.js .quote__star { animation: dd-boil 1.8s steps(1) infinite; }
 .contact__ways a:hover { padding-left: 6px; }
 .contact__ways i { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--r-ctl); background: var(--surface); }
 .contact__ways i svg { width: 20px; height: 20px; }
-.contact__ways span { display: grid; gap: 3px; font-weight: 500; font-size: 0.98rem; }
-.contact__ways small { font-weight: 400; font-size: 0.84rem; color: var(--muted); }
+.contact__ways span { display: grid; gap: 3px; font-weight: 600; font-size: 1rem; }
+.contact__ways small { font-weight: 500; font-size: 0.86rem; color: var(--muted); }
 .form { display: grid; gap: 14px; padding: clamp(22px, 2.6vw, 32px); border-radius: 26px; background: var(--surface); }
 .form h3 { margin-bottom: 4px; font-size: 1.55rem; letter-spacing: -0.03em; }
 .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form label { display: grid; gap: 7px; font-size: 0.86rem; font-weight: 500; color: var(--muted); }
+.form label { display: grid; gap: 7px; font-size: 0.88rem; font-weight: 600; color: var(--muted); }
 .form input, .form select, .form textarea { width: 100%; padding: 12px 14px; border: 0; border-radius: var(--r-ctl); background: var(--bg); color: var(--text); font-size: 1rem; box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow var(--t-1) ease; }
 .form textarea { resize: vertical; min-height: 96px; }
 .form input:hover, .form select:hover, .form textarea:hover { box-shadow: inset 0 0 0 1px var(--line-2); }
@@ -1195,13 +1200,13 @@ html.motion.js .quote__star { animation: dd-boil 1.8s steps(1) infinite; }
 .form .btn { justify-self: start; margin-top: 6px; }
 .form .btn:disabled { cursor: progress; opacity: 0.6; }
 .form__trap { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-.form__note { font-size: 0.82rem; color: var(--muted); }
+.form__note { font-size: 0.84rem; font-weight: 500; color: var(--muted); }
 .form__note .link { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 /* The brief: pick-one chips (real radios, so arrow keys move between them), fields with their own errors, and the
    thank-you that replaces the form once it's sent. */
 .form__field { display: grid; gap: 7px; }
-.form__field > label { font-size: 0.86rem; font-weight: 500; color: var(--muted); }
-.form__hint { font-size: 0.8rem; color: var(--muted); }
+.form__field > label { font-size: 0.88rem; font-weight: 600; color: var(--muted); }
+.form__hint { font-size: 0.82rem; font-weight: 500; color: var(--muted); }
 .form__err { display: flex; gap: 6px; align-items: baseline; font-size: 0.82rem; font-weight: 500; color: #ffd2cb; }
 .form__err::before { content: '!'; flex: none; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: #ff7a6b; color: #151514; font-size: 0.7rem; font-weight: 700; transform: translateY(2px); }
 .form__foot { display: grid; gap: 10px; }
@@ -1425,7 +1430,7 @@ html:has(.pdlg[open]) { overflow: hidden; }
 /* the next page on the route through the site: one big link that opens the footer */
 .footer__next { position: relative; display: grid; gap: 12px; padding: 0 clamp(80px, 12vw, 160px) clamp(32px, 4vw, 48px) 0; margin-bottom: clamp(36px, 5vw, 56px); border-bottom: 1px solid var(--line); }
 .footer__next small { font: 500 0.84rem/1 var(--body); color: var(--sun); }
-.footer__next span { justify-self: start; font: 360 clamp(2.1rem, 5.4vw, 4.6rem)/1.02 var(--display); letter-spacing: -0.045em; text-wrap: balance;
+.footer__next span { justify-self: start; font: 430 clamp(2.1rem, 5.4vw, 4.6rem)/1.02 var(--display); letter-spacing: -0.045em; text-wrap: balance;
   background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 100% / 0% 0.07em; transition: background-size 600ms var(--ease); }
 .footer__next:hover span, .footer__next:focus-visible span { background-size: 100% 0.07em; }
 .footer__next-arrow { position: absolute; right: 0; bottom: clamp(26px, 3.4vw, 44px); width: clamp(64px, 9vw, 116px); height: clamp(64px, 9vw, 116px); transition: transform 500ms var(--ease); }
@@ -1443,7 +1448,7 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .footer__cols h3 { margin-bottom: 16px; font: 500 0.84rem/1 var(--body); letter-spacing: 0; color: var(--muted); }
 .footer__cols a { display: block; padding: 6px 0; font-size: 0.95rem; transition: color var(--t-1) ease; }
 .footer__cols a:hover { color: var(--muted); }
-.footer__mark { display: flex; align-items: center; margin-top: clamp(44px, 6vw, 80px); font: 360 clamp(4rem, 15vw, 13rem)/0.8 var(--display); letter-spacing: -0.055em; user-select: none; }
+.footer__mark { display: flex; align-items: center; margin-top: clamp(44px, 6vw, 80px); font: 430 clamp(4rem, 15vw, 13rem)/0.8 var(--display); letter-spacing: -0.055em; user-select: none; }
 /* the route from the hero, ending in the chevron: the site closes the way it opens */
 .footer__route { display: block; width: 100%; height: 0.42em; overflow: visible; }
 .footer__route path { fill: none; stroke: var(--blue); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
