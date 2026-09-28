@@ -219,6 +219,7 @@
       sec.classList.toggle('is-roomy', k >= 1 && room - stage.offsetHeight > 160); // tall screens: centre the stage
       if (!ok) {
         sec.classList.remove('is-live');
+        sec.style.removeProperty('--day');
         [intro, caption, stepsBox].forEach((el) => el && (el.style.opacity = el.style.transform = '', el.inert = false));
         drawings.forEach((d) => d.render({ walls: 0, morph: 0, stops: 0, travel: 0 }));
       }
@@ -237,6 +238,8 @@
         caption.inert = c < 0.5;
         // the headline's marker swipe and doodle play as the heading takes over from the hero
         capTitle?.classList.toggle('is-in', c > 0.6);
+        // the night hero turns into the lilac "How we work" room with the heading (site.css, .journey --day)
+        sec.style.setProperty('--day', c.toFixed(3));
       }
       const s = { walls: span(p, P.walls), morph: span(p, P.morph), stops: span(p, P.stops), travel: span(p, P.travel) };
       if (compact.matches) {
