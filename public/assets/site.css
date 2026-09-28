@@ -280,7 +280,7 @@ html.menu-open { overflow: hidden; }
 .journey__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .journey__step { padding-right: clamp(16px, 2.4vw, 36px); }
 .journey__num { padding: 4px 8px 3px; border-radius: 999px; background: var(--mk, var(--sun)); font: 600 0.76rem/1 var(--body); color: var(--ink); font-variant-numeric: tabular-nums; }
-.journey__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.journey__head { display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start; gap: 0 10px; } /* a two-line title never shifts its row's chips */
 .journey__head h3 { flex-basis: 100%; }
 .journey__dd { width: 30px; height: 30px; margin-left: -3px; }
 .journey__dd .dd__ink > * { stroke: var(--ink); stroke-width: 3; }
@@ -294,6 +294,11 @@ html.menu-open { overflow: hidden; }
 .journey--home.is-live .journey__sticky { align-items: flex-start; padding-top: clamp(84px, 11vh, 132px); }
 .journey--home.is-live.is-roomy .journey__sticky { align-items: center; padding-top: 64px; }
 .journey.is-live .journey__stage { grid-template-areas: "text" "map" "steps"; gap: clamp(18px, 3.6vh, 44px); }
+/* a stage a little taller than the screen is scaled to fit (journey.js sets --fit). It is laid out that much wider
+   first, so once scaled it spans the page's width exactly, in line with the nav. It scales from its left edge: from
+   the top on the home page, which hangs from the top, else from the middle. */
+.journey.is-live .journey__stage { flex: none; width: calc(var(--wrap) / var(--fit, 1)); margin: 0 0 0 calc((100% - var(--wrap)) / 2); scale: var(--fit, 1); transform-origin: 0 50%; }
+.journey--home.is-live:not(.is-roomy) .journey__stage { transform-origin: 0 0; }
 .journey.is-live .journey__intro, .journey.is-live .journey__caption { grid-area: text; align-self: end; }
 /* the drawing is capped at about 27% of the screen's height; the steps take the same width so each stage's title
    sits under its stop (the wide maze is 4.52 times wider than tall) */

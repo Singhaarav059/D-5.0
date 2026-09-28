@@ -203,12 +203,17 @@
       : { walls: [0, 0.16], morph: [0.06, 0.34], stops: [0.32, 0.4], travel: [0.43, 0.93] };
     sec.style.setProperty('--track', home ? '330svh' : '300svh');
 
-    // Live only if the stage fits the screen; a short screen keeps the plain version.
+    // Live only if the stage fits the screen. A stage up to a fifth too tall (most laptops, for the home page) is scaled
+    // down to fit (--fit, site.css); a screen shorter than that keeps the plain version. (offsetHeight ignores the
+    // scale, so this measures the stage at full size.)
     const fit = () => {
       sec.classList.add('is-live');
+      sec.style.removeProperty('--fit');
       const room = sticky.clientHeight - parseFloat(getComputedStyle(sticky).paddingTop) - 8;
-      const ok = stage.offsetHeight <= room;
-      sec.classList.toggle('is-roomy', ok && room - stage.offsetHeight > 160); // tall screens: centre the stage
+      const k = room / stage.offsetHeight;
+      const ok = k >= 0.8;
+      sec.style.setProperty('--fit', Math.min(1, k).toFixed(4));
+      sec.classList.toggle('is-roomy', k >= 1 && room - stage.offsetHeight > 160); // tall screens: centre the stage
       if (!ok) {
         sec.classList.remove('is-live');
         [intro, caption, stepsBox].forEach((el) => el && (el.style.opacity = el.style.transform = '', el.inert = false));
