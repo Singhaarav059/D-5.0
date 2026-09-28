@@ -1290,7 +1290,12 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 
   /* tools: categories become a scrollable row of chips; the tool list sits right under them */
   .kmap__stage { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-  .kmap__wires, .kmap__core, .kmap__dot { display: none; }
+  /* no wires here, but the stack stays: a smaller pile beside its title, the picked layer still pulled out */
+  .kmap__wires, .kmap__dot, .kmap__stub, .kmap__port { display: none; }
+  .kmap__core { grid-template-columns: auto auto; justify-content: start; align-items: center; column-gap: 18px; text-align: left; }
+  .kmap__stack { grid-row: span 2; width: 130px; margin: 0; }
+  .kmap__title { align-self: end; }
+  .kmap__sub { align-self: start; }
   .kmap__cats { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--pad) * -1); padding: 2px var(--pad) 6px; }
   .kmap__cats::-webkit-scrollbar { display: none; }
   .kmap__cat { flex: none; width: auto; grid-template-columns: auto auto auto; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px; }
