@@ -72,7 +72,7 @@ const contact = (id = 'contact') => `<section class="section sheet sheet--blue c
       <label>How can we help?<textarea name="message" rows="4" maxlength="5000" minlength="10" required></textarea></label>
       <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
       <button class="btn btn--primary" type="submit"><span>Send message</span><i class="btn__icon">${icon.arrow}</i></button>
-      <p class="form__note" data-form-note aria-live="polite">Your details are sent securely when contact delivery is configured; otherwise your email app will be offered as a fallback.</p>
+      <p class="form__note" data-form-note aria-live="polite">We only use your details to reply to you. Prefer email? Write to ${esc(C.email)}.</p>
     </form>
   </div>
 </section>`;
