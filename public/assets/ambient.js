@@ -26,7 +26,7 @@
     const wrap = W <= 560 ? W - 32 : Math.min(1200, W - 48);
     return { W, H, edge: (W - wrap) / 2 };
   };
-  const target = () => (innerWidth >= 1400 ? 13 : innerWidth >= 1025 ? 9 : 5);
+  const target = () => (innerWidth >= 1400 ? 7 : innerWidth >= 1025 ? 5 : 3);
 
   // What to draw next, and how big. Everything prefers the margins, sized to fit them; a few go behind the text
   // column (faded there, site.css), and on narrow screens they sit at the edges, partly off-screen.

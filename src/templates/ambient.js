@@ -12,17 +12,15 @@ const { sketchSvg } = require('./sketches');
 
 // [doodle, marker colour]
 const DOODLES = [['bulb', 'sun'], ['pencil', 'lilac'], ['gear', 'sky'], ['rocket', 'tomato'], ['chip', 'lilac'], ['browser', 'sky'],
-  ['phone', 'sun'], ['layers', 'mint'], ['bag', 'tomato'], ['cloud', 'mint'], ['loop', 'sky'], ['pen', 'pink'], ['star', 'sun'],
-  ['chat', 'pink'], ['plane', 'sky'], ['cup', 'tomato'], ['card', 'mint'], ['bolt', 'sun'], ['spiral', 'lilac'], ['heart', 'pink']];
+  ['layers', 'mint'], ['cloud', 'mint'], ['star', 'sun'], ['chat', 'pink'], ['plane', 'sky'], ['heart', 'pink']];
 
 // [doodle, marker colour, words]: small moments of the work, not claims about anyone's project
 const STICKERS = [['gear', 'mint', 'Tests passing'], ['rocket', 'tomato', 'Shipped'], ['pencil', 'lilac', 'Wireframes ready'],
-  ['bulb', 'sun', 'New idea'], ['cloud', 'sky', 'Deployed'], ['chat', 'pink', 'Feedback in'], ['layers', 'mint', 'Sprint review'],
-  ['pen', 'pink', 'Design QA'], ['browser', 'sky', 'Staging live'], ['loop', 'sun', 'Automated']];
+  ['bulb', 'sun', 'New idea'], ['cloud', 'sky', 'Deployed'], ['chat', 'pink', 'Feedback in']];
 
 // [sketch, marker colour]
-const SKETCHES = [['wireframe', 'sky'], ['pen', 'lilac'], ['code', 'mint'], ['git', 'sun'], ['chart', 'tomato'], ['sticky', 'sun'],
-  ['kanban', 'sun'], ['chat', 'sky'], ['flow', 'sun'], ['db', 'sky'], ['phone', 'mint'], ['map', 'tomato']];
+const SKETCHES = [['wireframe', 'sky'], ['code', 'mint'], ['git', 'sun'], ['chart', 'tomato'], ['kanban', 'sun'], ['flow', 'sun'],
+  ['db', 'sky'], ['phone', 'mint']];
 
 const ambient = () => `<div class="amb" aria-hidden="true" data-amb data-src="./assets/crew3d.js"></div>
 <template data-amb-set>${[
