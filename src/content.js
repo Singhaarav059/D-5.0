@@ -5,7 +5,7 @@ module.exports = {
   calendly: 'https://calendly.com/krupal-demazetech/30min',
   email: 'contact@demazetech.com',
   address: 'A 804, Ganesh Glory 11, Jagatpur road, Near S.G. Highway, Gota, Ahmedabad',
-  mapUrl: 'https://www.google.com/maps/dir//D-814,+Ganesh+Glory+11,+Jagatpur+Road,+Sarkhej+-+Gandhinagar+Hwy,+Gota,+Ahmedabad,+Gujarat+382470/@23.1141548,72.4578552,12z',
+  mapUrl: 'https://www.google.com/maps/dir//A-804,+Ganesh+Glory+11,+Jagatpur+Road,+Sarkhej+-+Gandhinagar+Hwy,+Gota,+Ahmedabad,+Gujarat+382470/@23.1141548,72.4578552,12z',
   socials: [
     { name: 'LinkedIn', href: 'https://www.linkedin.com/in/krupalchaudhary', icon: 'linkedin' },
     { name: 'X', href: 'https://x.com/growwithkrupal', icon: 'x' },
