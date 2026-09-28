@@ -99,12 +99,16 @@ function deadEnds(cols, rows, { right, down, way }) {
 }
 
 // `n` dead ends spread evenly across the maze: one per equal slice of its width, the nearest to the slice's middle,
-// never in the column next to one already taken.
-function spread(ends, cols, n) {
+// never in the column next to one already taken, and only where `label(i, end, taken)` finds room for its label
+// (it returns the label's y, or null). Each pick is [x, y, label y].
+function spread(ends, cols, n, label) {
   const taken = [];
   for (let i = 0; i < n; i++) {
     const mid = ((i + 0.5) * cols) / n;
-    const free = ends.filter(([x]) => !taken.some(([tx]) => Math.abs(tx - x) < 2));
+    const fits = (e) => { const ly = label(i, e, taken); return ly === null ? [] : [[...e, ly]]; };
+    let free = ends.filter((e) => !taken.some(([tx]) => Math.abs(tx - e[0]) < 2)).flatMap(fits);
+    // nothing left that far apart: any other free dead end will do
+    if (!free.length) free = ends.filter((e) => !taken.some(([tx, ty]) => tx === e[0] && ty === e[1])).flatMap(fits);
     if (!free.length) break;
     taken.push(free.reduce((a, b) => (Math.abs(b[0] - mid) < Math.abs(a[0] - mid) ? b : a)));
   }
@@ -114,8 +118,9 @@ function spread(ends, cols, n) {
 // (Anything CSS animates is a wrapper <g> without a transform attribute: a CSS transform would replace it.)
 // A sticker label: a small tilted tag in the doodle's colour, centred on x, y (width estimated from the text).
 // `minX` keeps the whole tag right of that x (the drawing's left edge), so it is never cut off by the page margin.
+const tagBox = (text, size) => [text.length * size * 0.56 + size * 1.3, size * 1.75];
 const tag = (text, x, y, size, color, tilt, minX = -Infinity) => {
-  const w = text.length * size * 0.56 + size * 1.3, h = size * 1.75;
+  const [w, h] = tagBox(text, size);
   x = Math.max(x, minX + w / 2);
   return `<g class="maze__tag" style="--dd:var(--${color})" transform="translate(${+x.toFixed(1)} ${+y.toFixed(1)}) rotate(${tilt})"><rect x="${+(-w / 2).toFixed(1)}" y="${+(-h / 2).toFixed(1)}" width="${+w.toFixed(1)}" height="${+h.toFixed(1)}" rx="${+(h / 2).toFixed(1)}"/><text y="${+(size * 0.36).toFixed(1)}" font-size="${size}">${esc(text)}</text></g>`;
 };
@@ -137,12 +142,25 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
   const vb = [-C, -8, W + C * 2.4, H + 16];
   const lineY = H / 2;
   const geo = { pts, y: lineY, stops: stops.map((f) => +(vb[0] + f * vb[2]).toFixed(1)), mark: [W + C * 0.95, (exit + 0.5) * C], C };
-  const spots = spread(deadEnds(cols, rows, m), cols, pits.length);
-  const pitfalls = spots.map(([x, y], i) => {
+  // A pitfall's label sits on the side of the maze with more room (under the doodle in the top half, over it below),
+  // or on the other side if that is where it stays clear of the labels already placed and of the "Launch" tag under
+  // the exit. The margin allows for the stickers' tilt.
+  const box = (text, x, y) => ({ x, y, s: tagBox(text, tagSize) });
+  const apart = (a, b) => Math.abs(a.x - b.x) > (a.s[0] + b.s[0]) / 2 + 10 || Math.abs(a.y - b.y) > (a.s[1] + b.s[1]) / 2 + 10;
+  const fin = finish ? [box(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9)] : [];
+  const label = (i, [x, y], taken) => {
+    const others = [...fin, ...taken.map(([tx, , ty], j) => box(pits[j][1], (tx + 0.5) * C, ty))];
+    const side = y < rows / 2 ? 1 : -1;
+    for (const k of [side, -side]) {
+      const ly = (y + 0.5) * C + k * C * 0.62;
+      if (others.every((o) => apart(box(pits[i][1], (x + 0.5) * C, ly), o))) return ly;
+    }
+    return null;
+  };
+  const spots = spread(deadEnds(cols, rows, m), cols, pits.length, label);
+  const pitfalls = spots.map(([x, y, ty], i) => {
     const [name, label, color] = pits[i];
     const cx = (x + 0.5) * C, cy = (y + 0.5) * C;
-    // the label sits on the side of the maze with more room: under the doodle in the top half, over it below
-    const ty = y < rows / 2 ? cy + C * 0.62 : cy - C * 0.62;
     return `<g class="maze__pit" style="--i:${i}"><g class="maze__pit-in">${doodleAt(name, cx, cy, C * 0.8, { color })}${tag(label, cx, ty, tagSize, color, i % 2 ? 4 : -4)}</g></g>`;
   }).join('');
   const [ex, ey] = pts[0];
@@ -150,10 +168,10 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
     <g class="maze__wallset"><path class="maze__walls" d="${wallPath(cols, rows, m, entry, exit, C)}"/></g>
     <path class="maze__glow" d="${toPath(pts)}" pathLength="1"/>
     <g class="maze__pits">${pitfalls}</g>
-    <g class="maze__start">${doodleAt('bulb', ex + C * 0.35, ey - C * 1.05, C * 0.95, { color: 'sun' })}${start ? tag(start, ex + C * 0.35, ey - C * 1.95, tagSize, 'sun', -5, vb[0] + 4) : ''}</g>
     <path class="maze__route" d="${toPath(pts)}" pathLength="1"/>
     <path class="maze__line" d="M0 0"/>
     <path class="maze__trail" d="M0 0"/>
+    <g class="maze__start">${doodleAt('bulb', ex + C * 0.35, ey - C * 1.05, C * 0.95, { color: 'sun' })}${start ? tag(start, ex + C * 0.35, ey - C * 1.95, tagSize, 'sun', -5, vb[0] + 4) : ''}</g>
     <g class="maze__stops">${geo.stops.map((x) => `<circle class="maze__stop" cx="${x}" cy="${lineY}" r="7"/>`).join('')}</g>
     <g class="maze__markset"><g class="maze__rocket"><g class="maze__lift"><g class="maze__exhaust">${doodleAt('exhaust', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g>${doodleAt('rocket', geo.mark[0] + C * 0.05, geo.mark[1] - C * 1.15, C * 1.05, { color: 'tomato' })}</g></g>${finish ? `<g class="maze__finish">${tag(finish, geo.mark[0] + C * 0.05, geo.mark[1] + C * 0.9, tagSize, 'tomato', 4)}</g>` : ''}<path class="maze__mark" d="${chevron(geo.mark[0], geo.mark[1], C * 0.95)}"/></g>
     <circle class="maze__signal" r="6"><animateMotion dur="7s" repeatCount="indefinite" begin="indefinite" path="${toPath(pts)}"/></circle>
