@@ -1764,8 +1764,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .journey.is-live .journey__steps { grid-area: text; align-self: end; }
   .journey.is-live .journey__map { width: min(100%, 58svh); }
   .journey.is-live .journey__steps { grid-template-rows: none; }
-  .journey.is-live .journey__step { display: block; grid-area: 1 / 1; opacity: 0; transition: opacity 400ms var(--ease); }
-  .journey.is-live .journey__step.is-active { opacity: 1; }
+  /* the stages take turns in one slot: the old one leaves first, then the new one comes in, so two never overlap */
+  .journey.is-live .journey__step { display: block; grid-area: 1 / 1; opacity: 0; transition: opacity 160ms ease, translate 160ms ease; }
+  .journey.is-live .journey__step.is-active { opacity: 1; transition: opacity 360ms var(--ease) 170ms, translate 360ms var(--ease) 170ms; }
+  .journey.is-live .journey__step:not(.is-active) { translate: 0 6px; }
   .journey.is-live .journey__step :is(.journey__art, .journey__head), .journey.is-live .journey__step p { opacity: 1; transform: none; filter: none; }
   .journey.is-live .journey__steps { margin-top: 0; }
   .journey.is-live .journey__art { margin-bottom: 12px; }

@@ -242,14 +242,18 @@
         sec.style.setProperty('--day', c.toFixed(3));
       }
       const s = { walls: span(p, P.walls), morph: span(p, P.morph), stops: span(p, P.stops), travel: span(p, P.travel) };
+      // the stages' entrance; on phones and tablets they share the heading's slot, so the heading leaves in the first
+      // half of the beat and the stages arrive in the second, never on screen together
+      let enter = s.stops;
       if (compact.matches) {
-        // the heading makes way for the stages
         const c = home ? span(p, P.caption) : 1;
-        caption.style.opacity = (c * (1 - s.stops)).toFixed(3);
-        caption.inert = c * (1 - s.stops) < 0.5;
+        const out = c * (1 - Math.min(1, s.stops * 2));
+        enter = Math.max(0, s.stops * 2 - 1);
+        caption.style.opacity = out.toFixed(3);
+        caption.inert = out < 0.5;
       } else if (!home) { caption.style.opacity = ''; caption.inert = false; }
-      stepsBox.style.opacity = s.stops.toFixed(3);
-      stepsBox.style.transform = `translateY(${(16 * (1 - s.stops)).toFixed(1)}px)`;
+      stepsBox.style.opacity = enter.toFixed(3);
+      stepsBox.style.transform = `translateY(${(16 * (1 - enter)).toFixed(1)}px)`;
       const shown = drawings.filter((d) => d.svg.getBoundingClientRect().width > 0);
       shown.forEach((d) => d.render(s));
       const at = (shown[0] || drawings[0]).at;
