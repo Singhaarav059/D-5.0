@@ -16,6 +16,10 @@ const J = C.journey;
 const LOOP = '<svg class="scribble__loop" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M186 12C120 2 22 12 10 50c-10 34 88 44 170 40 72-3 118-18 110-44C282 18 206 6 118 12"/></svg>';
 const headline = (h) => h.replace(/<mark>(.*?)<\/mark>/, `<span class="scribble">$1${LOOP}${doodle('star', { color: 'sun', cls: 'hero__star' })}${doodle('star', { color: 'pink', cls: 'hero__star hero__star--2' })}</span>`);
 
+// The record, right under the promise: the four figures (content.js `metrics`), each with a marker line in its colour.
+const PROOF_MK = ['sun', 'pink', 'mint', 'sky'];
+const proof = () => `<ul class="hero__proof" data-hero-fade>${C.metrics.map((m, i) => `<li style="--mk:var(--${PROOF_MK[i % 4]})"><b>${m.prefix}${m.value}${m.suffix}</b>${esc(m.label.toLowerCase())}</li>`).join('')}</ul>`;
+
 const heroCopy = () => `<div class="journey__intro" data-hero>
           <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
           <div class="hero__grid">
@@ -25,6 +29,7 @@ const heroCopy = () => `<div class="journey__intro" data-hero>
               <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact')}${btn('See how we work', '#how', 'btn--ghost')}</div>
             </div>
           </div>
+          ${proof()}
         </div>`;
 
 const caption = () => `<div class="journey__caption" id="how">${head({ label: 'How we work', title: C.journey.title, lead: esc(C.journey.lead), mark: ['bulb', 'sun'] })}</div>`;

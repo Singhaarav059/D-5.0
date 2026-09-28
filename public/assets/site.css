@@ -563,6 +563,10 @@ html.motion.js .hero__arrow .dd__ink > * { animation: dd-draw 0.9s cubic-bezier(
 .hero__title .w, .phero__title .w { padding: 0.08em 0.05em 0.14em; margin: -0.08em -0.05em -0.14em; }
 .hero__lead { font-size: clamp(1.02rem, 1.25vw, 1.15rem); line-height: 1.5; color: var(--muted); max-width: 40ch; }
 .hero__ctas { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+/* the record under the promise: four figures on one line, each underlined in its marker colour */
+.hero__proof { margin-top: clamp(18px, 3vh, 32px); display: flex; flex-wrap: wrap; gap: 10px clamp(20px, 3.4vw, 48px); font-size: 0.9rem; color: var(--muted); }
+.hero__proof li { display: inline-flex; align-items: baseline; gap: 8px; }
+.hero__proof b { font: 400 1.35rem/1 var(--display); letter-spacing: -0.03em; color: var(--text); padding-bottom: 3px; background: linear-gradient(var(--mk), var(--mk)) no-repeat 0 100% / 100% 3px; font-variant-numeric: tabular-nums; }
 
 /* The maze (templates/maze.js). Resting state: faint walls, the blue route, the chevron. When a maze first comes
    into view the walls rise, the route draws itself through, the chevron lands and the walls fall back. */
@@ -1593,6 +1597,8 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .journey--home { padding-top: 104px; }
   .hero__title { font-size: clamp(2.6rem, 12.4vw, 3.4rem); }
   .hero__ctas .btn { flex: 1 1 auto; justify-content: space-between; }
+  .hero__proof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; font-size: 0.84rem; }
+  .hero__proof li { display: grid; gap: 4px; justify-items: start; }
   .phero { padding-top: 112px; }
   .phero__title { font-size: clamp(2.4rem, 11vw, 3.1rem); }
   .h2 { font-size: clamp(1.95rem, 8.6vw, 2.5rem); }
