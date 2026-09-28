@@ -151,8 +151,7 @@
     const x0 = g.pts[0][0], x1 = g.pts[g.pts.length - 1][0];
     const line = route.map((_, i) => [x0 + ((x1 - x0) * i) / (N - 1), g.y]);
     const q = (s) => svg.querySelector(s);
-    const els = { walls: q('.maze__wallset'), line: q('.maze__line'), trail: q('.maze__trail'), mark: q('.maze__markset'), traveler: q('.maze__traveler'), stops: $$('.maze__stop', svg), glow: q('.maze__glow'), pits: $$('.maze__pit', svg) };
-    const glowAt = els.glow ? parseFloat(getComputedStyle(els.glow).opacity) || 0 : 0; // its resting strength (site.css)
+    const els = { walls: q('.maze__wallset'), line: q('.maze__line'), trail: q('.maze__trail'), mark: q('.maze__markset'), traveler: q('.maze__traveler'), stops: $$('.maze__stop', svg), pits: $$('.maze__pit', svg) };
     const end = g.mark[0] - g.C * 0.62; // the signal comes to rest against the chevron
     // where each stage is reached, as a fraction of the walk
     const at = g.stops.map((x) => (x - g.stops[0]) / (end - g.stops[0]));
@@ -162,8 +161,7 @@
       if (key === last) return;
       last = key;
       els.walls.style.opacity = (1 - s.walls).toFixed(3);
-      // the route's glow fades with the walls, and the pitfalls drop out of the picture one after another
-      if (els.glow) els.glow.style.opacity = (glowAt * (1 - s.walls)).toFixed(3);
+      // the pitfalls drop out of the picture one after another
       els.pits.forEach((p, i) => {
         const k = clamp(s.walls * 1.9 - i * 0.13), f = k * k;
         p.style.opacity = (1 - k).toFixed(3);

@@ -166,7 +166,6 @@ function maze({ cols, rows, seed, entry, exit, cls, stops = [0.012, 0.262, 0.512
   const [ex, ey] = pts[0];
   return `<svg class="maze ${cls}" viewBox="${vb.join(' ')}" aria-hidden="true" focusable="false" data-geo='${JSON.stringify(geo)}'>
     <g class="maze__wallset"><path class="maze__walls" d="${wallPath(cols, rows, m, entry, exit, C)}"/></g>
-    <path class="maze__glow" d="${toPath(pts)}" pathLength="1"/>
     <g class="maze__pits">${pitfalls}</g>
     <path class="maze__route" d="${toPath(pts)}" pathLength="1"/>
     <path class="maze__line" d="M0 0"/>
