@@ -1869,7 +1869,7 @@ html.rm :is(.svc-panel, .acc__a, .acc__a p, .pcard__media, .nav__bar) { transiti
   --accent: color-mix(in srgb, var(--brand) 82%, #000);
   --lift: 0 1px 2px rgba(16, 18, 24, 0.06), 0 16px 34px -18px rgba(16, 18, 24, 0.32);
   position: absolute; inset: 0; overflow: hidden; color: var(--fg); pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 58%, #fbfbf9 0%, #f1f1ed 55%, #e7e7e2 100%); }
+  background: radial-gradient(90% 80% at 50% 45%, color-mix(in srgb, var(--brand) 10%, #fff) 0%, color-mix(in srgb, var(--brand) 30%, #fff) 62%, color-mix(in srgb, var(--brand) 44%, #fff) 100%); }
 .reel__bg { position: absolute; inset: 0; display: grid; place-items: center; }
 .reel__rings { width: calc(640px * var(--s, 1)); height: calc(440px * var(--s, 1)); overflow: visible; fill: none; stroke: var(--ring); stroke-width: 1; }
 .reel__flash { position: absolute; inset: 0; z-index: 3; background: #fff; opacity: 0; }
@@ -1885,12 +1885,12 @@ html.rm :is(.svc-panel, .acc__a, .acc__a p, .pcard__media, .nav__bar) { transiti
   background: radial-gradient(90% 70% at 50% 72%, color-mix(in srgb, var(--brand) 16%, #24262d) 0%, #121317 60%, #0a0a0d 100%); }
 .reel--noir .reel__bg::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: 4%; height: 34%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.07), transparent 70%); }
 .reel--paper { --fg: #1f1a14; --mute: #7a7063; --line: rgba(60, 40, 20, 0.14); --idle: rgba(60, 40, 20, 0.06); --idle-strong: rgba(60, 40, 20, 0.14); --link: rgba(60, 40, 20, 0.3);
-  background: radial-gradient(rgba(60, 40, 20, 0.13) 1px, transparent 1.3px) 0 0 / 18px 18px, #f5efe4; }
+  background: radial-gradient(rgba(60, 40, 20, 0.16) 1px, transparent 1.3px) 0 0 / 18px 18px, radial-gradient(80% 70% at 30% 20%, #fbe9bf, transparent 70%), #efcf8c; }
 .reel--blueprint { --fg: #0f1a2b; --mute: #5b6b82; --line: rgba(30, 70, 130, 0.14); --idle: rgba(30, 70, 130, 0.06); --idle-strong: rgba(30, 70, 130, 0.14); --link: rgba(30, 70, 130, 0.35);
-  background: linear-gradient(rgba(30, 70, 130, 0.07) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, rgba(30, 70, 130, 0.07) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(180deg, #f2f6fb, #e6edf6); }
-.reel--tint { --ring: color-mix(in srgb, var(--brand) 22%, transparent);
-  background: radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--brand) 30%, #fff) 0%, transparent 70%), radial-gradient(60% 60% at 5% 100%, color-mix(in srgb, var(--brand) 18%, #fff) 0%, transparent 70%), #fbfaf8; }
-.reel--dots { background: radial-gradient(color-mix(in srgb, var(--brand) 32%, transparent) 1.1px, transparent 1.5px) 0 0 / 15px 15px, #fbfbf9; }
+  background: linear-gradient(rgba(30, 70, 130, 0.07) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, rgba(30, 70, 130, 0.07) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(180deg, #d7e6fb, #a9c8f2); }
+.reel--tint { --ring: color-mix(in srgb, var(--brand) 30%, transparent);
+  background: radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--brand) 55%, #fff) 0%, transparent 70%), radial-gradient(60% 60% at 5% 100%, color-mix(in srgb, var(--brand) 40%, #fff) 0%, transparent 70%), color-mix(in srgb, var(--brand) 26%, #fff); }
+.reel--dots { background: radial-gradient(color-mix(in srgb, var(--brand) 45%, transparent) 1.1px, transparent 1.5px) 0 0 / 15px 15px, color-mix(in srgb, var(--brand) 22%, #fff); }
 /* More looks, so no two reels share a backdrop. Light: sunset (warm morning light), ledger (green ruled paper), sky
    (pale morning blue). Dark, sharing one set of light-on-dark tokens: midnight (indigo with a mint glow), film
    (black stock with sprocket holes), chalk (a green board), amber (charcoal with an amber glow), neon (pink into
@@ -1898,19 +1898,19 @@ html.rm :is(.svc-panel, .acc__a, .acc__a p, .pcard__media, .nav__bar) { transiti
 .reel--sunset { --fg: #3a2415; --mute: #8a5a3a; --line: rgba(90, 50, 20, 0.16); --idle: rgba(90, 50, 20, 0.07); --idle-strong: rgba(90, 50, 20, 0.15); --link: rgba(90, 50, 20, 0.3); --ring: rgba(255, 255, 255, 0.4);
   background: radial-gradient(60% 55% at 50% 105%, #ffae5c 0%, transparent 72%), linear-gradient(180deg, #fff4da 0%, #ffd9a1 100%); }
 .reel--ledger { --fg: #0f2a1d; --mute: #4f6b5c; --line: rgba(20, 110, 70, 0.16); --idle: rgba(20, 110, 70, 0.06); --idle-strong: rgba(20, 110, 70, 0.14); --link: rgba(20, 110, 70, 0.35);
-  background: linear-gradient(rgba(20, 110, 70, 0.1) 1px, transparent 1px) 0 0 / 100% 24px, linear-gradient(90deg, rgba(20, 110, 70, 0.1) 1px, transparent 1px) 0 0 / 88px 100%, #f4f9f5; }
+  background: linear-gradient(rgba(20, 110, 70, 0.1) 1px, transparent 1px) 0 0 / 100% 24px, linear-gradient(90deg, rgba(20, 110, 70, 0.1) 1px, transparent 1px) 0 0 / 88px 100%, linear-gradient(180deg, #e3f5e8, #bfe6cb); }
 .reel--sky { --fg: #11283d; --mute: #4d6a85; --line: rgba(20, 70, 120, 0.14); --idle: rgba(20, 70, 120, 0.06); --idle-strong: rgba(20, 70, 120, 0.14); --link: rgba(20, 70, 120, 0.3); --ring: rgba(255, 255, 255, 0.55);
-  background: radial-gradient(80% 70% at 18% 0%, #fff 0%, transparent 60%), linear-gradient(180deg, #dbeefc 0%, #b9dbf3 100%); }
+  background: radial-gradient(80% 70% at 18% 0%, #fff 0%, transparent 60%), linear-gradient(180deg, #cde7fb 0%, #93c8f0 100%); }
 /* (the looks below that set their own accent do it as .reel.reel--x, so the shared dark tokens here don't win over it) */
 .reel:is(.reel--midnight, .reel--film, .reel--chalk, .reel--amber, .reel--neon, .reel--pop) { --fg: #f6f4ef; --inv: #0e0f12; --mute: rgba(246, 244, 239, 0.68); --line: rgba(255, 255, 255, 0.16); --idle: rgba(255, 255, 255, 0.09); --idle-strong: rgba(255, 255, 255, 0.2);
   --link: rgba(255, 255, 255, 0.36); --ring: rgba(255, 255, 255, 0.08); --accent: color-mix(in srgb, var(--brand) 50%, #fff); --lift: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -16px rgba(0, 0, 0, 0.7); }
-.reel--midnight { background: radial-gradient(70% 60% at 82% 8%, color-mix(in srgb, var(--brand) 60%, transparent), transparent 70%), radial-gradient(60% 60% at 8% 100%, rgba(60, 240, 190, 0.18), transparent 70%), #110d2e; }
+.reel--midnight { background: radial-gradient(70% 60% at 82% 8%, color-mix(in srgb, var(--brand) 60%, transparent), transparent 70%), radial-gradient(60% 60% at 8% 100%, rgba(60, 240, 190, 0.22), transparent 70%), linear-gradient(160deg, #2c2380, #150f45); }
 .reel.reel--film { --accent: #ffb547; background: radial-gradient(80% 70% at 50% 50%, #1d1b18, #0c0b0a 75%); }
 .reel--film .reel__bg::before, .reel--film .reel__bg::after { content: ''; position: absolute; left: 0; right: 0; height: 12px; background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(255, 255, 255, 0.16) 9px 21px, transparent 21px 30px); }
 .reel--film .reel__bg::before { top: 5px; } .reel--film .reel__bg::after { bottom: 5px; }
 .reel.reel--chalk { --accent: #f5d76e; --ring: rgba(255, 255, 255, 0.06); background: radial-gradient(90% 80% at 50% 38%, #2c4c3f, #1c3329 68%, #152720); }
 .reel--chalk .reel__sun { background: radial-gradient(circle at 50% 40%, rgba(245, 215, 110, 0.5), rgba(245, 215, 110, 0.06) 70%); }
-.reel.reel--amber { --accent: #ffc23a; background: radial-gradient(70% 60% at 50% 105%, rgba(255, 194, 58, 0.3), transparent 70%), #17181c; }
+.reel.reel--amber { --accent: #ffd36b; background: radial-gradient(70% 60% at 50% 105%, rgba(255, 194, 58, 0.42), transparent 70%), linear-gradient(160deg, #b0431a, #5a1c09); }
 .reel.reel--neon { --accent: #ffe14d; background: radial-gradient(80% 70% at 0% 0%, #ff4e8a, transparent 62%), radial-gradient(80% 70% at 100% 100%, #7b5cff, transparent 62%), #2a1650; }
 .reel.reel--pop { --accent: #43092a; background: radial-gradient(rgba(255, 255, 255, 0.24) 1.2px, transparent 1.7px) 0 0 / 14px 14px, linear-gradient(160deg, #ff5c93, #ff2f6d); }
 .reel:is(.reel--paper, .reel--blueprint, .reel--dots, .reel--ledger, .reel--film, .reel--pop) .reel__rings { display: none; }
