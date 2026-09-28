@@ -7,7 +7,8 @@ const { quoteHtml } = require('./about');
 const { SVC_ART } = require('./shared');
 const { doodle } = require('./doodles');
 
-const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--i:${i}" data-stack-card>
+// --hue: the project's reel accent, which washes the card (site.css); the pastel --tint stays for the picture's frame
+const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')};--i:${i}" data-stack-card>
   <div class="stack-card__inner">
     <i class="stack-card__shade" aria-hidden="true"></i>
     <div class="stack-card__copy">

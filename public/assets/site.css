@@ -698,16 +698,23 @@ html.motion.js .maze.is-seen .maze__finish, html.motion.js .maze.is-seen .maze__
 .stack-card__inner {
   position: relative; overflow: hidden; height: 100%;
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: center;
-  padding: clamp(18px, 2.2vw, 28px); border-radius: 26px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
+  padding: clamp(18px, 2.2vw, 28px); border-radius: 30px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
   transform-origin: 50% 0; will-change: transform;
 }
+/* each card is washed in its own project's colour (opaque: the deck stacks them), so the three read as three rooms */
+.stack-card .stack-card__inner { background: radial-gradient(90% 120% at 0% 0%, color-mix(in srgb, var(--hue) 34%, transparent), transparent 70%), color-mix(in srgb, var(--hue) 12%, #111117); }
 .stack-card__shade { position: absolute; inset: 0; z-index: 2; background: #000; opacity: 0; pointer-events: none; }
 .stack-card__copy { padding-left: clamp(4px, 1vw, 14px); }
 .stack-card__num { font: 500 0.84rem/1 var(--body); color: var(--muted); font-variant-numeric: tabular-nums; }
 .stack-card h3 { margin-top: 14px; font-size: clamp(1.55rem, 2.3vw, 2.15rem); line-height: 1.06; letter-spacing: -0.035em; }
 .stack-card p { margin-top: 14px; color: var(--muted); font-size: 0.98rem; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-.stack-card__media { align-self: stretch; display: grid; place-items: center; min-height: 0; border-radius: 18px; overflow: hidden; padding: clamp(10px, 1.6vw, 20px); background: var(--tint); }
+.stack-card__media { align-self: stretch; display: grid; place-items: center; min-height: 0; border-radius: 24px; overflow: hidden; padding: clamp(10px, 1.6vw, 20px); background: var(--tint); }
 .stack-card__media img { width: 100%; height: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; }
+/* hover: as on the projects grid, the picture moves inside its frame and the frame stays put */
+.stack-card__media > .reel, .stack-card__media > picture > img { transition: transform 900ms var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .stack-card:hover .stack-card__media > .reel, .stack-card:hover .stack-card__media > picture > img { transform: scale(1.045); }
+}
 .tags { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px; }
 .tags li { padding: 7px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-2); font-size: 0.8rem; font-weight: 500; line-height: 1.2; }
 .stack.is-deck { display: block; position: relative; height: clamp(440px, calc(100svh - 330px), 560px); overflow: clip; overflow-clip-margin: 30px; }
@@ -1895,7 +1902,7 @@ html.rm :is(.svc-panel, .acc__a, .acc__a p, .pcard__media, .nav__bar) { transiti
 .reel--noir { --fg: #f3f2ee; --inv: #0e0f12; --mute: #9b9ea8; --line: rgba(255, 255, 255, 0.12); --idle: rgba(255, 255, 255, 0.07); --idle-strong: rgba(255, 255, 255, 0.16);
   --link: rgba(255, 255, 255, 0.3); --ring: rgba(255, 255, 255, 0.06); --accent: color-mix(in srgb, var(--brand) 55%, #fff);
   --lift: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -16px rgba(0, 0, 0, 0.75);
-  background: radial-gradient(90% 70% at 50% 72%, color-mix(in srgb, var(--brand) 16%, #24262d) 0%, #121317 60%, #0a0a0d 100%); }
+  background: radial-gradient(90% 70% at 50% 72%, color-mix(in srgb, var(--brand) 42%, #24262d) 0%, color-mix(in srgb, var(--brand) 22%, #121317) 60%, color-mix(in srgb, var(--brand) 12%, #0a0a0d) 100%); }
 .reel--noir .reel__bg::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: 4%; height: 34%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.07), transparent 70%); }
 .reel--paper { --fg: #1f1a14; --mute: #7a7063; --line: rgba(60, 40, 20, 0.14); --idle: rgba(60, 40, 20, 0.06); --idle-strong: rgba(60, 40, 20, 0.14); --link: rgba(60, 40, 20, 0.3);
   background: radial-gradient(rgba(60, 40, 20, 0.16) 1px, transparent 1.3px) 0 0 / 18px 18px, radial-gradient(80% 70% at 30% 20%, #fbe9bf, transparent 70%), #efcf8c; }
