@@ -1,5 +1,5 @@
 // The home hero's maze and "How we work" (src/templates/journey.js). Each maze draws itself in when it first comes
-// into view (CSS). "How we work" is four rows with the Demaze route running through them: the route is drawn from the
+// into view (CSS), and falls away as the hero scrolls off. "How we work" is four rows with the Demaze route running through them: the route is drawn from the
 // rows' positions (so it follows the layout at every width) and, with motion, draws itself as the rows scroll by,
 // lighting each stage's stop as it arrives. Each stage's scene of the work plays while it is on screen.
 (() => {
@@ -17,6 +17,28 @@
   $$('.maze').forEach((m) => seen.observe(m));
 
   const motion = root.classList.contains('motion') && window.gsap && window.ScrollTrigger;
+
+  // Leaving the hero, the maze is taken away: its pitfalls drop out one after another and the walls fade, until only
+  // the route is left, which "How we work" below picks up. Tied to the scroll, so scrolling back builds it again.
+  if (motion) {
+    gsap.registerPlugin(ScrollTrigger);
+    $$('.journey--home .maze').forEach((svg) => {
+      const walls = svg.querySelector('.maze__wallset');
+      const pits = $$('.maze__pit', svg);
+      const clamp = (v) => Math.min(1, Math.max(0, v));
+      ScrollTrigger.create({
+        trigger: svg, start: 'center 72%', end: 'center 18%',
+        onUpdate: ({ progress: p }) => {
+          walls.style.opacity = (1 - clamp(p * 1.6)).toFixed(3);
+          pits.forEach((pit, i) => {
+            const k = clamp(p * 1.9 - i * 0.12), f = k * k;
+            pit.style.opacity = (1 - k).toFixed(3);
+            pit.style.transform = k ? `translate(0, ${(f * 90).toFixed(1)}px) rotate(${(f * (i % 2 ? 28 : -24)).toFixed(1)}deg)` : '';
+          });
+        },
+      });
+    });
+  }
 
   // Stage scenes (src/templates/stages.js). The markup is the finished picture; each timeline builds it up from its
   // parts, holds it, fades the parts and starts again. `rest` is where the finished picture holds, which is what a
@@ -196,7 +218,6 @@
     let t = 0;
     new ResizeObserver(() => { clearTimeout(t); t = setTimeout(layout, 80); }).observe(body);
     if (motion) {
-      gsap.registerPlugin(ScrollTrigger);
       // the tip of the line keeps pace a little below the middle of the screen, and reaches the chevron while it is
       // still in view
       ScrollTrigger.create({ trigger: body, start: 'top 62%', end: 'bottom 85%', onUpdate: (self) => { progress = self.progress; paint(); }, onRefresh: (self) => { progress = self.progress; paint(); } });

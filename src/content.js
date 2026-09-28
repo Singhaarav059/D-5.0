@@ -14,12 +14,13 @@ module.exports = {
   logoMark: './assets/img/logo.png',
   tagline: 'We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.',
 
-  // Home hero. The headline is the name's promise (de-maze); the part in <em> is set in brand blue and the word in
-  // <mark> gets a hand-drawn loop around it.
+  // Home hero. The label is the original promise (a strategic partner for scalable AI products); the headline is the
+  // name's promise (de-maze), the part in <em> set in brand blue and the word in <mark> looped by hand; the lead names
+  // the maze (the pitfalls drawn in the maze under it) and hands over to "How we work" ("the way through").
   hero: {
-    label: 'Demaze Technologies · Ahmedabad, India',
-    headline: 'AI products, <em>without the <mark>maze.</mark></em>',
-    lead: 'From the first workshop to launch and beyond, we design, build and scale AI software with you, as one long-term team.',
+    label: 'Your strategic partner for scalable AI products',
+    headline: 'Build AI products <em>without the <mark>maze.</mark></em>',
+    lead: 'Vague specs, scope creep, deadlines, tech debt: every product has its maze. We design, build and scale AI software with you and find the way through, as one long-term team.',
   },
 
   // "How we work" (templates/journey.js): the heading over the maze scene; the four stages are `process` below.
