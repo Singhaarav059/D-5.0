@@ -483,7 +483,7 @@
           scrollTrigger: {
             trigger: deck.closest('section'), pin: true, scrub: 0.6, invalidateOnRefresh: true,
             start: () => (deck.closest('section').offsetHeight > innerHeight ? 'bottom bottom' : 'top top'),
-            end: () => '+=' + innerHeight * 0.75 * (cards.length - 1),
+            end: () => '+=' + innerHeight * 0.45 * (cards.length - 1), // a short hold per card: the work, not the scroll
           },
         });
         cards.forEach((c, i) => {
@@ -658,7 +658,7 @@
       '(min-width: 1025px)': () => {
         const n = svcPanels.length;
         const st = ScrollTrigger.create({
-          trigger: svc, pin: $('.services__pin', svc), start: 'top top', end: () => '+=' + innerHeight * n * 0.55,
+          trigger: svc, pin: $('.services__pin', svc), start: 'top top', end: () => '+=' + innerHeight * n * 0.3,
           onUpdate: (s) => {
             const f = Math.min(s.progress * n, n - 0.001);
             setSvc(Math.floor(f), f % 1);

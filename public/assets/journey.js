@@ -201,7 +201,7 @@
     const P = home
       ? { intro: [0.02, 0.12], caption: [0.12, 0.22], walls: [0.1, 0.28], morph: [0.2, 0.46], stops: [0.44, 0.52], travel: [0.55, 0.95] }
       : { walls: [0, 0.16], morph: [0.06, 0.34], stops: [0.32, 0.4], travel: [0.43, 0.93] };
-    sec.style.setProperty('--track', home ? '330svh' : '300svh');
+    sec.style.setProperty('--track', home ? '220svh' : '180svh'); // about one and a half screens of scroll, not three
 
     // Live only if the stage fits the screen. A stage up to a fifth too tall (most laptops, for the home page) is scaled
     // down to fit (--fit, site.css); a screen shorter than that keeps the plain version. (offsetHeight ignores the
