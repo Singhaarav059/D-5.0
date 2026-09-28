@@ -1725,7 +1725,6 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 /* try-on */
 .rk-tryon { display: flex; align-items: center; gap: 28px; }
 .rk-mirror { position: relative; width: 210px; height: 270px; border-radius: 105px 105px 18px 18px; background: linear-gradient(180deg, #ffffff, #eceee9); box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand) 45%, #d9c9a0), 0 30px 50px -24px rgba(0, 0, 0, 0.8); overflow: hidden; }
-.rk-mirror__looks { position: absolute; inset: 40px 20px 30px; }
 .rk-look { position: absolute; inset: 0; filter: hue-rotate(var(--hue)); }
 .rk-mirror__scan { position: absolute; left: 0; right: 0; height: 2px; background: var(--brand); }
 .rk-mirror__tag { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); background: var(--ink); color: #fff; }
@@ -1743,27 +1742,15 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 .rk-kpi { padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); }
 .rk-kpi small { display: block; font-size: 13px; font-weight: 600; color: #8a8e9a; white-space: nowrap; }
 .rk-kpi strong { font: 700 19px/1.2 var(--display); white-space: nowrap; }
-.rk-dash__charts { display: grid; grid-template-columns: 1fr 120px; gap: 10px; min-height: 0; }
-.rk-dash__charts > * { border-radius: 10px; background: #fff; }
-.rk-linebox { position: relative; padding: 12px; }
 .rk-line { width: 100%; height: 100%; }
 .rk-line__path { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .rk-line__area { fill: color-mix(in srgb, var(--brand) 16%, transparent); }
 .rk-line__dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border: 3px solid #fff; border-radius: 50%; background: var(--brand); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); translate: 12px 12px; }
-.rk-linebox .rk-line__dot { left: 0; top: 0; }
-.rk-donut { width: 100%; height: 100%; padding: 12px; transform: rotate(-90deg); }
-.rk-donut circle { fill: none; stroke: #e7e9ef; stroke-width: 7; }
-.rk-donut .rk-donut__val { stroke: var(--brand); stroke-linecap: round; }
 .rk-table2 { display: grid; gap: 7px; align-content: start; }
 .rk-tr { display: grid; grid-template-columns: 1.3fr 1fr auto; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; }
 .rk-tr span:nth-child(2) { color: #6b6f7b; }
 .rk-pill { padding: 4px 10px; border-radius: 999px; font-size: 13px; }
 .rk-pill--ok { background: #dff5ea; color: #1f9d55; }
-.rk-bigbars { display: flex; align-items: flex-end; gap: 14px; padding: 12px 14px 0; border-radius: 10px; background: #fff; }
-.rk-bigbars div { flex: 1; display: grid; grid-template-rows: 1fr auto; justify-items: center; gap: 4px; height: 100%; }
-.rk-bigbars i.is-top { background: var(--brand); }
-.rk-bigbars i { background: color-mix(in srgb, var(--brand) 35%, #fff); align-self: end; width: 100%; height: calc(var(--h) * 100%); border-radius: 6px 6px 2px 2px; transform-origin: bottom; }
-.rk-bigbars span { font-size: 13px; font-weight: 600; color: #6b6f7b; padding-bottom: 6px; }
 .rk-cms { position: relative; display: flex; align-items: center; gap: 24px; }
 .rk-palette { display: grid; gap: 10px; padding: 12px; border-radius: 16px; box-shadow: inset 0 0 0 1px var(--line); }
 .rk-block { width: 150px; padding: 11px 14px; border-radius: 10px; background: var(--paper); color: var(--ink); font-size: 16px; font-weight: 700; box-shadow: var(--lift); }
