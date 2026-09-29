@@ -67,7 +67,7 @@ test('static server protects the root and serves safe routes', async (t) => {
   assert.equal(compressed.status, 200);
   assert.equal(compressed.headers['content-encoding'], 'br');
   assert.ok(compressed.headers.etag);
-  const cached = await request(server, 'GET', '/about.html', { 'If-None-Match': compressed.headers.etag });
+  const cached = await request(server, 'GET', '/about.html', { 'Accept-Encoding': 'br', 'If-None-Match': compressed.headers.etag });
   assert.equal(cached.status, 304);
 
   // A page rewritten within the same second as the browser's copy is still served in full: its ETag has changed,
@@ -141,4 +141,45 @@ test('a folder of pages without an index leaves its name to the page beside it',
   assert.equal((await request(server, 'GET', '/projects')).body, 'all projects');
   assert.equal((await request(server, 'GET', '/projects/one')).body, 'one project');
   assert.equal((await request(server, 'GET', '/projects/two')).status, 404);
+});
+
+test('text is compressed once per encoding, with a validator that matches the copy sent', async (t) => {
+  const zlib = require('node:zlib');
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'static-server-'));
+  const css = 'body { color: red; }\n'.repeat(200);
+  await fs.writeFile(path.join(root, 'site.css'), css);
+  await fs.writeFile(path.join(root, 'index.html'), '<h1>ok</h1>');
+  const server = createStaticServer({ root });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    await fs.rm(root, { recursive: true, force: true });
+  });
+
+  const raw = (headers) => new Promise((resolve, reject) => {
+    http.get({ hostname: '127.0.0.1', port: server.address().port, path: '/site.css', headers }, (res) => {
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks) }));
+    }).on('error', reject);
+  });
+
+  const br = await raw({ 'Accept-Encoding': 'br, gzip' });
+  assert.equal(br.headers['content-encoding'], 'br');
+  assert.equal(br.headers.vary, 'Accept-Encoding');
+  assert.equal(Number(br.headers['content-length']), br.body.length);
+  assert.equal(zlib.brotliDecompressSync(br.body).toString(), css);
+
+  const gzip = await raw({ 'Accept-Encoding': 'gzip' });
+  assert.equal(zlib.gunzipSync(gzip.body).toString(), css);
+  assert.notEqual(gzip.headers.etag, br.headers.etag);
+
+  const plain = await raw({});
+  assert.equal(plain.body.toString(), css);
+  assert.equal(plain.headers.vary, 'Accept-Encoding');
+
+  // revalidating with the validator of the copy the browser holds is a 304
+  const again = await raw({ 'Accept-Encoding': 'br', 'If-None-Match': br.headers.etag });
+  assert.equal(again.status, 304);
+  assert.equal(again.headers.vary, 'Accept-Encoding');
 });
