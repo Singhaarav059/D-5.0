@@ -545,5 +545,12 @@
 
   // Reels on the page (projects grid, home deck); other scripts mount more with window.Reel.mount(figure).
   window.Reel = { mount: (host) => host.reel || build(host) };
-  document.querySelectorAll('[data-reel]').forEach((h) => { if (!h.closest('template')) build(h); });
+  // Each is built as it comes within a screen or so of view: building one (its scenes and timeline) takes a good part
+  // of a frame, and the projects page holds sixteen, which all at once froze the page as it loaded.
+  const near = 'IntersectionObserver' in window && new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    near.unobserve(e.target);
+    if (!e.target.reel) build(e.target);
+  }), { rootMargin: '600px 0px' });
+  document.querySelectorAll('[data-reel]').forEach((h) => { if (!h.closest('template')) near ? near.observe(h) : build(h); });
 })();
