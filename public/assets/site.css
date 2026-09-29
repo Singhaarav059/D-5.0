@@ -247,7 +247,8 @@ html.motion.js .amb__item.is-in :is(.amb__dd, .amb__sk) :is(.dd__fill, .dd__dots
 
 
 /* ---------- glass: panels float over the moving background, frosted ---------- */
-:is(.svc-panel, .ind__panel, .ind__tile, .kmap__cat, .form, .acc, .stack-card__inner, .contact__ways i, .pfilter button, .svc-list__btn, .btn--ghost) {
+/* (not the filter buttons: they sit on the filter bar's own glass, and a blur of a blur shows nothing but costs a pass) */
+:is(.svc-panel, .ind__panel, .ind__tile, .kmap__cat, .form, .acc, .stack-card__inner, .contact__ways i, .svc-list__btn, .btn--ghost) {
   -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
 }
 :is(.svc-panel, .ind__panel, .form, .stack-card__inner) { background: var(--glass); box-shadow: var(--glass-shadow); }
