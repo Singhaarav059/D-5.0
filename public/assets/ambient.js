@@ -89,6 +89,7 @@
       const tilt = c.kind === 'doodle' ? 8 : 4;
       el.style.cssText += `;left:${item.box.x.toFixed(0)}px;top:${item.box.y.toFixed(0)}px;--r:${rnd(-tilt, tilt).toFixed(1)}deg;--d:${d.toFixed(2)}`;
       el.style.visibility = '';
+      checkAway();
       float.style.cssText = `--dur:${rnd(5, 9).toFixed(1)}s;--delay:${rnd(-6, 0).toFixed(1)}s`;
       if (still) { el.classList.add('is-in'); return; }
       requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
@@ -134,6 +135,28 @@
 
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };
   fill();
+
+  // The industry and tool rows run the full width, under the margins, on see-through chips: a doodle behind one showed
+  // through its words. While such a row passes a doodle's slot, the doodle steps aside. The rows' places on the page
+  // are measured after layout (a ResizeObserver), so scrolling only compares numbers.
+  const rows = [...document.querySelectorAll('.reach__row')];
+  let bands = [], awayRaf = 0;
+  const away = () => {
+    awayRaf = 0;
+    for (const l of live) {
+      if (!l.box) continue;
+      const top = l.box.y - 16, bottom = l.box.y + l.box.h + 16;
+      l.el.classList.toggle('is-away', bands.some((b) => b.top - scrollY < bottom && b.bottom - scrollY > top));
+    }
+  };
+  const checkAway = () => { if (bands.length) awayRaf ||= requestAnimationFrame(away); };
+  if (rows.length && 'ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      bands = rows.map((el) => { const r = el.getBoundingClientRect(); return { top: r.top + scrollY, bottom: r.bottom + scrollY }; });
+      checkAway();
+    }).observe(document.body);
+    addEventListener('scroll', checkAway, { passive: true });
+  }
   // a new size means new lanes: start over
   let resizing = 0;
   addEventListener('resize', () => {
