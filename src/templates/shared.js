@@ -4,6 +4,7 @@
 const C = require('../content');
 const { esc, pad, cal, icon, head, pic, btn } = require('./helpers');
 const { doodle } = require('./doodles');
+const { maze } = require('./maze');
 
 // Each service's icon and marker colour (as in the tools map), and a service as a small tile: its icon, name and a
 // line on what it covers. Used by the nav's menu and the services hero.
@@ -20,8 +21,12 @@ const heroAside = {
   projects: () => `<div class="phero__show phero-fan" data-hero-fade>${C.projects.slice(0, 3).map((p, i) => `<a class="phero-fan__card" href="./projects#${p.image}" style="--i:${i};--tint:${p.tint}">${pic(p.image, p.name, { sizes: '300px', cls: 'phero-fan__img' })}<span>${esc(p.name)}<small>${esc(p.sector)}</small></span></a>`).join('')}
     <p class="phero-chip"><b>${C.projects.length}</b> products · <b>${SECTORS}</b> sectors</p></div>`,
   services: () => `<div class="phero__show phero-svcs" data-hero-fade>${C.services.map((s) => svcTile(s, 'nav__svc phero-svcs__tile')).join('')}</div>`,
-  about: () => `<figure class="phero__show phero-team" data-hero-fade>${pic(C.founder.photo, `${C.founder.name}, ${C.founder.title}`, { sizes: '420px', cls: 'phero-team__img' })}
-    <figcaption><b>Founder-led</b>${esc(C.founder.name)}, ${esc(C.founder.title)}, with a team of ${C.metrics.find((m) => /team/i.test(m.label)).value}+ in Ahmedabad</figcaption></figure>`,
+  // where the name comes from: the word, what it means, and a small maze that draws itself in and is solved (journey.js)
+  about: () => `<figure class="phero__show phero-name" data-hero-fade>
+    <p class="phero-name__word">de·maze <small>verb</small></p>
+    <p class="phero-name__def">To take the maze out of building a product: the vague specs, the scope creep, the missed deadlines.</p>
+    ${maze({ cols: 9, rows: 4, seed: 1907, entry: 1, exit: 2, cls: 'maze--card', pits: C.journey.pitfalls.slice(0, 3), start: C.journey.start, finish: C.journey.finish, tagSize: 12 })}
+    <figcaption>Where our name comes from</figcaption></figure>`,
   contact: () => `<div class="phero__show phero-next" data-hero-fade><p class="phero-next__label">What happens next</p><ol>
     <li><b>You tell us what you’re building</b>By email, the form below or a call: whatever is easiest.</li>
     ${NEXT_STEPS}</ol></div>`,

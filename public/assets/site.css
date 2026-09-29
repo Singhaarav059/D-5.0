@@ -1556,7 +1556,7 @@ html.motion.js .phero__art { animation: dd-boil 1.8s steps(1) 2.4s infinite; }
 .phero--aside .phero__dd--2 { left: auto; right: -12%; top: auto; bottom: -2%; width: 13%; height: auto; aspect-ratio: 1; }
 .phero--aside .phero__dd--3 { right: 6%; top: -8%; width: 10%; height: auto; aspect-ratio: 1; }
 .phero__show { position: relative; justify-self: stretch; }
-.phero-svcs__tile, .phero-team, .phero-next, .phero-chip, .phero-fan__card span {
+.phero-svcs__tile, .phero-name, .phero-next, .phero-chip, .phero-fan__card span {
   background: var(--lg-bg-strong); box-shadow: var(--lg-rim), var(--lg-drop); -webkit-backdrop-filter: var(--lg-blur); backdrop-filter: var(--lg-blur);
 }
 /* projects: three real screens, fanned like prints on a desk; each opens its case study */
@@ -1575,11 +1575,13 @@ html.motion.js .phero__art { animation: dd-boil 1.8s steps(1) 2.4s infinite; }
 .phero-svcs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .phero-svcs__tile { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 16px; border-radius: 22px; }
 /* about: the founder, on a glass print */
-.phero-team { margin: 0; padding: 10px; border-radius: 26px; }
-.phero-team__img { width: 100%; height: clamp(240px, 22vw, 320px); object-fit: cover; object-position: 50% 18%; border-radius: 18px; }
-.phero-team figcaption { padding: 12px 8px 4px; font-size: 0.86rem; line-height: 1.45; color: var(--muted); }
-.phero-team figcaption b { display: block; font: 400 1.1rem/1.2 var(--display); color: var(--text); letter-spacing: -0.02em; }
-/* contact: what happens after you get in touch, as three numbered steps */
+/* about: where the name comes from, a dictionary entry over a small maze that solves itself */
+.phero-name { margin: 0; display: grid; gap: 10px; padding: clamp(20px, 2vw, 28px); border-radius: 26px; }
+.phero-name__word { font: 430 clamp(2rem, 3vw, 2.6rem)/1 var(--display); letter-spacing: -0.04em; }
+.phero-name__word small { margin-left: 8px; font: italic 400 0.95rem/1 var(--body); letter-spacing: 0; color: var(--muted); }
+.phero-name__def { max-width: 36ch; font-size: 0.95rem; line-height: 1.5; color: var(--muted); }
+.phero-name .maze { margin-top: 14px; }
+.phero-name figcaption { margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); }
 .phero-next { padding: clamp(20px, 2vw, 28px); border-radius: 26px; }
 .phero-next__label { margin-bottom: 16px; font: 500 0.8rem/1 var(--body); color: var(--accent-text); letter-spacing: 0.02em; }
 .phero-next ol { display: grid; gap: 16px; counter-reset: next; }
