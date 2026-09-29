@@ -874,6 +874,8 @@ export function start() {
   } catch {
     return null;
   }
+  // (reading back each shader's log makes the page wait for the GPU to compile it; only worth it locally)
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   assets();
   materials();
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -893,6 +895,7 @@ export function start() {
   const journey = new Journey(scene, still);
   const env = { W: 0, H: 0, still, rush: 1, pointer: { x: -1e4, y: -1e4 } };
   let on = false, seen = false; // on: the band has room for them; seen: it is on screen
+  let cap = 2; // the most device pixels per CSS pixel (see pace)
   const client = { x: -1e4, y: -1e4 }; // the pointer, in viewport pixels
 
   const layout = () => {
@@ -907,40 +910,56 @@ export function start() {
     const H = Math.ceil(5 * s + 30);
     band.style.height = H + 'px';
     env.W = W; env.H = H; env.s = s;
-    // up to 2 device pixels per CSS pixel, so the fur and faces are crisp on retina screens; the strands are sized to
-    // the pixels they land on, a little fuller than one pixel so they read as plush, not grain
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    // up to 2 device pixels per CSS pixel, so the fur and faces are crisp on retina screens (fewer if frames keep
+    // running long, see pace); the strands are sized to the pixels they land on, a little fuller than one pixel so they
+    // read as plush, not grain
+    const dpr = Math.min(devicePixelRatio || 1, 2, cap);
     furShared.uDensity.value = clamp((s * dpr) / 1.7, 16, 34);
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
+    moved = true;
     camera.left = 0; camera.right = W; camera.top = H; camera.bottom = 0;
     camera.updateProjectionMatrix();
     journey.layout({ W, H, s });
   };
   const playing = () => on && seen;
 
-  let last = performance.now() / 1000, t = 0, raf = 0, lastScroll = scrollY, rushAim = 1;
+  let last = performance.now() / 1000, t = 0, raf = 0, lastScroll = scrollY, rushAim = 1, ready = false;
+  // Where the canvas is, for the pointer: read only when the pointer or the page has moved since (reading it makes the
+  // browser lay the page out there and then, mid-frame), and never without a pointer nearby.
+  let box = null, moved = true;
+  // frames arriving slower than 40 a second for a couple of seconds: draw fewer pixels (down to 1 per CSS px)
+  let slow = 0;
+  const pace = (gap) => {
+    if (gap > 0.2 || cap <= 1) return; // (a stall, such as the tab coming back, is not the band's doing)
+    slow = gap > 1 / 40 ? slow + gap : Math.max(0, slow - gap * 0.5);
+    if (slow > 2) { slow = 0; cap = Math.max(1, Math.min(cap, renderer.getPixelRatio()) - 0.25); layout(); }
+  };
   const frame = (nowMs) => {
     raf = 0;
     if (!on || (!still && !playing())) return;
     const now = nowMs / 1000;
+    // at most 60 a second on 120 Hz screens (every other refresh); 60 and 90 Hz screens draw every refresh
+    if (!still && now - last < 1 / 96) { raf = requestAnimationFrame(frame); return; }
     const dt = Math.min(0.05, Math.max(0, now - last));
+    if (!still) pace(now - last);
     last = now;
     t += dt;
     // scroll speed (px/s) hurries the idea along; it eases back when the page stops
     const v = Math.abs(scrollY - lastScroll) / Math.max(dt, 1e-3);
+    if (v) moved = true;
     lastScroll = scrollY;
     rushAim = damp(rushAim, 1 + Math.min(1.5, v / 900), v > 0 ? 6 : 2, dt);
     env.rush = rushAim;
-    const box = canvas.getBoundingClientRect();
-    env.pointer.x = client.x - box.left; env.pointer.y = client.y - box.top;
+    if (client.x > -1e3 && (moved || !box)) { box = canvas.getBoundingClientRect(); moved = false; }
+    env.pointer.x = box ? client.x - box.left : -1e4; env.pointer.y = box ? client.y - box.top : -1e4;
     step(dt);
     renderer.render(scene, camera);
     journey.draw();
     if (!still && !document.hidden) raf = requestAnimationFrame(frame);
   };
   const resume = () => {
-    if (still || raf || !playing() || document.hidden) return;
+    if (still || !ready || raf || !playing() || document.hidden) return;
     last = performance.now() / 1000;
     raf = requestAnimationFrame(frame);
   };
@@ -967,8 +986,12 @@ export function start() {
     t = 2;
     step(0);
   }
-  frame(performance.now());
-  requestAnimationFrame(() => { canvas.classList.add('is-in'); journey.svg.classList.add('is-in'); });
+  // where the browser can, compile every shader off the main thread first (the scroll would freeze while they compile), then draw
+  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : Promise.resolve()).catch(() => {}).then(() => {
+    ready = true;
+    frame(performance.now());
+    requestAnimationFrame(() => { canvas.classList.add('is-in'); journey.svg.classList.add('is-in'); });
+  });
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => { seen = e.isIntersecting; resume(); }, { rootMargin: '80px 0px' }).observe(band);
@@ -977,7 +1000,7 @@ export function start() {
   let resizing = 0;
   addEventListener('resize', () => {
     clearTimeout(resizing);
-    resizing = setTimeout(() => { layout(); if (still) frame(performance.now()); else resume(); }, 150);
+    resizing = setTimeout(() => { layout(); if (still && ready) frame(performance.now()); else resume(); }, 150);
   });
   if (!still) {
     addEventListener('pointermove', (e) => { client.x = e.clientX; client.y = e.clientY; }, { passive: true });

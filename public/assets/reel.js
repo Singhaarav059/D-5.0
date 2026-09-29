@@ -516,6 +516,8 @@
           const o = { ...(d.hero.opts || {}) };
           if (o.screen) o.screen = (o.screen.web ? m.webScreen : m.appScreen)(o.screen);
           hero = m.createHero(d.hero.kind, o);
+          return hero.compiled;
+        }).then(() => {
           view.classList.add('is-3d');
           sizeCanvas();
           drawHero();

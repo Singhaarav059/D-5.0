@@ -15,7 +15,10 @@ let renderer, envMap, bufW = 0, bufH = 0;
 
 function core() {
   if (renderer) return;
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  // (each hero is copied out right after it is drawn, in the same task, so the drawing buffer need not be kept)
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // reading back each shader's log makes the page wait for the GPU to compile it; only worth it locally
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   renderer.setPixelRatio(1); // callers size canvases in device pixels
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -776,9 +779,14 @@ const BUILD = {
 export function createHero(kind, opts = {}) {
   core();
   const h = BUILD[kind](opts);
+  // where the browser can, its shaders compile off the main thread first (`compiled`); until then it draws nothing and the reel keeps its
+  // illustration
+  let ready = false;
+  const compiled = (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(h.scene, h.camera) : Promise.resolve()).catch(() => {}).then(() => { ready = true; });
   return {
+    compiled,
     draw(state, t, ctx, w, hgt) {
-      if (!w || !hgt) return;
+      if (!w || !hgt || !ready) return;
       if (w > bufW || hgt > bufH) { bufW = Math.max(bufW, w); bufH = Math.max(bufH, hgt); renderer.setSize(bufW, bufH, false); }
       h.update(state, t);
       h.camera.aspect = w / hgt;

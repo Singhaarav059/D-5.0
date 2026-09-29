@@ -30,6 +30,8 @@ async function init() {
   const THREE = await import('./vendor/three/three.module.js');
   const host = card.querySelector('.visit3d');
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
+  // (reading back each shader's log makes the page wait for the GPU to compile it; only worth it locally)
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   host.append(renderer.domElement);
 
@@ -288,6 +290,9 @@ async function init() {
     camera.updateProjectionMatrix();
   };
   resize();
+  // where the browser can, compile every shader off the main thread first (the scroll would freeze while they compile); the SVG map stays
+  // until the diorama is ready
+  if (renderer.extensions.has('KHR_parallel_shader_compile')) await renderer.compileAsync(scene, camera).catch(() => {});
 
   const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
   if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -317,6 +322,7 @@ async function init() {
   };
   const tick = (now) => {
     raf = requestAnimationFrame(tick);
+    if (last && now - last < 1000 / 96) return; // at most 60 a second on 120 Hz screens
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
     last = now; t += dt;
     tilt.x += (tilt.tx - tilt.x) * 0.05; tilt.y += (tilt.ty - tilt.y) * 0.05;
