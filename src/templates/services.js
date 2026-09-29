@@ -131,4 +131,22 @@ const industries = () => `<section class="section sheet sheet--day sheet--lilac 
   </div>
 </section>`;
 
-module.exports = { techStack, services, industries };
+// Home: where we build and what we build with, compact: the industries and the stack's marks in two rows running
+// opposite ways (faster with the scroll, like the band; site.js), each with a way to the full version on services.
+// The first run of each row is the readable list; the copy that makes the loop seamless is hidden from readers.
+const reach = () => {
+  const seen = new Set();
+  const tools = C.tools.flatMap((t) => t.items).filter(([n, slug]) => techIcon(slug) && !seen.has(n) && seen.add(n));
+  const row = (cls, label, items) => `<div class="reach__row ${cls}"><div class="band__track reach__track">${[0, 1].map((k) => `<ul class="reach__run"${k ? ' aria-hidden="true"' : ` aria-label="${label}"`}>${items}</ul>`).join('')}</div></div>`;
+  const inds = C.industries.map(([n, , a]) => `<li class="reach__chip" style="--mk:var(--${a.color})">${doodle(a.doodle, { color: a.color })}${esc(n)}</li>`).join('');
+  const marks = tools.map(([n, slug]) => `<li class="reach__chip reach__chip--tool"><img src="${techIcon(slug)}" alt="" width="22" height="22" loading="lazy">${esc(n)}</li>`).join('');
+  return `<section class="section reach" id="reach">
+  <div class="wrap">
+    ${head({ label: 'Industries & stack', title: `${C.industries.length} industries, <em>one production stack</em>`, lead: 'Where the products we build run, and what we build them with.', mark: ['gear', 'mint'], side: `<p class="reach__links"><a class="link-arrow" href="./services#industries">All industries ${icon.arrow}</a><a class="link-arrow" href="./services#tools">The full stack ${icon.arrow}</a></p>` })}
+  </div>
+  ${row('reach__row--ind', 'Industries we serve', inds)}
+  ${row('reach__row--tools', 'What we build with', marks)}
+</section>`;
+};
+
+module.exports = { techStack, services, industries, reach };

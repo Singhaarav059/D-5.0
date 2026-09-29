@@ -12,7 +12,7 @@ const { pageHero, faq, contact, cta, band } = require('./templates/shared');
 const { work, studio, build } = require('./templates/home');
 const { hero, howWeWork } = require('./templates/journey');
 const { about, stats, whyUs, founder } = require('./templates/about');
-const { techStack, services, industries } = require('./templates/services');
+const { techStack, services, industries, reach } = require('./templates/services');
 const { projectsGrid } = require('./templates/projects');
 const { visit } = require('./templates/contact');
 
@@ -24,7 +24,7 @@ const pages = {
     schema: [S.organization(), S.website(), S.faqPage(3)],
     // Home is the summary: the hero and its maze, how we work, proof (work), what we build (four tiles), who we
     // are, the first questions, contact. The service panels, the tools map and industries live on the services page.
-    body: [hero(), howWeWork(), band(), work(), build(), studio(), faq(3), cta()].join('\n'),
+    body: [hero(), howWeWork(), band(), work(), build(), reach(), studio(), faq(3), cta()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
