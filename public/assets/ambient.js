@@ -99,6 +99,20 @@
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
   }
 
+  // The studio (office3d.js), home's "who we are": the crew kit and the room are imported when the section comes near
+  // (the same crew3d.js as the band, so one copy), and it plays while on screen.
+  const office = document.querySelector('[data-office]');
+  if (office && layer.dataset.src && !navigator.connection?.saveData && 'IntersectionObserver' in window) {
+    const url = (src) => new URL(src, document.baseURI).href;
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      Promise.all([import(url(layer.dataset.src)), import(url(office.dataset.src))])
+        .then(([kit, room]) => room.start(office.querySelector('.office__stage'), kit)).catch(() => {});
+    }, { rootMargin: '600px 0px' });
+    io.observe(office);
+  }
+
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };
   fill();
   // a new size means new lanes: start over

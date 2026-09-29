@@ -1070,6 +1070,13 @@ html.motion.js .ind__panel:not([hidden]) .ind__art .dd { animation: dd-boil 1.6s
 .studio__founder { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(48px, 8vw, 128px); align-items: center; }
 .studio .quote__print { rotate: -2.5deg; margin-left: 12px; }
 .studio .quote__star { right: auto; left: -34px; rotate: -10deg; }
+/* inside the studio: the crew's office in 3D (office3d.js draws into the stage), warm against the night */
+.office { margin: clamp(48px, 7vw, 88px) 0 0; }
+.office__stage { position: relative; overflow: hidden; height: clamp(300px, 40vw, 560px); border-radius: 28px;
+  background: radial-gradient(120% 90% at 30% 20%, #f3ebdf, #e2d4c0 70%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 30px 60px -34px rgba(0, 0, 0, 0.8); }
+.office__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 900ms var(--ease); }
+.office__stage.is-live .office__canvas { opacity: 1; }
+.office figcaption { margin-top: 14px; font-size: 0.86rem; color: var(--muted); }
 .studio__team { margin-top: 32px; padding-top: 22px; max-width: 52ch; border-top: 1px solid var(--line); color: var(--muted); font-size: 1.02rem; }
 .reasons { margin-top: clamp(48px, 8vh, 88px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 .reason { padding: clamp(22px, 3vh, 30px) clamp(18px, 2.4vw, 32px) 0 0; }

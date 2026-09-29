@@ -53,8 +53,16 @@ const studio = () => `<section class="section sheet quote studio" id="about">
         <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
       </div>
     </div>
+    ${office()}
   </div>
 </section>`;
+
+// Inside the studio: the Muse crew at work in a small office, in 3D (public/assets/office3d.js, loaded when it comes
+// near). Until then, and without WebGL, the frame shows the room's colour and says what is in it.
+const office = () => `<figure class="office" data-office data-src="./assets/office3d.js" data-reveal>
+      <div class="office__stage" role="img" aria-label="The Demaze crew at work in a small studio: two at their laptops, one getting coffee from the machine, two planning at the whiteboard"></div>
+      <figcaption>Inside the studio: coding, coffee, and the plan on the board.</figcaption>
+    </figure>`;
 
 // Home: the four services as tiles (the full panels, demos and tools live on the services page), each with the work
 // that shows it; then a way to ask when it isn't obvious which one fits.

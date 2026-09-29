@@ -128,10 +128,11 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-function furMaterial(color, lag, len) {
+// `density`: the strand-size uniform of the scene the character is in (each scene sizes strands to its own pixels)
+function furMaterial(color, lag, len, density = furShared.uDensity) {
   return new THREE.ShaderMaterial({
     glslVersion: THREE.GLSL3,
-    uniforms: { ...furShared, uColor: color, uLag: lag, uLen: { value: len } },
+    uniforms: { ...furShared, uDensity: density, uColor: color, uLag: lag, uLen: { value: len } },
     vertexShader: FUR_VERT,
     fragmentShader: FUR_FRAG,
     alphaToCoverage: true,
@@ -247,10 +248,10 @@ function stick(mesh, x, y, lift) {
   mesh.quaternion.setFromUnitVectors(Z, n);
 }
 
-function makeCharacter({ fur, acc, accColor = '#ff6242', side = 1 }) {
+function makeCharacter({ fur, acc, accColor = '#ff6242', side = 1, density }) {
   const color = { value: new Color(fur) };
   const lag = { value: new Vector3() };
-  const furM = (len) => furMaterial(color, lag, len);
+  const furM = (len) => furMaterial(color, lag, len, density);
   const mHead = furM(0.15), mBody = furM(0.16), mLimb = furM(0.11);
 
   const root = new Group();
@@ -962,3 +963,7 @@ export function start() {
 
   return { band };
 }
+
+// The character kit, for other scenes (office3d.js): build a character, pose it through its springs, blink, and the
+// props and materials they share. `M` and `G` are filled by materials() and assets().
+export { THREE, assets, materials, makeCharacter, pose0, apply, blink, laptop, std, part, place, FUR, M, G, furShared, clamp, lerp, damp, smooth, TAU, NECK_Y, HEAD_UP, HIP_Y };
