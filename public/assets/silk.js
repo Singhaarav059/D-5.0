@@ -34,7 +34,7 @@
     const dpr = Math.min(devicePixelRatio || 1, 2) * SCALE;
     it.w = Math.max(1, Math.round(r.width * dpr));
     it.h = Math.max(1, Math.round(r.height * dpr));
-    it.c.width = it.w; it.c.height = it.h;
+    it.c.width = it.w; it.c.height = it.h; it.drawn = false;
   };
 
   // One frame: the ribbon runs corner to corner through the lower half; every thread is the same wave with a small
@@ -78,15 +78,21 @@
   };
 
   items.forEach(size);
-  let raf = 0, last = 0;
-  const t0 = performance.now();
+  let raf = 0, last = 0, clock = 0, scrolledAt = -1e9;
+  // While the page is being scrolled the silk holds still: the glass above it would re-blur the ribbon on every frame
+  // of every canvas on screen, right when the scroll needs the frame. It picks up where it stopped (its clock waits
+  // too), a moment after the scrolling ends; the ribbon drifts too slowly for the pause to show.
+  addEventListener('scroll', () => { scrolledAt = performance.now(); }, { passive: true });
   const loop = (now) => {
     raf = 0;
     if (document.hidden) return;
-    if (now - last > 33) { // ~30fps is plenty for slow silk
+    const gap = now - last;
+    if (gap > 33) { // ~30fps is plenty for slow silk
       last = now;
-      const t = (now - t0) / 1000;
-      items.forEach((it) => { if (it.on) draw(it, t); });
+      const moving = now - scrolledAt <= 160;
+      if (!moving) clock += Math.min(gap, 100) / 1000;
+      // (a canvas with nothing on it yet, new to the screen or just resized, is drawn at once, scrolling or not)
+      items.forEach((it) => { if (it.on && (!moving || !it.drawn)) { draw(it, clock); it.drawn = true; } });
     }
     if (items.some((it) => it.on)) raf = requestAnimationFrame(loop);
   };
