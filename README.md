@@ -66,8 +66,10 @@ public/                Everything a visitor can load (the only folder the server
     crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) working an idea through
                        Idea, Design, Build and Launch in a row in the contact block; they wave when the cursor (or a tap)
                        comes near
-    office3d.js        The studio: a small 3D office on home ("who we are") where the crew codes, fetches coffee from
-                       the machine, plans at the whiteboard and stops by to chat (uses crew3d.js's character kit)
+    office3d.js        The studio: a small 3D office on home ("who we are") where the crew codes, makes coffee, draws
+                       the plan on the whiteboard, stops by to chat and sits in the beanbag (uses crew3d.js's character
+                       kit). Walking is planned on a grid of the room (A*, corners rounded) so nobody passes through
+                       furniture or each other; the element exposes `office` and `officeStep(dt)` for checks
     boot.js            Sets motion / reduced-motion classes before first paint
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
     vendor/            Third-party libraries (GSAP, ScrollTrigger, Lenis, Three.js)
