@@ -185,7 +185,6 @@ function assets() {
   T = {
     blush: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(255,128,150,0.62)'], [0.55, 'rgba(255,140,160,0.28)'], [1, 'rgba(255,150,170,0)']])),
     shadow: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(40,30,20,0.34)'], [0.6, 'rgba(40,30,20,0.14)'], [1, 'rgba(40,30,20,0)']])),
-    glow: canvasTexture(64, 64, (c, w, h) => glow(c, w, h, [[0, 'rgba(255,255,255,1)'], [0.35, 'rgba(255,255,255,0.45)'], [1, 'rgba(255,255,255,0)']])),
     logo: canvasTexture(64, 64, (c) => {
       c.fillStyle = '#f7f4ee';
       c.beginPath(); c.moveTo(18, 14); c.lineTo(50, 32); c.lineTo(18, 50); c.lineTo(27, 32); c.fill();
@@ -443,22 +442,13 @@ function laptop() {
   return g;
 }
 
-const halo = (color, size) => {
-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: T.glow, color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
-  sp.scale.setScalar(size);
-  return sp;
-};
-
 // A light bulb: the idea, before it is had.
 function bulb() {
   const g = new Group();
   const glass = std('#fff8e1', 0.2, { emissive: new Color('#ffcb45'), emissiveIntensity: 0, transparent: true, opacity: 0.92 });
   part(g, G.small, glass, [0, 0.12, 0], [0.3, 0.32, 0.3]);
   part(g, new THREE.CylinderGeometry(0.12, 0.1, 0.2, 14), std('#b9bdc8', 0.35, { metalness: 0.4 }), [0, -0.22, 0]);
-  const h = halo('#ffcb45', 1.6);
-  h.position.y = 0.12;
-  g.add(h);
-  return { g, glass, halo: h };
+  return { g, glass };
 }
 
 // A pencil for the designer's hand.
@@ -490,9 +480,6 @@ function rocket() {
   body.add(flame);
   part(flame, new THREE.ConeGeometry(0.17, 0.55, 16), new THREE.MeshBasicMaterial({ color: '#ffcb45', toneMapped: false, transparent: true, opacity: 0.95 }), [0, -0.3, 0]).rotation.x = Math.PI;
   part(flame, new THREE.ConeGeometry(0.09, 0.32, 12), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }), [0, -0.2, 0.01]).rotation.x = Math.PI;
-  const h = halo('#ff9a4a', 1.4);
-  h.position.y = -0.35;
-  flame.add(h);
   flame.scale.setScalar(0);
   return { g, body, flame };
 }
@@ -501,23 +488,23 @@ function rocket() {
 function idea() {
   const g = new Group();
   const core = part(g, G.small, std('#fff4c8', 0.3, { emissive: new Color('#ffcb45'), emissiveIntensity: 1.1 }), null, [0.2, 0.2, 0.2]);
-  const h = halo('#ffcb45', 1.1);
-  g.add(h);
   const ring = part(g, new THREE.TorusGeometry(0.34, 0.035, 10, 40), std('#a58bff', 0.3, { emissive: new Color('#a58bff'), emissiveIntensity: 0.4 }));
   ring.rotation.set(1.2, 0.2, 0);
   const cube = part(g, new THREE.BoxGeometry(0.34, 0.34, 0.34), new THREE.MeshPhysicalMaterial({ color: '#3d5afe', roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.1, emissive: new Color('#3d5afe'), emissiveIntensity: 0.25 }));
   const sh = part(g, G.plane, M.shadow, null, [0.7, 0.45, 1]);
   sh.rotation.x = -Math.PI / 2;
   sh.renderOrder = -1;
-  return { g, core, halo: h, ring, cube, sh };
+  return { g, core, ring, cube, sh };
 }
 
 /* ---------- the journey ---------- */
 
-// The crew's one act is the Demaze process, run on a maze route: at Idea a bulb lights and
-// the idea drops out of it; it rolls along the route to Design, where it is sketched and gains a ring; to Build,
-// where it hops onto a laptop and is coded into a product; to Launch, where it is loaded into a rocket that lifts
-// off, and a new idea is had at the top. Everyone watches the idea travel. Whoever the cursor comes near stops to
+// The crew's one act is the Demaze process, run as a relay along a maze route. Idea thinks; a bulb lights over their
+// head, they jump, and the idea drops into their hands. Each worker throws it on to the next (a wind-up, an arc, the
+// route lighting up under it), and the next turns, holds their arms out and catches it with a squash. Design holds it
+// up and sketches a ring round it; Build codes it on the laptop until it pops into a product; Launch lobs it into the
+// rocket, counts down on a raised hand, and everyone looks up and cheers the rocket off, a ripple down the line. Then
+// a new rocket rolls out, and a new idea. Everyone watches the idea travel. Whoever the cursor comes near stops to
 // wave, and if it's their turn, the idea waits for them.
 
 const STAGES = [
@@ -528,7 +515,7 @@ const STAGES = [
 ];
 
 // [phase, seconds]: the work at each stage, and the road between them
-const PHASES = [['idea', 3.4], ['road', 2.2], ['design', 3.4], ['road', 2.2], ['build', 3.6], ['road', 2.2], ['launch', 5]];
+const PHASES = [['idea', 3.6], ['toss', 1.25], ['design', 3.4], ['toss', 1.25], ['build', 3.6], ['toss', 1.25], ['launch', 5.8]];
 const CYCLE = PHASES.reduce((a, [, d]) => a + d, 0);
 
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -549,6 +536,7 @@ class Journey {
       return c;
     });
     this.chars = this.crew;
+    for (const c of this.crew) c.palms = [0, 1].map((k) => { const h = new Group(); h.position.set(0, -0.62, 0.14); c.arms[k].add(h); return h; });
     const [ideaC, designC, buildC] = this.crew;
     this.bulb = bulb();
     ideaC.root.add(this.bulb.g);
@@ -656,157 +644,207 @@ class Journey {
 
   update(t, dt, env) {
     const s = this.s, H = this.H;
-    const [ideaC, designC, buildC, launchC] = this.crew;
-    // the cycle's clock: a little faster while the page scrolls; it waits for a station whose worker is waving
+    const crew = this.crew, [, , buildC] = crew;
+    // the cycle's clock: a little faster while the page scrolls; it waits for a station whose worker is waving (never
+    // mid-throw, never once the rocket is lit)
     const ph0 = this.phase(this.t);
-    const worker = { idea: ideaC, design: designC, build: buildC, launch: launchC }[ph0.name];
-    if (!(worker && worker.att > 0.4 && !(ph0.name === 'launch' && ph0.u > 0.8))) this.t = (this.t + dt * (1 + 0.6 * (env.rush - 1))) % CYCLE;
+    const worker = { idea: 0, design: 1, build: 2, launch: 3 }[ph0.name];
+    const hold = worker !== undefined && crew[worker].att > 0.4 && !(ph0.name === 'launch' && ph0.u > 0.8);
+    if (!hold) this.t = (this.t + dt * (1 + 0.6 * (env.rush - 1))) % CYCLE;
     const ph = this.phase(this.t);
-    const u = ph.u, st = [0, 0, 1, 1, 2, 2, 3][ph.i]; // the station the idea is at, or has left
-    const o = this.orb;
-    const foot = (i) => this.rest[i]; // where the idea rests at a station (layout)
+    const u = ph.u, st = [0, 0, 1, 1, 2, 2, 3][ph.i]; // the station the idea is at, or is flying from
+    const o = this.orb, r = this.rocket;
     const wp = (obj) => obj.getWorldPosition(this.v);
-    let pos, floor, show = { core: 1, ring: 0, cube: 0 }, bulbLit = 0, done = 0;
+    const ramp = (a, b) => smooth(clamp((u - a) / (b - a), 0, 1)); // 0 before a, 1 after b, eased
+    const bump = (a, b) => Math.sin(clamp((u - a) / (b - a), 0, 1) * Math.PI); // up and down between a and b
+    // where a character holds the idea: between the palms (Design holds it up in one hand, Build on the laptop)
+    const palms = (i) => {
+      const c = crew[i], a = wp(c.palms[0]).clone(), b = wp(c.palms[1]);
+      return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 + 0.16 * s };
+    };
+    const holdAt = (i) => {
+      if (i === 1) { const p = wp(crew[1].palms[1]); return { x: p.x - 0.05 * s, y: p.y + 0.16 * s }; }
+      if (i === 2 && !(ph.name === 'build' && u > 2.9) && ph.name !== 'toss') { const p = wp(this.laptop); return { x: p.x, y: p.y + 0.5 * s }; }
+      return palms(i);
+    };
+    const dAt = (i) => this.stationD[i];
+    let pos, floor, show = { core: 1, ring: 0, cube: 0 }, bulbLit = 0, done = 0, flight = null, pop = 0;
     let rocketY = 0, flame = 0, rocketIn = 1, shake = 0;
 
-    // how far the idea has come, for the route's lit part
-    const dAt = (i) => this.stationD[i];
     if (ph.name === 'idea') {
-      // the bulb flickers on, the idea drops out of it
-      const f = u < 0.9 ? 0 : u < 1.3 ? (Math.sin(u * 60) > 0 ? 1 : 0.2) : u < 2.9 ? 1 : 1 - smooth(clamp((u - 2.9) / 0.5, 0, 1));
-      bulbLit = f;
-      const from = wp(this.bulb.g).clone(), to = foot(0);
-      const k = smooth(clamp((u - 1.8) / 0.8, 0, 1));
-      pos = { x: lerp(from.x, to.x, k), y: lerp(from.y, to.y, k) + Math.sin(k * Math.PI) * 0.6 * s };
-      show.core = smooth(clamp((u - 1.5) / 0.4, 0, 1));
-      floor = to.y;
-      done = 0;
-    } else if (ph.name === 'road') {
-      const k = smooth(u / ph.dur);
-      const d = lerp(dAt(st), dAt(st + 1), k);
-      const p = this.at(d);
-      const a = foot(st), b = foot(st + 1);
-      // leave the rest spot onto the route, travel, step off at the next
-      const edge = Math.min(1, Math.min(k, 1 - k) / 0.12);
-      pos = { x: lerp(k < 0.5 ? a.x : b.x, p.x, edge), y: lerp(k < 0.5 ? a.y : b.y, p.y, edge) + 0.22 * s * edge };
+      // the bulb flickers on over Idea's head; the idea drops out of it into Idea's hands
+      bulbLit = u < 0.9 ? 0 : u < 1.3 ? (Math.sin(u * 60) > 0 ? 1 : 0.25) : u < 2.9 ? 1 : 1 - ramp(2.9, 3.4);
+      const from = wp(this.bulb.g).clone(), to = holdAt(0), k = ramp(1.8, 2.45);
+      pos = { x: lerp(from.x, to.x, k), y: lerp(from.y, to.y, k) + Math.sin(k * Math.PI) * 0.35 * s };
+      show.core = ramp(1.5, 1.85);
+      floor = this.rest[0].y;
+    } else if (ph.name === 'toss') {
+      // thrown in an arc to the next one, who catches it
+      const k = clamp((u - 0.38) / 0.62, 0, 1);
+      const a = holdAt(st), b = holdAt(st + 1);
+      if (u < 0.38) pos = a;
+      else {
+        const lift = 1.25 * s + Math.abs(b.x - a.x) * 0.08;
+        pos = { x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k) + 4 * lift * k * (1 - k) };
+        flight = { vx: (b.x - a.x), vy: (b.y - a.y) + 4 * lift * (1 - 2 * k) };
+      }
       show = { core: st >= 2 ? 0 : 1, ring: st === 1 ? 1 : 0, cube: st >= 2 ? 1 : 0 };
-      floor = pos.y - 0.22 * s * edge;
-      done = d / this.total;
+      floor = lerp(this.rest[st].y, this.rest[st + 1].y, k);
+      done = lerp(dAt(st), dAt(st + 1), smooth(k)) / this.total;
     } else if (ph.name === 'design') {
-      // up in front of the designer, sketched, a ring drawn round it, and down again
-      const a = foot(1);
-      const up = smooth(clamp(u / 0.5, 0, 1)) * (1 - smooth(clamp((u - 2.8) / 0.5, 0, 1)));
-      pos = { x: a.x - 0.1 * s, y: a.y + up * 1.3 * s + Math.sin(t * 3) * 0.05 * s * up };
-      show.ring = smooth(clamp((u - 0.7) / 1.8, 0, 1));
-      floor = a.y;
+      // held up in one hand while the other sketches a ring round it
+      pos = holdAt(1);
+      show.ring = ramp(0.7, 2.4);
+      floor = this.rest[1].y;
       done = dAt(1) / this.total;
     } else if (ph.name === 'build') {
-      // a hop onto the laptop, coded into a thing, a hop back down
-      const a = foot(2), top = wp(this.laptop).clone();
-      const on = smooth(clamp(u / 0.6, 0, 1)) * (1 - smooth(clamp((u - 2.9) / 0.6, 0, 1)));
-      const hop = Math.sin(clamp(u / 0.6, 0, 1) * Math.PI) + Math.sin(clamp((u - 2.9) / 0.6, 0, 1) * Math.PI);
-      pos = { x: lerp(a.x, top.x, on), y: lerp(a.y, top.y + 0.55 * s, on) + hop * 0.45 * s };
-      const m = smooth(clamp((u - 1.5) / 1, 0, 1));
+      // on the laptop, coded into a product (a pop), lifted up to throw
+      pos = holdAt(2);
+      const m = ramp(1.5, 2.3);
+      pop = bump(1.9, 2.5);
       show = { core: 1 - m, ring: 1 - m, cube: m };
-      floor = on > 0.5 ? top.y + 0.1 * s : a.y; // on the laptop, its shadow falls on the keys
+      floor = u > 2.9 ? this.rest[2].y : pos.y - 0.45 * s;
       done = dAt(2) / this.total;
-    } else { // launch
-      const a = foot(3), hatch = { x: this.pad.x, y: this.pad.y + 1.1 * s };
-      const k = smooth(clamp(u / 0.7, 0, 1));
-      pos = { x: lerp(a.x, hatch.x, k), y: lerp(a.y, hatch.y, k) + Math.sin(k * Math.PI) * 0.9 * s };
-      show = { core: 0, ring: 0, cube: 1 - smooth(clamp((u - 0.5) / 0.25, 0, 1)) };
-      floor = lerp(a.y, hatch.y, k);
-      shake = u > 0.8 && u < 1.6 ? 1 : 0;
-      flame = smooth(clamp((u - 0.9) / 0.4, 0, 1)) * (u < 3.4 ? 1 : 0);
-      const lift = Math.max(0, u - 1.5);
-      rocketY = 0.5 * 2600 * lift * lift * (s / 30); // accelerating, off the top of the screen by about u = 3.2
-      rocketIn = u < 3.9 ? 1 : 0;
-      if (u >= 3.9) rocketIn = smooth(clamp((u - 4.1) / 0.5, 0, 1)); // a new one rolls out
-      if (u >= 3.9) rocketY = 0;
-      done = 1 - smooth(clamp((u - 2.2) / 1.2, 0, 1));
+    } else { // launch: loaded into the rocket, a count of three, lift-off, everyone cheering it up
+      const hatch = { x: this.pad.x, y: this.pad.y + 1.15 * s }, a = holdAt(3), k = ramp(0.55, 1.0);
+      pos = { x: lerp(a.x, hatch.x, k), y: lerp(a.y, hatch.y, k) + Math.sin(k * Math.PI) * 0.8 * s };
+      show = { core: 0, ring: 0, cube: 1 - ramp(0.95, 1.1) };
+      floor = lerp(this.rest[3].y, this.pad.y, k);
+      shake = (u > 1.0 && u < 1.25) || (u > 2.3 && u < 2.9) ? 1 : 0;
+      flame = ramp(2.3, 2.6) * (u < 4.4 ? 1 : 0);
+      const lift = Math.max(0, u - 2.8);
+      rocketY = 0.5 * 2600 * lift * lift * (s / 30);
+      rocketIn = u < 4.5 ? 1 : ramp(4.9, 5.4); // a new one rolls out
+      if (u >= 4.5) rocketY = 0;
+      done = 1 - ramp(3.2, 4.4);
     }
     if (this.still) done = Math.max(done, dAt(2) / this.total);
 
-    // the idea
+    // the idea: squashes and stretches along its flight, spins, pops as it changes
     o.g.position.set(pos.x, pos.y, 60);
     const vis = Math.max(show.core, show.ring, show.cube);
-    o.core.scale.setScalar(0.2 * Math.max(0.001, show.core));
-    o.halo.material.opacity = 0.8 * show.core;
-    o.ring.scale.setScalar(Math.max(0.001, show.ring));
+    const sp = flight ? Math.min(0.22, Math.hypot(flight.vx, flight.vy) / (60 * s)) : 0;
+    o.g.rotation.z = flight ? Math.atan2(flight.vy, flight.vx) - Math.PI / 2 : 0;
+    o.core.scale.set(0.24 * (1 - sp * 0.5), 0.24 * (1 + sp), 0.24).multiplyScalar(Math.max(0.001, show.core) * (1 + pop * 0.4));
+    o.ring.scale.setScalar(Math.max(0.001, show.ring) * (1 + pop * 0.3));
     o.ring.rotation.z = t * 1.2;
-    o.cube.scale.setScalar(Math.max(0.001, show.cube));
-    o.cube.rotation.set(0.5 + t * 0.4, t * 0.7, 0);
+    o.cube.scale.setScalar(Math.max(0.001, show.cube) * (1 + pop * 0.35));
+    o.cube.rotation.set(0.5 + t * 0.4 + (flight ? t * 6 : 0), t * 0.7, 0);
     o.g.visible = vis > 0.01;
     // its shadow stays on the ground under it, fainter the higher it is
     const height = (pos.y - floor) / s;
-    o.sh.position.y = -height - 0.18;
-    o.sh.scale.set(0.7 * vis, 0.45 * vis, 1);
-    o.sh.visible = height < 3;
+    o.sh.position.set(0, -height - 0.18, 0);
+    o.sh.scale.set(0.7 * vis * clamp(1 - height / 4, 0.3, 1), 0.45 * vis * clamp(1 - height / 4, 0.3, 1), 1);
+    o.sh.visible = !flight && height < 3;
 
     // the bulb and the rocket
     this.bulb.glass.emissiveIntensity = 1.6 * bulbLit;
-    this.bulb.halo.material.opacity = 0.9 * bulbLit;
-    const r = this.rocket;
+    this.bulb.g.scale.setScalar(0.9 * (1 + 0.15 * bump(0.9, 1.4) * (ph.name === 'idea' ? 1 : 0)));
     r.g.position.set(this.pad.x + (shake ? Math.sin(t * 70) * 0.03 * s : 0), this.pad.y + rocketY, 10);
     r.body.scale.setScalar(Math.max(0.001, rocketIn));
     r.flame.scale.set(flame, flame * (0.85 + 0.25 * Math.sin(t * 40)), flame);
     r.g.visible = rocketIn > 0.01 && this.pad.y + rocketY < H + 80;
-
     this.svgProgress = done;
 
-    // the crew: each watches the idea and does their part when it's with them
-    this.crew.forEach((c, i) => {
+    // the crew: each watches the idea, does their part when it's with them, gets ready to catch it, and all of them
+    // see the rocket off
+    const rocketUp = ph.name === 'launch' && u > 2.3 && u < 4.6;
+    crew.forEach((c, i) => {
       const p = pose0();
       const cw = c.root.position;
       const headY = cw.y + (NECK_Y + HEAD_UP * 0.6) * s;
-      const tx = (ph.name === 'launch' && u > 1.4 && i === 3) ? r.g.position.x : pos.x;
-      const ty = (ph.name === 'launch' && u > 1.4 && i === 3) ? Math.min(r.g.position.y, H) : pos.y;
-      const lx = clamp((tx - cw.x) / (5 * s), -1, 1), ly = clamp((ty - headY) / (5 * s), -1, 1);
-      p.yaw = c.face;
-      p.hy = clamp(lx * 0.9 - c.face * 0.6, -0.9, 0.9);
-      p.hx = clamp(-ly * 0.45, -0.45, 0.35);
-      // alive while waiting: breathing, a slow weight shift, now and then a glance down the route
+      const tx = rocketUp ? r.g.position.x : pos.x, ty = rocketUp ? Math.min(r.g.position.y + 1.2 * s, H + 40) : pos.y;
+      const lx = clamp((tx - cw.x) / (5 * s), -1, 1), ly = clamp((ty - headY) / (4 * s), -1, 1);
+      let yaw = c.face;
+      // alive while waiting: breathing, a slow weight shift, the odd tilt of the head
       p.bob = 0.012 * Math.sin(t * 2.1 + i * 1.3);
       p.br = 0.022 * Math.sin(t * 1.8 + i * 1.7);
       p.sway = 0.035 * Math.sin(t * 0.8 + i * 2.1);
-      p.hz += 0.05 * Math.sin(t * 0.6 + i);
-      const mine = st === i && ph.name !== 'road';
-      // the hand-off: as the idea leaves, its last worker gives it a nod
-      if (ph.name === 'road' && st === i && u < 0.7) p.hx += 0.28 * Math.sin((u / 0.7) * Math.PI);
-      if (i === 0) { // Idea: points at the bulb, jumps when it lights
-        const lit = ph.name === 'idea' ? smooth(clamp((u - 0.3) / 0.5, 0, 1)) * (1 - smooth(clamp((u - 2.8) / 0.5, 0, 1))) : 0;
-        p.arz = lerp(-0.38, -2.55, lit); p.arx = -0.2 * lit;
-        // a crouch before the jump, a stretch in the air, a squash on landing
-        const jump = ph.name === 'idea' ? Math.max(0, Math.sin(clamp((u - 1.25) / 0.45, 0, 1) * Math.PI)) : 0;
-        const crouch = ph.name === 'idea' && u > 0.95 && u < 1.25 ? Math.sin(((u - 0.95) / 0.3) * Math.PI * 0.5) : 0;
-        const land = ph.name === 'idea' && u > 1.7 && u < 1.95 ? Math.sin(((u - 1.7) / 0.25) * Math.PI) : 0;
-        p.bob += jump * 0.4 - crouch * 0.1;
-        p.sq = crouch * 0.9 - jump * 0.7 + land * 0.6;
-        p.alz = 0.38 + jump * 0.9;
-        if (ph.name === 'idea' && u < 1.8) p.hx = -0.35; // looking up at the bulb
-      } else if (i === 1) { // Design: sketches in the air round the idea
-        const work = mine ? smooth(clamp((u - 0.4) / 0.4, 0, 1)) * (1 - smooth(clamp((u - 2.7) / 0.4, 0, 1))) : 0;
-        p.arx = lerp(-0.1, -1.25 + Math.sin(t * 7) * 0.18, work);
-        p.arz = lerp(-0.38, -0.2 + Math.cos(t * 7) * 0.14, work);
-        p.lean = 0.08 * work;
-      } else if (i === 2) { // Build: sits with the laptop, typing in bursts while the idea is on it
+      p.hz = 0.05 * Math.sin(t * 0.6 + i);
+      const turn = (to, k) => { yaw = lerp(yaw, to, k); };
+      const holdPose = (k) => { p.alx = lerp(p.alx, -0.95, k); p.arx = lerp(p.arx, -0.95, k); p.alz = lerp(p.alz, 0.14, k); p.arz = lerp(p.arz, -0.14, k); };
+      const ready = (k) => { // arms out for the catch, a bounce on the toes
+        p.alx = lerp(p.alx, -1.15, k); p.arx = lerp(p.arx, -1.15, k); p.alz = lerp(p.alz, 0.55, k); p.arz = lerp(p.arz, -0.55, k);
+        p.bob += 0.05 * Math.abs(Math.sin(t * 9)) * k; p.lean += 0.06 * k;
+      };
+      const caught = (at) => { const e = bump(at, at + 0.3); p.sq += 0.55 * e; p.lean -= 0.14 * e; p.bob -= 0.05 * e; };
+      const throwIt = () => { // two hands up and back, then over and forward, and a follow-through
+        const back = ramp(0, 0.3) * (1 - ramp(0.34, 0.46)), fwd = bump(0.34, 0.75);
+        p.alx = p.arx = lerp(lerp(-0.95, -2.8, back), -1.25, fwd);
+        p.alz = 0.25; p.arz = -0.25;
+        p.lean += -0.16 * back + 0.24 * fwd; p.sq += -0.35 * back + 0.25 * fwd;
+      };
+      if (i === 0) { // Idea: thinks, jumps when the bulb lights, catches the idea, throws it on
+        if (ph.name === 'idea') {
+          const think = 1 - ramp(0.85, 1.0);
+          p.arx = lerp(0, -1.9, think); p.arz = lerp(-0.38, 0.35, think); p.hz += 0.12 * think; p.hx = -0.25;
+          const crouch = u > 0.95 && u < 1.25 ? Math.sin(((u - 0.95) / 0.3) * Math.PI * 0.5) : 0;
+          const jump = bump(1.25, 1.7), land = bump(1.7, 1.95);
+          p.bob += jump * 0.4 - crouch * 0.1; p.sq += crouch * 0.9 - jump * 0.7 + land * 0.6;
+          if (u > 1.0 && u < 1.8) { p.alz = 0.38 + jump * 1.9; p.arz = -0.38 - jump * 1.9; }
+          if (u > 1.8) { holdPose(ramp(1.8, 2.2)); caught(2.4); }
+          if (u > 2.6) { p.hx = 0.3 * (1 - ramp(3.1, 3.3)); p.bob += 0.04 * Math.abs(Math.sin(t * 7)) * (1 - ramp(3.1, 3.3)); } // a delighted look at it
+          turn(0.9, ramp(3.0, 3.5));
+          if (u < 1.9) p.hx = -0.35; // up at the bulb
+        } else if (ph.name === 'toss' && st === 0) { turn(0.9, 1 - ramp(0.8, 1.25)); throwIt(); }
+        else if (ph.name === 'launch' && u > 4.9) { turn(0, 0); p.hx = -0.2 * ramp(4.9, 5.4); } // looking up: the next one
+      } else if (i === 1) { // Design: ready, catches, holds it up and sketches round it, throws it on
+        if (ph.name === 'toss' && st === 0) { turn(-0.8, ramp(0, 0.35)); ready(ramp(0.1, 0.4) * (1 - ramp(1.0, 1.1))); if (u > 1.0) holdPose(1); caught(1.0); }
+        else if (ph.name === 'design') {
+          turn(-0.8, 1 - ramp(0, 0.4));
+          const up = ramp(0.2, 0.6) * (1 - ramp(2.9, 3.2));
+          p.alx = lerp(-0.95, -1.3, up); p.alz = lerp(0.14, 0.3, up);
+          const work = ramp(0.5, 0.8) * (1 - ramp(2.5, 2.8));
+          p.arx = lerp(-0.95, -1.35 + Math.sin(t * 7) * 0.2, Math.max(work, 1 - up)); p.arz = lerp(-0.14, -0.1 + Math.cos(t * 7) * 0.16, work);
+          p.lean = 0.08 * work; p.hz += 0.08 * work * Math.sin(t * 2);
+          if (u > 2.6) { p.hx = -0.1; p.hy = -0.2; } // holds it off to look
+          if (u > 2.9) holdPose(ramp(2.9, 3.2));
+          turn(0.9, ramp(3.0, 3.4));
+        } else if (ph.name === 'toss' && st === 1) { turn(0.9, 1 - ramp(0.8, 1.25)); throwIt(); }
+      } else if (i === 2) { // Build: sits with the laptop, catches, codes it into a product, lifts it, throws it on
         p.llx = -1.5; p.lrx = -1.5;
         p.bob = -0.24 + 0.01 * Math.sin(t * 2);
         p.lean = 0.12;
-        const typing = mine && u > 0.5 && u < 2.9 ? 1 : 0.25 * Math.max(0, Math.sin(t * 0.7));
-        const tap = (k) => Math.max(0, Math.sin(t * 17 + k)) * 0.08 * typing;
+        const typing = ph.name === 'build' && u > 0.4 && u < 2.8 ? 1 : 0.25 * Math.max(0, Math.sin(t * 0.7));
+        const tap = (q) => Math.max(0, Math.sin(t * 17 + q)) * 0.1 * typing;
         p.alx = -0.72 - tap(0); p.arx = -0.72 - tap(1.7);
         p.alz = 0.12; p.arz = -0.12;
-        if (mine) p.hx = Math.max(p.hx, 0.2);
+        if (ph.name === 'build') {
+          p.hx = 0.22 + 0.06 * Math.max(0, Math.sin(t * 11)) * typing; // eyes on it, nodding along
+          if (u > 1.9 && u < 2.6) { p.hx = -0.15; p.sq += 0.3 * bump(1.9, 2.3); } // the pop: a jump back
+          if (u > 2.8) { const lift = ramp(2.8, 3.1); p.alx = p.arx = lerp(-0.72, -1.2, lift); p.alz = 0.14; p.arz = -0.14; p.hx = 0.1; }
+          turn(0.8, ramp(3.1, 3.5));
+        } else if (ph.name === 'toss' && st === 1) { turn(-0.6, ramp(0, 0.35) * (1 - ramp(0.9, 1.25))); ready(ramp(0.1, 0.4) * (1 - ramp(0.95, 1.05))); caught(1.0); }
+        else if (ph.name === 'toss' && st === 2) { turn(0.8, 1 - ramp(0.8, 1.25)); throwIt(); p.lean += 0.12; }
         this.laptop.rotation.x = 0.05 - p.lean;
-      } else { // Launch: cheers the rocket up, then waves it off
-        const cheer = ph.name === 'launch' ? smooth(clamp((u - 1.4) / 0.4, 0, 1)) * (1 - smooth(clamp((u - 3.4) / 0.5, 0, 1))) : 0;
-        p.alz = lerp(0.38, 2.5 + Math.sin(t * 9) * 0.2, cheer);
-        p.arz = lerp(-0.38, -2.5 - Math.sin(t * 9 + 1) * 0.2, cheer);
-        const hop = Math.abs(Math.sin(t * 9));
-        p.bob += cheer * hop * 0.1;
-        p.sq = cheer * (0.35 - hop * 0.6);
+      } else { // Launch: ready, catches, loads the rocket, counts down, sees it off
+        if (ph.name === 'toss' && st === 2) { turn(-0.8, ramp(0, 0.35)); ready(ramp(0.1, 0.4) * (1 - ramp(1.0, 1.1))); if (u > 1.0) holdPose(1); caught(1.0); }
+        else if (ph.name === 'launch') {
+          turn(0.9, ramp(0, 0.45) * (1 - ramp(1.15, 1.5)));
+          if (u < 1.0) { // an underarm lob into the hatch
+            const swing = bump(0.35, 0.95);
+            p.alx = p.arx = lerp(-0.95, -0.2, ramp(0.2, 0.45)) + (-1.3 * swing);
+            p.alz = 0.2; p.arz = -0.2; p.lean = 0.12 * swing;
+          }
+          if (u > 1.2 && u < 2.3) { // three, two, one: a finger up, a nod each
+            const c3 = Math.floor((u - 1.25) / 0.35), inBeat = ((u - 1.25) % 0.35) / 0.35;
+            p.alz = 2.2 + 0.25 * Math.sin(inBeat * Math.PI); p.alx = -0.3;
+            if (c3 >= 0 && c3 < 3) p.hx = 0.18 * Math.sin(inBeat * Math.PI);
+          }
+        }
       }
+      // everyone sees the rocket off: they look up after it and cheer, a ripple from Launch down the line
+      if (rocketUp) {
+        const d = (3 - i) * 0.12, cheer = ramp(2.9 + d, 3.2 + d) * (1 - ramp(4.2 + d, 4.6 + d));
+        const hop = i === 2 ? 0 : Math.abs(Math.sin((u - d) * 9));
+        p.alz = lerp(p.alz, 2.5 + Math.sin(t * 9 + i) * 0.2, cheer); p.arz = lerp(p.arz, -2.5 - Math.sin(t * 9 + i + 1) * 0.2, cheer);
+        p.alx = lerp(p.alx, -0.2, cheer); p.arx = lerp(p.arx, -0.2, cheer);
+        p.bob += cheer * hop * 0.14; p.sq += cheer * (0.3 - hop * 0.6);
+        turn(0, cheer);
+      } else if (ph.name === 'launch' && u > 1.2 && u < 2.3 && i < 3) { p.lean += 0.06; p.hx -= 0.05; } // waiting for it
+      p.yaw = yaw;
+      p.hy = clamp(lx * 0.9 - yaw * 0.6, -0.9, 0.9);
+      p.hx += clamp(-ly * 0.45, -0.5, 0.35);
       blink(c, dt, t);
       apply(c, wave(c, p, t, env, false), this.still ? 0 : dt);
     });
@@ -865,7 +903,7 @@ export function start() {
     canvas.hidden = journey.svg.hidden = !on;
     if (!on) return;
     if (canvas.parentNode !== band) band.append(journey.svg, canvas);
-    const s = Math.min(27, W / 13); // a character's scale: at most 96px tall
+    const s = Math.min(32, W / (W < 600 ? 16 : 12.5)); // a character's scale: at most 114px tall; room between them on phones
     const H = Math.ceil(5 * s + 30);
     band.style.height = H + 'px';
     env.W = W; env.H = H; env.s = s;
@@ -961,6 +999,8 @@ export function start() {
     band.classList.remove('is-live');
   });
 
+  // for checks: step the band and draw a frame
+  band.crewStep = (dt) => { t += dt; step(dt); renderer.render(scene, camera); journey.draw(); return canvas; };
   return { band };
 }
 

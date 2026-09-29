@@ -64,8 +64,8 @@ public/                Everything a visitor can load (the only folder the server
     journey.js         The maze's draw-in, the stage scenes, and the "How we work" route drawn through the rows on scroll
     ambient.js         The moving background: doodles coming and going behind every page; loads crew3d.js for the crew band
     crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) working an idea through
-                       Idea, Design, Build and Launch in a row in the contact block; they wave when the cursor (or a tap)
-                       comes near
+                       Idea, Design, Build and Launch in a row in the contact block, throwing it on from one to the next
+                       and cheering the rocket off together; they wave when the cursor (or a tap) comes near
     office3d.js        The studio: a small 3D office on home ("who we are") where the crew codes, makes coffee, draws
                        the plan on the whiteboard, stops by to chat and sits in the beanbag (uses crew3d.js's character
                        kit). Walking is planned on a grid of the room (A*, corners rounded) so nobody passes through
