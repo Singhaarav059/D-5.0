@@ -1499,6 +1499,15 @@ export function start(el, kit) {
   const camera = new THREE.PerspectiveCamera(28, 2, 0.5, 200);
   const density = { value: 24 };
   const office = new Office(scene, density);
+  // small props (books, leaves, pens, jars) keep out of the shadow maps: their shadows don't show, their draws cost
+  const sphere = new THREE.Sphere(), wscale = new THREE.Vector3();
+  scene.updateMatrixWorld(true);
+  scene.traverse((o) => {
+    if (!o.isMesh || !o.castShadow || o.geometry.isInstancedBufferGeometry || o.material === CASTER) return;
+    o.geometry.computeBoundingSphere();
+    sphere.copy(o.geometry.boundingSphere);
+    if (sphere.radius * o.getWorldScale(wscale).x < 0.32) o.castShadow = false;
+  });
   el.prepend(canvas);
 
   let W = 0, H = 0;
