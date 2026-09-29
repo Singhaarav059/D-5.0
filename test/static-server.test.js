@@ -41,6 +41,8 @@ test('static server protects the root and serves safe routes', async (t) => {
   assert.equal(home.body, '<h1>ok</h1>');
   assert.equal(home.headers['x-content-type-options'], 'nosniff');
   assert.equal(home.headers['x-frame-options'], 'SAMEORIGIN');
+  assert.equal(home.headers['strict-transport-security'], 'max-age=31536000');
+  assert.equal(home.headers['content-security-policy-report-only'], undefined);
 
   const route = await request(server, 'GET', '/about');
   assert.equal(route.status, 200);
