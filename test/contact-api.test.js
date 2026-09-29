@@ -7,7 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const { createStaticServer } = require('../lib/static-server');
-const { handleContact } = require('../lib/contact-api');
+const { handleContact, resetRateLimit } = require('../lib/contact-api');
 
 function request(server, method, requestPath, body, headers = {}) {
   const address = server.address();
@@ -55,4 +55,26 @@ test('contact API validates submissions and never exposes delivery internals', a
   const method = await request(server, 'GET', '/api/contact');
   assert.equal(method.status, 405);
   assert.equal(method.headers.allow, 'POST');
+});
+
+test('contact API answers oversized and non-object bodies instead of dropping the connection or crashing', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'contact-api-'));
+  await fs.writeFile(path.join(root, 'index.html'), '<h1>ok</h1>');
+  const server = createStaticServer({ root, onRequest: (req, res) => handleContact(req, res, { webhookUrl: '' }) });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    await fs.rm(root, { recursive: true, force: true });
+  });
+  const headers = { 'Content-Type': 'application/json' };
+  resetRateLimit();
+
+  const huge = await request(server, 'POST', '/api/contact', JSON.stringify({ message: 'x'.repeat(40_000) }), headers);
+  assert.equal(huge.status, 413);
+  assert.equal(JSON.parse(huge.body).error, 'payload_too_large');
+
+  for (const body of ['null', '5', '[]']) {
+    const odd = await request(server, 'POST', '/api/contact', body, headers);
+    assert.equal(odd.status, 400, body);
+  }
 });
