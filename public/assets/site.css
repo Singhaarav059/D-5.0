@@ -488,7 +488,6 @@ html.menu-open { overflow: hidden; }
 
 /* ---------- the home hero: the promise and the maze it gets you out of (templates/journey.js) ---------- */
 .journey { position: relative; isolation: isolate; padding-block: clamp(112px, 15vh, 160px) clamp(56px, 8vw, 104px); }
-.journey__stage { display: grid; gap: clamp(36px, 6vh, 64px); }
 
 /* ---------- How we work: the four stages as rows, a scene of the work beside its words, alternating sides, with the
    Demaze route running through them (journey.js draws it from the rows' positions and on scroll). The scenes sit on
@@ -593,19 +592,21 @@ html.menu-open { overflow: hidden; }
 .jart__meter { fill: var(--mint-tint); stroke: var(--mint-ink); stroke-width: 0.8; }
 
 /* hero copy */
-.hero__grid { margin-top: clamp(28px, 5vh, 52px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 32px clamp(40px, 5vw, 88px); align-items: end; }
-.hero__title { font: 430 clamp(2.9rem, min(6.1vw, 9.6vh), 5.9rem)/0.95 var(--display); letter-spacing: -0.052em; }
+.hero__layout { margin-top: clamp(24px, 4vh, 44px); display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: center; }
+.hero__title { font: 430 clamp(2.8rem, min(5.3vw, 9.4vh), 5.4rem)/0.95 var(--display); letter-spacing: -0.052em; }
+.hero__copy .hero__lead { margin-top: clamp(20px, 3vh, 28px); }
+.hero__copy .hero__proof { margin-top: clamp(28px, 4.5vh, 44px); padding-top: 22px; border-top: 1px solid var(--line); }
+/* the maze on a glass board, the hero's picture; it tilts a little toward the pointer (site.js sets --rx, --ry) */
+.hero__board { position: relative; padding: clamp(18px, 2.2vw, 32px) clamp(14px, 1.6vw, 24px); border-radius: 30px; background: var(--glass); box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; }
+.hero__board .maze { transform: translateZ(28px); }
 .hero__title em { display: block; color: #7d90ff; }
 /* hero doodles: two sparkles by the looped word, an arrow from the actions down to the maze (clear of the proof line) */
 .hero__star { position: absolute; width: 0.34em; height: 0.34em; right: -0.42em; top: -0.18em; }
 .hero__star--2 { width: 0.2em; height: 0.2em; right: -0.62em; top: 0.3em; }
-.hero__aside { position: relative; }
-.hero__arrow { position: absolute; width: 74px; height: 74px; left: 18px; bottom: -86px; transform: rotate(118deg) scaleY(-1); }
-.hero__arrow .dd__ink > * { stroke: var(--tomato); stroke-width: 3; }
 html.motion.js .hero__star { animation: dd-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 2.1s both, dd-spin 5s linear 2.6s infinite; }
 html.motion.js .hero__star--2 { animation-delay: 2.3s, 2.8s; animation-direction: normal, reverse; }
 @keyframes dd-spin { to { rotate: 1turn; } }
-html.motion.js .hero__arrow .dd__ink > * { animation: dd-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1.9s both; }
 /* display ascenders and descenders reach past the word masks: give them room */
 .hero__title .w, .phero__title .w { padding: 0.08em 0.05em 0.14em; margin: -0.08em -0.05em -0.14em; }
 .hero__lead { font-size: clamp(1.02rem, 1.25vw, 1.15rem); line-height: 1.5; color: var(--muted); max-width: 40ch; }
@@ -618,7 +619,6 @@ html.motion.js .hero__arrow .dd__ink > * { animation: dd-draw 0.9s cubic-bezier(
 /* The maze (templates/maze.js). Resting state: faint walls, the blue route, the chevron. When a maze first comes
    into view the walls rise, the route draws itself through, the chevron lands and the walls fall back. */
 .maze { display: block; width: 100%; height: auto; overflow: visible; }
-.maze--narrow { display: none; }
 .maze__walls { fill: none; stroke: var(--draw); stroke-width: 1.2; stroke-linecap: square; vector-effect: non-scaling-stroke; opacity: 0.4; }
 .maze__route { fill: none; stroke: var(--blue); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 .maze__mark { fill: var(--blue); }
@@ -1732,9 +1732,7 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
   .nav__toggle { display: grid; }
   .nav__drop { display: none; }
   .nav__bar { padding-inline: 18px 8px; }
-  .hero__grid, .shead__row { grid-template-columns: minmax(0, 1fr); }
-  .hero__grid { gap: 22px; }
-  .hero__arrow { display: none; }
+  .shead__row { grid-template-columns: minmax(0, 1fr); }
   .phero__art { display: none; }
   .hero__title { font-size: clamp(2.6rem, 9.4vw, 4.8rem); }
   .phero__title { font-size: clamp(2.4rem, 8.4vw, 4.4rem); }
@@ -1751,6 +1749,9 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 }
 
 @media (max-width: 860px) {
+  /* the hero stacks: the promise, then the maze board under it */
+  .hero__layout { grid-template-columns: minmax(0, 1fr); }
+  .hero__board { width: min(100%, 620px); }
   /* what drives us: the route needs its four columns; below that each value carries its own doodle */
   .values { display: none; }
   .drives__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; }
@@ -1772,8 +1773,6 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 }
 
 @media (max-width: 860px) {
-  .maze--wide { display: none; }
-  .maze--narrow { display: block; }
   .maze__route { stroke-width: 4.4; }
 }
 

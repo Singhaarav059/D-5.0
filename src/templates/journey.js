@@ -15,33 +15,31 @@ const J = C.journey;
 const LOOP = '<svg class="scribble__loop" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M186 12C120 2 22 12 10 50c-10 34 88 44 170 40 72-3 118-18 110-44C282 18 206 6 118 12"/></svg>';
 const headline = (h) => h.replace(/<mark>(.*?)<\/mark>/, `<span class="scribble">$1${LOOP}${doodle('star', { color: 'sun', cls: 'hero__star' })}${doodle('star', { color: 'pink', cls: 'hero__star hero__star--2' })}</span>`);
 
-// The record, right under the promise: the four figures (content.js `metrics`), each with a marker line in its colour.
-// It sits under the headline only, leaving the cell under the actions free for the arrow down to the maze.
+// The record, under the actions: the four figures (content.js `metrics`), each with a marker line in its colour.
 const PROOF_MK = ['sun', 'pink', 'mint', 'sky'];
 const proof = () => `<ul class="hero__proof" data-hero-fade>${C.metrics.map((m, i) => `<li style="--mk:var(--${PROOF_MK[i % 4]})"><b>${m.prefix}${m.value}${m.suffix}</b>${esc(m.label.toLowerCase())}</li>`).join('')}</ul>`;
 
-const heroCopy = () => `<div class="journey__intro" data-hero>
-          <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
-          <div class="hero__grid">
-            <h1 class="hero__title" data-split="hero">${headline(C.hero.headline)}</h1>
-            <div class="hero__aside">${doodle('arrow', { color: 'tomato', cls: 'hero__arrow' })}
-              <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
-              <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact#form-brief')}${btn('See how we work', '#how', 'btn--ghost')}</div>
-            </div>
-            ${proof()}
-          </div>
+// The maze on its board: the four pitfalls the lead names (vague specs, scope creep, deadlines, tech debt), the idea at
+// the entrance, the launch at the exit. It draws itself in, is solved, tilts toward the pointer (site.js) and falls
+// away as the hero scrolls off (journey.js).
+const LEAD_PITS = [4, 0, 2, 3].map((i) => J.pitfalls[i]);
+const board = () => `<div class="hero__board" data-hero-fade data-tilt>
+          ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--board', pits: LEAD_PITS, start: J.start, finish: J.finish, tagSize: 13 })}
         </div>`;
 
-const drawing = () => `<div class="journey__map">
-          ${maze({ cols: 22, rows: 5, seed: 1892, entry: 2, exit: 2, cls: 'maze--wide', pits: J.pitfalls, start: J.start, finish: J.finish })}
-          ${maze({ cols: 10, rows: 6, seed: 1900, entry: 2, exit: 3, cls: 'maze--narrow', pits: J.pitfalls.slice(0, 4), start: J.start, finish: J.finish, tagSize: 14 })}
-        </div>`;
-
-// The home page opens with the promise and the maze it gets you out of.
+// The home page opens with the promise beside the maze it gets you out of.
 const hero = () => `<section class="journey journey--home">
-  <div class="wrap journey__stage">
-    ${heroCopy()}
-    ${drawing()}
+  <div class="wrap hero" data-hero>
+    <p class="hero__label" data-hero-fade>${esc(C.hero.label)}</p>
+    <div class="hero__layout">
+      <div class="hero__copy">
+        <h1 class="hero__title" data-split="hero">${headline(C.hero.headline)}</h1>
+        <p class="hero__lead" data-hero-fade>${esc(C.hero.lead)}</p>
+        <div class="hero__ctas" data-hero-fade>${btn('Start a project', './contact#form-brief')}${btn('See how we work', '#how', 'btn--ghost')}</div>
+        ${proof()}
+      </div>
+      ${board()}
+    </div>
   </div>
 </section>`;
 

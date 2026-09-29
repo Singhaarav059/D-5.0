@@ -542,6 +542,21 @@
     if (fades.length) tl.fromTo(fades, { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
   }
 
+  // The hero's maze board leans a little toward the pointer, as if it could be picked up (mouse and trackpad only; a
+  // touch has no hover to follow). Springy, at most 5 degrees, and it settles back when the pointer leaves.
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    $$('[data-tilt]').forEach((el) => {
+      const tilt = { x: 0, y: 0 };
+      const set = () => { el.style.setProperty('--rx', `${tilt.x.toFixed(2)}deg`); el.style.setProperty('--ry', `${tilt.y.toFixed(2)}deg`); };
+      const to = (x, y) => gsap.to(tilt, { x, y, duration: 0.9, ease: 'elastic.out(1, 0.6)', overwrite: true, onUpdate: set });
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        to(((e.clientY - r.top) / r.height - 0.5) * -10, ((e.clientX - r.left) / r.width - 0.5) * 10);
+      });
+      el.addEventListener('pointerleave', () => to(0, 0));
+    });
+  }
+
   // Section headlines open as the hero's does: the words rise out of their masks, one after another, then the marker
   // swipes under the quieter half. The label's hairline draws across as it arrives (site.css), so sections read as
   // one run rather than blocks sliding in.

@@ -27,7 +27,10 @@
       const pits = $$('.maze__pit', svg);
       const clamp = (v) => Math.min(1, Math.max(0, v));
       ScrollTrigger.create({
-        trigger: svg, start: 'center 72%', end: 'center 18%',
+        // from when the maze passes the middle of the screen (never before the first scroll, since on wide screens it
+        // sits in the first one), over half a screen
+        start: () => Math.max(1, svg.getBoundingClientRect().top + scrollY + svg.clientHeight / 2 - innerHeight * 0.32),
+        end: (self) => self.start + innerHeight * 0.5, invalidateOnRefresh: true,
         onUpdate: ({ progress: p }) => {
           walls.style.opacity = (1 - clamp(p * 1.6)).toFixed(3);
           pits.forEach((pit, i) => {
