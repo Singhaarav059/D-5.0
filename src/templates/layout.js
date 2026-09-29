@@ -12,7 +12,6 @@ const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About', './about-us'], ['Contact', './contact']];
 
 // The motion switch (footer and phone menu): site.js sets its state and saves the choice; boot.js applies it.
-const motionSwitch = `<button type="button" class="motion-switch" role="switch" aria-checked="true" data-motion-switch><span class="motion-switch__track" aria-hidden="true"><i></i></span>Animations</button>`;
 
 const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
 
@@ -105,7 +104,6 @@ ${ambient()}
     <div class="nav__menu-foot" style="--i:${NAV.length + 1}">
       <a class="btn btn--primary" ${cal}><span>Book a call</span><i class="btn__icon">${icon.arrow}</i></a>
       <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>
-      ${motionSwitch}
     </div>
   </div>
 </header>
@@ -147,7 +145,7 @@ function footer([label, line, href]) {
       <svg class="footer__chevron" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg>
       <span class="footer__word">Demaze${doodle('star', { color: 'sun', cls: 'footer__spark' })}${doodle('star', { color: 'pink', cls: 'footer__spark footer__spark--2' })}</span>
     </div>
-    <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><span class="footer__end">${motionSwitch}<a href="#main" data-top>Back to top ↑</a></span></div>
+    <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><span class="footer__end"><a href="#main" data-top>Back to top ↑</a></span></div>
   </div>
 </footer>`;
 }

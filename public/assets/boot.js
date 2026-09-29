@@ -1,12 +1,11 @@
 'use strict';
 
-// Runs in <head>, before the page paints: decides motion or stillness for everything else. The visitor's own choice
-// (the "Motion" switch in the footer and menu, saved in this browser) wins over the system setting.
+// Runs in <head>, before the page paints: decides motion or stillness for everything else, from the visitor's system
+// setting (reduce motion).
 (() => {
   const root = document.documentElement;
-  let pref = null;
-  try { pref = localStorage.getItem('demaze-motion'); } catch {}
-  const reduced = pref === 'off' || (pref !== 'on' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  try { localStorage.removeItem('demaze-motion'); } catch {} // (the old on-page switch's saved choice, now retired)
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   root.classList.add(reduced ? 'rm' : 'motion', 'js');
   window.setTimeout(() => {
     if (!window.gsap) root.classList.remove('js');

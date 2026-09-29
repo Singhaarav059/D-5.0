@@ -7,18 +7,6 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
   // ---------- UI that works regardless of motion ----------
-  // The motion switch (footer, phone menu): on is the moving site, off the still one. The choice is saved and the page
-  // reloads, because boot.js sets the mode before anything draws (the scroll position comes back with it).
-  $$('[data-motion-switch]').forEach((b) => {
-    b.setAttribute('aria-checked', root.classList.contains('motion'));
-    b.addEventListener('click', () => {
-      const on = b.getAttribute('aria-checked') !== 'true';
-      try { localStorage.setItem('demaze-motion', on ? 'on' : 'off'); } catch {}
-      $$('[data-motion-switch]').forEach((x) => x.setAttribute('aria-checked', on));
-      root.classList.add('is-idle'); // everything stops at once while the page reloads
-      location.reload();
-    });
-  });
   // Card to case study: a project's image and title share transition names across pages (helpers.js `vt`). Leaving a
   // page, only the destination's pair keeps its names, so the browser grows that one card into the page and every
   // other named element simply goes with the page (and costs nothing). Back from the cache, the names return.
