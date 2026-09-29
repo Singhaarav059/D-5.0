@@ -65,16 +65,11 @@
     float.append(c.src.cloneNode(true));
     el.append(float);
     if (c.w) el.style.width = c.w + 'px';
-    layer.append(el);
-    const w = el.offsetWidth, h = el.offsetHeight;
-    if (w > lane.w || h > sh - 16) { el.remove(); return; } // doesn't fit whole; the next try picks again
-    const jx = Math.min(10, (lane.w - w) / 2), jy = Math.min(14, (sh - h) / 2 - 8);
-    const box = { x: lane.x + (lane.w - w) / 2 + rnd(-jx, jx), y: TOP + k * sh + (sh - h) / 2 + rnd(-jy, jy), w, h };
+    el.style.visibility = 'hidden';
     const d = c.kind === 'sketch' ? rnd(0.3, 0.6) : rnd(0.5, 1); // nearer things move more
-    const tilt = c.kind === 'doodle' ? 8 : 4;
-    el.style.cssText += `;left:${box.x.toFixed(0)}px;top:${box.y.toFixed(0)}px;--r:${rnd(-tilt, tilt).toFixed(1)}deg;--d:${d.toFixed(2)}`;
-    float.style.cssText = `--dur:${rnd(5, 9).toFixed(1)}s;--delay:${rnd(-6, 0).toFixed(1)}s`;
-    const item = { el, box, d, used: c.src, born: scrollY, lane: li, slot: k };
+    // the slot is taken now; the item is placed once its size is known
+    const item = { el, box: null, d, used: c.src, born: scrollY, lane: li, slot: k };
+    live.push(item);
     // it leaves (after a while, or early to make way), and something else appears in a free slot
     let timer = 0;
     item.leave = () => {
@@ -85,10 +80,34 @@
       el.classList.add('is-out');
       setTimeout(() => { el.remove(); setTimeout(spawn, rnd(300, 1500)); }, 800);
     };
-    live.push(item);
-    if (still) { el.classList.add('is-in'); return; }
-    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
-    timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(8, 13) : rnd(11, 16)) * 1000);
+    // its size comes from the browser's next layout (reading offsetWidth here would lay the whole page out at once)
+    measure(el, (w, h) => {
+      if (!live.includes(item)) { el.remove(); return; } // gone while measuring (a resize)
+      if (w > lane.w || h > sh - 16) { live.splice(live.indexOf(item), 1); el.remove(); return; } // doesn't fit whole; the next try picks again
+      const jx = Math.min(10, (lane.w - w) / 2), jy = Math.min(14, (sh - h) / 2 - 8);
+      item.box = { x: lane.x + (lane.w - w) / 2 + rnd(-jx, jx), y: TOP + k * sh + (sh - h) / 2 + rnd(-jy, jy), w, h };
+      const tilt = c.kind === 'doodle' ? 8 : 4;
+      el.style.cssText += `;left:${item.box.x.toFixed(0)}px;top:${item.box.y.toFixed(0)}px;--r:${rnd(-tilt, tilt).toFixed(1)}deg;--d:${d.toFixed(2)}`;
+      el.style.visibility = '';
+      float.style.cssText = `--dur:${rnd(5, 9).toFixed(1)}s;--delay:${rnd(-6, 0).toFixed(1)}s`;
+      if (still) { el.classList.add('is-in'); return; }
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
+      timer = setTimeout(item.leave, (c.kind === 'doodle' || c.kind === 'tag' ? rnd(8, 13) : rnd(11, 16)) * 1000);
+      queue();
+    });
+    layer.append(el);
+  };
+  const waiting = new Map();
+  const sizer = 'ResizeObserver' in window ? new ResizeObserver((entries) => entries.forEach((e) => {
+    const done = waiting.get(e.target);
+    if (!done) return;
+    waiting.delete(e.target); sizer.unobserve(e.target);
+    const b = e.borderBoxSize?.[0];
+    done(b ? b.inlineSize : e.contentRect.width, b ? b.blockSize : e.contentRect.height);
+  })) : null;
+  const measure = (el, done) => {
+    if (!sizer) { requestAnimationFrame(() => done(el.offsetWidth, el.offsetHeight)); return; }
+    waiting.set(el, done); sizer.observe(el);
   };
 
   // The 3D crew (crew3d.js): loaded once the page has settled, never on Save-Data, and only on pages with a crew band
@@ -137,6 +156,7 @@
     layer.style.setProperty('--px', now.x.toFixed(3));
     layer.style.setProperty('--py', now.y.toFixed(3));
     for (const l of live) {
+      if (!l.box) continue; // (still being measured)
       l.el.style.setProperty('--sy', Math.max(-14, Math.min(14, (l.born - scrollY) * l.d * 0.05)).toFixed(1) + 'px'); // a little, never out of its slot
       if (fine) {
         const cx = l.box.x + l.box.w / 2, cy = l.box.y + l.box.h / 2;
