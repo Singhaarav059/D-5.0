@@ -119,18 +119,34 @@
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
   }
 
-  // The studio (office3d.js), home's "who we are": the crew kit and the room are imported when the section comes near
-  // (the same crew3d.js as the band, so one copy), and it plays while on screen.
+  // The studio (office3d.js), home's "who we are": the crew kit and the room are imported and built once, and it plays
+  // while on screen. Building it is one long job (the room, its shaders, a first frame), so it is done in a quiet
+  // moment soon after the page has settled, not when the section comes near, where it froze the scroll. The section
+  // coming near (well ahead) still starts it, for a visitor who scrolls before the page is idle, and on devices
+  // short of memory that is the only trigger.
   const office = document.querySelector('[data-office]');
   if (office && layer.dataset.src && !navigator.connection?.saveData && 'IntersectionObserver' in window) {
     const url = (src) => new URL(src, document.baseURI).href;
-    const io = new IntersectionObserver((entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
+    let began = false, lastScroll = -1e9;
+    addEventListener('scroll', () => { lastScroll = performance.now(); }, { passive: true });
+    const build = () => {
+      if (began) return;
+      began = true;
       io.disconnect();
       Promise.all([import(url(layer.dataset.src)), import(url(office.dataset.src))])
         .then(([kit, room]) => room.start(office.querySelector('.office__stage'), kit)).catch(() => {});
-    }, { rootMargin: '600px 0px' });
+    };
+    const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) build(); }, { rootMargin: '1800px 0px' });
     io.observe(office);
+    if (!(navigator.deviceMemory && navigator.deviceMemory <= 2)) {
+      const quiet = () => {
+        if (began) return;
+        if (performance.now() - lastScroll < 400) { setTimeout(quiet, 400); return; }
+        if (window.requestIdleCallback) requestIdleCallback(build, { timeout: 3000 }); else build();
+      };
+      const settle = () => setTimeout(quiet, 3500); // after the crew band's own build, which starts as the page settles
+      if (document.readyState === 'complete') settle(); else addEventListener('load', settle, { once: true });
+    }
   }
 
   const fill = () => { for (let i = live.length; i < target(); i++) setTimeout(spawn, still ? 0 : i * rnd(180, 420)); };

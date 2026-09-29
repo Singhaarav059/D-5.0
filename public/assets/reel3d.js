@@ -775,6 +775,12 @@ const BUILD = {
   },
 };
 
+// The shared renderer and studio lighting (the first hero needs both): reel.js has this made in a quiet moment after
+// the page settles, so the first reel does not make them as it scrolls into view.
+export function warm() {
+  try { core(); } catch { /* no WebGL: the reels keep their illustrations */ }
+}
+
 // Build a hero. Returns { draw(state, time, ctx, w, h) } or throws if WebGL is unavailable.
 export function createHero(kind, opts = {}) {
   core();
@@ -782,7 +788,7 @@ export function createHero(kind, opts = {}) {
   // where the browser can, its shaders compile off the main thread first (`compiled`); until then it draws nothing and the reel keeps its
   // illustration
   let ready = false;
-  const compiled = (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(h.scene, h.camera) : Promise.resolve()).catch(() => {}).then(() => { ready = true; });
+  const compiled = (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(h.scene, h.camera) : new Promise((resolve) => setTimeout(resolve, 0))).catch(() => {}).then(() => { ready = true; });
   return {
     compiled,
     draw(state, t, ctx, w, hgt) {

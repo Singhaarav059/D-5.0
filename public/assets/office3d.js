@@ -1644,7 +1644,7 @@ export function start(el, kit) {
   }
   // where the browser can, compile every shader off the main thread first (the scroll would freeze while they compile), then show the room
   place(t);
-  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : Promise.resolve()).catch(() => {}).then(() => {
+  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : new Promise((resolve) => setTimeout(resolve, 0))).catch(() => {}).then(() => {
     renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     el.classList.add('is-live');

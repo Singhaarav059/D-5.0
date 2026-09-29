@@ -987,7 +987,7 @@ export function start() {
     step(0);
   }
   // where the browser can, compile every shader off the main thread first (the scroll would freeze while they compile), then draw
-  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : Promise.resolve()).catch(() => {}).then(() => {
+  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : new Promise((resolve) => setTimeout(resolve, 0))).catch(() => {}).then(() => {
     ready = true;
     frame(performance.now());
     requestAnimationFrame(() => { canvas.classList.add('is-in'); journey.svg.classList.add('is-in'); });

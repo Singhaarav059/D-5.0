@@ -553,4 +553,19 @@
     if (!e.target.reel) build(e.target);
   }), { rootMargin: '600px 0px' });
   document.querySelectorAll('[data-reel]').forEach((h) => { if (!h.closest('template')) near ? near.observe(h) : build(h); });
+
+  // The first reel to need its 3D hero also needs the shared renderer and lighting, which take a while to make. They
+  // are made in a quiet moment once the page has settled (staggered after the crew band and the studio), so that
+  // never happens mid-scroll. Where memory is short or data is saved they wait to be needed, as before.
+  if ('IntersectionObserver' in window && document.querySelector('[data-reel]') && !navigator.connection?.saveData && !(navigator.deviceMemory && navigator.deviceMemory <= 2)) {
+    let lastScroll = -1e9;
+    addEventListener('scroll', () => { lastScroll = performance.now(); }, { passive: true });
+    const quiet = () => {
+      if (performance.now() - lastScroll < 400) { setTimeout(quiet, 400); return; }
+      const go = () => load3d().then((m) => m.warm()).catch(() => {});
+      if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else go();
+    };
+    const settle = () => setTimeout(quiet, 6500);
+    if (document.readyState === 'complete') settle(); else addEventListener('load', settle, { once: true });
+  }
 })();
