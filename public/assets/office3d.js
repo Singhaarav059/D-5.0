@@ -394,7 +394,8 @@ class Board {
   note(i) { const [u, v] = this.notes[i]; return { x: BOARD.x + (u - 0.5) * BOARD.w, y: BOARD.y + (0.5 - v) * BOARD.h, z: BACK + 0.4 }; }
   reset() { this.progress = 0; this.wiped = 0; this.stuck = 0; }
   redraw() {
-    const key = `${this.progress.toFixed(3)}|${this.wiped.toFixed(3)}|${this.stuck}`;
+    // redrawn (and sent to the GPU again) in steps of about a pixel on screen, not on every frame of a stroke
+    const key = `${Math.floor(this.progress * 250)}|${Math.floor(this.wiped * 250)}|${this.stuck}`;
     if (key === this.drawn) return;
     this.drawn = key;
     const c = this.canvas.getContext('2d'), w = this.canvas.width, h = this.canvas.height;
@@ -600,6 +601,69 @@ function dressing(scene) {
     add(scene, new THREE.PlaneGeometry(1.6, 2.1), new THREE.MeshStandardMaterial({ map: canvasTex(192, 256, draw), roughness: 0.7 }), x, y, BACK + 0.15, false);
   });
   return { hands };
+}
+
+// Everything that never moves, merged: the room is some 350 pieces of furniture and props, each its own draw call
+// (and again in each shadow map) every frame, which kept the main thread busy for most of a frame. Pieces that share a
+// look (roughness, metal, texture, shadows) become one mesh, each piece's colour kept per vertex. Transparent pieces
+// (they are sorted by depth) and `keep` (whatever the day moves, lights or retextures) stay as they are.
+const LOOK = ['roughness', 'metalness', 'envMapIntensity', 'side', 'flatShading', 'opacity', 'alphaTest', 'depthWrite', 'depthTest', 'toneMapped', 'polygonOffset', 'polygonOffsetFactor', 'polygonOffsetUnits', 'wireframe'];
+const MAPS = ['normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'lightMap', 'bumpMap', 'emissiveMap', 'alphaMap', 'displacementMap', 'envMap'];
+function bake(scene, keep) {
+  const skip = new Set();
+  for (const o of keep) o?.traverse?.((c) => skip.add(c));
+  scene.updateMatrixWorld(true);
+  const shown = (o) => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+  const sets = new Map();
+  scene.traverse((m) => {
+    if (!m.isMesh || m.isInstancedMesh || skip.has(m) || !shown(m) || m.renderOrder) return;
+    const mt = m.material, g = m.geometry;
+    if (!mt?.isMeshStandardMaterial || mt.transparent || mt.vertexColors || MAPS.some((k) => mt[k])) return;
+    if (g.isInstancedBufferGeometry || !g.attributes.normal || g.morphAttributes.position || m.matrixWorld.determinant() < 0) return;
+    const key = [mt.type, mt.map?.uuid, mt.emissive.getHexString(), mt.emissiveIntensity, ...LOOK.map((k) => mt[k]), m.castShadow, m.receiveShadow, !!g.attributes.uv].join();
+    if (!sets.has(key)) sets.set(key, []);
+    sets.get(key).push(m);
+  });
+  const nm = new THREE.Matrix3(), v = new THREE.Vector3();
+  let n = 0;
+  for (const list of sets.values()) {
+    if (list.length < 2) continue;
+    const uv = !!list[0].geometry.attributes.uv;
+    let verts = 0, idx = 0;
+    for (const m of list) { const g = m.geometry, c = g.attributes.position.count; verts += c; idx += g.index ? g.index.count : c; }
+    const P = new Float32Array(verts * 3), N = new Float32Array(verts * 3), C = new Float32Array(verts * 3), U = uv ? new Float32Array(verts * 2) : null;
+    const I = verts > 65535 ? new Uint32Array(idx) : new Uint16Array(idx);
+    let o = 0, oi = 0;
+    for (const m of list) {
+      const g = m.geometry, pos = g.attributes.position, nor = g.attributes.normal, col = m.material.color, c = pos.count;
+      nm.getNormalMatrix(m.matrixWorld);
+      for (let i = 0; i < c; i++) {
+        v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld); v.toArray(P, (o + i) * 3);
+        v.fromBufferAttribute(nor, i).applyMatrix3(nm).normalize(); v.toArray(N, (o + i) * 3);
+        C[(o + i) * 3] = col.r; C[(o + i) * 3 + 1] = col.g; C[(o + i) * 3 + 2] = col.b;
+        if (uv) { U[(o + i) * 2] = g.attributes.uv.getX(i); U[(o + i) * 2 + 1] = g.attributes.uv.getY(i); }
+      }
+      if (g.index) for (let i = 0; i < g.index.count; i++) I[oi++] = g.index.getX(i) + o;
+      else for (let i = 0; i < c; i++) I[oi++] = o + i;
+      o += c;
+      m.removeFromParent();
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(N, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(C, 3));
+    if (uv) geo.setAttribute('uv', new THREE.BufferAttribute(U, 2));
+    geo.setIndex(new THREE.BufferAttribute(I, 1));
+    const material = list[0].material.clone();
+    material.color.set('#ffffff');
+    material.vertexColors = true;
+    const merged = new THREE.Mesh(geo, material);
+    merged.castShadow = list[0].castShadow; merged.receiveShadow = list[0].receiveShadow;
+    merged.matrixAutoUpdate = false;
+    scene.add(merged);
+    n += list.length - 1;
+  }
+  return n;
 }
 
 // A soft room made of light, drawn once into an environment map: the window's daylight, the ceiling, the warm floor.
@@ -1443,10 +1507,13 @@ export function start(el, kit) {
   canvas.setAttribute('aria-hidden', 'true');
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   } catch {
     return null;
   }
+  // checking each shader's log makes the page wait for the GPU to finish compiling it (tens of ms each, with the
+  // scroll frozen); only worth it while working on the scene locally
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   K.assets();
   K.materials();
   SOFT = soft();
@@ -1508,13 +1575,19 @@ export function start(el, kit) {
     sphere.copy(o.geometry.boundingSphere);
     if (sphere.radius * o.getWorldScale(wscale).x < 0.32) o.castShadow = false;
   });
+  const km = office.kitchen;
+  bake(scene, [
+    ...office.actors.map((a) => a.c.root), ...office.chairs.flatMap((c) => [c.g, c.shadow]), ...office.desks.map((d) => d.glow),
+    ...km.buttons, km.needle, km.stream, ...Object.values(office.decor.hands), office.clouds,
+    office.mug, office.sinkMug, office.marker, ...office.puffs,
+  ]);
   el.prepend(canvas);
 
-  let W = 0, H = 0;
+  let W = 0, H = 0, cap = 2; // cap: the most device pixels per CSS pixel; lowered if frames keep running long
   const layout = () => {
     W = el.clientWidth; H = el.clientHeight;
     if (!W || !H) return;
-    const dpr = Math.min(devicePixelRatio || 1, W < 700 ? 1.5 : 2);
+    const dpr = Math.min(devicePixelRatio || 1, W < 700 ? 1.5 : 2, cap);
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
@@ -1534,30 +1607,54 @@ export function start(el, kit) {
     camera.lookAt(aim);
   };
 
-  let on = false, raf = 0, last = performance.now() / 1000, t = 0;
+  // The shadow maps are redrawn every other frame: the crew's shadows keep up at 30 per second, which does not show,
+  // and it halves what the two maps cost
+  renderer.shadowMap.autoUpdate = false;
+  let on = false, ready = false, raf = 0, last = performance.now() / 1000, t = 0, n = 0;
+  // frames arriving slower than 40 a second for a couple of seconds: draw fewer pixels (down to 1 per CSS px)
+  let slow = 0;
+  const pace = (gap) => {
+    if (gap > 0.2 || cap <= 1) return; // (a stall, such as the tab coming back, is not the scene's doing)
+    slow = gap > 1 / 40 ? slow + gap : Math.max(0, slow - gap * 0.5);
+    if (slow > 2) { slow = 0; cap = Math.max(1, Math.min(cap, renderer.getPixelRatio()) - 0.25); layout(); }
+  };
+  const draw = () => { renderer.shadowMap.needsUpdate = n++ % 2 === 0; renderer.render(scene, camera); };
   const frame = (now) => {
     raf = 0;
-    const s = now / 1000, dt = Math.min(0.05, Math.max(0, s - last));
+    if (!on || document.hidden) return;
+    const s = now / 1000;
+    // at most 60 a second on 120 Hz screens (every other refresh): twice the frames would cost twice as much for
+    // motion this slow. 60 and 90 Hz screens draw every refresh.
+    if (s - last < 1 / 96) { raf = requestAnimationFrame(frame); return; }
+    const gap = s - last, dt = Math.min(0.05, Math.max(0, gap));
     last = s; t += dt;
+    pace(gap);
     look.x = K.damp(look.x, aimLook.x, 3, dt); look.y = K.damp(look.y, aimLook.y, 3, dt);
     office.update(dt, t);
     place(t);
-    renderer.render(scene, camera);
-    if (on && !still && !document.hidden) raf = requestAnimationFrame(frame);
+    draw();
+    raf = requestAnimationFrame(frame);
   };
-  const resume = () => { if (still || raf || !on || document.hidden) return; last = performance.now() / 1000; raf = requestAnimationFrame(frame); };
+  const resume = () => { if (still || !ready || raf || !on || document.hidden) return; last = performance.now() / 1000; raf = requestAnimationFrame(frame); };
 
   layout();
   if (still) { // one moment of the day: run the simulation forward quietly, then draw it once
     for (let i = 0; i < 60 * 16; i++) { t += 1 / 60; office.update(1 / 60, t); }
     place(t);
+  }
+  // where the browser can, compile every shader off the main thread first (the scroll would freeze while they compile), then show the room
+  place(t);
+  (renderer.extensions.has('KHR_parallel_shader_compile') ? renderer.compileAsync(scene, camera) : Promise.resolve()).catch(() => {}).then(() => {
+    renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
-  } else frame(performance.now());
-  el.classList.add('is-live');
+    el.classList.add('is-live');
+    ready = true;
+    resume();
+  });
 
   new IntersectionObserver(([e]) => { on = e.isIntersecting; resume(); }, { rootMargin: '100px 0px' }).observe(el);
   let resizing = 0;
-  addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => { layout(); if (still) renderer.render(scene, camera); }, 150); });
+  addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => { layout(); if (still && ready) { renderer.shadowMap.needsUpdate = true; renderer.render(scene, camera); } }, 150); });
   if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); aimLook.x = (e.clientX - r.left) / r.width - 0.5; aimLook.y = (e.clientY - r.top) / r.height - 0.5; });
     el.addEventListener('pointerleave', () => { aimLook.x = aimLook.y = 0; });
@@ -1566,6 +1663,6 @@ export function start(el, kit) {
   canvas.addEventListener('webglcontextlost', () => { cancelAnimationFrame(raf); on = false; canvas.remove(); el.classList.remove('is-live'); });
   // for checks: the crew's positions (collisions are tested against these), and a way to step and draw a frame
   el.office = office;
-  el.officeStep = (dt) => { t += dt; office.update(dt, t); place(t); renderer.render(scene, camera); return canvas; };
+  el.officeStep = (dt) => { t += dt; office.update(dt, t); place(t); draw(); return canvas; };
   return { el };
 }
