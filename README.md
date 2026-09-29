@@ -192,7 +192,7 @@ Things the code cannot settle on its own:
 - **Custom domain**: `demazetech.com` is not yet pointed at the Railway service (see Deployment).
 - **Office address**: `address` in `src/content.js` says *A 804*, Ganesh Glory 11, but the Google Maps link
   (`mapUrl`) points to *D-814*. Confirm which is correct.
-- **Missing copy**: the "Educational courses & LMS platform" project has no description yet (marked `TODO` in
+- **Missing copy**: the "Educational Courses & LMS Platform" project has no description yet (marked `TODO` in
   `src/content.js`); its card shows only the title and highlights.
 
 ## Licensing
