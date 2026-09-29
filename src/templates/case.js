@@ -8,28 +8,38 @@ const { esc, pad, caseHref, vt, icon, pic, shot, btn } = require('./helpers');
 const { pageHero } = require('./shared');
 const { reelAttr, servicesOf } = require('./projects');
 
+// The facts of the project under the brief: its sector, the services it drew on and, where we can name it, the client.
+const facts = (p) => {
+  const used = C.services.filter((s) => servicesOf(p).split(' ').includes(s.id));
+  const client = C.reels[p.image]?.client;
+  const row = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
+  return `<dl class="case__facts" data-hero-fade>${row('Sector', esc(p.sector))}${used.length ? row('Services', used.map((s) => `<a href="./services#${s.id}">${esc(s.title)}</a>`).join('')) : ''}${client ? row('Client', esc(client.replace(/^Built for (\w)/, (_, c) => c.toUpperCase()))) : ''}</dl>`;
+};
+
 const caseHero = (p, i) => pageHero(`Case study · ${pad(i + 1)} / ${pad(C.projects.length)} · ${p.sector}`, esc(p.title), p.brief,
-  `<div class="hero__ctas" data-hero-fade>${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn('All projects', './projects', 'btn--ghost')}</div>`,
+  `<div class="hero__ctas" data-hero-fade>${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn('All projects', './projects', 'btn--ghost')}</div>${facts(p)}`,
   [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']], '', vt(p, 'title')); // (the title arrives with the card, so no word-by-word intro)
 
-// The hero carries the brief; the story goes on with what we built and the outcome. Beside it: the reel (or the
-// screens without motion), then the services the project drew on.
-const caseStory = (p, i) => {
-  const used = C.services.filter((s) => servicesOf(p).split(' ').includes(s.id));
-  return `<section class="section case" style="--tint:${p.tint}">
-  <div class="wrap case__grid">
-    <div class="case__aside">
-      <figure class="pcard__media case__media" style="--tint:${p.tint};${shot(p.image)};${vt(p, 'media')}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 620px', attrs: 'fetchpriority="high" decoding="async"' })}</figure>
-      ${used.length ? `<p class="case__svcs"><span>Services</span>${used.map((s) => `<a href="./services#${s.id}">${esc(s.title)}</a>`).join('')}</p>` : ''}
+// The hero carries the brief and the facts; the story goes on with what we built (the reel, or the screens without
+// motion, beside it) and closes on the outcome, set large in the project's own colour.
+const caseStory = (p, i) => `<section class="section case" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')}">
+  <div class="wrap">
+    <div class="case__grid">
+      <div class="case__aside">
+        <figure class="pcard__media case__media" style="--tint:${p.tint};${shot(p.image)};${vt(p, 'media')}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 620px', attrs: 'fetchpriority="high" decoding="async"' })}</figure>
+      </div>
+      <div class="case__body">
+        <h2 class="case__label" data-reveal>What we built</h2>
+        ${p.description ? `<p class="case__lead" data-reveal>${esc(p.description)}</p>` : ''}
+        <ul class="case__features" data-stagger>${p.features.map((f) => `<li>${icon.check}<span>${esc(f)}</span></li>`).join('')}</ul>
+      </div>
     </div>
-    <div class="case__body" data-stagger>
-      <section class="case__part"><h2>What we built</h2>
-        ${p.description ? `<p>${esc(p.description)}</p>` : ''}<ul class="checks checks--list">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul></section>
-      <section class="case__part"><h2>The outcome</h2><p>${esc(p.outcome)}</p></section>
+    <div class="case__outcome" data-reveal>
+      <h2 class="case__label">The outcome</h2>
+      <p>${esc(p.outcome)}</p>
     </div>
   </div>
 </section>`;
-};
 
 // The previous and next case, so a reader can keep going without the grid.
 const caseMore = (i) => {

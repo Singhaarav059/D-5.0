@@ -90,7 +90,6 @@ const fit = (text, max = 160) => {
 // One case study page per project, in the grid's order.
 C.projects.forEach((p, i) => {
   const href = caseHref(p);
-  const next = C.projects[(i + 1) % C.projects.length];
   const og = S.image(p.image);
   pages[href.slice(2)] = layout({
     slug: href.slice(2),
@@ -99,7 +98,7 @@ C.projects.forEach((p, i) => {
     description: fit(`${p.brief} ${p.outcome}`),
     og: { ...og, alt: `${p.title}, product screens` },
     reels: true,
-    next: ['Next case', next.name, caseHref(next)],
+    next: ['All projects', 'See what else we’ve built', './projects'], // (the next case is in the cards above)
     schema: [S.organization(), S.caseStudy(p, href), S.breadcrumbs([['Home', './'], ['Projects', './projects'], [p.name, href]])],
     body: [caseHero(p, i), caseStory(p, i), caseMore(i), cta()].join('\n'),
   });

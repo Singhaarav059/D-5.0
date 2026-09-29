@@ -1350,14 +1350,23 @@ html:has(.pdlg[open]) { overflow: hidden; }
 .case__aside { position: sticky; top: 104px; display: grid; gap: 18px; }
 .case__media { aspect-ratio: 16 / 11; }
 .case__media img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
-.case__svcs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 0.88rem; }
-.case__svcs span { color: var(--muted); }
-.case__svcs a { font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color var(--t-2) ease; }
-.case__svcs a:hover { text-decoration-color: currentColor; }
-.case__body { display: grid; gap: 28px; }
-.case__part { display: grid; gap: 12px; padding-top: 20px; border-top: 1px solid var(--line); }
-.case__part h2 { font: 500 0.84rem/1 var(--body); letter-spacing: 0; color: var(--muted); }
-.case__part p { font-size: 1.02rem; line-height: 1.65; max-width: 62ch; }
+/* the facts under a case's brief: sector, services, client, as labelled columns */
+.case__facts { margin-top: clamp(28px, 4vh, 40px); display: flex; flex-wrap: wrap; gap: 16px clamp(28px, 4vw, 56px); padding-top: 20px; border-top: 1px solid var(--line); }
+.case__facts dt { font-size: 0.8rem; color: var(--muted); }
+.case__facts dd { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-weight: 500; }
+.case__facts a { padding-block: 12px; margin-block: -12px; /* a 44px target, no shift */ text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color var(--t-2) ease; }
+.case__facts a:hover { text-decoration-color: currentColor; }
+.case__body { display: grid; gap: 22px; align-content: start; }
+.case__label { justify-self: start; padding: 5px 11px 4px; border-radius: 999px; background: color-mix(in srgb, var(--hue) 30%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hue) 60%, transparent); font: 600 0.8rem/1 var(--body); letter-spacing: 0; }
+.case__lead { font-size: clamp(1.08rem, 1.3vw, 1.2rem); line-height: 1.6; max-width: 58ch; }
+/* each feature a card with a check in the project's colour */
+.case__features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.case__features li { display: flex; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: 0.95rem; line-height: 1.4; }
+.case__features svg { flex: none; width: 22px; height: 22px; padding: 4px; border-radius: 50%; background: var(--hue); color: #fff; }
+/* the outcome: the case's last word, large, in the project's colour */
+.case__outcome { margin-top: clamp(40px, 6vw, 80px); display: grid; gap: 18px; justify-items: start; padding: clamp(28px, 4vw, 56px); border-radius: 30px;
+  background: radial-gradient(80% 140% at 0% 0%, color-mix(in srgb, var(--hue) 38%, transparent), transparent 70%), color-mix(in srgb, var(--hue) 14%, #111117); box-shadow: inset 0 0 0 1px var(--line); }
+.case__outcome p { font: 430 clamp(1.5rem, 2.8vw, 2.5rem)/1.18 var(--display); letter-spacing: -0.035em; max-width: 30ch; text-wrap: pretty; }
 .case-more { padding-block: 0 clamp(72px, 10vw, 136px); }
 .case-more__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .case-more__card { display: flex; align-items: center; gap: 18px; padding: 12px; padding-right: 22px; border-radius: var(--r-card); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transition: transform var(--t-2) var(--ease), box-shadow var(--t-2) ease; }
@@ -1374,6 +1383,7 @@ html:has(.pdlg[open]) { overflow: hidden; }
   .case__grid { grid-template-columns: minmax(0, 1fr); }
   .case__aside { position: static; }
   .case-more__row { grid-template-columns: minmax(0, 1fr); }
+  .case__features { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---------- visit (contact page) ---------- */
