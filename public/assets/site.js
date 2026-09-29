@@ -542,19 +542,43 @@
     if (fades.length) tl.fromTo(fades, { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
   }
 
-  // Everything else enters the same way: a short rise and fade, once.
-  // (.is-in lets CSS finish the entrance: the headline's marker swipe and its doodle drawing on)
-  $$('[data-reveal]').forEach((el) => gsap.fromTo(el, { opacity: 0, y: RISE }, {
-    opacity: 1, y: 0, duration: 0.8, ease: EASE, onStart: () => el.classList.add('is-in'), scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+  // Section headlines open as the hero's does: the words rise out of their masks, one after another, then the marker
+  // swipes under the quieter half. The label's hairline draws across as it arrives (site.css), so sections read as
+  // one run rather than blocks sliding in.
+  const heads = $$('.shead .h2');
+  heads.forEach((h) => {
+    const words = split(h, 'w');
+    gsap.set(words, { yPercent: 108 });
+    gsap.set(h, { opacity: 1 }); // (site.css hides [data-reveal] until it plays; here the masks hide the words instead)
+    gsap.fromTo(words, { yPercent: 108 }, {
+      yPercent: 0, duration: 0.9, stagger: 0.04, ease: EASE, onStart: () => setTimeout(() => h.classList.add('is-in'), 350),
+      scrollTrigger: { trigger: h, start: 'top 88%', once: true },
+    });
+  });
+
+  // Everything else comes into focus rather than sliding: a short rise out of a soft blur, once. (.is-in lets CSS
+  // finish an entrance: a route drawing itself, a marker swipe, a doodle drawing on.)
+  const FOCUS = { opacity: 0, y: 10, filter: 'blur(8px)' };
+  const SHARP = { opacity: 1, y: 0, filter: 'blur(0px)', clearProps: 'filter' };
+  $$('[data-reveal]').filter((el) => !heads.includes(el)).forEach((el) => gsap.fromTo(el, FOCUS, {
+    ...SHARP, duration: 0.9, ease: EASE, onStart: () => el.classList.add('is-in'), scrollTrigger: { trigger: el, start: 'top 90%', once: true },
   }));
-  $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, { opacity: 0, y: RISE }, {
-    opacity: 1, y: 0, duration: 0.8, stagger: 0.06, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
+  $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, FOCUS, {
+    ...SHARP, duration: 0.9, stagger: 0.07, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
   }));
 
-  // Dark sheets settle into place as they arrive: a small lift and scale, tied to the scroll.
-  $$('.section.sheet').forEach((el) => gsap.fromTo(el, { y: 48, scale: 0.965 }, {
-    y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 55%', scrub: true },
+  // Sheets unfold as they arrive: each room opens out from a rounded, inset shape to its full width, tied to the scroll,
+  // so one room grows out of the page instead of sliding up over it.
+  $$('.section.sheet').forEach((el) => gsap.fromTo(el, { clipPath: 'inset(4% 4.5% 0% 4.5% round 64px)' }, {
+    clipPath: 'inset(0% 0% 0% 0% round 34px)', ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 35%', scrub: 0.5 },
   }));
+
+  // The page's aura leans toward the colour of the room coming up (site.css --room), so each hands over to the next.
+  const ROOMS = [['.process', 'rgb(138 61 240 / 0.26)'], ['.sheet--mint', 'rgb(22 184 134 / 0.24)'], ['.sheet--sky', 'rgb(26 166 196 / 0.24)'], ['.sheet--lilac', 'rgb(138 61 240 / 0.26)'], ['.sheet--sun', 'rgb(255 191 31 / 0.2)'], ['.sheet--blue', 'rgb(61 90 254 / 0.3)']];
+  ROOMS.forEach(([sel, colour]) => $$(sel).forEach((el) => ScrollTrigger.create({
+    trigger: el, start: 'top 70%', end: 'bottom 30%',
+    onToggle: (st) => root.style.setProperty('--room', st.isActive ? colour : 'rgb(61 90 254 / 0.2)'),
+  })));
 
   // The footer's route draws itself into the chevron when the footer arrives.
   $$('[data-draw]').forEach((el) => ScrollTrigger.create({ trigger: el, start: 'top 94%', once: true, onEnter: () => el.classList.add('is-drawn') }));

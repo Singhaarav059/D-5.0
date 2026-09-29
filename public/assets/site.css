@@ -91,10 +91,13 @@
 /* The page: bright stock under a fixed aura of brand colour, a faint grain, and a maze under everything (a seamless
    tile drawn by scripts/maze-tile.js, on body::before below). The hero and "How we work" solve the maze; the rest of
    the site is written on it. */
+/* the aura leans toward the colour of the room coming up (site.js sets --room), so each room hands over to the next */
+@property --room { syntax: '<color>'; inherits: true; initial-value: rgb(61 90 254 / 0.2); }
+html { transition: --room 1.4s ease; }
 html::before {
   content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background:
-    radial-gradient(58vw 48vw at 100% 0%, rgb(61 90 254 / 0.2), transparent 70%),
+    radial-gradient(58vw 48vw at 100% 0%, var(--room), transparent 70%),
     radial-gradient(46vw 44vw at 0% 30%, rgb(165 139 255 / 0.1), transparent 70%),
     radial-gradient(54vw 44vw at 12% 100%, rgb(98 193 255 / 0.1), transparent 70%),
     radial-gradient(40vw 34vw at 92% 88%, rgb(210 123 255 / 0.12), transparent 70%);
@@ -281,6 +284,10 @@ html.motion.js .amb__item.is-in :is(.amb__dd, .amb__sk) :is(.dd__fill, .dd__dots
   display: flex; align-items: center; gap: 14px; padding-top: 14px; border-top: 1px solid var(--line);
   font: 500 0.84rem/1.3 var(--body); color: var(--muted);
 }
+/* a section's hairline draws itself across as its number and label arrive, so 01 → 02 → 03 read as one run */
+.shead__label { position: relative; border-top-color: transparent; }
+.shead__label::before { content: ''; position: absolute; inset: -1px 0 auto; height: 1px; background: var(--line); transform-origin: 0 50%; transition: transform 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+html.motion.js .shead__label:not(.is-in)::before { transform: scaleX(0); }
 .shead__n::before { content: counter(shead, decimal-leading-zero); color: var(--accent-text); font-variant-numeric: tabular-nums; }
 .shead__row { margin-top: clamp(20px, 3vw, 36px); display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px clamp(32px, 6vw, 96px); align-items: end; }
 .shead__row:has(> :only-child), .shead--stack .shead__row { grid-template-columns: minmax(0, 1fr); }
