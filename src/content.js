@@ -276,7 +276,7 @@ module.exports = {
       scenes: [
         { type: 'board', chapter: 'Organise', cap: 'Every case, its media and leads pinned together', items: [{ label: 'Case file', art: 'folder' }, { label: 'Photos', art: 'photo' }, { label: 'Location', art: 'pin' }, { label: 'Video', art: 'video' }, { label: 'Notes', art: 'memo' }, { label: 'Witness', art: 'detective' }] },
         { type: 'products', chapter: 'AI tools', cap: 'AI tools analyse photos, video and documents', query: 'Find matches in case media', ai: true, pick: 1, badge: 'AI match', items: [{ art: 'photo', label: 'Photo', sub: 'Tagged' }, { art: 'video', label: 'Video', sub: 'Matched' }, { art: 'doc', label: 'Document', sub: 'Summarised' }] },
-        { type: 'document', chapter: 'Documents', cap: 'Case reports are generated automatically', title: 'Case Report', stamp: 'Generated', exports: ['pdf'], fields: [['Case', '#CF-2291'], ['Client', 'A. Kapoor'], ['Subject', 'Asset trace'], ['Evidence', '14 photos · 3 videos'], ['Status', 'Findings ready']] },
+        { type: 'document', example: true, chapter: 'Documents', cap: 'Case reports are generated automatically', title: 'Case Report', stamp: 'Generated', exports: ['pdf'], fields: [['Case', '#CF-2291'], ['Client', 'A. Kapoor'], ['Subject', 'Asset trace'], ['Evidence', '14 photos · 3 videos'], ['Status', 'Findings ready']] },
       ],
       outro: 'Case work, organised',
     },
