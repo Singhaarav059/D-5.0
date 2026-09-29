@@ -1851,8 +1851,10 @@ html.motion.js [data-reveal], html.motion.js [data-stagger] > *, html.motion.js 
 
 /* Touch screens: every tap target is at least 44px tall. */
 @media (pointer: coarse) {
-  .svc-list__btn, .brand, .link-arrow, .footer__bottom a, select { min-height: 44px; }
-  .svc-list__btn, .footer__bottom a { display: inline-flex; align-items: center; }
+  .svc-list__btn, .brand, .link-arrow, .footer__bottom a, select, .svc-panel__work a, .ind__work a { min-height: 44px; }
+  .svc-list__btn, .footer__bottom a, .svc-panel__work a, .ind__work a { display: inline-flex; align-items: center; }
+  .quote figcaption a { position: relative; } /* a taller hit area, the caption's lines where they are */
+  .quote figcaption a::after { content: ''; position: absolute; inset: -9px -4px; }
   .footer__cols a { padding-block: 10px; }
 }
 
