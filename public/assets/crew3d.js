@@ -25,7 +25,7 @@ const damp = (a, b, k, dt) => a + (b - a) * (1 - Math.exp(-k * dt));
 const smooth = (t) => t * t * (3 - 2 * t);
 const rnd = (a, b) => a + Math.random() * (b - a);
 
-const SHELLS = 18;
+const SHELLS = 22;
 
 /* ---------- palette ---------- */
 
@@ -38,8 +38,8 @@ const INK = '#1d1c1a';
 
 const KEY_DIR = new Vector3(-0.55, 0.75, 0.62).normalize();
 const FILL_DIR = new Vector3(0.85, 0.05, 0.5).normalize();
-const KEY = new Color('#fff4e6').multiplyScalar(2.5);
-const FILL = new Color('#dfe8ff').multiplyScalar(0.55);
+const KEY = new Color('#fff1de').multiplyScalar(2.8);
+const FILL = new Color('#dfe8ff').multiplyScalar(0.5);
 const SKY = new Color('#fffaf2').multiplyScalar(0.95);
 const GROUND = new Color('#b4b9c9').multiplyScalar(0.95); // the page's cool light bouncing up
 
@@ -105,7 +105,7 @@ void main() {
   float alpha = 1.0;
   if (vH > 0.0) {
     float t = vH / len;
-    float rad = 0.56 * (1.0 - t * t * 0.9);
+    float rad = 0.64 * (1.0 - t * t * 0.85);
     float dist = length(d);
     float w = max(fwidth(dist), 0.02);
     alpha = t > 1.0 ? 0.0 : 1.0 - smoothstep(rad - w, rad + w, dist);
@@ -116,12 +116,12 @@ void main() {
   float key = clamp((dot(N, uKeyDir) + 0.55) / 1.55, 0.0, 1.0);
   float fill = clamp((dot(N, uFillDir) + 0.6) / 1.6, 0.0, 1.0);
   vec3 amb = mix(uGround, uSky, N.y * 0.5 + 0.5);
-  vec3 base = uColor * (0.93 + 0.12 * r.y);
-  float ao = mix(0.6, 1.0, pow(vH, 0.8));
+  vec3 base = uColor * (0.97 + 0.05 * r.y); // (a strong per-strand tint read as grain at this size)
+  float ao = mix(0.72, 1.0, pow(vH, 0.7));
   vec3 col = base * (amb + uKeyCol * key * key + uFillCol * fill) * ao;
   // sheen at the silhouette and on the lit tips
   float rim = pow(1.0 - clamp(N.z, 0.0, 1.0), 3.0);
-  col += (uKeyCol * 0.22 + base * 0.12) * rim * vH;
+  col += (uKeyCol * 0.34 + base * 0.16) * rim * vH; // a brighter rim keeps the silhouette clean on dark and coloured grounds
   col += base * 0.1 * vH * key;
   gl_FragColor = vec4(col, alpha);
   #include <tonemapping_fragment>
@@ -370,10 +370,25 @@ function accessory(head, kind, tint) {
 /* ---------- poses ---------- */
 
 // A pose is a flat set of angles; activities write one, a wave is blended over it by the character's attention.
-const REST = { yaw: 0, bob: 0, lean: 0, twist: 0, sway: 0, hx: 0, hy: 0, hz: 0, alx: 0, alz: 0.38, arx: 0, arz: -0.38, llx: 0, lrx: 0, sit: 0 };
+// sq: squash (+) and stretch (-) of the body; br: breath.
+const REST = { yaw: 0, bob: 0, lean: 0, twist: 0, sway: 0, hx: 0, hy: 0, hz: 0, alx: 0, alz: 0.38, arx: 0, arz: -0.38, llx: 0, lrx: 0, sit: 0, sq: 0, br: 0 };
 const pose0 = () => ({ ...REST });
 
-function apply(c, p) {
+// The pose a character shows follows the pose it is given through a spring on every joint, so every change eases in,
+// overshoots a touch and settles, the same way for all of them (no snapping between acts). Arms are stiffer, so
+// typing and waving stay quick; the head lags the body a little, for follow-through.
+const STIFF = { alx: 420, alz: 420, arx: 420, arz: 420, hx: 150, hy: 150, hz: 150, sq: 520, br: 400, bob: 300 };
+function apply(c, target, dt = 0) {
+  if (!c.cur || !dt) { c.cur = { ...target }; c.vel = {}; for (const k in target) c.vel[k] = 0; }
+  else {
+    const h = Math.min(dt, 1 / 30);
+    for (const k in target) {
+      const kk = STIFF[k] || 220, d = 2 * Math.sqrt(kk) * 0.78; // a little under critical: a small, soft overshoot
+      c.vel[k] += ((target[k] - c.cur[k]) * kk - c.vel[k] * d) * h;
+      c.cur[k] += c.vel[k] * h;
+    }
+  }
+  const p = c.cur;
   c.root.rotation.y = p.yaw;
   c.hips.position.y = p.bob;
   c.torso.rotation.set(p.lean, p.twist, p.sway);
@@ -382,6 +397,9 @@ function apply(c, p) {
   c.arms[0].rotation.set(p.arx, 0, p.arz);
   c.legs[1].rotation.x = p.llx;
   c.legs[0].rotation.x = p.lrx;
+  // squash and stretch keep the volume; the breath lifts the chest
+  const sq = clamp(p.sq, -1, 1);
+  c.body.scale.set(0.76 * (1 + sq * 0.08), 0.66 * (1 - sq * 0.13 + p.br), 0.66 * (1 + sq * 0.08));
 }
 
 // Turn to the viewer, look at the cursor and wave with the arm on the cursor's side.
@@ -746,13 +764,23 @@ class Journey {
       p.yaw = c.face;
       p.hy = clamp(lx * 0.9 - c.face * 0.6, -0.9, 0.9);
       p.hx = clamp(-ly * 0.45, -0.45, 0.35);
+      // alive while waiting: breathing, a slow weight shift, now and then a glance down the route
       p.bob = 0.012 * Math.sin(t * 2.1 + i * 1.3);
+      p.br = 0.022 * Math.sin(t * 1.8 + i * 1.7);
+      p.sway = 0.035 * Math.sin(t * 0.8 + i * 2.1);
+      p.hz += 0.05 * Math.sin(t * 0.6 + i);
       const mine = st === i && ph.name !== 'road';
+      // the hand-off: as the idea leaves, its last worker gives it a nod
+      if (ph.name === 'road' && st === i && u < 0.7) p.hx += 0.28 * Math.sin((u / 0.7) * Math.PI);
       if (i === 0) { // Idea: points at the bulb, jumps when it lights
         const lit = ph.name === 'idea' ? smooth(clamp((u - 0.3) / 0.5, 0, 1)) * (1 - smooth(clamp((u - 2.8) / 0.5, 0, 1))) : 0;
         p.arz = lerp(-0.38, -2.55, lit); p.arx = -0.2 * lit;
+        // a crouch before the jump, a stretch in the air, a squash on landing
         const jump = ph.name === 'idea' ? Math.max(0, Math.sin(clamp((u - 1.25) / 0.45, 0, 1) * Math.PI)) : 0;
-        p.bob += jump * 0.35;
+        const crouch = ph.name === 'idea' && u > 0.95 && u < 1.25 ? Math.sin(((u - 0.95) / 0.3) * Math.PI * 0.5) : 0;
+        const land = ph.name === 'idea' && u > 1.7 && u < 1.95 ? Math.sin(((u - 1.7) / 0.25) * Math.PI) : 0;
+        p.bob += jump * 0.4 - crouch * 0.1;
+        p.sq = crouch * 0.9 - jump * 0.7 + land * 0.6;
         p.alz = 0.38 + jump * 0.9;
         if (ph.name === 'idea' && u < 1.8) p.hx = -0.35; // looking up at the bulb
       } else if (i === 1) { // Design: sketches in the air round the idea
@@ -774,10 +802,12 @@ class Journey {
         const cheer = ph.name === 'launch' ? smooth(clamp((u - 1.4) / 0.4, 0, 1)) * (1 - smooth(clamp((u - 3.4) / 0.5, 0, 1))) : 0;
         p.alz = lerp(0.38, 2.5 + Math.sin(t * 9) * 0.2, cheer);
         p.arz = lerp(-0.38, -2.5 - Math.sin(t * 9 + 1) * 0.2, cheer);
-        p.bob += cheer * Math.abs(Math.sin(t * 9)) * 0.08;
+        const hop = Math.abs(Math.sin(t * 9));
+        p.bob += cheer * hop * 0.1;
+        p.sq = cheer * (0.35 - hop * 0.6);
       }
       blink(c, dt, t);
-      apply(c, wave(c, p, t, env, false));
+      apply(c, wave(c, p, t, env, false), this.still ? 0 : dt);
     });
   }
 
@@ -834,14 +864,14 @@ export function start() {
     canvas.hidden = journey.svg.hidden = !on;
     if (!on) return;
     if (canvas.parentNode !== band) band.append(journey.svg, canvas);
-    const s = Math.min(20, W / 15); // a character's scale: at most 71px tall
+    const s = Math.min(27, W / 13); // a character's scale: at most 96px tall
     const H = Math.ceil(5 * s + 30);
     band.style.height = H + 'px';
     env.W = W; env.H = H; env.s = s;
-    // 1.5 device pixels per CSS pixel at most keeps the GPU's fill cheap; the fur's strands are sized to the pixels
-    // they land on
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
-    furShared.uDensity.value = clamp((s * dpr) / 1.2, 18, 44);
+    // up to 2 device pixels per CSS pixel, so the fur and faces are crisp on retina screens; the strands are sized to
+    // the pixels they land on, a little fuller than one pixel so they read as plush, not grain
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    furShared.uDensity.value = clamp((s * dpr) / 1.7, 16, 34);
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.left = 0; camera.right = W; camera.top = H; camera.bottom = 0;
