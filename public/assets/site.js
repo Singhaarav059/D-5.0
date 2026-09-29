@@ -593,6 +593,26 @@
     gsap.to(o, { v: end, duration: 1.6, delay: inHero ? 0.6 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
   });
 
+  // Selected work (the home bento, desktop and tablet; phones swipe a carousel): as the lower two cards come
+  // up the page they slide in under the first, one after the other, and the first gives way as they arrive, as the
+  // stacked deck did, but with the scroll rather than a pin. Scrolling back plays it in reverse.
+  const stack = $('#work .stack');
+  if (stack) {
+    ScrollTrigger.matchMedia({
+      '(min-width: 561px)': () => {
+        const [first, ...rest] = $$('.stack-card', stack);
+        if (!rest.length) return undefined;
+        const tl = gsap.timeline({ scrollTrigger: { trigger: rest[0], start: 'top bottom', end: 'top 40%', scrub: 0.6 } });
+        rest.forEach((c, i) => tl.fromTo(c, { yPercent: 38, scale: 0.94, rotation: i % 2 ? 2.5 : -2.5 }, { yPercent: 0, scale: 1, rotation: 0, ease: 'none', duration: 1 }, i * 0.25));
+        // the first gives way while they slide in, and comes back once they have landed
+        const inner = $('.stack-card__inner', first);
+        tl.fromTo(inner, { scale: 1, filter: 'brightness(1)' }, { scale: 0.97, filter: 'brightness(0.82)', transformOrigin: '50% 100%', ease: 'none', duration: 0.6 }, 0) // (from an explicit brightness: GSAP reads none as 0)
+          .to(inner, { scale: 1, filter: 'brightness(1)', ease: 'none', duration: 0.65 }, 0.6);
+        return () => gsap.set([...rest, inner], { clearProps: 'all' });
+      },
+    });
+  }
+
   // Service demos: the active panel's demo builds up and loops while the services are on screen; the others hold their
   // finished picture (the markup). Figures count up, the cursor finds its button wherever layout put it.
   const INK = '#151514', MINT_INK = '#0b7f5b';
