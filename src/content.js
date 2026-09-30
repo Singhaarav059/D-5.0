@@ -424,8 +424,12 @@ module.exports = {
     },
   },
   closing: 'Have a product in mind? <em>Let’s talk it through.</em>',
-  // The contact form's optional questions (lib/contact-api.js accepts exactly these values). Edit both together.
+  // The brief (contact page): what they need (any of `needs`, sent as the subject) and where they are now (one of
+  // `stages`); lib/contact-api.js accepts exactly these stage values. `budgets` and `timelines` are older optional
+  // questions the endpoint still accepts. Edit these and the endpoint together.
   brief: {
+    needs: ['AI & ML', 'Web or mobile app', 'SaaS platform', 'E-commerce', 'Cloud', 'Not sure yet'],
+    stages: ['Just an idea', 'Have designs', 'Have a product', 'Scaling up'],
     budgets: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not sure yet'],
     timelines: ['As soon as possible', 'In 1–3 months', 'In 3–6 months', 'Just exploring'],
   },
