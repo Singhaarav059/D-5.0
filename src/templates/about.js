@@ -24,7 +24,7 @@ const valuesMap = () => `<svg class="values" viewBox="0 0 800 150" aria-hidden="
 </svg>`;
 
 const drives = () => `<section class="sheet-wrap" data-room="#ffcb45">
-  <div class="sheet drives">
+  <div class="sheet drives" data-light>
     <div class="drives__head">${kicker('What drives us', 'kicker--blue', ['bulb', 'sun'])}<h2 class="display display--l" data-reveal>Four reasons <em class="quiet-ink">we do this.</em></h2></div>
     ${valuesMap()}
     <div class="drives__grid">${C.about.drives.map((d, i) => `

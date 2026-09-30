@@ -131,6 +131,40 @@
     placePill();
     if (document.fonts) document.fonts.ready.then(placePill);
   }
+  // Liquid glass (Chromium, which can run an SVG filter on what is behind an element): a displacement map for the
+  // capsule, pushing what shows through its rounded rim inward so the edge reads as a lens. Other browsers keep the
+  // frosted glass.
+  const bar = $('.nav__bar');
+  if (bar && motion && navigator.userAgentData && navigator.userAgentData.brands.some((b) => /Chromium/.test(b.brand))) safe(() => {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;width:0;height:0';
+    svg.innerHTML = '<filter id="lg-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feImage result="map" preserveAspectRatio="none"/><feDisplacementMap in="SourceGraphic" in2="map" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter>';
+    document.body.append(svg);
+    const img = svg.querySelector('feImage');
+    const build = () => {
+      const W = Math.round(bar.offsetWidth), H = Math.round(bar.offsetHeight);
+      if (!W || !H) return;
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      const g = cv.getContext('2d'), px = g.createImageData(W, H), r = H / 2, B = 16;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const cx = Math.min(W - r, Math.max(r, x)), dx = x - cx, dy = y - r, len = Math.hypot(dx, dy) || 1;
+        const d = r - len, t = d < B ? Math.pow(1 - Math.max(0, d) / B, 2) : 0; // 0 in the middle, 1 at the rim
+        const o = (y * W + x) * 4;
+        px.data[o] = 128 - (dx / len) * t * 127;
+        px.data[o + 1] = 128 - (dy / len) * t * 127;
+        px.data[o + 2] = 128; px.data[o + 3] = 255;
+      }
+      g.putImageData(px, 0, 0);
+      img.setAttribute('href', cv.toDataURL());
+      img.setAttribute('width', W); img.setAttribute('height', H);
+    };
+    build();
+    root.classList.add('lg-refract');
+    if ('ResizeObserver' in window) { let w = 0; new ResizeObserver(() => { if (Math.abs(bar.offsetWidth - w) > 1) { w = bar.offsetWidth; build(); } }).observe(bar); }
+  });
   const toggle = $('[data-menu-toggle]');
   const menu = $('#menu');
   const scrim = $('[data-nav-scrim]');
@@ -255,9 +289,101 @@
       el.animate([{ transform: 'translate(0,0) rotate(0deg)' }, { transform: `translate(${(r(1) - 0.5) * 60}px,${(r(2) - 0.5) * 80}px) rotate(${(r(3) - 0.5) * 40}deg)` }], { duration: 9000 + r(4) * 7000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
     });
     $$('[data-marquee]').forEach((el) => el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: +(el.dataset.marquee || 40) * 1000, iterations: Infinity, direction: el.dataset.marqueeDir === '-1' ? 'reverse' : 'normal' }));
-  } else {
-    $$('.footer__route').forEach((svg) => svg.pauseAnimations && svg.pauseAnimations());
   }
+
+  /* ---------- the footer's route as a field of dots: the route (content in data-route, the footer SVG's own
+     620 x 100 drawing) is snapped to the grid; a head runs along it lighting the dots it passes (white, then brand
+     blue behind it), each stop ripples in its colour as the head reaches it, and dots near the pointer brighten. It
+     runs only while on screen; with reduced motion it is drawn once, finished. ---------- */
+  $$('[data-matrix]').forEach((host) => safe(() => {
+    const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    if (!ctx) return;
+    host.prepend(cv);
+    host.classList.add('is-live');
+    const css = getComputedStyle(root), col = (n) => css.getPropertyValue('--' + n).trim() || '#fff';
+    const stops = JSON.parse(host.dataset.stops).map(([x, y, c, t, side]) => ({ x, y, c: col(c), t: t.toUpperCase(), side, hit: -1e9 }));
+    const pts = host.dataset.route.match(/[MHV][^MHV]*/g).reduce((a, seg) => {
+      const n = seg.slice(1).trim().split(/[ ,]+/).map(Number), last = a[a.length - 1] || [0, 0];
+      a.push(seg[0] === 'M' ? n : seg[0] === 'H' ? [n[0], last[1]] : [last[0], n[0]]);
+      return a;
+    }, []);
+    const blue = col('blue');
+    let W = 0, H = 0, P = 12, cols = 0, rows = 0, cells = [], onRoute = new Map(), sIdx = [], ptr = null;
+    const lay = () => {
+      W = host.clientWidth;
+      P = W < 600 ? 9 : 12;
+      cols = Math.floor(W / P); rows = W < 600 ? 15 : 13;
+      H = rows * P + 34;
+      const dpr = Math.min(2, devicePixelRatio || 1);
+      cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const gx = (x) => Math.round(((x + 10) / 620) * (cols - 1)), gy = (y) => Math.round(((y + 6) / 100) * (rows - 1));
+      cells = [];
+      for (let i = 1; i < pts.length; i++) {
+        let [x, y] = [gx(pts[i - 1][0]), gy(pts[i - 1][1])];
+        const [x2, y2] = [gx(pts[i][0]), gy(pts[i][1])];
+        if (i === 1) cells.push([x, y]);
+        while (x !== x2 || y !== y2) { x += Math.sign(x2 - x); y += Math.sign(y2 - y); cells.push([x, y]); }
+      }
+      onRoute = new Map(cells.map(([x, y], i) => [x + ',' + y, i]));
+      sIdx = stops.map((s) => { const k = gx(s.x) + ',' + gy(s.y); return onRoute.has(k) ? onRoute.get(k) : 0; });
+    };
+    const start = performance.now(), mark = host.parentElement.querySelector('.footer__word svg');
+    let before = 0;
+    const SPEED = 26, TRAIL = 16, REST = 1.4; // cells a second, cells of fading trail, seconds at the end
+    const draw = (now) => {
+      const t = (now - start) / 1000, loop = cells.length / SPEED + REST;
+      const head = motion ? ((t % loop) * SPEED) : cells.length + TRAIL;
+      // arriving at the end of the route: the name's chevron takes a step forward
+      if (mark && before < cells.length && head >= cells.length) mark.animate([{ transform: 'none' }, { transform: 'translateX(14%)' }, { transform: 'none' }], { duration: 700, easing: E });
+      before = head;
+      ctx.clearRect(0, 0, W, H);
+      const off = 17; // room above for the labels
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+        const cx = x * P + P / 2, cy = off + y * P + P / 2, i = onRoute.get(x + ',' + y);
+        let a = 0.09, r = 1.2, c = '#f4f1ea';
+        if (i !== undefined) {
+          const d = head - i;
+          if (d >= 0 && d < TRAIL) { const k = 1 - d / TRAIL; a = 0.55 + 0.45 * k; r = 1.8 + 1.6 * k; c = k > 0.7 ? '#ffffff' : blue; }
+          else if (d >= TRAIL) { a = 0.9; r = 2; c = blue; }
+          else { a = 0.24; r = 1.6; }
+        }
+        // the ripples out of the stops the head has passed this lap
+        stops.forEach((s, k) => {
+          if (head < sIdx[k] || !motion) return;
+          const age = (head - sIdx[k]) / SPEED, [sx, sy] = cells[sIdx[k]], dist = Math.hypot(x - sx, y - sy) - age * 9;
+          if (age < 1.2 && Math.abs(dist) < 0.8) { a = Math.max(a, 0.85 * (1 - age / 1.2)); c = s.c; r = Math.max(r, 2); }
+        });
+        if (ptr) { const dd = Math.hypot(cx - ptr.x, cy - ptr.y); if (dd < 80) { const k = 1 - dd / 80; a = Math.min(1, a + 0.4 * k); r += 0.8 * k; } }
+        ctx.globalAlpha = a; ctx.fillStyle = c;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 6.2832); ctx.fill();
+      }
+      // the stops: a block of dots in their colour, the label above or below
+      ctx.font = '600 11.5px Figtree, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      stops.forEach((s, k) => {
+        const [sx, sy] = cells[sIdx[k]] || [0, 0], cx = sx * P + P / 2, cy = off + sy * P + P / 2, lit = head >= sIdx[k];
+        ctx.globalAlpha = lit ? 1 : 0.45; ctx.fillStyle = s.c;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { ctx.beginPath(); ctx.arc(cx + dx * P * 0.5, cy + dy * P * 0.5, lit ? 2.6 : 2, 0, 6.2832); ctx.fill(); }
+        ctx.globalAlpha = lit ? 1 : 0.5; ctx.fillStyle = '#f4f1ea';
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+        ctx.fillText(s.t, cx, s.side < 0 ? cy - P * 1.4 : cy + P * 1.4 + 9);
+      });
+      ctx.globalAlpha = 1;
+    };
+    let seen = false, raf = 0;
+    const frame = (now) => { raf = 0; draw(now); if (motion && seen && !document.hidden) raf = requestAnimationFrame(frame); };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    lay();
+    if ('ResizeObserver' in window) new ResizeObserver(() => { lay(); kick(); }).observe(host);
+    if (document.fonts) document.fonts.ready.then(kick);
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) kick(); }).observe(host);
+    if (motion && fine) {
+      host.addEventListener('pointermove', (e) => { const b = cv.getBoundingClientRect(); ptr = { x: e.clientX - b.left, y: e.clientY - b.top }; });
+      host.addEventListener('pointerleave', () => { ptr = null; });
+    }
+    kick();
+  }));
 
   /* ---------- the mazes: the walls draw in and the route is worked out from the entrance. At each pitfall's turning
      the head tries the dead end, runs into the pitfall, rules it out (callout, cross, legend) and backs out leaving a
@@ -446,6 +572,7 @@
   const qwords = quote ? $$('[data-qw]', quote) : [];
   const aura = $('[data-aura]');
   const rooms = $$('[data-room]');
+  const lights = $$('[data-light]'); // light panels the glass capsule firms up over
   const span = (el) => { const r = el.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - innerHeight)); };
 
   // Each frame reads every position it needs first, then writes: a read after a write makes the browser lay the page
@@ -467,11 +594,12 @@
     const qr = quote && motion ? quote.getBoundingClientRect() : null;
     const bw = bgeo ? bridge.parentElement.getBoundingClientRect().top : null;
     let col = null;
+    const light = lights.some((el) => { const r = el.getBoundingClientRect(); return r.top < 70 && r.bottom > 14; });
     if (aura) for (const s of rooms) { const r = s.getBoundingClientRect(); if (r.top < vh * 0.55 && r.bottom > vh * 0.45) col = s.dataset.room; }
 
     // writes
     if (progress) progress.style.transform = `scaleX(${H > 0 ? sy / H : 0})`;
-    if (nav) nav.classList.toggle('is-scrolled', sy > 40);
+    if (nav) { nav.classList.toggle('is-scrolled', sy > 40); nav.classList.toggle('is-light', light); }
 
     if (journey && stages.length) {
       if (jp === null) setStage(0);

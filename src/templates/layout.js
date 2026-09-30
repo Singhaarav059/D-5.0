@@ -91,7 +91,7 @@ ${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).re
 <div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">
   <span class="curtain__kicker">${chevron()}Demaze · on the route to</span>
   <span class="curtain__label" data-curtain-label></span>
-  <svg class="curtain__route" viewBox="-10 -6 620 100"><path pathLength="1" d="M0 62H84V18H214V54H338V26H468V40H600"/>${[[149, 18, 'var(--sun)'], [276, 54, 'var(--lilac)'], [403, 26, 'var(--sky)'], [534, 40, 'var(--tomato)']].map(([x, y, c], i) => `<circle cx="${x}" cy="${y}" r="7" style="fill:${c};--i:${i}"/>`).join('')}</svg>
+  <span class="curtain__march" aria-hidden="true">${march()}</span>
   ${[['star', 'sun'], ['rocket', 'tomato'], ['bulb', 'sky'], ['heart', 'pink']].map(([d, c], i) => doodle(d, { color: c, cls: `curtain__dd curtain__dd--${i + 1}` })).join('')}
 </div></div>
 ${backdrop()}
@@ -127,8 +127,23 @@ ${footer(next || C.next[slug] || C.next[''])}
 `;
 }
 
+// The curtain's loader: five chevrons (the logo's arrow) made of dots, one per stage colour and the brand blue, lit in
+// a wave that marches left to right (site.css .curtain__march).
+const MARCH = ['var(--sun)', 'var(--lilac)', 'var(--sky)', 'var(--tomato)', 'var(--blue)'];
+function march() {
+  const rows = 9, pitch = 9, dots = [];
+  MARCH.forEach((c, k) => {
+    for (let r = 0; r < rows; r++) {
+      const x = 4 - Math.abs(r - 4);
+      for (const dx of [0, 1]) dots.push(`<i style="--x:${k * pitch + x + dx};--y:${r};--c:${c}"></i>`);
+    }
+  });
+  return dots.join('');
+}
+
 // The footer: the next page on the route through the site (content.js `next`), the links, then the route itself
-// (Idea → Design → Build → Launch, a dot travelling along it) running into the chevron and the name.
+// (Idea → Design → Build → Launch) as a field of dots (site.js lights the route dot by dot, each stop rippling in its
+// colour as the head passes; the SVG is the drawing without JS or with reduced motion), then the chevron and the name.
 const ROUTE = 'M0 62H84V18H214V54H338V26H468V40H600';
 const STOPS = [[149, 18, 'var(--sun)', 'Idea', 2], [276, 54, 'var(--lilac)', 'Design', 80], [403, 26, 'var(--sky)', 'Build', 10], [534, 40, 'var(--tomato)', 'Launch', 66]];
 function footer([label, line, href]) {
@@ -143,12 +158,13 @@ function footer([label, line, href]) {
     </div>
     <div class="footer__mark" aria-hidden="true">
       <div class="footer__route-head"><span>The route, every time</span><span>Idea → Launch</span></div>
-      <svg class="footer__route" viewBox="-10 -6 620 100">
-        <path class="is-track" d="${ROUTE}"/>
-        <path class="is-drawn" data-drawin data-dur="2600" pathLength="1" d="${ROUTE}"/>
-        ${STOPS.map(([x, y, c, t, ty]) => `<circle cx="${x}" cy="${y}" r="7" style="fill:${c}"/><text x="${x}" y="${ty}">${t.toUpperCase()}</text>`).join('')}
-        <circle class="footer__dot" r="5"><animateMotion dur="9s" repeatCount="indefinite" path="${ROUTE}"/></circle>
-      </svg>
+      <div class="footer__matrix" data-matrix data-route="${ROUTE}" data-stops="${esc(JSON.stringify(STOPS.map(([x, y, c, t, ty]) => [x, y, c.slice(6, -1), t, ty < y ? -1 : 1])))}">
+        <svg class="footer__route" viewBox="-10 -6 620 100">
+          <path class="is-track" d="${ROUTE}"/>
+          <path class="is-drawn" data-drawin data-dur="2600" pathLength="1" d="${ROUTE}"/>
+          ${STOPS.map(([x, y, c, t, ty]) => `<circle cx="${x}" cy="${y}" r="7" style="fill:${c}"/><text x="${x}" y="${ty}">${t.toUpperCase()}</text>`).join('')}
+        </svg>
+      </div>
       <div class="footer__word">${chevron()}<span data-words><span data-w>Demaze</span></span></div>
     </div>
     <div class="footer__bottom">

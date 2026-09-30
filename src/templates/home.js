@@ -203,7 +203,7 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
 // maze's entrance; once it arrives, the maze works out its way through. The crew runs the idea along the card's foot.
 const start = () => `<section class="start-wrap" data-room="#ffcb45">
   <svg class="bridge" data-bridge aria-hidden="true"><path class="bridge__track" data-bridge-track/><path class="bridge__line" data-bridge-line/><path class="bridge__pulse" data-bridge-pulse pathLength="100"/><circle class="bridge__head" data-bridge-head r="7"/></svg>
-  <div class="start">
+  <div class="start" data-light>
     <div class="start__copy">
       ${kicker('Start a project', '', ['rocket', 'tomato'])}
       <h2 class="display display--xl" data-words>${words('Got a maze? <em>We’ll map the route.</em>')}</h2>
