@@ -66,7 +66,7 @@ const tools = () => {
   const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
   return `<section class="wrap tools kmap" id="tools" data-room="#62c1ff">
   <div class="sec-head">
-    <div>${kicker('Tools & technologies')}<h2 class="display display--l" data-reveal>The stack, <em class="quiet">built for production.</em></h2></div>
+    <div>${kicker('Tools & technologies', '', ['gear', 'sky'])}<h2 class="display display--l" data-reveal>The stack, <em class="quiet">built for production.</em></h2></div>
     <p class="sec-head__lead">${esc(C.stack.lead)}</p>
   </div>
   <div class="kmap__stage" style="--mk:var(--${kmapArt(tabs[0].tab)[1]})" data-tabs data-kmap-stage data-reveal>
@@ -95,7 +95,7 @@ const tools = () => {
 // the current tile, until the visitor picks one (site.js).
 const industries = () => `<section class="wrap inds" id="industries" data-room="#ff85b8">
   <div class="sec-head">
-    <div>${kicker('Industries')}<h2 class="display display--l" data-reveal>Where we’ve found <em class="quiet">the way through.</em></h2></div>
+    <div>${kicker('Industries', '', ['store', 'pink'])}<h2 class="display display--l" data-reveal>Where we’ve found <em class="quiet">the way through.</em></h2></div>
     <p class="sec-head__lead">${C.industries.length} industries. Pick one to see the kinds of systems we build for it.</p>
   </div>
   <div class="ind" data-tabs data-ind>
@@ -122,7 +122,7 @@ const industries = () => `<section class="wrap inds" id="industries" data-room="
 
 // One question open at a time (a native exclusive <details> group, so it works without JS).
 const faq = () => `<section class="wrap faq" data-room="#ffcb45">
-  <div class="sec-head">${kicker('FAQ')}<h2 class="display display--l" data-reveal>Good questions.</h2></div>
+  <div class="sec-head">${kicker('FAQ', '', ['question', 'sky'])}<h2 class="display display--l" data-reveal>Good questions.</h2></div>
   ${C.faq.map((f, i) => `<details class="faq__item" name="faq"${i === 0 ? ' open' : ''}><summary><span class="faq__n">${pad(i + 1)}</span><span class="faq__q">${esc(f.q)}</span><span class="faq__plus" aria-hidden="true">+</span></summary><div class="faq__a"><p>${esc(f.a)}</p></div></details>`).join('')}
 </section>`;
 

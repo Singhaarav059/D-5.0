@@ -6,6 +6,7 @@
 
 const C = require('../content');
 const { esc, cal, kicker, words, btn } = require('./helpers');
+const { pageHead } = require('./shared');
 
 const shortAddress = C.address.replace(/ road/, ' Road').replace(/, Near S\.G\. Highway/, '');
 
@@ -39,11 +40,13 @@ const brief = () => `<div class="brief" id="brief">
   </div>
 </div>`;
 
-const contact = () => `<section class="wrap contact" data-room="#ffcb45">
+// The contact page opens with its own head (what happens next beside it), then the ways to reach us beside the brief.
+const contact = () => `${pageHead({ label: 'Contact', title: 'Tell us about <em>your maze.</em>', room: '#ffcb45', aside: 'contact', doodles: [['plane', 'sun'], ['heart', 'pink'], ['star', 'sky']],
+  lead: 'A few lines are enough. We’ll come back with questions, a rough route and who from the team you’d work with.' })}
+<section class="wrap contact" id="brief-section" data-room="#ffcb45">
   <div class="contact__side">
-    ${kicker('Contact')}
-    <h1 class="display display--xl" data-words>${words('Tell us about <em>your maze.</em>')}</h1>
-    <p class="lead" data-reveal>A few lines are enough. We’ll come back with questions, a rough route and who from the team you’d work with.</p>
+    ${kicker('Start a project', '', ['pencil', 'lilac'])}
+    <h2 class="display display--l" data-words>${words('Send us <em>a brief.</em>')}</h2>
     <div class="ways" data-reveal>
       <a href="mailto:${C.email}"><span>Email</span><b>${C.email}</b></a>
       <a ${cal}><span>Call</span><b>Book 30 minutes ↗</b></a>
@@ -98,7 +101,7 @@ const visit = () => `<section class="wrap visit" data-room="#62c1ff">
     <span class="visit__label"><i></i>Gota, Ahmedabad · Open in Maps</span>
   </a>
   <div class="visit__copy">
-    ${kicker('Visit')}
+    ${kicker('Visit', '', ['house', 'tomato'])}
     <h2 class="display display--l" data-reveal>Visit us <em class="quiet">in Ahmedabad.</em></h2>
     <p class="lead" data-reveal>${esc(C.address)}</p>
     <div class="actions" data-reveal>${btn('Get directions', C.mapUrl, { tone: 'paper', extra: 'target="_blank" rel="noopener"' })}${btn('Book with Calendly', C.calendly, { tone: 'ghost', extra: 'target="_blank" rel="noopener"' })}</div>

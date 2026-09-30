@@ -59,6 +59,18 @@ demo scenes but make them clearly illustrative (generic labels, an "Illustrative
 - **Home**: the tape shows what we build with its drawings; the industries-and-stack rows (drawings and logos) are
   back; the maze's pitfalls are drawn.
 
+## Third round (polish)
+
+- **Nav**: the old glass capsule is back, with the pill gliding to the hovered link and menus under Projects (the
+  three latest cases) and Services (the four services), plus the old phone menu.
+- **Page transition**: the new page no longer shows through for a moment before the curtain lifts (the lift animation
+  now holds its first frame), and the curtain is the first thing in the page, so it covers from the first paint.
+- **Graphics**: the storefront demo draws its products (a coat, a scarf, a tote); every section label carries a small
+  drawing; the metrics are four equal cards, each with its drawing; about's hero shows a tangle straightened into a
+  route; contact has a hero of its own ("What happens next", three drawn steps).
+- **Home services**: the "four kinds of product" line is gone; a "Not sure which you need?" card sits under the list.
+- **Spacing**: one gap between sections everywhere (`--section` in site.css).
+
 ## Checked
 
 Every page at 1440, 768 and 390px in headless Chromium: no horizontal overflow and no page errors. The only console

@@ -170,17 +170,23 @@ const web = () => `<div class="demo demo--web" data-cycle="7">
   </div>
 </div>`;
 
-const product = (name, price, tint, shape, d, hot = false) => `<div class="product${hot ? ' is-hot' : ''}" ${kf('rise', d)}><div class="product__img" style="background:${tint}"><i class="shape shape--${shape}"></i></div><b>${name}</b><span>${price}</span>${hot ? `<span class="product__add" ${kf('press', 1.2)}>Add to bag</span>` : '<span class="product__stars">★★★★☆</span>'}</div>`;
+// The shop's products, drawn: a long coat, a folded silk scarf, a canvas tote.
+const GOODS = {
+  coat: '<svg class="good" viewBox="0 0 60 80"><path class="good__fill" style="fill:#e8c9a4" d="M22 6h16l8 6 8 20-6 3-4-10v49H16V25l-4 10-6-3 8-20z"/><path class="good__ink" d="M22 6h16l8 6 8 20-6 3-4-10v49H16V25l-4 10-6-3 8-20zM22 6l8 14 8-14M30 20v54M24 44h4M24 54h4"/><circle class="good__btn" cx="33" cy="36" r="1.6"/><circle class="good__btn" cx="33" cy="48" r="1.6"/><circle class="good__btn" cx="33" cy="60" r="1.6"/></svg>',
+  scarf: '<svg class="good" viewBox="0 0 60 80"><path class="good__fill" style="fill:#b9a4ff" d="M14 10c10-4 22-4 32 0v18c-10 4-22 4-32 0z"/><path class="good__fill" style="fill:#a58bff" d="M18 28l6 44h10l-4-44zM34 28l8 38h8l-8-40z"/><path class="good__ink" d="M14 10c10-4 22-4 32 0v18c-10 4-22 4-32 0zM18 28l6 44h10l-4-44M34 28l8 38h8l-8-40M24 72l-1 5M28 72v5M32 72l1 5M42 66l-1 5M46 66v5M50 66l1 5"/><path class="good__ink good__pattern" d="M20 16c4 2 8 2 12 0s8-2 12 0M20 22c4 2 8 2 12 0s8-2 12 0"/></svg>',
+  tote: '<svg class="good" viewBox="0 0 60 80"><path class="good__fill" style="fill:#9fe3cb" d="M10 30h40l-3 44H13z"/><path class="good__ink" d="M10 30h40l-3 44H13zM20 30c0-14 20-14 20 0M24 30c0-9 12-9 12 0"/><rect class="good__label" x="22" y="46" width="16" height="12" rx="2"/><path class="good__ink" d="M26 52h8"/></svg>',
+};
+const product = (name, price, tint, good, d, hot = false) => `<div class="product${hot ? ' is-hot' : ''}" ${kf('rise', d)}><div class="product__img" style="background:${tint}">${GOODS[good]}</div><b>${name}</b><span>${price}</span>${hot ? `<span class="product__add" ${kf('press', 1.2)}>Add to bag</span>` : '<span class="product__stars">★★★★☆</span>'}</div>`;
 const ecom = () => `<div class="demo demo--ecom" data-cycle="7">
   <div class="store">
     <div class="store__top"><b>Storefront</b><span class="store__search">Search coats, bags…</span><span class="bag"><i></i><b ${kf('pop', 1.4)}>1</b></span></div>
-    <div class="store__grid">${product('Linen coat', '$180', 'var(--tomato-tint)', 'round', 0.2, true)}${product('Silk scarf', '$95', 'var(--lilac-tint)', 'tall', 0.3)}${product('Tote bag', '$140', 'var(--mint-tint)', 'wide', 0.4)}</div>
-    <div class="store__reco" ${kf('rise', 1.8)}><b>✦ For you</b><i style="background:var(--sun-tint)"></i><i style="background:var(--sky-tint)"></i><i style="background:var(--pink-tint)"></i><span>Pairs with the coat</span></div>
+    <div class="store__grid">${product('Linen coat', '$180', 'var(--tomato-tint)', 'coat', 0.2, true)}${product('Silk scarf', '$95', 'var(--lilac-tint)', 'scarf', 0.3)}${product('Tote bag', '$140', 'var(--mint-tint)', 'tote', 0.4)}</div>
+    <div class="store__reco" ${kf('rise', 1.8)}><b>✦ For you</b><span class="reco">${GOODS.scarf}</span><span class="reco">${GOODS.tote}</span><span class="reco-t">Pairs with the coat: scarf, tote</span></div>
   </div>
   <div class="checkout">
     <div class="checkout__card" ${kf('rise', 1.6)}>
       <b>Checkout</b>
-      <span class="checkout__item"><i class="shape shape--round"></i><span>Linen coat<small>Size M · Sand</small></span><b>$180</b></span>
+      <span class="checkout__item"><span class="checkout__thumb">${GOODS.coat}</span><span>Linen coat<small>Size M · Sand</small></span><b>$180</b></span>
       ${[['Shipping', 'Free', 1.9], ['Payment', 'Card ✓', 2.1], ['Fraud check', 'Passed ✓', 2.3]].map(([t, v, d]) => `<span class="checkout__row" ${kf('rise', d)}><span>${t}</span><b>${v}</b></span>`).join('')}
       <span class="checkout__total" ${kf('rise', 2.5)}><span>Total</span><b>$180.00</b></span>
       <span class="checkout__bar"><i ${kf('growX', 2)}></i></span>

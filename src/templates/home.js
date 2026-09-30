@@ -51,7 +51,7 @@ const howWeWork = () => `<section class="journey" data-journey data-room="#a58bf
   <div class="journey__pin">
     <div class="wrap journey__inner">
       <div class="journey__head">
-        <div>${kicker('How we work')}<h2 class="display display--m">${C.journey.title.replace('<em>', '<em class="quiet">')}</h2></div>
+        <div>${kicker('How we work', '', ['spiral', 'lilac'])}<h2 class="display display--m">${C.journey.title.replace('<em>', '<em class="quiet">')}</h2></div>
         <div class="journey__count"><span><b data-stage-num>01</b><em class="quiet"> / 04</em></span><i class="journey__bar"><i data-jbar></i></i></div>
       </div>
       <div class="journey__route">
@@ -82,7 +82,7 @@ const SHOW = 6;
 const work = () => `<section class="hwork" data-hscroll data-room="#ff6242">
   <div class="hwork__pin">
     <div class="wrap hwork__head">
-      <div>${kicker('Selected work')}<h2 class="display display--l" data-words>${words('From brief <em>to launch.</em>')}</h2></div>
+      <div>${kicker('Selected work', '', ['star', 'tomato'])}<h2 class="display display--l" data-words>${words('From brief <em>to launch.</em>')}</h2></div>
       <div class="hwork__side">
         <div class="hwork__count" aria-hidden="true"><span><b data-work-num>01</b><em class="quiet"> / ${pad(SHOW)}</em></span><small data-work-name>${esc(C.projects[0].name)} · ${esc(C.projects[0].sector)}</small></div>
         ${btn(`All ${C.projects.length} →`, './projects', { tone: 'ghost' })}
@@ -120,8 +120,8 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
   <div class="svc sheet" data-svcpin>
     <div class="svc__pin">
       <div class="svc__head">
-        <div>${kicker('Services', 'kicker--blue')}<h2 class="display display--l" data-reveal>What we build</h2></div>
-        <p>Four kinds of product. Most of what we ship uses two or three together. <b class="svc__hint">Keep scrolling</b><b class="svc__hint-tap">Tap one</b> to see each one work.</p>
+        <div>${kicker('Services', 'kicker--blue', ['pencil', 'lilac'])}<h2 class="display display--l" data-reveal>What we build</h2></div>
+        <a class="ulink ulink--ink" href="./services">All services →</a>
       </div>
       <div class="svc__grid">
         <div class="svc__list">${C.services.map((s, i) => `
@@ -132,6 +132,7 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
             <i class="svc__rule"></i>
           </button>`).join('')}
           <span class="svc__progress"><i data-sbar></i></span>
+          <div class="svc__help"><span class="svc__help-art">${doodle('question', { color: 'sky' })}</span><p><b>Not sure which you need?</b> Most products use two or three. Tell us the problem and we’ll map the route.</p>${btn('Book a call', C.calendly, { tone: 'ink', size: 'sm', extra: 'target="_blank" rel="noopener"' })}</div>
         </div>
         <div class="svc__show">
           <div class="svc__screen">
@@ -157,7 +158,7 @@ const reach = () => {
   const marks = tools.map(([n, slug]) => `<li class="reach__chip reach__chip--tool"><img src="${techIcon(slug)}" alt="" width="22" height="22" loading="lazy">${esc(n)}</li>`).join('');
   return `<section class="reach" data-room="#62c1ff">
   <div class="wrap sec-head">
-    <div>${kicker('Industries & stack')}<h2 class="display display--l" data-words>${words(`${C.industries.length} industries, <em>one production stack.</em>`)}</h2></div>
+    <div>${kicker('Industries & stack', '', ['gear', 'mint'])}<h2 class="display display--l" data-words>${words(`${C.industries.length} industries, <em>one production stack.</em>`)}</h2></div>
     <p class="sec-head__lead">Where the products we build run, and what we build them with. <a class="ulink" href="./services#tools">The full stack →</a></p>
   </div>
   ${row('reach__row--ind', 'Industries we serve', inds, 90)}
@@ -172,7 +173,7 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
   <div class="studio__grid">
     ${print()}
     <div class="studio__words">
-      ${kicker('Who we are')}
+      ${kicker('Who we are', '', ['heart', 'pink'])}
       ${quote('var(--pink)')}
       <p class="studio__team" data-reveal>${esc(C.founder.name.split(' ')[0])} leads a team of ${team.value}${team.suffix} technologists, designers and strategists in Ahmedabad who build your product with you, as one long-term team.</p>
       <a class="ulink" href="./about-us">More about us →</a>
@@ -190,7 +191,7 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
 const start = () => `<section class="start-wrap" data-room="#ffcb45">
   <div class="start">
     <div class="start__copy">
-      ${kicker('Start a project')}
+      ${kicker('Start a project', '', ['rocket', 'tomato'])}
       <h2 class="display display--xl" data-words>${words('Got a maze? <em>We’ll map the route.</em>')}</h2>
       <p class="lead" data-reveal>Tell us the problem. In 30 minutes we’ll sketch the route through it: what to build first, what to skip, and who you’d work with.</p>
       <div class="actions" data-reveal>${btn('Book a 30-min call', C.calendly, { tone: 'ink', size: 'lg', extra: 'target="_blank" rel="noopener"' })}${btn('Send a brief', './contact', { tone: 'line', size: 'lg', magnet: false })}</div>

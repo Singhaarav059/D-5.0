@@ -3,10 +3,34 @@
 'use strict';
 
 const C = require('../content');
-const { SITE_URL, esc, pad, cal } = require('./helpers');
+const { SITE_URL, esc, pad, cal, caseHref, pic, icon, SVC_ART } = require('./helpers');
+const { doodle } = require('./doodles');
 const { chevron } = require('./maze');
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About', './about-us'], ['Contact', './contact']];
+
+// A service as a small tile: its drawing, name and what it covers (the Services menu and the phone menu).
+const svcTile = (s) => `<a class="nav__svc" href="./services#${s.id}"><span class="nav__svc-icon" style="--dd:var(--${SVC_ART[s.id][1]})">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span><b>${esc(s.title)}</b><small>${esc(s.summary)}</small></span></a>`;
+const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
+
+// The two menus that open from the bar, each a preview of its page: the three latest case studies, and the four
+// services. Each ends with a way forward.
+const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
+    <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="${caseHref(p)}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
+    <div class="nav__drop-side">
+      <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
+      <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
+    </div>
+  </div>`;
+const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-panel>
+    <div class="nav__drop-grid">${C.services.map(svcTile).join('')}</div>
+    <div class="nav__drop-side">
+      <p><b>Not sure where to start?</b>Tell us the problem. In 30 minutes we’ll sketch the route through it.</p>
+      <a class="btn btn--blue btn--sm" ${cal}><span>Book a call</span><i class="btn__dot" aria-hidden="true">→</i></a>
+      <a class="nav__drop-link" href="./services">All services ${icon.arrow}</a>
+    </div>
+  </div>`;
+const DROPS = { Projects: ['work', dropWork], Services: ['services', dropServices] };
 
 // The background: an aura in the colour of the section in view (site.js follows [data-room]), two quiet glows and the
 // maze tile; on screens with wide margins, five doodles drift in them.
@@ -64,28 +88,35 @@ ${og ? `<meta property="og:image" content="${og.url}">
 ${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 </head>
 <body class="page-${(slug || 'home').replace(/\//g, '-')}" data-crew-src="./assets/crew3d.js">
+<div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">${chevron()}<span data-curtain-label></span></div></div>
 ${backdrop()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
-  <div class="nav__bar" data-navbar>
-    <a class="nav__brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="26" height="26">Demaze</a>
-    <nav class="nav__links" aria-label="Primary"><i class="nav__pill" data-pill aria-hidden="true"></i>${NAV.map(([t, h]) => `<a href="${h}"${current(h)}>${t}</a>`).join('')}</nav>
-    <div class="nav__end">
-      <a class="btn btn--blue btn--sm" ${cal} data-magnet><span>Book a call</span><i class="btn__dot" aria-hidden="true">→</i></a>
-      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>Menu</button>
-    </div>
+  <div class="nav__bar">
+    <a class="nav__brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="24" height="24"><span>Demaze</span></a>
+    <nav class="nav__links" aria-label="Primary" data-nav-links><i class="nav__pill" aria-hidden="true"></i>${NAV.map(([t, h]) => (DROPS[t]
+      ? `<a class="nav__trigger" href="${h}"${current(h)} aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${chevronDown}</a>`
+      : `<a href="${h}"${current(h)}>${t}</a>`)).join('')}</nav>
+    <a class="btn btn--blue btn--sm nav__cta" ${cal} data-magnet><span>Book a call</span><i class="btn__dot" aria-hidden="true">→</i></a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu" data-menu-toggle><span></span><span></span></button>
     <i class="nav__progress" data-progress aria-hidden="true"></i>
+    ${dropWork()}
+    ${dropServices()}
+  </div>
+  <div class="nav__scrim" data-nav-scrim hidden></div>
+  <div class="nav__menu" id="menu" hidden>
+    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${current(h)}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
+    <div class="nav__menu-svcs" style="--i:${NAV.length}">${C.services.map(svcTile).join('')}</div>
+    <div class="nav__menu-foot" style="--i:${NAV.length + 1}">
+      <a class="btn btn--blue" ${cal}><span>Book a call</span><i class="btn__dot" aria-hidden="true">→</i></a>
+      <a class="nav__menu-mail" href="mailto:${C.email}">${C.email}</a>
+    </div>
   </div>
 </header>
-<div class="menu" id="menu" hidden>
-  <nav class="menu__links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}"${current(h)}><small>${pad(i + 1)}</small>${t}</a>`).join('')}</nav>
-  <a class="menu__mail" href="mailto:${C.email}">${C.email}</a>
-</div>
 <main id="main">
 ${body}
 </main>
 ${footer(next || C.next[slug] || C.next[''])}
-<div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">${chevron()}<span data-curtain-label></span></div></div>
 </body>
 </html>
 `;

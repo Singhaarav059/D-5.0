@@ -38,7 +38,7 @@
     lbl.textContent = JSON.parse(getComputedStyle(root).getPropertyValue('--curtain-label') || '""');
     curtain.style.visibility = 'visible';
     root.classList.remove('curtain-in');
-    curtain.animate([{ clipPath: 'inset(0 0 0 0 round 0px)' }, { clipPath: 'inset(0 0 100% 0 round 0 0 40px 40px)' }], { duration: 720, delay: 160, easing: EZ, fill: 'forwards' })
+    curtain.animate([{ clipPath: 'inset(0 0 0 0 round 0px)' }, { clipPath: 'inset(0 0 100% 0 round 0 0 40px 40px)' }], { duration: 720, delay: 160, easing: EZ, fill: 'both' })
       .onfinish = () => { curtain.style.visibility = ''; curtain.getAnimations().forEach((a) => a.cancel()); };
   };
   safe(lift);
@@ -70,28 +70,71 @@
     $('.curtain__inner', curtain).getAnimations().forEach((a) => a.cancel());
   });
 
-  /* ---------- nav: the pill under the current page's link, the reading progress, the phone menu ---------- */
+  /* ---------- nav: a glass pill glides to the hovered link and rests on the current page; Projects and Services open
+     a menu with a preview of the page; the reading progress; the phone menu ---------- */
   const nav = $('[data-nav]');
-  const pill = $('[data-pill]');
-  const placePill = () => {
-    const on = $('.nav__links a[aria-current]');
-    if (!pill || !on || !on.offsetWidth) { if (pill) pill.style.opacity = 0; return; }
-    pill.style.opacity = 1;
-    pill.style.width = on.offsetWidth + 'px';
-    pill.style.transform = `translateX(${on.offsetLeft}px)`;
-  };
-  placePill();
-  if (document.fonts) document.fonts.ready.then(placePill);
+  const links = $('[data-nav-links]');
+  let placePill = () => {};
+  if (links) {
+    const pill = $('.nav__pill', links);
+    const current = $('a[aria-current]', links);
+    let openDrop = null;
+    const rest = () => openDrop || current;
+    const moveTo = (a) => {
+      links.classList.toggle('has-pill', !!a);
+      $$('a', links).forEach((l) => l.classList.toggle('is-pill', l === a));
+      if (a) { pill.style.setProperty('--x', a.offsetLeft + 'px'); pill.style.setProperty('--w', a.offsetWidth + 'px'); }
+    };
+    links.addEventListener('pointerover', (e) => { const a = e.target.closest('a'); if (a) moveTo(a); });
+    links.addEventListener('focusin', (e) => moveTo(e.target.closest('a')));
+    links.addEventListener('pointerleave', () => moveTo(rest()));
+    links.addEventListener('focusout', () => moveTo(rest()));
+    // The menus: a mouse opens one on hover (with a grace period to travel into it) and a click follows the link; a
+    // touch opens it on the first tap; ArrowDown opens it from the keyboard. Escape or a click elsewhere closes it.
+    const triggers = $$('[data-drop]', links);
+    let closing = 0;
+    const setDrop = (t) => {
+      clearTimeout(closing);
+      openDrop = t;
+      triggers.forEach((x) => {
+        x.setAttribute('aria-expanded', x === t);
+        document.getElementById(x.getAttribute('aria-controls')).classList.toggle('is-open', x === t);
+      });
+      nav.classList.toggle('has-drop', !!t);
+      moveTo(t || current);
+    };
+    const later = () => { clearTimeout(closing); closing = setTimeout(() => setDrop(null), 220); };
+    triggers.forEach((t) => {
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      t.addEventListener('click', (e) => { if (!fine && openDrop !== t) { e.preventDefault(); setDrop(t); } });
+      t.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); setDrop(t); const f = $('a', panel); if (f) f.focus(); } });
+      if (fine) {
+        t.addEventListener('pointerenter', () => setDrop(t));
+        t.addEventListener('pointerleave', later);
+        panel.addEventListener('pointerenter', () => clearTimeout(closing));
+        panel.addEventListener('pointerleave', later);
+      }
+      panel.addEventListener('focusout', (e) => { if (!panel.contains(e.relatedTarget) && e.relatedTarget !== t) setDrop(null); });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openDrop) { const t = openDrop; setDrop(null); t.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (openDrop && !e.target.closest('.nav__bar')) setDrop(null); });
+    placePill = () => { pill.style.transition = 'none'; moveTo(rest()); pill.offsetWidth; pill.style.transition = ''; };
+    placePill();
+    if (document.fonts) document.fonts.ready.then(placePill);
+  }
   const toggle = $('[data-menu-toggle]');
   const menu = $('#menu');
+  const scrim = $('[data-nav-scrim]');
   const setMenu = (open) => {
     if (!toggle || !menu) return;
     menu.hidden = !open;
+    if (scrim) scrim.hidden = !open;
     toggle.setAttribute('aria-expanded', open);
-    toggle.textContent = open ? 'Close' : 'Menu';
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     root.classList.toggle('menu-open', open);
   };
   if (toggle) toggle.addEventListener('click', () => setMenu(menu.hidden));
+  if (scrim) scrim.addEventListener('click', () => setMenu(false));
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu && !menu.hidden) { setMenu(false); toggle.focus(); } });
   if (menu) menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 

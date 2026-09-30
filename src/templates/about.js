@@ -25,7 +25,7 @@ const valuesMap = () => `<svg class="values" viewBox="0 0 800 150" aria-hidden="
 
 const drives = () => `<section class="sheet-wrap" data-room="#ffcb45">
   <div class="sheet drives">
-    <div class="drives__head">${kicker('What drives us', 'kicker--blue')}<h2 class="display display--l" data-reveal>Four reasons <em class="quiet-ink">we do this.</em></h2></div>
+    <div class="drives__head">${kicker('What drives us', 'kicker--blue', ['bulb', 'sun'])}<h2 class="display display--l" data-reveal>Four reasons <em class="quiet-ink">we do this.</em></h2></div>
     ${valuesMap()}
     <div class="drives__grid">${C.about.drives.map((d, i) => `
       <div class="drive" data-v="${i}" data-reveal data-delay="${(i * 0.08).toFixed(2)}" style="--mk:var(--${VALUES[i][1]})">
@@ -41,7 +41,7 @@ const founder = () => `<section class="wrap studio studio--about" data-room="#3d
   <div class="studio__grid">
     ${print({ tilt: 3, tape: 'var(--pink)' })}
     <div class="studio__words">
-      ${kicker('From the founder')}
+      ${kicker('From the founder', '', ['cup', 'tomato'])}
       ${quote('var(--blue)')}
       <a class="ulink" href="${C.founder.href}" target="_blank" rel="noopener">${esc(C.founder.name.split(' ')[0])} on LinkedIn ↗</a>
     </div>
@@ -52,7 +52,7 @@ const founder = () => `<section class="wrap studio studio--about" data-room="#3d
 const WHY = [['rocket', 'sun'], ['heart', 'pink'], ['star', 'mint']];
 const why = () => `<section class="sheet-wrap" data-room="#62c1ff">
   <div class="sheet sheet--sky why">
-    <div class="why__head">${kicker('Why Demaze', 'kicker--ink')}<h2 class="display display--l" data-words>${words('Why teams <em>choose us.</em>')}</h2></div>
+    <div class="why__head">${kicker('Why Demaze', 'kicker--ink', ['star', 'sun'])}<h2 class="display display--l" data-words>${words('Why teams <em>choose us.</em>')}</h2></div>
     <ol class="reasons">${C.whyUs.map((w, i) => `
       <li class="reason" data-reveal data-delay="${(i * 0.1).toFixed(1)}" data-tilt="5" style="--mk:var(--${WHY[i][1]})">
         <span class="reason__art">${doodle(WHY[i][0], { color: WHY[i][1] })}</span>

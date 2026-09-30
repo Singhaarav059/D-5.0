@@ -61,8 +61,8 @@ const btn = (label, href, { tone = 'paper', size = '', extra = '', magnet = true
   return `<a class="btn btn--${tone}${size ? ` btn--${size}` : ''}" href="${href}"${extra ? ` ${extra}` : ''}${magnet && !outline ? ' data-magnet' : ''}><span>${esc(label)}</span>${outline ? '' : '<i class="btn__dot" aria-hidden="true">→</i>'}</a>`;
 };
 
-// A small uppercase label over a section's headline.
-const kicker = (text, cls = '') => `<span class="kicker${cls ? ` ${cls}` : ''}">${esc(text)}</span>`;
+// A small uppercase label over a section's headline; `art` ([doodle, colour]) puts a drawing before it.
+const kicker = (text, cls = '', art = null) => `<span class="kicker${cls ? ` ${cls}` : ''}">${art ? require('./doodles').doodle(art[0], { color: art[1], cls: 'kicker__dd' }) : ''}${esc(text)}</span>`;
 
 // The hand-drawn loop around the headline word in <mark> (drawn in by site.js).
 const LOOP = '<svg class="loop" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path data-drawin data-delay="0.9" data-dur="1300" pathLength="1" d="M34 66C18 30 120 6 178 30C204 44 188 86 110 92C50 96 8 80 14 54C20 28 80 18 128 20"/></svg>';
