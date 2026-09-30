@@ -364,67 +364,83 @@
   const rooms = $$('[data-room]');
   const span = (el) => { const r = el.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - innerHeight)); };
 
+  // Each frame reads every position it needs first, then writes: a read after a write makes the browser lay the page
+  // out again mid-frame. The selected work's card centres are measured once (per resize) without the track's shift,
+  // then placed by arithmetic as the track moves.
+  let hmids = null, hmax = 0, htx = 0;
+  const measureWork = () => {
+    hmax = Math.max(0, track.scrollWidth - innerWidth);
+    hmids = hcards.map((c) => { const b = c.getBoundingClientRect(); return b.left + b.width / 2 - htx; });
+  };
   const tick = () => {
+    // reads
     const vh = innerHeight, sy = scrollY, H = root.scrollHeight - vh;
+    const jp = journey && stages.length && !flatJourney.matches ? span(journey) : null;
+    const pinWork = hs && track && !flatPins.matches;
+    if (pinWork && !hmids) measureWork();
+    const hp = pinWork ? span(hs) : null;
+    const sp = svcPin && !flatPins.matches ? span(svcPin) : null;
+    const qr = quote && motion ? quote.getBoundingClientRect() : null;
+    let col = null;
+    if (aura) for (const s of rooms) { const r = s.getBoundingClientRect(); if (r.top < vh * 0.55 && r.bottom > vh * 0.45) col = s.dataset.room; }
+
+    // writes
     if (progress) progress.style.transform = `scaleX(${H > 0 ? sy / H : 0})`;
     if (nav) nav.classList.toggle('is-scrolled', sy > 40);
 
     if (journey && stages.length) {
-      if (flatJourney.matches) setStage(0);
+      if (jp === null) setStage(0);
       else {
-        const p = span(journey);
         if (jroute) {
-          jroute.style.strokeDashoffset = jlen * (1 - p);
-          if (jdot) { const pt = jroute.getPointAtLength(jlen * p); jdot.style.left = pt.x / 10 + '%'; jdot.style.top = pt.y / 0.8 + '%'; }
+          jroute.style.strokeDashoffset = jlen * (1 - jp);
+          if (jdot) { const pt = jroute.getPointAtLength(jlen * jp); jdot.style.left = pt.x / 10 + '%'; jdot.style.top = pt.y / 0.8 + '%'; }
         }
-        const s = Math.min(3, Math.floor(p * 4 + 0.0001));
-        setStage(s);
-        const local = clamp(p * 4 - s);
+        const st = Math.min(3, Math.floor(jp * 4 + 0.0001));
+        setStage(st);
+        const local = clamp(jp * 4 - st);
         if (jbar) jbar.style.transform = `scaleX(${local})`;
-        $$('li[data-step]', stages[s]).forEach((li) => li.classList.toggle('is-on', local > (+li.dataset.step + 0.6) / (+li.dataset.n + 0.6)));
+        $$('li[data-step]', stages[st]).forEach((li) => li.classList.toggle('is-on', local > (+li.dataset.step + 0.6) / (+li.dataset.n + 0.6)));
       }
     }
 
     if (hs && track) {
-      if (flatPins.matches) {
+      if (hp === null) {
         track.style.transform = '';
+        htx = 0;
         hcards.forEach((c) => { c.style.transform = ''; c.style.opacity = ''; });
       } else {
-        const p = span(hs), max = Math.max(0, track.scrollWidth - innerWidth), cx = innerWidth / 2;
-        track.style.transform = `translate3d(${(-p * max).toFixed(1)}px,0,0)`;
-        if (motion) hcards.forEach((c) => {
-          const b = c.getBoundingClientRect(), off = b.left + b.width / 2 - cx, d = Math.min(1, Math.abs(off) / innerWidth);
+        const cx = innerWidth / 2;
+        htx = -hp * hmax;
+        track.style.transform = `translate3d(${htx.toFixed(1)}px,0,0)`;
+        if (motion) hcards.forEach((c, i) => {
+          const off = hmids[i] + htx - cx, d = Math.min(1, Math.abs(off) / innerWidth);
           c.style.transform = `scale(${(1 - d * 0.12).toFixed(3)}) rotate(${(off / innerWidth * 3).toFixed(2)}deg)`;
           c.style.opacity = (1 - d * 0.55).toFixed(3);
         });
-        if (hbar) hbar.style.transform = `scaleX(${p})`;
-        setWork(Math.min(hcards.length - 1, Math.round(p * (hcards.length - 1))));
+        if (hbar) hbar.style.transform = `scaleX(${hp})`;
+        setWork(Math.min(hcards.length - 1, Math.round(hp * (hcards.length - 1))));
       }
     }
 
-    if (svcPin && !flatPins.matches) {
-      const p = span(svcPin), i = Math.min(3, Math.floor(p * 4 + 0.0001));
+    if (sp !== null) {
+      const i = Math.min(3, Math.floor(sp * 4 + 0.0001));
       setSvc(i);
       const bar = $('[data-sbar]');
-      if (bar) bar.style.transform = `scaleX(${clamp(p * 4 - i)})`;
+      if (bar) bar.style.transform = `scaleX(${clamp(sp * 4 - i)})`;
     }
 
-    if (quote && motion) {
-      const r = quote.getBoundingClientRect(), q = clamp((vh * 0.8 - r.top) / (r.height + vh * 0.25)), lit = Math.round(q * qwords.length * 1.15);
+    if (qr) {
+      const q = clamp((vh * 0.8 - qr.top) / (qr.height + vh * 0.25)), lit = Math.round(q * qwords.length * 1.15);
       qwords.forEach((w, i) => w.classList.toggle('is-lit', i < lit));
     }
 
-    if (aura) {
-      let col = null;
-      for (const s of rooms) { const r = s.getBoundingClientRect(); if (r.top < vh * 0.55 && r.bottom > vh * 0.45) col = s.dataset.room; }
-      if (col && aura.style.color !== col) aura.style.color = col;
-    }
+    if (col && aura.style.color !== col) aura.style.color = col;
   };
   let raf = 0;
   const queue = () => { raf ||= requestAnimationFrame(() => { raf = 0; safe(tick); }); };
   addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', () => { queue(); placePill(); });
-  [flatJourney, flatPins].forEach((m) => m.addEventListener && m.addEventListener('change', () => { stageOn = -1; queue(); }));
+  addEventListener('resize', () => { hmids = null; queue(); placePill(); });
+  [flatJourney, flatPins].forEach((m) => m.addEventListener && m.addEventListener('change', () => { stageOn = -1; hmids = null; queue(); }));
   safe(tick);
   // on phones the selected work scrolls sideways by swipe: the counter follows the card nearest the middle
   const hview = $('.hwork__viewport');
@@ -597,15 +613,20 @@
   // Services page: each card sticks as the next slides up over it; the one underneath settles back and dims.
   const stackCards = $$('[data-stack-card]');
   const stackWide = matchMedia('(min-width: 960px) and (min-height: 820px)');
-  const stackTick = () => stackCards.forEach((c, i) => {
-    const next = stackCards[i + 1];
-    if (!next || !stackWide.matches || !motion) { c.style.transform = ''; c.style.filter = ''; return; }
-    const a = c.getBoundingClientRect(), b = next.getBoundingClientRect();
-    const p = clamp(1 - (b.top - a.top) / Math.max(1, a.height));
-    c.style.transform = p ? `scale(${(1 - p * 0.06).toFixed(4)})` : '';
-    c.style.filter = p ? `brightness(${(1 - p * 0.45).toFixed(3)})` : '';
-  });
-  if (stackCards.length) { addEventListener('scroll', () => requestAnimationFrame(stackTick), { passive: true }); stackTick(); }
+  let stackRaf = 0;
+  const stackTick = () => {
+    stackRaf = 0;
+    const live = stackWide.matches && motion;
+    const boxes = live ? stackCards.map((c) => c.getBoundingClientRect()) : []; // (all reads, then all writes)
+    stackCards.forEach((c, i) => {
+      if (!live || !stackCards[i + 1]) { c.style.transform = ''; c.style.filter = ''; return; }
+      const a = boxes[i], b = boxes[i + 1];
+      const p = clamp(1 - (b.top - a.top) / Math.max(1, a.height));
+      c.style.transform = p ? `scale(${(1 - p * 0.06).toFixed(4)})` : '';
+      c.style.filter = p ? `brightness(${(1 - p * 0.45).toFixed(3)})` : '';
+    });
+  };
+  if (stackCards.length) { addEventListener('scroll', () => { stackRaf ||= requestAnimationFrame(stackTick); }, { passive: true }); stackTick(); }
 
   /* ---------- the brief: checks the fields, sends it to /api/contact, keeps an unsent draft in the browser ---------- */
   $$('[data-form]').forEach((form) => {
