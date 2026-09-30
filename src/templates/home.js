@@ -136,9 +136,9 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
         <div class="svc__show">
           <div class="svc__screen">
             ${C.services.map((s, i) => `<div class="svc__demo${i === 0 ? ' is-on' : ''}" data-svc-panel="${i}"><div data-fit>${demos[s.id]()}</div>
-              <div class="svc__tags"><b style="background:${SVC_COLOR[s.id]}">${esc(s.title)}</b>${chipsOf(s).map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>`).join('')}
+              <div class="svc__tags">${chipsOf(s).map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>`).join('')}
           </div>
-          ${C.services.map((s, i) => `<div class="svc__caption${i === 0 ? ' is-on' : ''}" data-svc-panel="${i}"><span>Seen in <b>${esc(names(s))}</b> <em>· demo is illustrative</em></span><a class="ulink" href="./services#${s.id}">Explore ${esc(s.title)} →</a></div>`).join('')}
+          ${C.services.map((s, i) => `<div class="svc__caption${i === 0 ? ' is-on' : ''}" data-svc-panel="${i}"><span>Seen in <b>${esc(names(s))}</b> <em>· Illustrative · sample data</em></span><a class="ulink" href="./services#${s.id}">Explore ${esc(s.title)} →</a></div>`).join('')}
         </div>
       </div>
     </div>
@@ -187,7 +187,10 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
 
 // ---------- start a project ----------
 
+// A thin yellow route runs down from the studio and lands on the card's top edge right above its label, so the yellow is reached
+// along the route rather than cut to.
 const start = () => `<section class="start-wrap" data-room="#ffcb45">
+  <div class="start__lead" aria-hidden="true"><svg viewBox="0 0 120 100" preserveAspectRatio="none"><path data-drawin data-dur="900" pathLength="1" d="M116 0V44H4V100"/></svg><i></i></div>
   <div class="start">
     <div class="start__copy">
       ${kicker('Start a project', '', ['rocket', 'tomato'])}

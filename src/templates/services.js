@@ -15,17 +15,20 @@ const byKey = (k) => C.projects.find((p) => p.image === k);
 // ---------- the four services ----------
 
 // Each card sticks under the nav as the next one slides up over it; the ones underneath settle back (site.js). On
-// the left what the service is, what it covers and the work that shows it; on the right the service working.
+// the left, in order of weight: what the service is (its name), why it matters (the summary, then the description),
+// what it covers (the capabilities, quieter) and the proof (the projects it shows in); on the right the service
+// working.
 const serviceList = () => `<section class="wrap svcs" data-stack>${C.services.map((s, i) => `
   <article class="svcs__item" id="${s.id}" style="--i:${i};--c:${SVC_COLOR[s.id]};--dd:var(--${SVC_ART[s.id][1]})" data-stack-card>
     <div class="svcs__main">
-      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)} · ${s.work.length} projects</span></div>
+      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)}</span></div>
       <h2 class="display display--l">${esc(s.title)}</h2>
-      <p>${esc(s.description)}</p>
-      <ul class="svcs__items">${s.items.map((t) => `<li><i>✓</i>${esc(t)}</li>`).join('')}</ul>
-      <div class="svcs__work"><span>Seen in</span>${s.work.slice(0, 3).map((k) => { const p = byKey(k); return `<a class="avatar-chip" href="${caseHref(p)}" title="${esc(p.title)}"><span style="background:${p.tint}">${pic(p.image, '', { sizes: '36px' })}</span>${esc(p.name)}</a>`; }).join('')}${s.work.length > 3 ? `<a class="avatar-chip avatar-chip--more" href="./projects">+${s.work.length - 3} more</a>` : ''}</div>
+      <p class="svcs__value">${esc(s.summary)}</p>
+      <p class="svcs__desc">${esc(s.description)}</p>
+      <div class="svcs__caps"><span class="svcs__label">What it covers</span><ul class="svcs__items">${s.items.map((t) => `<li><i>✓</i>${esc(t)}</li>`).join('')}</ul></div>
+      <div class="svcs__work"><span class="svcs__label">Seen in ${s.work.length} projects</span>${s.work.slice(0, 3).map((k) => { const p = byKey(k); return `<a class="avatar-chip" href="${caseHref(p)}" title="${esc(p.title)}"><span style="background:${p.tint}">${pic(p.image, '', { sizes: '36px' })}</span>${esc(p.name)}</a>`; }).join('')}${s.work.length > 3 ? `<a class="avatar-chip avatar-chip--more" href="./projects">+${s.work.length - 3} more</a>` : ''}</div>
     </div>
-    <div class="svcs__demo"><div class="svcs__screen"><div data-fit>${demos[s.id]()}</div></div><span class="svcs__caption">Demo is illustrative · sample data</span></div>
+    <div class="svcs__demo"><div class="svcs__screen"><div data-fit>${demos[s.id]()}</div></div><span class="svcs__caption">Illustrative · sample data</span></div>
   </article>`).join('')}
 </section>`;
 
