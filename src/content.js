@@ -22,11 +22,11 @@ module.exports = {
   tagline: 'We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.',
 
   // Home hero. The label is the original promise (a strategic partner for scalable AI products); the headline is the
-  // name's promise (de-maze), the part in <em> set quieter and the word in <mark> ending on the route's blue dot; the lead names
+  // name's promise (de-maze), the part in <em> set in the highlight and the word in <mark> underlined by the route; the lead names
   // the maze (the pitfalls drawn in the maze under it) and hands over to "How we work" ("the way through").
   hero: {
     label: 'Your strategic partner for scalable AI products',
-    headline: 'Build AI products <em>without the <mark>maze.</mark></em>',
+    headline: 'Build AI products <em>without the <mark>maze</mark></em>',
     lead: 'Vague specs, scope creep, tech debt: every product has a maze. We design and build AI software with you, and find the way through.',
   },
 

@@ -181,6 +181,46 @@
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu && !menu.hidden) { setMenu(false); toggle.focus(); } });
   if (menu) menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 
+  /* ---------- the opening (first page of a visit; boot.js decides): the maze draws, the route solves it and runs out
+     into the logo, the name rises; then the sheet folds into the nav capsule while the logo flies to its place there.
+     A click, key, wheel or touch skips straight to the fold. `opening` resolves as the page is uncovered, and the
+     reveals wait for it. ---------- */
+  const opening = new Promise((uncovered) => {
+    const el = $('[data-intro]');
+    if (!el || !motion || !root.classList.contains('intro-on')) { if (el) el.remove(); root.classList.remove('intro-on'); uncovered(); return; }
+    let folded = false, gone = false;
+    const timers = [], skipOn = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+    const end = () => { if (gone) return; gone = true; timers.forEach(clearTimeout); root.classList.remove('intro-on'); el.remove(); uncovered(); };
+    const fold = (fast) => {
+      if (folded) return;
+      folded = true;
+      skipOn.forEach((ev) => removeEventListener(ev, skip));
+      try {
+        if (fast) el.getAnimations({ subtree: true }).forEach((a) => a.finish());
+        const bar = $('.nav__bar'), mark = $('.nav__brand img'), lock = $('[data-ilock]', el), chev = $('[data-ic]', el);
+        const D = fast ? 460 : 860;
+        [$('.intro__maze', el), $('[data-itag]', el)].forEach((x) => x.animate([{ opacity: 1 }, { opacity: 0 }], { duration: D * 0.45, easing: 'ease', fill: 'forwards' }));
+        const L = lock.getBoundingClientRect(), c = chev.getBoundingClientRect(), mk = mark.getBoundingClientRect(), r = bar.getBoundingClientRect();
+        lock.style.transformOrigin = `${c.left + c.width / 2 - L.left}px ${c.top + c.height / 2 - L.top}px`;
+        lock.animate([{ transform: 'none' }, { transform: `translate(${mk.left + mk.width / 2 - (c.left + c.width / 2)}px, ${mk.top + mk.height / 2 - (c.top + c.height / 2)}px) scale(${mk.width / c.width})` }], { duration: D, easing: EZ, fill: 'forwards' });
+        el.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round ${getComputedStyle(bar).borderRadius || '999px'})` }], { duration: D, easing: EZ, fill: 'forwards' });
+        el.animate([{ opacity: 1 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], { duration: D + 220, fill: 'forwards' }).onfinish = end;
+        timers.push(setTimeout(uncovered, D * 0.35), setTimeout(end, D + 800));
+      } catch (e) { console.warn(e); end(); }
+    };
+    const skip = () => fold(true);
+    skipOn.forEach((ev) => addEventListener(ev, skip, { passive: true }));
+    try {
+      const IO = 'cubic-bezier(.65,0,.35,1)';
+      $('[data-iw]', el).animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 760, easing: IO, fill: 'forwards' });
+      $('[data-ir]', el).animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 950, delay: 420, easing: IO, fill: 'forwards' });
+      $('[data-ic]', el).animate([{ opacity: 0, transform: 'translateX(-10px) scale(.5)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 1300, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
+      $$('[data-it] > span > span', el).forEach((s, i) => s.animate([{ transform: 'translateY(110%)' }, { transform: 'none' }], { duration: 650, delay: 1380 + i * 45, easing: E, fill: 'forwards' }));
+      $('[data-itag]', el).animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, delay: 1650, easing: E, fill: 'forwards' });
+      timers.push(setTimeout(() => fold(false), 2300));
+    } catch (e) { console.warn(e); end(); }
+  });
+
   /* ---------- reveals: fade-ups, headlines rising word by word, counters, lines drawing themselves ---------- */
   const reveal = (el) => {
     const d = +(el.dataset.delay || 0) * 1000;
@@ -209,7 +249,7 @@
       if (el.hasAttribute('data-reveal')) el.style.opacity = 0;
       if (el.hasAttribute('data-words')) $$('[data-w]', el).forEach((w) => { w.style.transform = 'translateY(108%)'; });
       if (el.hasAttribute('data-drawin')) el.style.strokeDashoffset = 1;
-      io.observe(el);
+      opening.then(() => io.observe(el));
     });
   }
 
@@ -230,6 +270,27 @@
     zoom: () => [{ transform: 'scale(1.02)' }, { transform: 'scale(1.1) translate(-1.5%,-1%)', offset: 0.5 }, { transform: 'scale(1.02)' }],
     travel: (a, b, el) => { const tx = el.dataset.tx || 0, ty = el.dataset.ty || 0, u = +(el.dataset.u || 0.15); return seq([[0, { transform: 'translate(0,0)', opacity: 0 }], [a, { transform: 'translate(0,0)', opacity: 0 }], [a + 0.01, { transform: 'translate(0,0)', opacity: 1 }], [a + u, { transform: `translate(${tx}px,${ty}px)`, opacity: 1 }], [a + u + 0.01, { transform: `translate(${tx}px,${ty}px)`, opacity: 0 }], [1, { transform: `translate(${tx}px,${ty}px)`, opacity: 0 }]]); },
     move: (a, b, el) => { const [x1, y1] = (el.dataset.from || '0,0').split(','), [x2, y2] = (el.dataset.to || '0,0').split(','), u = +(el.dataset.u || 0.15); return seq([[0, { left: x1 + '%', top: y1 + '%' }], [a, { left: x1 + '%', top: y1 + '%' }], [a + u, { left: x2 + '%', top: y2 + '%' }], [b, { left: x2 + '%', top: y2 + '%' }], [b + 0.06, { left: x1 + '%', top: y1 + '%' }], [1, { left: x1 + '%', top: y1 + '%' }]]); },
+    // one state giving way to the next: `show` fades in at a and out at b; `hide` is its opposite
+    show: (a, b) => seq([[0, { opacity: 0 }], [a, { opacity: 0 }], [a + 0.04, { opacity: 1 }], [b, { opacity: 1 }], [b + 0.03, { opacity: 0 }], [1, { opacity: 0 }]]),
+    hide: (a, b) => seq([[0, { opacity: 1 }], [a, { opacity: 1 }], [a + 0.04, { opacity: 0 }], [b, { opacity: 0 }], [b + 0.03, { opacity: 1 }], [1, { opacity: 1 }]]),
+    // in from an offset (data-dx / data-dy), like a notification dropping in
+    slide: (a, b, el) => { const off = `translate(${el.dataset.dx || '0px'},${el.dataset.dy || '-24px'})`; return seq([[0, { opacity: 0, transform: off }], [a, { opacity: 0, transform: off }], [a + 0.07, { opacity: 1, transform: 'none' }], [b, { opacity: 1, transform: 'none' }], [b + 0.04, { opacity: 0, transform: off }], [1, { opacity: 0, transform: off }]]); },
+    // a click's ripple
+    ping: (a) => seq([[0, { opacity: 0, transform: 'scale(.3)' }], [a, { opacity: 0, transform: 'scale(.3)' }], [a + 0.004, { opacity: 0.9, transform: 'scale(.4)' }], [a + 0.07, { opacity: 0, transform: 'scale(2)' }], [1, { opacity: 0, transform: 'scale(2)' }]]),
+    // a pointer (or a selection box) through its waypoints, "t:x,y[,w,h];…" in seconds and % of its parent; it shows
+    // from the first waypoint until b
+    path: (a, b, el, C) => {
+      const pts = el.dataset.path.split(';').map((s) => { const [t, v] = s.split(':'); const n = v.split(',').map(Number); return [clamp(+t / C), { left: n[0] + '%', top: n[1] + '%', ...(n.length > 2 ? { width: n[2] + '%', height: n[3] + '%' } : {}) }]; });
+      const first = pts[0][1], last = pts[pts.length - 1][1];
+      return seq([[0, { ...first, opacity: 0 }], [pts[0][0], { ...first, opacity: 0 }], [pts[0][0] + 0.03, { ...first, opacity: 1 }], ...pts.slice(1).map(([o, p]) => [o, { ...p, opacity: 1 }]), [b, { ...last, opacity: 1 }], [b + 0.03, { ...last, opacity: 0 }], [1, { ...last, opacity: 0 }]]);
+    },
+    // a camera move on a whole shot: "t:scale,x,y;…" (seconds, then the scale and the shift in px), eased in and out
+    cam: (a, b, el, C) => {
+      const k = el.dataset.cam.split(';').map((s) => { const [t, v] = s.split(':'); const [sc, x, y] = v.split(',').map(Number); return { offset: clamp(+t / C), easing: 'cubic-bezier(.65,0,.35,1)', transform: `translate(${x}px,${y}px) scale(${sc})` }; });
+      if (k[0].offset > 0) k.unshift({ ...k[0], offset: 0 });
+      if (k[k.length - 1].offset < 1) k.push({ ...k[k.length - 1], offset: 1 });
+      return k;
+    },
   };
   const hosts = new Map(); // host -> { anims, seen }
   const active = (host) => {
@@ -263,7 +324,7 @@
         if (!k) return;
         const a = +(el.dataset.d || 0) / C, b = +(el.dataset.e || C - 0.5) / C;
         const dur = el.dataset.kf === 'blink' ? 1000 : el.dataset.kf === 'zoom' ? 14000 : C * 1000;
-        const anim = el.animate(k(a, b, el), { duration: dur, iterations: Infinity });
+        const anim = el.animate(k(a, b, el, C), { duration: dur, iterations: Infinity });
         anim.pause();
         anims.push(anim);
       }));
@@ -559,7 +620,9 @@
     const origin = $('[data-origin]', card), mazeEl = $('[data-maze]', card);
     const one = matchMedia('(max-width: 959px)').matches;
     const o = origin && !one ? origin.getBoundingClientRect() : null;
-    const ax = f.left - w.left + f.width * (one ? 0.5 : 0.45), ay = f.bottom - w.top + 36;
+    // from the studio's port when it has one (the capsule on its bottom edge), else from under the studio
+    const port = $('[data-bridge-port]'), pr = port && port.getBoundingClientRect();
+    const ax = pr ? pr.left + pr.width / 2 - w.left : f.left - w.left + f.width * (one ? 0.5 : 0.45), ay = pr ? pr.bottom - w.top : f.bottom - w.top + 36;
     const bx = o ? o.left + o.width / 2 - w.left : c.left - w.left + Math.min(80, c.width * 0.1), by = o ? o.top + o.height / 2 - w.top : c.top - w.top + 26;
     const ym = Math.round((ay + (c.top - w.top)) / 2), r = Math.min(18, Math.abs(bx - ax) / 2, (by - ay) / 4), sg = Math.sign(bx - ax);
     const d = !sg || r < 1 ? `M${ax} ${ay}V${ym}H${bx}V${by}` : `M${ax} ${ay}V${ym - r}Q${ax} ${ym} ${ax + sg * r} ${ym}H${bx - sg * r}Q${bx} ${ym} ${bx} ${ym + r}V${by}`;
@@ -829,15 +892,27 @@
     box.addEventListener('keydown', stop);
   });
 
-  // About: the values route draws itself when it arrives; hovering a value's card lights its station, and back.
-  $$('[data-values]').forEach((v) => {
-    if (!motion || !('IntersectionObserver' in window)) { v.classList.add('is-in'); return; }
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { v.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.3 });
-    io.observe(v);
+  // About, what drives us: the route draws down the values with the scroll, its head at 60% of the screen; each value
+  // lights as the head reaches its picture, and the count beside the heading follows. Reads first, then writes.
+  $$('[data-drives]').forEach((list) => {
+    const line = $('[data-drives-line]', list), items = $$('[data-drive]', list), num = $('[data-drives-n]');
+    if (!motion) { items.forEach((it) => it.classList.add('is-lit')); list.classList.add('is-done'); return; }
+    let raf = 0;
+    const draw = () => {
+      raf = 0;
+      const lr = line.parentElement.getBoundingClientRect(), head = innerHeight * 0.6;
+      const p = clamp((head - lr.top) / Math.max(1, lr.height));
+      const lit = items.map((it) => { const a = it.firstElementChild.getBoundingClientRect(); return a.top + a.height / 2 <= Math.max(head, lr.top + 1); });
+      line.style.setProperty('--p', p.toFixed(4));
+      items.forEach((it, i) => it.classList.toggle('is-lit', lit[i]));
+      list.classList.toggle('is-done', p >= 1);
+      if (num) num.textContent = pad(Math.max(1, lit.lastIndexOf(true) + 1));
+    };
+    const queueDraw = () => { raf ||= requestAnimationFrame(draw); };
+    addEventListener('scroll', queueDraw, { passive: true });
+    addEventListener('resize', queueDraw);
+    draw();
   });
-  const valueParts = $$('.drive[data-v], .values__stop');
-  const lightValue = (v) => valueParts.forEach((el) => el.classList.toggle('is-lit', el.dataset.v === v));
-  valueParts.forEach((el) => { el.addEventListener('pointerenter', () => lightValue(el.dataset.v)); el.addEventListener('pointerleave', () => lightValue(null)); });
 
   // Services page: each card sticks as the next slides up over it; the one underneath settles back and dims.
   const stackCards = $$('[data-stack-card]');

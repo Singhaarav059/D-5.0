@@ -193,6 +193,7 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
   ${metrics('metrics--big')}
   <figure class="office" data-office data-bridge-from data-src="./assets/office3d.js" data-reveal>
     <div class="office__stage" role="img" aria-label="The Demaze crew at work in a small studio: two at their laptops, one getting coffee from the machine, two planning at the whiteboard"></div>
+    <span class="office__port" data-bridge-port aria-hidden="true"><i><svg viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg></i>Next stop: your project</span>
     <figcaption>Inside the studio: coding, coffee, and the plan on the board.</figcaption>
   </figure>
 </section>`;

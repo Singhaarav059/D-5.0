@@ -65,8 +65,8 @@ const btn = (label, href, { tone = 'paper', size = '', extra = '', magnet = true
 const kicker = (text, cls = '', art = null) => `<span class="kicker${cls ? ` ${cls}` : ''}">${art ? require('./doodles').doodle(art[0], { color: art[1], cls: 'kicker__dd' }) : ''}${esc(text)}</span>`;
 
 // A headline whose words rise into place one by one (site.js, [data-words]). `html` is trusted HTML from the
-// templates or content.js: the words inside <em> are set in the quieter grey, a word in <mark> ends
-// on the route's head: its full stop is the blue dot the maze's route travels with (site.css .w-dot).
+// templates or content.js: the words inside <em> are set in the quieter grey, and a word in <mark> gets the Demaze
+// route drawn under it, ending on the logo's chevron (site.css .w-mark).
 const words = (html) => {
   const out = [];
   let quiet = false, mark = false;
@@ -77,10 +77,8 @@ const words = (html) => {
     if (tok === '<mark>') { mark = true; continue; }
     if (tok === '</mark>') { mark = false; continue; }
     const w = `<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${tok}</span></span>`;
-    if (mark) {
-      const [, word, stop] = tok.match(/^(.*?)([.!?]?)$/);
-      out.push(`<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${word}${stop ? `<span class="w-dot">${stop}</span>` : ''}</span></span>`);
-    } else out.push(w);
+    if (mark) out.push(`<span class="w-mark">${w}<svg class="w-route" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 11H30V4H62V11H100"/></svg><svg class="w-chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0L10 5L0 10L3 5Z"/></svg></span>`);
+    else out.push(w);
   }
   return out.join(' ');
 };

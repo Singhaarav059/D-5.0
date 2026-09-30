@@ -5,7 +5,7 @@
 const C = require('../content');
 const { SITE_URL, esc, pad, cal, caseHref, pic, icon, SVC_ART } = require('./helpers');
 const { doodle } = require('./doodles');
-const { chevron } = require('./maze');
+const { chevron, carve } = require('./maze');
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About', './about-us'], ['Contact', './contact']];
 
@@ -31,6 +31,21 @@ const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-
     </div>
   </div>`;
 const DROPS = { Projects: ['work', dropWork], Services: ['services', dropServices] };
+
+// The opening, on a visitor's first page of a visit (boot.js decides; site.js plays it): a small maze draws itself,
+// the route works its way through and out into the logo's chevron, the name rises beside it, and the sheet folds into
+// the nav capsule as the logo flies to its place there. Inline SVG and text only: nothing extra to download.
+const intro = () => {
+  const u = 20, m = carve(7, 5, 5, u, 0, false);
+  return `<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__lock" data-ilock>
+    <svg class="intro__maze" viewBox="-6 -20 180 140"><path class="intro__walls" data-iw pathLength="1" d="${m.walls}"/><path class="intro__route" data-ir pathLength="1" d="${m.route}L160 90V50H174"/></svg>
+    <img class="intro__mark" data-ic src="${C.logoMark}" alt="" width="44" height="44">
+    <span class="intro__word" data-it>${[...'Demaze'].map((ch) => `<span><span>${ch}</span></span>`).join('')}</span>
+  </div>
+  <p class="intro__tag" data-itag>${esc(C.hero.label)}</p>
+</div>`;
+};
 
 // The background: an aura in the colour of the section in view (site.js follows [data-room]), two quiet glows and the
 // maze tile; on screens with wide margins, five doodles drift in them.
@@ -88,6 +103,7 @@ ${og ? `<meta property="og:image" content="${og.url}">
 ${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 </head>
 <body class="page-${(slug || 'home').replace(/\//g, '-')}" data-crew-src="./assets/crew3d.js">
+${intro()}
 <div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">
   <span class="curtain__kicker">${chevron()}Demaze · on the route to</span>
   <span class="curtain__label" data-curtain-label></span>

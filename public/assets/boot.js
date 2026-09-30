@@ -16,4 +16,12 @@
     // never leave the page covered, whatever happens to site.js
     window.setTimeout(() => root.classList.remove('curtain-in'), 3000);
   }
+  // The opening plays once a visit, on the first page, and never with reduced motion or when arriving through the
+  // curtain; site.js plays it and lifts it (and CSS bails out on its own if site.js never runs).
+  let seen = true;
+  try { seen = !!sessionStorage.getItem('dmz-intro'); sessionStorage.setItem('dmz-intro', '1'); } catch {}
+  if (!seen && !label && !reduced) {
+    root.classList.add('intro-on');
+    window.setTimeout(() => root.classList.remove('intro-on'), 6000);
+  }
 })();
