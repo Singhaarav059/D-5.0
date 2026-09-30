@@ -1548,7 +1548,7 @@ html.rm .bridge__pulse { display: none; }
 .curtain__kicker svg { width: 16px; fill: var(--blue); }
 .curtain__label { font: 300 clamp(3rem, 11vw, 9rem)/1 var(--display); letter-spacing: -0.06em; }
 /* the loader: five chevrons of dots on a faint dot grid, lit in a wave marching left to right */
-.curtain__march { --p: clamp(8px, 1.5vw, 13px); position: relative; width: calc(42 * var(--p)); height: calc(9 * var(--p)); margin-top: clamp(6px, 1.4vh, 14px); background: radial-gradient(circle, rgba(255, 255, 255, 0.13) 0 1.2px, transparent 1.7px) 0 0 / var(--p) var(--p); }
+.curtain__march { --p: min(clamp(8px, 1.5vw, 13px), calc((100vw - 64px) / 42)); position: relative; width: calc(42 * var(--p)); height: calc(9 * var(--p)); margin-top: clamp(6px, 1.4vh, 14px); background: radial-gradient(circle, rgba(255, 255, 255, 0.13) 0 1.2px, transparent 1.7px) 0 0 / var(--p) var(--p); }
 .curtain__march i { position: absolute; left: calc(var(--x) * var(--p)); top: calc(var(--y) * var(--p)); width: var(--p); height: var(--p); }
 .curtain__march i::before { content: ''; position: absolute; inset: 22%; border-radius: 50%; background: var(--c); opacity: 0.22; transform: scale(0.75); }
 .curtain.is-open .curtain__march i::before, html.curtain-in .curtain__march i::before { animation: march 1.15s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--x) * 24ms) infinite; }
@@ -1557,6 +1557,8 @@ html.rm .curtain__march i::before { animation: none !important; opacity: 1; tran
 .curtain__dd { position: absolute; width: clamp(34px, 5vw, 60px); height: auto; aspect-ratio: 1; opacity: 0; }
 .curtain__dd--1 { left: -12%; top: -18%; rotate: -12deg; } .curtain__dd--2 { right: -10%; top: -8%; rotate: 10deg; }
 .curtain__dd--3 { left: -4%; bottom: -24%; rotate: 8deg; } .curtain__dd--4 { right: -2%; bottom: -30%; rotate: -8deg; }
+/* phones: the loader and the drawings stay inside the screen (the inner box is nearly as wide as it) */
+@media (max-width: 600px) { .curtain__dd { width: 34px; } .curtain__dd--1 { left: 8%; top: -34%; } .curtain__dd--2 { right: 8%; top: -30%; } .curtain__dd--3 { left: 10%; bottom: -44%; } .curtain__dd--4 { right: 10%; bottom: -48%; } }
 .curtain.is-open .curtain__dd { animation: dd-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 300ms forwards; }
 .curtain.is-open .curtain__dd--2 { animation-delay: 380ms; } .curtain.is-open .curtain__dd--3 { animation-delay: 460ms; } .curtain.is-open .curtain__dd--4 { animation-delay: 540ms; }
 /* the opening (layout.js intro, boot.js, site.js): a maze solved into the logo, folding into the nav capsule. It rests
