@@ -83,6 +83,17 @@ and by eye. Changes:
 - the tags under the home demos scroll sideways on phones; footer links, section links and the logo are thumb-sized
   on touch; the footer's columns sit two to a row on phones; metrics and the selected work step down on phones.
 
+## Fifth round (rhythm and the transition)
+
+- **One rhythm**: every section owns only its top gap (`--section`); nothing adds a bottom gap, so two sections never
+  stack their spacing (the double gaps before "Selected work", before "Start a project" and under the page heads).
+  Measured between consecutive home sections: 64px on phones, 112px on laptops.
+- **Phones**: the design scene's two screens share the row (the valuation screen was cut off at the edge); home's
+  tools are a grid of sixteen logos instead of a second running row.
+- **Page transition**: a sheet of frosted glass unfolds out of a small pill at the top of the screen (the Dynamic
+  Island), the route drawing itself under the page name with four drawings around it; on the new page it folds back
+  into the pill and fades.
+
 ## Checked
 
 Every page at 1440, 768 and 390px in headless Chromium: no horizontal overflow and no page errors. The only console

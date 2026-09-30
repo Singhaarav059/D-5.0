@@ -32,14 +32,19 @@
     if (p in LABELS) return LABELS[p];
     return p.startsWith('projects/') ? 'Case study' : 'Dead end';
   };
+  // The pill it unfolds from and folds back into (site.css --pill), and the sheet at full size.
+  const PILL = 'inset(18px calc(50% - 70px) calc(100% - 62px) calc(50% - 70px) round 22px)';
+  const FULL = 'inset(0px 0px 0px 0px round 0px)';
   const lift = () => {
     if (!curtain || !root.classList.contains('curtain-in')) return;
     const lbl = $('[data-curtain-label]', curtain);
     lbl.textContent = JSON.parse(getComputedStyle(root).getPropertyValue('--curtain-label') || '""');
     curtain.style.visibility = 'visible';
+    curtain.classList.add('is-open');
     root.classList.remove('curtain-in');
-    curtain.animate([{ clipPath: 'inset(0 0 0 0 round 0px)' }, { clipPath: 'inset(0 0 100% 0 round 0 0 40px 40px)' }], { duration: 720, delay: 160, easing: EZ, fill: 'both' })
-      .onfinish = () => { curtain.style.visibility = ''; curtain.getAnimations().forEach((a) => a.cancel()); };
+    $('.curtain__inner', curtain).animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.92) translateY(-30px)' }], { duration: 420, delay: 200, easing: EZ, fill: 'both' });
+    const fold = curtain.animate([{ clipPath: FULL, opacity: 1 }, { clipPath: PILL, opacity: 1, offset: 0.82 }, { clipPath: PILL, opacity: 0 }], { duration: 900, delay: 220, easing: EZ, fill: 'both' });
+    fold.onfinish = () => { curtain.style.visibility = ''; curtain.classList.remove('is-open'); curtain.getAnimations().forEach((x) => x.cancel()); $('.curtain__inner', curtain).getAnimations().forEach((x) => x.cancel()); };
   };
   safe(lift);
   let leaving = false;
@@ -57,9 +62,12 @@
     try { sessionStorage.setItem('dmz-curtain', label); } catch {}
     $('[data-curtain-label]', curtain).textContent = label;
     curtain.style.visibility = 'visible';
-    curtain.animate([{ clipPath: 'inset(100% 0 0 0 round 40px 40px 0 0)' }, { clipPath: 'inset(0 0 0 0 round 0px)' }], { duration: 640, easing: EZ, fill: 'forwards' });
-    $('.curtain__inner', curtain).animate([{ transform: 'translateY(60px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 700, delay: 180, easing: E, fill: 'both' });
-    setTimeout(() => { location.href = url.href; }, 660);
+    curtain.classList.remove('is-open');
+    curtain.offsetWidth; // restart the drawings
+    curtain.classList.add('is-open');
+    curtain.animate([{ clipPath: PILL, opacity: 0 }, { clipPath: PILL, opacity: 1, offset: 0.12 }, { clipPath: FULL, opacity: 1 }], { duration: 760, easing: EZ, fill: 'forwards' });
+    $('.curtain__inner', curtain).animate([{ transform: 'scale(0.9) translateY(-40px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 700, delay: 200, easing: E, fill: 'both' });
+    setTimeout(() => { location.href = url.href; }, 1000);
   });
   // back to a page kept in memory: the curtain it left with must not still cover it
   addEventListener('pageshow', (e) => {
@@ -67,6 +75,7 @@
     leaving = false;
     curtain.getAnimations().forEach((a) => a.cancel());
     curtain.style.visibility = '';
+    curtain.classList.remove('is-open');
     $('.curtain__inner', curtain).getAnimations().forEach((a) => a.cancel());
   });
 

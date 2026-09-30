@@ -88,7 +88,12 @@ ${og ? `<meta property="og:image" content="${og.url}">
 ${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 </head>
 <body class="page-${(slug || 'home').replace(/\//g, '-')}" data-crew-src="./assets/crew3d.js">
-<div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">${chevron()}<span data-curtain-label></span></div></div>
+<div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">
+  <span class="curtain__kicker">${chevron()}Demaze · on the route to</span>
+  <span class="curtain__label" data-curtain-label></span>
+  <svg class="curtain__route" viewBox="-10 -6 620 100"><path pathLength="1" d="M0 62H84V18H214V54H338V26H468V40H600"/>${[[149, 18, 'var(--sun)'], [276, 54, 'var(--lilac)'], [403, 26, 'var(--sky)'], [534, 40, 'var(--tomato)']].map(([x, y, c], i) => `<circle cx="${x}" cy="${y}" r="7" style="fill:${c};--i:${i}"/>`).join('')}</svg>
+  ${[['star', 'sun'], ['rocket', 'tomato'], ['bulb', 'sky'], ['heart', 'pink']].map(([d, c], i) => doodle(d, { color: c, cls: `curtain__dd curtain__dd--${i + 1}` })).join('')}
+</div></div>
 ${backdrop()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
