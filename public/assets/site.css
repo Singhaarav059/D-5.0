@@ -318,7 +318,7 @@ html.menu-open { overflow: hidden; }
 .maze__legend { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .maze__status { font: 600 11.5px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
 .maze__status b { color: var(--text); }
-.maze__legend ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(max(118px, 30%), 1fr)); gap: 6px; width: 100%; }
+.maze__legend ul { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 6px; width: 100%; }
 .maze__legend li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 5px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); font: 500 12px/1 var(--body); color: var(--muted); transition: color 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease; }
 .maze__legend .dd { width: 18px; height: 18px; }
 .maze__legend li.is-out { color: var(--text); text-decoration: line-through; text-decoration-color: var(--tomato); text-decoration-thickness: 1.5px; }
@@ -1182,11 +1182,19 @@ html:not(.js) .quote span[data-mk], html.rm .quote span[data-mk] { background-si
 
 /* ---------- start a project: the yellow panel ---------- */
 .start-wrap { position: relative; padding: var(--section) clamp(8px, 1.2vw, 18px) 0; }
-.start__lead { position: absolute; top: calc(var(--section) * 0.2); left: 0; right: 0; height: calc(var(--section) * 0.8); max-width: 1400px; margin: 0 auto; padding-left: calc(clamp(8px, 1.2vw, 18px) + clamp(20px, 5vw, 80px)); pointer-events: none; }
-.start__lead svg { display: block; width: clamp(64px, 8vw, 120px); height: 100%; overflow: visible; }
-.start__lead path { fill: none; stroke: var(--sun); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 1; vector-effect: non-scaling-stroke; }
-.start__lead i { position: absolute; top: -5px; left: calc(clamp(8px, 1.2vw, 18px) + clamp(20px, 5vw, 80px) + clamp(64px, 8vw, 120px) * 0.967 - 2px); width: 10px; height: 10px; margin-left: -3px; border-radius: 50%; background: var(--sun); }
-.start { max-width: 1400px; margin: 0 auto; background: var(--sun); color: var(--ink); border-radius: clamp(28px, 3vw, 44px); padding: clamp(40px, 6vw, 96px) clamp(20px, 5vw, 80px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(32px, 5vw, 72px); align-items: center; }
+/* the route from the studio into the card (site.js lays it out in the section's own pixels and draws it on scroll) */
+.bridge { position: absolute; left: 0; top: 0; z-index: 2; width: 1px; height: 1px; overflow: visible; pointer-events: none; }
+.bridge path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bridge__track { stroke: rgba(244, 241, 234, 0.2); stroke-width: 2; stroke-dasharray: 0.1 8; }
+.bridge__line { stroke: var(--blue); stroke-width: 5; }
+.bridge__pulse { stroke: #c9d1ff; stroke-width: 3; stroke-dasharray: 6 100; stroke-dashoffset: 6; opacity: 0; }
+.bridge.is-done .bridge__pulse { opacity: 1; animation: bridge-run 2.8s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes bridge-run { from { stroke-dashoffset: 6; } to { stroke-dashoffset: -100; } }
+.bridge__head { fill: var(--paper); stroke: var(--blue); stroke-width: 4; }
+html.rm .bridge__pulse { display: none; }
+.start { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; background: var(--sun); color: var(--ink); border-radius: clamp(28px, 3vw, 44px); padding: clamp(40px, 6vw, 96px) clamp(20px, 5vw, 80px) clamp(28px, 4vw, 56px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 4vh, 48px) clamp(32px, 5vw, 72px); align-items: center; }
+.start .crew-band { grid-column: 1 / -1; margin-top: 0; }
+@media (max-width: 959px) { .start { grid-template-columns: minmax(0, 1fr); } }
 .start__copy { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
 .start .kicker { color: var(--ink); }
 .start h2 { font-size: clamp(2.6rem, 5.4vw, 5.6rem); line-height: 0.92; }
@@ -1194,7 +1202,7 @@ html:not(.js) .quote span[data-mk], html.rm .quote span[data-mk] { background-si
 .start .lead { color: var(--ink); max-width: 40ch; }
 .start__note { margin-top: -10px; font-size: 15px; color: #5c4a14; max-width: 44ch; }
 .start .btn--ink .btn__dot { background: var(--sun); color: var(--ink); }
-.start__maze { position: relative; border-radius: 28px; background: rgba(21, 21, 20, 0.06); box-shadow: inset 0 0 0 1.5px rgba(21, 21, 20, 0.14); padding: clamp(14px, 2vw, 26px); }
+.start__maze { position: relative; border-radius: 28px; background: rgba(255, 255, 255, 0.28); box-shadow: inset 0 0 0 1.5px rgba(21, 21, 20, 0.14); padding: clamp(14px, 2vw, 26px); }
 
 /* ---------- contact + the brief ---------- */
 .contact { padding-top: var(--section); padding-bottom: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: clamp(32px, 5vw, 80px); align-items: start; }

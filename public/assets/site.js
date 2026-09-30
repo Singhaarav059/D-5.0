@@ -418,6 +418,30 @@
     if (hnum) hnum.textContent = pad(Math.min(i + 1, showN));
     if (hname) hname.textContent = hcards[i].dataset.name;
   };
+  // The bridge: the route from the studio into the start card, laid out in the section's own pixels (from under the
+  // studio, a step across, then down onto the maze's entrance; on one column it lands on the card's top edge). It
+  // draws with the scroll, its head at about two-thirds down the screen; once it arrives it tells the maze to go and a
+  // pulse keeps running along it.
+  const bridge = $('[data-bridge]');
+  let bgeo = null, bdone = false;
+  const bline = bridge && $('[data-bridge-line]', bridge), bhead = bridge && $('[data-bridge-head]', bridge);
+  const layBridge = () => {
+    bgeo = null;
+    const wrap = bridge && bridge.parentElement, from = $('[data-bridge-from]'), card = wrap && $('.start', wrap);
+    if (!bridge || !from || !card) return;
+    const w = wrap.getBoundingClientRect(), f = from.getBoundingClientRect(), c = card.getBoundingClientRect();
+    const origin = $('[data-origin]', card), mazeEl = $('[data-maze]', card);
+    const one = matchMedia('(max-width: 959px)').matches;
+    const o = origin && !one ? origin.getBoundingClientRect() : null;
+    const ax = f.left - w.left + f.width * (one ? 0.5 : 0.45), ay = f.bottom - w.top + 36;
+    const bx = o ? o.left + o.width / 2 - w.left : c.left - w.left + Math.min(80, c.width * 0.1), by = o ? o.top + o.height / 2 - w.top : c.top - w.top + 26;
+    const ym = Math.round((ay + (c.top - w.top)) / 2), r = Math.min(18, Math.abs(bx - ax) / 2, (by - ay) / 4), sg = Math.sign(bx - ax);
+    const d = !sg || r < 1 ? `M${ax} ${ay}V${ym}H${bx}V${by}` : `M${ax} ${ay}V${ym - r}Q${ax} ${ym} ${ax + sg * r} ${ym}H${bx - sg * r}Q${bx} ${ym} ${bx} ${ym + r}V${by}`;
+    $$('path', bridge).forEach((p) => p.setAttribute('d', d));
+    const len = bline.getTotalLength();
+    bline.style.strokeDasharray = `${len} ${len + 1}`;
+    bgeo = { ay, by, len, mazeEl };
+  };
   const quote = $('[data-quote]');
   const qwords = quote ? $$('[data-qw]', quote) : [];
   const aura = $('[data-aura]');
@@ -441,6 +465,7 @@
     const hp = pinWork ? span(hs) : null;
     const sp = svcPin && !flatPins.matches ? span(svcPin) : null;
     const qr = quote && motion ? quote.getBoundingClientRect() : null;
+    const bw = bgeo ? bridge.parentElement.getBoundingClientRect().top : null;
     let col = null;
     if (aura) for (const s of rooms) { const r = s.getBoundingClientRect(); if (r.top < vh * 0.55 && r.bottom > vh * 0.45) col = s.dataset.room; }
 
@@ -490,6 +515,15 @@
       sbars.forEach((b, j) => { b.style.transform = `scaleX(${j < i ? 1 : j > i ? 0 : clamp(sp * 4 - i).toFixed(3)})`; });
     }
 
+    if (bgeo) {
+      const p = motion ? clamp((vh * 0.68 - (bw + bgeo.ay)) / Math.max(1, bgeo.by - bgeo.ay)) : 1, l = bgeo.len * p;
+      bline.style.strokeDashoffset = bgeo.len - l;
+      const pt = bline.getPointAtLength(l);
+      bhead.setAttribute('cx', pt.x); bhead.setAttribute('cy', pt.y);
+      bhead.style.opacity = p > 0 && p < 1 ? 1 : 0;
+      if (p >= 1 && !bdone) { bdone = true; bridge.classList.add('is-done'); if (bgeo.mazeEl) bgeo.mazeEl.dispatchEvent(new Event('maze:go')); }
+    }
+
     if (qr) {
       const q = clamp((vh * 0.8 - qr.top) / (qr.height + vh * 0.25)), lit = Math.round(q * qwords.length * 1.15);
       qwords.forEach((w, i) => w.classList.toggle('is-lit', i < lit));
@@ -500,7 +534,13 @@
   let raf = 0;
   const queue = () => { raf ||= requestAnimationFrame(() => { raf = 0; safe(tick); }); };
   addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', () => { hmids = null; queue(); placePill(); });
+  addEventListener('resize', () => { hmids = null; safe(layBridge); queue(); placePill(); });
+  if (bridge) {
+    safe(layBridge);
+    if ('ResizeObserver' in window) new ResizeObserver(() => { safe(layBridge); queue(); }).observe(bridge.parentElement);
+    if (document.fonts) document.fonts.ready.then(() => { safe(layBridge); queue(); });
+    addEventListener('load', () => { safe(layBridge); queue(); });
+  }
   [flatJourney, flatPins].forEach((m) => m.addEventListener && m.addEventListener('change', () => { stageOn = -1; hmids = null; queue(); }));
   safe(tick);
   // on phones the selected work scrolls sideways by swipe: the counter follows the card nearest the middle

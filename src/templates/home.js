@@ -191,7 +191,7 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
     </div>
   </div>
   ${metrics('metrics--big')}
-  <figure class="office" data-office data-src="./assets/office3d.js" data-reveal>
+  <figure class="office" data-office data-bridge-from data-src="./assets/office3d.js" data-reveal>
     <div class="office__stage" role="img" aria-label="The Demaze crew at work in a small studio: two at their laptops, one getting coffee from the machine, two planning at the whiteboard"></div>
     <figcaption>Inside the studio: coding, coffee, and the plan on the board.</figcaption>
   </figure>
@@ -199,10 +199,10 @@ const studio = () => `<section class="wrap studio" data-room="#ff85b8">
 
 // ---------- start a project ----------
 
-// A thin yellow route runs down from the studio and lands on the card's top edge right above its label, so the yellow is reached
-// along the route rather than cut to.
+// The route runs on from the studio into the card (site.js draws it as you scroll, [data-bridge]) and lands on the
+// maze's entrance; once it arrives, the maze works out its way through. The crew runs the idea along the card's foot.
 const start = () => `<section class="start-wrap" data-room="#ffcb45">
-  <div class="start__lead" aria-hidden="true"><svg viewBox="0 0 120 100" preserveAspectRatio="none"><path data-drawin data-dur="900" pathLength="1" d="M116 0V44H4V100"/></svg><i></i></div>
+  <svg class="bridge" data-bridge aria-hidden="true"><path class="bridge__track" data-bridge-track/><path class="bridge__line" data-bridge-line/><path class="bridge__pulse" data-bridge-pulse pathLength="100"/><circle class="bridge__head" data-bridge-head r="7"/></svg>
   <div class="start">
     <div class="start__copy">
       ${kicker('Start a project', '', ['rocket', 'tomato'])}
@@ -210,9 +210,9 @@ const start = () => `<section class="start-wrap" data-room="#ffcb45">
       <p class="lead" data-reveal>Tell us the problem. We’ll map the route: what to build first, what to skip, and what comes next.</p>
       <div class="actions" data-reveal>${btn('Book a 30-min call', C.calendly, { tone: 'ink', size: 'lg', extra: 'target="_blank" rel="noopener"' })}${btn('Send a brief', './contact', { tone: 'line', size: 'lg', magnet: false })}</div>
       <p class="start__note" data-reveal>No sales deck. Just the problem, the context, and what you’re trying to build.</p>
-      <div class="crew-band" data-crew aria-hidden="true"></div>
     </div>
-    <div class="start__maze" data-tilt="4">${maze({ cols: 9, rows: 6, seed: 309, tone: 'day', pits: 4, start: 'Your problem', label: 'A route mapped through a maze, from your problem to launch' })}</div>
+    <div class="start__maze" data-tilt="4">${maze({ cols: 9, rows: 6, seed: 309, tone: 'day', pits: 4, wait: true, start: 'Your problem', label: 'A route mapped through a maze, from your problem to launch' })}</div>
+    <div class="crew-band" data-crew aria-hidden="true"></div>
   </div>
 </section>`;
 

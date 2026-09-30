@@ -118,8 +118,8 @@ const icon = (name, x, y, size, color) => {
 
 // A maze as the page draws it. `tone`: 'night' (light walls, the blue route), 'day' (ink walls on a coloured panel,
 // the same blue route) or 'lost' (the 404: the route runs into the deepest dead end, where "You are here" waits).
-// `pits`: how many pitfalls it holds (and lists in the legend under it).
-function maze({ cols, rows, seed, tone = 'night', pits: want = 6, start = C.journey.start, label = '' }) {
+// `pits`: how many pitfalls it holds (and lists in the legend under it); `wait`: it starts when told (site.js, 'maze:go').
+function maze({ cols, rows, seed, tone = 'night', pits: want = 6, wait = false, start = C.journey.start, label = '' }) {
   const lost = tone === 'lost';
   const u = 44;
   const m = carve(cols, rows, seed, u, lost ? 0 : want, lost);
@@ -128,7 +128,7 @@ function maze({ cols, rows, seed, tone = 'night', pits: want = 6, start = C.jour
   const list = m.probes.map((p, i) => ({ ...p, pf: C.journey.pitfalls[i % C.journey.pitfalls.length] }));
   const k = u * 0.08; // chevron: 10 units wide, set with its notch on the route's end
   const [ex, ey] = m.exit;
-  return `<div class="maze maze--${tone}" data-maze>
+  return `<div class="maze maze--${tone}" data-maze${wait ? ' data-maze-wait' : ''}>
   <div class="maze__board">
     <svg viewBox="${m.vb.join(' ')}"${label ? ` role="img" aria-label="${esc(label)}"` : ' aria-hidden="true"'}>
       <path class="maze__walls" data-walls pathLength="1" d="${m.walls}"/>
@@ -136,7 +136,7 @@ function maze({ cols, rows, seed, tone = 'night', pits: want = 6, start = C.jour
       <path class="maze__route" data-route d="${m.route}"/>
       ${list.map((p) => `<path class="maze__probe" data-probe data-s="${p.s}" d="${p.d}"/>`).join('')}
       ${list.map((p, i) => `<g class="maze__pit is-out" data-pit="${i}">${icon(p.pf[0], p.x, p.y, u * 0.66, p.pf[2])}<path class="maze__x" d="M${p.x + u * 0.12} ${p.y - u * 0.36}l${u * 0.22} ${u * 0.22}m0 ${-u * 0.22}l${-u * 0.22} ${u * 0.22}"/></g>`).join('')}
-      <circle class="maze__origin" cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.1}"/>
+      <circle class="maze__origin" data-origin cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.1}"/>
       ${lost ? '' : `<text class="maze__start" x="${u * 0.9}" y="${-u * 0.42}">${esc(start)}</text>`}
       ${lost ? '' : `<g class="maze__exit" data-end><svg x="${ex - 3 * k}" y="${ey - 5 * k}" width="${10 * k}" height="${10 * k}" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg><text x="${cols * u + u * 0.22}" y="${ey + u * 0.95}">${esc(C.journey.finish)}</text></g>`}
       <circle class="maze__head" data-head cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.17}"/>
@@ -146,7 +146,7 @@ function maze({ cols, rows, seed, tone = 'night', pits: want = 6, start = C.jour
   </div>
   ${list.length ? `<div class="maze__legend">
     <span class="maze__status" data-maze-status aria-hidden="true"><b data-maze-n>${list.length}</b> of ${list.length} ruled out</span>
-    <ul aria-label="Pitfalls ruled out on the way">${list.map((p, i) => `<li class="is-out" data-leg="${i}">${require('./doodles').doodle(p.pf[0], { color: p.pf[2] })}${esc(p.pf[1])}</li>`).join('')}</ul>
+    <ul aria-label="Pitfalls ruled out on the way" style="--cols:${list.length % 3 ? 2 : 3}">${list.map((p, i) => `<li class="is-out" data-leg="${i}">${require('./doodles').doodle(p.pf[0], { color: p.pf[2] })}${esc(p.pf[1])}</li>`).join('')}</ul>
   </div>` : ''}
 </div>`;
 }
