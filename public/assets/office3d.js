@@ -1505,6 +1505,10 @@ export function start(el, kit) {
   const canvas = document.createElement('canvas');
   canvas.className = 'office__canvas';
   canvas.setAttribute('aria-hidden', 'true');
+  // Phone-sized frames get half-size shadow maps: at that width a 2048 map puts several texels under every screen
+  // pixel. (Multisampling stays on everywhere: the fur's strands are cut out with alpha to coverage, which needs it.)
+  const narrow = Math.min(el.clientWidth || innerWidth, innerWidth) < 700;
+  const shadowSize = narrow ? 1024 : 2048;
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
@@ -1542,7 +1546,7 @@ export function start(el, kit) {
   sun.target.position.set(-5, 0, -2);
   sun.position.set(-5 - 0.3 * 40, 0.62 * 40, -2 - 0.75 * 40);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(shadowSize, shadowSize);
   Object.assign(sun.shadow.camera, { left: -26, right: 26, top: 20, bottom: -20, near: 5, far: 90 });
   sun.shadow.radius = 4;
   sun.shadow.bias = -0.0005;
@@ -1553,7 +1557,7 @@ export function start(el, kit) {
   room.position.set(6, 22, 16);
   room.target.position.set(1, 0, -3);
   room.castShadow = true;
-  room.shadow.mapSize.set(2048, 2048);
+  room.shadow.mapSize.set(shadowSize, shadowSize);
   Object.assign(room.shadow.camera, { left: -24, right: 24, top: 16, bottom: -16, near: 1, far: 70 });
   room.shadow.radius = 8;
   room.shadow.bias = -0.0004;
@@ -1656,8 +1660,12 @@ export function start(el, kit) {
   let resizing = 0;
   addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => { layout(); if (still && ready) { renderer.shadowMap.needsUpdate = true; renderer.render(scene, camera); } }, 150); });
   if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); aimLook.x = (e.clientX - r.left) / r.width - 0.5; aimLook.y = (e.clientY - r.top) / r.height - 0.5; });
-    el.addEventListener('pointerleave', () => { aimLook.x = aimLook.y = 0; });
+    // where the frame is, read once as the pointer enters rather than on every move (each read lays the page out)
+    let r = null;
+    el.addEventListener('pointerenter', () => { r = el.getBoundingClientRect(); });
+    el.addEventListener('pointermove', (e) => { r ||= el.getBoundingClientRect(); aimLook.x = (e.clientX - r.left) / r.width - 0.5; aimLook.y = (e.clientY - r.top) / r.height - 0.5; }, { passive: true });
+    el.addEventListener('pointerleave', () => { aimLook.x = aimLook.y = 0; r = null; });
+    addEventListener('scroll', () => { r = null; }, { passive: true }); // (the frame moved: read it again on the next move)
   }
   document.addEventListener('visibilitychange', resume);
   canvas.addEventListener('webglcontextlost', () => { cancelAnimationFrame(raf); on = false; canvas.remove(); el.classList.remove('is-live'); });
