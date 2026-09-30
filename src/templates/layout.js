@@ -18,7 +18,7 @@ const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="tr
 const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
     <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="${caseHref(p)}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
     <div class="nav__drop-side">
-      <p><b>${C.projects.length} featured products</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
+      <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
       <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
     </div>
   </div>`;

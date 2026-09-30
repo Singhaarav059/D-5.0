@@ -53,7 +53,7 @@ const founder = () => `<section class="wrap studio studio--about" data-room="#3d
 const WHY = [['chip', 'lilac'], ['spiral', 'sky'], ['star', 'sun']];
 const ai = C.services.find((s) => s.id === 'ai');
 const PROOF = {
-  ai: () => [[`${ai.work.length} of ${C.projects.length}`, 'featured products run on AI'], ['Seen in', ai.work.map((k) => C.projects.find((p) => p.image === k).name).join(', ')]],
+  ai: () => [[`${ai.work.length} of ${C.projects.length}`, 'products built with AI & ML'], ['Seen in', ai.work.map((k) => C.projects.find((p) => p.image === k).name).join(', ')]],
   route: () => [[`${C.process.length} stages`, C.process.map((s) => s.title.split(' ')[0]).join(' → ')], ['1 team', 'from the first workshop to scale']],
   record: () => C.metrics.map((m) => [`${m.prefix}${m.value}${m.suffix}`, m.label.toLowerCase()]),
 };

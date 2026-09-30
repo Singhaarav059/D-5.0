@@ -1,14 +1,10 @@
 // All site copy and data in one place. Edit here, then run `npm run build` to regenerate public/*.html.
 // Everything below is published as-is, so keep it accurate: no placeholder numbers or invented claims.
 //
-// One vocabulary, used the same way on every page:
-//   projects   engagements delivered, company-wide: only the record (`metrics`, "45+ projects delivered", as on
-//              demazetech.com) counts them
-//   products   what we designed and built that the site shows: `projects` below, always "N featured products"
-//              (never "projects" or "sectors" counted from this list)
-//   services   what we sell: `services` below; a product is tagged with every service it drew on, so the service
-//              counts overlap and are always worded "N products" beside a note that a product can have several
-//   industries the verticals we build for: `industries` below
+// Company figures are the published source values (45+ projects, $10M+, 35+ team, 6+ years, 16 products, 15
+// sectors): state them as given, never derive or reconcile replacements from the lists below. The service counts
+// come from each service's `work` list and overlap (a project can sit under several services); say so beside
+// them, without changing the numbers. The industries list is the one published; don't state a count for it.
 // Capitalisation: sentence case for labels and headings ("Case study", "Selected work"); service names exactly as
 // `services[].title` ("AI & ML", "Web, Mobile & SaaS", "E-commerce", "Cloud").
 
@@ -55,6 +51,9 @@ module.exports = {
     photo: 'krupal-chaudhary',
     href: 'https://www.linkedin.com/in/krupalchaudhary',
   },
+
+  // Sectors the work spans, as published (not counted from the projects' `sector` labels).
+  sectors: 15,
 
   metrics: [
     { value: 45, prefix: '', suffix: '+', label: 'Projects delivered' },
@@ -220,7 +219,7 @@ module.exports = {
   ],
 
   // Why teams choose us (about page): each reason names its proof, which templates/about.js renders from the data
-  // itself (`ai`: the featured products tagged AI & ML; `route`: the four stages; `record`: the metrics).
+  // itself (`ai`: the projects under AI & ML; `route`: the four stages; `record`: the metrics).
   whyUs: [
     { title: 'AI-native from day one', proof: 'ai',
       description: 'We design the model into the product from the first workshop: car valuations, case analysis, virtual try-ons, storyboards from a script.' },

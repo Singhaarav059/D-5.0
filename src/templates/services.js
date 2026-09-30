@@ -19,7 +19,7 @@ const byKey = (k) => C.projects.find((p) => p.image === k);
 const serviceList = () => `<section class="wrap svcs" data-stack>${C.services.map((s, i) => `
   <article class="svcs__item" id="${s.id}" style="--i:${i};--c:${SVC_COLOR[s.id]};--dd:var(--${SVC_ART[s.id][1]})" data-stack-card>
     <div class="svcs__main">
-      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)} · seen in ${s.work.length} products</span></div>
+      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)} · ${s.work.length} projects</span></div>
       <h2 class="display display--l">${esc(s.title)}</h2>
       <p>${esc(s.description)}</p>
       <ul class="svcs__items">${s.items.map((t) => `<li><i>✓</i>${esc(t)}</li>`).join('')}</ul>
@@ -96,7 +96,7 @@ const tools = () => {
 const industries = () => `<section class="wrap inds" id="industries" data-room="#ff85b8">
   <div class="sec-head">
     <div>${kicker('Industries', '', ['store', 'pink'])}<h2 class="display display--l" data-reveal>Where we’ve found <em class="quiet">the way through.</em></h2></div>
-    <p class="sec-head__lead">${C.industries.length} industries. Pick one to see the kinds of systems we build for it.</p>
+    <p class="sec-head__lead">The industries we serve. Pick one to see the kinds of systems we build for it.</p>
   </div>
   <div class="ind" data-tabs data-ind>
     <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n, , a], i) => `
@@ -108,7 +108,7 @@ const industries = () => `<section class="wrap inds" id="industries" data-room="
       <div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}" style="--mk:var(--${a.color})"${i ? ' hidden' : ''}>
         <div class="ind__top">
           <div class="ind__art" aria-hidden="true">${doodle(a.doodle, { color: a.color })}</div>
-          <div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3><p>${items.length} kinds of systems we build</p></div>
+          <div class="ind__head"><span>${pad(i + 1)}</span><h3>${esc(n)}</h3><p>${items.length} kinds of systems we build</p></div>
         </div>
         <ul class="ind__list">${items.map((t) => `<li><i>✓</i>${esc(t)}</li>`).join('')}</ul>
         ${work.length ? `<p class="ind__work"><span>Our work here</span>${work.map((p) => `<a href="${caseHref(p)}">${esc(p.name)} →</a>`).join('')}</p>` : `<p class="ind__work"><span>Building for ${esc(n.toLowerCase())}?</span><a href="./contact">Tell us about it →</a></p>`}

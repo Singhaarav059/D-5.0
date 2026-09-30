@@ -474,7 +474,7 @@
       if (on) { n++; if (motion) c.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 600, delay: Math.min(n, 8) * 40, easing: E, fill: 'backwards' }); }
     });
     b.closest('.projects')?.toggleAttribute('data-filtered', id !== 'all');
-    if (status) status.textContent = `Showing ${n} product${n === 1 ? '' : 's'}`;
+    if (status) status.textContent = `Showing ${n} project${n === 1 ? '' : 's'}`;
   }));
 
   /* ---------- services page: tabs (the tools map, the industries), the wires of the tools map, the industries'

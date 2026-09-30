@@ -96,10 +96,10 @@ const work = () => `<section class="hwork" data-hscroll data-room="#ff6242">
             <span class="round" aria-hidden="true">→</span>
           </div>
         </a>`).join('')}
-        <a class="hcard hcard--more" href="./projects" data-hcard data-name="${C.projects.length - SHOW} more · Every industry">
+        <a class="hcard hcard--more" href="./projects" data-hcard data-name="${C.projects.length - SHOW} more · All sectors">
           <span class="kicker">${C.projects.length - SHOW} more</span>
           <span class="hcard__big">Fintech, legal, commerce, senior care and more.</span>
-          <span class="pillink">See all ${C.projects.length} products →</span>
+          <span class="pillink">See all ${C.projects.length} projects →</span>
         </a>
       </div>
     </div>
@@ -127,7 +127,7 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
           <button type="button" class="svc__item${i === 0 ? ' is-on' : ''}" data-svc="${i}" aria-pressed="${i === 0}" style="--c:${SVC_COLOR[s.id]}">
             <span class="svc__n">${pad(i + 1)}</span>
             <span class="svc__text"><span class="svc__title">${esc(s.title)}</span><span class="svc__sum"><span><span>${esc(s.summary)}</span></span></span></span>
-            <span class="svc__count"><i></i>${s.work.length} products</span>
+            <span class="svc__count"><i></i>${s.work.length} projects</span>
             <i class="svc__rule"></i>
           </button>`).join('')}
           <span class="svc__progress"><i data-sbar></i></span>
@@ -157,7 +157,7 @@ const reach = () => {
   const marks = tools.map(([n, slug]) => `<li class="reach__chip reach__chip--tool"><img src="${techIcon(slug)}" alt="" width="22" height="22" loading="lazy">${esc(n)}</li>`).join('');
   return `<section class="reach" data-room="#62c1ff">
   <div class="wrap sec-head">
-    <div>${kicker('Industries & stack', '', ['gear', 'mint'])}<h2 class="display display--l" data-words>${words(`${C.industries.length} industries, <em>one production stack.</em>`)}</h2></div>
+    <div>${kicker('Industries & stack', '', ['gear', 'mint'])}<h2 class="display display--l" data-words>${words('Industries we serve, <em>one production stack.</em>')}</h2></div>
     <p class="sec-head__lead">Where the products we build run, and what we build them with. <a class="ulink" href="./services#tools">The full stack →</a></p>
   </div>
   ${row('reach__row--ind', 'Industries we serve', inds, 90)}
