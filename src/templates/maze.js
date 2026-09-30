@@ -1,12 +1,13 @@
 // The Demaze maze: the brand name as a picture. A seeded maze (recursive backtracker) and its one way through,
 // computed at build time so the page ships plain SVG. site.js plays it on a loop: the walls draw in, the pitfalls
-// (content.js `journey.pitfalls`) pop into the dead ends, the route is solved from the entrance to the exit and each
+// (content.js `journey.pitfalls`, each with its drawing) pop into the dead ends, the route is solved from the entrance to the exit and each
 // pitfall drops away as the route passes it, the exit lights up, then the walls erase and it starts over. With
 // reduced motion or no JS it is the finished drawing.
 'use strict';
 
 const C = require('../content');
-const { esc, MARK } = require('./helpers');
+const { esc } = require('./helpers');
+const { doodle } = require('./doodles');
 
 // A small, fast seeded generator (mulberry32), so the same seed always draws the same maze.
 const rng = (a) => () => {
@@ -108,8 +109,8 @@ function maze({ cols, rows, seed, tone = 'night', start = C.journey.start, label
   </svg>
   ${lost ? '' : `<span class="maze__start" style="left:${m.sx};top:${m.sy}" aria-hidden="true">${esc(start)} ↓</span>`}
   ${pits.map((p, i) => {
-    const [, name, color] = C.journey.pitfalls[i % C.journey.pitfalls.length];
-    return `<div class="maze__pin" style="left:${p.lx};top:${p.ly}" aria-hidden="true"><div class="maze__pit" data-pit data-at="${p.at.toFixed(4)}"><i style="background:${MARK[color]}"></i><span>${esc(name)}</span></div></div>`;
+    const [art, name, color] = C.journey.pitfalls[i % C.journey.pitfalls.length];
+    return `<div class="maze__pin" style="left:${p.lx};top:${p.ly}" aria-hidden="true"><div class="maze__pit" data-pit data-at="${p.at.toFixed(4)}">${doodle(art, { color })}<span>${esc(name)}</span></div></div>`;
   }).join('')}
   <div class="maze__pin" style="left:${m.ex};top:${m.ey}" aria-hidden="true">${end}</div>
 </div>`;

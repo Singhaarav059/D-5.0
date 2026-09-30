@@ -93,12 +93,21 @@ test('every local link, anchor and asset on the pages resolves', () => {
   }
 });
 
-test('project cards play their reels: one chapter per feature, on home, the projects page and every case study', () => {
+test('every project plays its motion reel on the projects page, home shows the selected work, each case its own', () => {
   const C = require('../src/content');
-  const reels = (page) => [...fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8').matchAll(/class="reel reel--\w+" data-cycle="([\d.]+)"/g)].map((m) => +m[1]);
-  assert.equal(reels('projects').length, C.projects.length, 'every project has a card on the projects page');
-  assert.ok(reels('index').length >= 6, 'home shows the selected work');
-  for (const p of C.projects) assert.equal(reels(`projects/${p.image}`)[0], +(p.features.length * 2.6).toFixed(1), `${p.image}: its reel runs one chapter per feature`);
+  const reels = (page) => [...fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8').matchAll(/<figure class="shot[^"]*"[^>]*data-reel="/g)].length;
+  assert.equal(reels('projects'), C.projects.length, 'every project card carries its reel');
+  assert.ok(reels('index') >= 6, 'home shows the selected work');
+  for (const p of C.projects) assert.equal(reels(`projects/${p.image}`), 1, `${p.image}: its case study plays its reel`);
+});
+
+test('screenshot backdrops (--shot) point at files next to the stylesheet that uses them', () => {
+  for (const page of ['index', 'projects']) {
+    const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
+    const urls = [...html.matchAll(/--shot:url\(([^)]+)\)/g)].map((m) => m[1]);
+    assert.ok(urls.length, `${page} has no screenshot backdrops`);
+    for (const url of urls) assert.ok(fs.existsSync(path.join(root, 'public', 'assets', url)), `${page}: --shot ${url} does not resolve from public/assets/`);
+  }
 });
 
 test('structured data parses and every page names the organisation', () => {

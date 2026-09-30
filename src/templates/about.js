@@ -1,29 +1,35 @@
-// About page: who we are and the record, what drives us, the founder's words, and why Demaze.
+// About page: who we are (beside where the name comes from) and the record, what drives us (four values as
+// stations on a Demaze route), the founder's words, and why teams choose us.
 'use strict';
 
 const C = require('../content');
 const { esc, pad, kicker, words } = require('./helpers');
-const { metrics, print, quote } = require('./shared');
+const { doodle, doodleAt } = require('./doodles');
+const { metrics, print, quote, pageHead } = require('./shared');
 
 const team = C.metrics.find((m) => /team/i.test(m.label));
-const intro = () => `<section class="wrap about" data-room="#ff85b8">
-  ${kicker('About Demaze')}
-  <h1 class="display display--xl about__title" data-words>${words('Digital transformation <em>architects.</em>')}</h1>
-  <div class="about__cols">
-    <p class="about__big" data-reveal>We’re more than developers: a passionate team of ${team.value}${team.suffix} technologists, innovators and strategic thinkers who believe in the power of AI to reshape businesses.</p>
-    <p class="about__small" data-reveal data-delay="0.1">${esc(C.about.whoWeAre[1])}</p>
-  </div>
-  ${metrics('metrics--big')}
-</section>`;
+const intro = () => `${pageHead({ label: 'About Demaze', title: 'Digital transformation <em>architects.</em>', room: '#ff85b8', aside: 'about', doodles: [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']],
+  lead: `We’re more than developers: a team of ${team.value}${team.suffix} technologists, innovators and strategic thinkers who believe in the power of AI to reshape businesses. ${C.about.whoWeAre[1]}` })}
+<section class="wrap about-record">${metrics('metrics--big')}</section>`;
 
-const DRIVE_COLORS = ['var(--sun)', 'var(--pink)', 'var(--mint)', 'var(--sky)'];
+// What drives us, drawn: the four values as stations on a Demaze route across the sheet, each over its own card, in
+// its colour. Hovering a card lights its station, and the other way round (site.js).
+const VALUES = [['bulb', 'sun'], ['heart', 'pink'], ['sprout', 'mint'], ['book', 'sky']];
+const chevronPath = (x, y, s) => `M${x - s / 2} ${y - s / 2}L${x + s / 2} ${y}L${x - s / 2} ${y + s / 2}L${x - s / 5} ${y}Z`;
+const valuesMap = () => `<svg class="values" viewBox="0 0 800 150" aria-hidden="true" focusable="false" data-values>
+  <circle class="values__start" cx="8" cy="55" r="7"/>
+  <path class="values__route" d="M8 55H200V95H400V55H600V95H768" pathLength="1"/>
+  <path class="values__mark" d="${chevronPath(782, 95, 28)}"/>
+  ${VALUES.map(([d, c], i) => { const x = 100 + i * 200, y = i % 2 ? 95 : 55; return `<g class="values__stop" data-v="${i}" style="--i:${i}"><g class="values__pop"><circle class="values__halo" style="--dd:var(--${c})" cx="${x}" cy="${y}" r="38"/><circle class="values__disc" cx="${x}" cy="${y}" r="30"/>${doodleAt(d, x, y, 50, { color: c })}</g></g>`; }).join('')}
+</svg>`;
+
 const drives = () => `<section class="sheet-wrap" data-room="#ffcb45">
   <div class="sheet drives">
-    ${kicker('What drives us', 'kicker--blue')}
-    <h2 class="display display--l" data-reveal>Four reasons <em class="quiet-ink">we do this.</em></h2>
+    <div class="drives__head">${kicker('What drives us', 'kicker--blue')}<h2 class="display display--l" data-reveal>Four reasons <em class="quiet-ink">we do this.</em></h2></div>
+    ${valuesMap()}
     <div class="drives__grid">${C.about.drives.map((d, i) => `
-      <div class="drive" data-reveal data-delay="${(i * 0.08).toFixed(2)}" data-tilt="6">
-        <span class="drive__n" style="background:${DRIVE_COLORS[i]}">${pad(i + 1)}</span>
+      <div class="drive" data-v="${i}" data-reveal data-delay="${(i * 0.08).toFixed(2)}" style="--mk:var(--${VALUES[i][1]})">
+        <span class="drive__n">${pad(i + 1)}</span>
         <h3>${esc(d.title)}</h3>
         <p>${esc(d.description)}</p>
       </div>`).join('')}
@@ -42,10 +48,19 @@ const founder = () => `<section class="wrap studio studio--about" data-room="#3d
   </div>
 </section>`;
 
-const why = () => `<section class="wrap why" data-room="#2fd0a0">
-  ${kicker('Why Demaze')}
-  <div class="why__list">${C.whyUs.map((y, i) => `
-    <div class="why__row" data-reveal><h3><small>${pad(i + 1)}</small>${esc(y.title)}</h3><p>${esc(y.description)}</p></div>`).join('')}
+// Why teams choose us: the three reasons as cards on a sky-blue room, each with its drawing and its number.
+const WHY = [['rocket', 'sun'], ['heart', 'pink'], ['star', 'mint']];
+const why = () => `<section class="sheet-wrap" data-room="#62c1ff">
+  <div class="sheet sheet--sky why">
+    <div class="why__head">${kicker('Why Demaze', 'kicker--ink')}<h2 class="display display--l" data-words>${words('Why teams <em>choose us.</em>')}</h2></div>
+    <ol class="reasons">${C.whyUs.map((w, i) => `
+      <li class="reason" data-reveal data-delay="${(i * 0.1).toFixed(1)}" data-tilt="5" style="--mk:var(--${WHY[i][1]})">
+        <span class="reason__art">${doodle(WHY[i][0], { color: WHY[i][1] })}</span>
+        <span class="reason__num">${pad(i + 1)}</span>
+        <h3>${esc(w.title)}</h3>
+        <p>${esc(w.description)}</p>
+      </li>`).join('')}
+    </ol>
   </div>
 </section>`;
 

@@ -9,7 +9,7 @@ const S = require('./templates/schema');
 const { layout } = require('./templates/layout');
 const { maze } = require('./templates/maze');
 const { pageHead } = require('./templates/shared');
-const { hero, tape, howWeWork, work, services, studio, start } = require('./templates/home');
+const { hero, tape, howWeWork, work, services, reach, studio, start } = require('./templates/home');
 const { projectsGrid } = require('./templates/projects');
 const { caseStudy } = require('./templates/case');
 const { serviceList, tools, industries, faq } = require('./templates/services');
@@ -24,7 +24,7 @@ const pages = {
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: 'Demaze designs and builds AI software, web and mobile apps, SaaS and eCommerce platforms, from the first workshop to launch and beyond.',
     schema: [S.organization(), S.website()],
-    body: [hero(), tape(), howWeWork(), work(), services(), studio(), start()].join('\n'),
+    body: [hero(), tape(), howWeWork(), work(), services(), reach(), studio(), start()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
@@ -32,7 +32,7 @@ const pages = {
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     schema: [S.organization(), S.projects(caseHref), S.breadcrumbs([['Home', './'], ['Projects', './projects']])],
     body: [
-      pageHead({ label: 'Projects', title: `${C.projects.length} products, <em>designed and built.</em>`, room: '#ff6242',
+      pageHead({ label: 'Projects', title: `${C.projects.length} products, <em>designed and built.</em>`, room: '#ff6242', aside: 'projects', doodles: [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']],
         lead: `From luxury automotive and fintech to legal, commerce and senior care: ${SECTORS} sectors in all. Every card plays a short film of the product: open one for its story.` }),
       projectsGrid(),
     ].join('\n'),
@@ -43,7 +43,7 @@ const pages = {
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     schema: [S.organization(), S.services(), S.faqPage(), S.breadcrumbs([['Home', './'], ['Services', './services']])],
     body: [
-      pageHead({ label: 'Services', title: 'Four crafts, <em>one team.</em>', room: '#2fd0a0', lead: 'AI, software, commerce and cloud, built together so the product works as one system from day one.' }),
+      pageHead({ label: 'Services', title: 'Four crafts, <em>one team.</em>', room: '#2fd0a0', aside: 'services', doodles: [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']], lead: 'AI, software, commerce and cloud, built together so the product works as one system from day one.' }),
       serviceList(), tools(), industries(), faq(),
     ].join('\n'),
   }),

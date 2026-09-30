@@ -4,7 +4,7 @@
 
 const C = require('../content');
 const { esc, pad, caseHref, pic, btn, SVC_COLOR } = require('./helpers');
-const { reel, servicesOf } = require('./projects');
+const { media, servicesOf } = require('./projects');
 
 const caseStudy = (p, i) => {
   const used = C.services.filter((s) => servicesOf(p).includes(s.id));
@@ -18,8 +18,8 @@ const caseStudy = (p, i) => {
       <p data-reveal>${esc(p.brief)}</p>
       ${used.length ? `<div class="case__svcs">${used.map((s) => `<a class="tagline-chip" href="./services#${s.id}"><i style="background:${SVC_COLOR[s.id]}"></i>${esc(s.title)}</a>`).join('')}</div>` : ''}
     </div>
+    <div class="case__media" data-reveal data-delay="0.15">${media(p, i, { size: 'hero', sizes: '(max-width: 960px) 94vw, 720px', eager: true })}</div>
   </header>
-  <div data-reveal>${reel(p, { size: 'hero', sizes: '(max-width: 1340px) 94vw, 1244px', eager: true })}</div>
   <section class="case__built">
     <div>
       <h2 class="kicker">What we built</h2>

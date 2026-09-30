@@ -202,7 +202,7 @@
       const r = (n) => { const x = Math.sin(i * 97 + n * 13.7) * 10000; return x - Math.floor(x); };
       el.animate([{ transform: 'translate(0,0) rotate(0deg)' }, { transform: `translate(${(r(1) - 0.5) * 60}px,${(r(2) - 0.5) * 80}px) rotate(${(r(3) - 0.5) * 40}deg)` }], { duration: 9000 + r(4) * 7000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
     });
-    $$('[data-marquee]').forEach((el) => el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: +(el.dataset.marquee || 40) * 1000, iterations: Infinity }));
+    $$('[data-marquee]').forEach((el) => el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: +(el.dataset.marquee || 40) * 1000, iterations: Infinity, direction: el.dataset.marqueeDir === '-1' ? 'reverse' : 'normal' }));
   } else {
     $$('.footer__route').forEach((svg) => svg.pauseAnimations && svg.pauseAnimations());
   }
@@ -424,38 +424,132 @@
     if (status) status.textContent = `Showing ${n} project${n === 1 ? '' : 's'}`;
   }));
 
-  /* ---------- services page: the tools tabs and the industries ---------- */
-  const tabs = $$('[data-tab]');
-  const setTab = (i, focus) => {
-    tabs.forEach((t, j) => { t.setAttribute('aria-selected', j === i); t.tabIndex = j === i ? 0 : -1; });
-    $$('[data-tabpanel]').forEach((p) => {
-      const on = +p.dataset.tabpanel === i;
-      p.hidden = !on;
-      if (on && motion) $$('span', p).forEach((s, k) => s.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: k * 30, easing: E, fill: 'backwards' }));
-    });
-    if (focus) tabs[i].focus();
-  };
-  tabs.forEach((t, i) => {
-    t.tabIndex = i ? -1 : 0;
-    t.addEventListener('click', () => setTab(i));
-    t.addEventListener('keydown', (e) => {
-      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (d) { e.preventDefault(); setTab((i + d + tabs.length) % tabs.length, true); }
+  /* ---------- services page: tabs (the tools map, the industries), the wires of the tools map, the industries'
+     own pace, and the service cards stacking as you scroll ---------- */
+  // Tabs: roving tabindex and arrow keys; picking one shows its panel and tells its box ('tabchange').
+  $$('[data-tabs]').forEach((box) => {
+    const tabs = $$('[role=tab]', box);
+    const select = (tab, focus) => {
+      tabs.forEach((t) => {
+        const on = t === tab, panel = document.getElementById(t.getAttribute('aria-controls'));
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        const was = panel.hidden;
+        panel.hidden = !on;
+        if (on && was && motion) $$('li, h3', panel).forEach((el, k) => el.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: k * 20, easing: E, fill: 'backwards' }));
+        if (on) box.dispatchEvent(new CustomEvent('tabchange', { detail: panel }));
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
+      });
     });
   });
-  const inds = $$('[data-ind]');
-  const setInd = (i) => {
-    inds.forEach((b, j) => b.setAttribute('aria-pressed', j === i));
-    $$('[data-ind-card]').forEach((c) => {
-      const on = +c.dataset.indCard === i;
-      if (on && c.hidden && motion) c.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: E });
-      c.hidden = !on;
+
+  // The tools map: the stack wired to its six discipline cards, and the chosen card to each of its tools. Wires run like
+  // the maze's route, in straight runs with rounded corners. Picking a discipline (resting a mouse on it picks it too)
+  // pulls its layer out of the stack, colours the stage and draws its lines to its tools.
+  $$('[data-kmap-stage]').forEach((stage) => safe(() => {
+    const svg = $('[data-kmap-wires]', stage);
+    const cats = $$('[data-kmap-cat]', stage);
+    const plates = [];
+    $$('[data-kmap-plate]', stage).forEach((p) => { plates[+p.dataset.kmapPlate] = p; });
+    const ports = $$('[data-kmap-port]', stage);
+    const NS = 'http://www.w3.org/2000/svg';
+    const wide = matchMedia('(min-width: 1025px)');
+    const route = (x1, y1, x2, y2, bend = (x1 + x2) / 2) => {
+      const dy = y2 - y1, r = Math.min(10, Math.abs(dy) / 2, Math.abs(bend - x1), Math.abs(x2 - bend)), sg = Math.sign(dy);
+      if (!sg || r < 1) return `M${x1} ${y1}H${bend}V${y2}H${x2}`;
+      return `M${x1} ${y1}H${bend - r}Q${bend} ${y1} ${bend} ${y1 + sg * r}V${y2 - sg * r}Q${bend} ${y2} ${bend + r} ${y2}H${x2}`;
+    };
+    const path = (d, cls, unit = true) => {
+      const el = document.createElementNS(NS, 'path');
+      el.setAttribute('d', d);
+      el.setAttribute('class', cls);
+      if (unit) el.setAttribute('pathLength', '1');
+      return el;
+    };
+    const draw = (animate) => {
+      const on = Math.max(0, cats.findIndex((c) => c.getAttribute('aria-selected') === 'true'));
+      stage.style.setProperty('--mk', cats[on].style.getPropertyValue('--mk'));
+      plates.forEach((p, i) => p.classList.toggle('is-on', i === on));
+      ports.forEach((p, i) => p.classList.toggle('is-on', i === on));
+      if (!wide.matches) { svg.replaceChildren(); return; }
+      const box = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+      const at = (el, side) => { const r = el.getBoundingClientRect(); return [(side === 'l' ? r.left : side === 'r' ? r.right : r.left + r.width / 2) - box.left, r.top + r.height / 2 - box.top]; };
+      const first = at(cats[0], 'l')[0];
+      const paths = [];
+      cats.forEach((c, i) => {
+        const [x1, y1] = at(ports[i], 'c'), [x2, y2] = at(c, 'l');
+        const d = route(x1 + 4, y1, x2, y2, x1 + (first - x1) * (0.25 + i * 0.1));
+        if (i === on) paths.push(path(d, 'kmap__wire is-on'), path(d, 'kmap__pulse'));
+        else paths.unshift(path(d, 'kmap__wire', false));
+      });
+      const panel = document.getElementById(cats[on].getAttribute('aria-controls'));
+      const [ax, ay] = at(cats[on], 'r');
+      $$('[data-kmap-dot]', panel).forEach((dot, i) => {
+        const [x, y] = at(dot, 'l');
+        const p = path(route(ax, ay, x - 1, y, ax + (x - ax) * 0.45), 'kmap__fan' + (animate ? ' is-drawing' : ''));
+        p.style.animationDelay = i * 28 + 'ms';
+        paths.push(p);
+      });
+      svg.replaceChildren(...paths);
+    };
+    stage.addEventListener('tabchange', () => requestAnimationFrame(() => draw(true)));
+    if (fine) {
+      let t = 0;
+      const rest = (c) => { clearTimeout(t); t = setTimeout(() => c.getAttribute('aria-selected') !== 'true' && c.click(), 180); };
+      cats.forEach((c) => { c.addEventListener('pointerenter', () => rest(c)); c.addEventListener('pointerleave', () => clearTimeout(t)); });
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(() => draw(false)).observe(stage);
+    if (document.fonts) document.fonts.ready.then(() => draw(false));
+    draw(false);
+  }));
+
+  // Industries: while the section is on screen the index moves on by itself, the current tile's bar saying when.
+  // Picking an industry, or touching the section at all, stops it for good.
+  $$('[data-ind]').forEach((box) => {
+    const tabs = $$('[role=tab]', box);
+    let stopped = !motion, auto = false;
+    const stop = () => { stopped = true; box.classList.remove('is-auto'); };
+    if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => box.classList.toggle('is-auto', e.isIntersecting && !stopped), { threshold: 0.35 }).observe(box);
+    box.addEventListener('animationend', (e) => {
+      if (e.animationName !== 'ind-timer' || stopped) return;
+      const next = tabs[(tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') + 1) % tabs.length];
+      auto = true; next.click(); auto = false;
     });
-  };
-  inds.forEach((b, i) => {
-    b.addEventListener('click', () => setInd(i));
-    if (fine) b.addEventListener('mouseenter', () => setInd(i));
+    tabs.forEach((t) => t.addEventListener('click', () => { if (!auto) stop(); }));
+    box.addEventListener('pointerdown', stop);
+    box.addEventListener('keydown', stop);
   });
+
+  // About: the values route draws itself when it arrives; hovering a value's card lights its station, and back.
+  $$('[data-values]').forEach((v) => {
+    if (!motion || !('IntersectionObserver' in window)) { v.classList.add('is-in'); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { v.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.3 });
+    io.observe(v);
+  });
+  const valueParts = $$('.drive[data-v], .values__stop');
+  const lightValue = (v) => valueParts.forEach((el) => el.classList.toggle('is-lit', el.dataset.v === v));
+  valueParts.forEach((el) => { el.addEventListener('pointerenter', () => lightValue(el.dataset.v)); el.addEventListener('pointerleave', () => lightValue(null)); });
+
+  // Services page: each card sticks as the next slides up over it; the one underneath settles back and dims.
+  const stackCards = $$('[data-stack-card]');
+  const stackWide = matchMedia('(min-width: 960px)');
+  const stackTick = () => stackCards.forEach((c, i) => {
+    const next = stackCards[i + 1];
+    if (!next || !stackWide.matches || !motion) { c.style.transform = ''; c.style.filter = ''; return; }
+    const a = c.getBoundingClientRect(), b = next.getBoundingClientRect();
+    const p = clamp(1 - (b.top - a.top) / Math.max(1, a.height));
+    c.style.transform = p ? `scale(${(1 - p * 0.06).toFixed(4)})` : '';
+    c.style.filter = p ? `brightness(${(1 - p * 0.45).toFixed(3)})` : '';
+  });
+  if (stackCards.length) { addEventListener('scroll', () => requestAnimationFrame(stackTick), { passive: true }); stackTick(); }
 
   /* ---------- the brief: checks the fields, sends it to /api/contact, keeps an unsent draft in the browser ---------- */
   $$('[data-form]').forEach((form) => {

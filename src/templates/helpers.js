@@ -23,8 +23,9 @@ const caseHref = (p) => `./projects/${p.image}`;
 // The marker colours by name (content.js names them; site.css has the same values as tokens).
 const MARK = { sun: '#ffcb45', pink: '#ff85b8', mint: '#2fd0a0', sky: '#62c1ff', lilac: '#a58bff', tomato: '#ff6242', blue: '#3d5afe' };
 
-// Each service's colour, used for its dot, its demo's tag and its filter.
+// Each service's colour (its dot, its demo's tag, its filter) and its drawing and marker name (templates/doodles.js).
 const SVC_COLOR = { ai: MARK.lilac, web: MARK.sky, ecom: MARK.tomato, cloud: MARK.mint };
+const SVC_ART = { ai: ['chip', 'lilac'], web: ['browser', 'sky'], ecom: ['bag', 'tomato'], cloud: ['cloud', 'mint'] };
 
 const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -43,6 +44,13 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
   const u = (f) => `./assets/img/work/${f.file}`;
   const h = Math.round((fb.w * m.h) / m.w);
   return `<picture><source type="image/webp" srcset="${webp.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
+};
+
+// The smallest large WebP of a screenshot, for the blurred backdrop behind it (site.css: --shot). A url() inside a
+// custom property resolves against the stylesheet that uses it (public/assets/site.css), hence no ./assets/ prefix.
+const shot = (key) => {
+  const f = MANIFEST[key].files.filter((x) => x.fmt === 'webp' && x.w > 200).sort((x, y) => x.w - y.w)[0];
+  return `--shot:url(img/work/${f.file})`;
 };
 
 // Buttons: a pill with the label and a round arrow. `tone`: paper (light pill, blue arrow), ink (dark pill),
@@ -76,4 +84,4 @@ const words = (html) => {
   return out.join(' ');
 };
 
-module.exports = { PUBLIC, SITE_URL, MANIFEST, MARK, SVC_COLOR, esc, pad, cal, caseHref, icon, pic, btn, kicker, words };
+module.exports = { PUBLIC, SITE_URL, MANIFEST, MARK, SVC_COLOR, SVC_ART, shot, esc, pad, cal, caseHref, icon, pic, btn, kicker, words };

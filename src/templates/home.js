@@ -4,11 +4,13 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, MARK, SVC_COLOR, btn, kicker, words } = require('./helpers');
+const { esc, pad, caseHref, SVC_COLOR, btn, kicker, words } = require('./helpers');
 const { maze } = require('./maze');
 const { stageScenes, demos } = require('./scenes');
-const { reel } = require('./projects');
+const { media } = require('./projects');
 const { metrics, print, quote } = require('./shared');
+const { doodle } = require('./doodles');
+const { techIcon } = require('./services');
 
 // ---------- the hero ----------
 
@@ -30,11 +32,12 @@ const hero = () => `<section class="wrap hero" data-room="#3d5afe">
   </div>
 </section>`;
 
-// ---------- the tape: the industries we build for, running sideways ----------
+// ---------- the tape: what we build, each with its drawing, running sideways ----------
 
+const BAND = [['AI & ML', 'chip', 'lilac'], ['Web apps', 'browser', 'sky'], ['Mobile apps', 'phone', 'sun'], ['SaaS', 'layers', 'mint'], ['eCommerce', 'bag', 'tomato'], ['Cloud', 'cloud', 'sky'], ['Automation', 'loop', 'pink'], ['UI/UX', 'pen', 'lilac']];
 const tape = () => {
-  const run = C.industries.map(([name, , { color }]) => `<span>${esc(name)}<i style="background:${MARK[color]}"></i></span>`).join('');
-  return `<div class="tape" aria-hidden="true"><div class="tape__track" data-marquee="70">${run}${run}</div></div>`;
+  const run = BAND.map(([t, d, c]) => `<span>${esc(t)}${doodle(d, { color: c })}</span>`).join('');
+  return `<div class="tape" aria-hidden="true"><div class="tape__track" data-marquee="60">${run}${run}</div></div>`;
 };
 
 // ---------- how we work ----------
@@ -88,7 +91,7 @@ const work = () => `<section class="hwork" data-hscroll data-room="#ff6242">
     <div class="hwork__viewport">
       <div class="hwork__track" data-htrack>${C.projects.slice(0, SHOW).map((p, i) => `
         <a class="hcard" href="${caseHref(p)}" data-hcard data-name="${esc(p.name)} · ${esc(p.sector)}">
-          <div data-tilt="4">${reel(p, { size: 'wide', sizes: '(max-width: 860px) 84vw, 920px' })}</div>
+          <div data-tilt="4">${media(p, i, { size: 'wide', sizes: '(max-width: 860px) 84vw, 920px' })}</div>
           <div class="hcard__foot">
             <div><span class="meta">${pad(i + 1)} · ${esc(p.sector)}</span><h3>${esc(p.name)} <em class="quiet">— ${esc(p.brief)}</em></h3></div>
             <span class="round" aria-hidden="true">→</span>
@@ -142,6 +145,26 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
   </div>
 </section>`;
 
+// ---------- where we build, and with what ----------
+
+// Two rows running opposite ways: the industries (each with its drawing) and the tools we build with (their logos).
+// The first run of each row is the readable list; the copy that makes the loop seamless is hidden from readers.
+const reach = () => {
+  const seen = new Set();
+  const tools = C.tools.flatMap((t) => t.items).filter(([n, slug]) => techIcon(slug) && !seen.has(n) && seen.add(n));
+  const row = (cls, label, items, speed) => `<div class="reach__row ${cls}"><div class="reach__track" data-marquee="${speed}"${cls.endsWith('tools') ? ' data-marquee-dir="-1"' : ''}>${[0, 1].map((k) => `<ul class="reach__run"${k ? ' aria-hidden="true"' : ` aria-label="${label}"`}>${items}</ul>`).join('')}</div></div>`;
+  const inds = C.industries.map(([n, , a]) => `<li class="reach__chip">${doodle(a.doodle, { color: a.color })}${esc(n)}</li>`).join('');
+  const marks = tools.map(([n, slug]) => `<li class="reach__chip reach__chip--tool"><img src="${techIcon(slug)}" alt="" width="22" height="22" loading="lazy">${esc(n)}</li>`).join('');
+  return `<section class="reach" data-room="#62c1ff">
+  <div class="wrap sec-head">
+    <div>${kicker('Industries & stack')}<h2 class="display display--l" data-words>${words(`${C.industries.length} industries, <em>one production stack.</em>`)}</h2></div>
+    <p class="sec-head__lead">Where the products we build run, and what we build them with. <a class="ulink" href="./services#tools">The full stack →</a></p>
+  </div>
+  ${row('reach__row--ind', 'Industries we serve', inds, 90)}
+  ${row('reach__row--tools', 'What we build with', marks, 80)}
+</section>`;
+};
+
 // ---------- who we are ----------
 
 const team = C.metrics.find((m) => /team/i.test(m.label));
@@ -177,4 +200,4 @@ const start = () => `<section class="start-wrap" data-room="#ffcb45">
   </div>
 </section>`;
 
-module.exports = { hero, tape, howWeWork, work, services, studio, start };
+module.exports = { hero, tape, howWeWork, work, services, reach, studio, start };
