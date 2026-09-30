@@ -351,8 +351,8 @@
         // the ripples out of the stops the head has passed this lap
         stops.forEach((s, k) => {
           if (head < sIdx[k] || !motion) return;
-          const age = (head - sIdx[k]) / SPEED, [sx, sy] = cells[sIdx[k]], dist = Math.hypot(x - sx, y - sy) - age * 9;
-          if (age < 1.2 && Math.abs(dist) < 0.8) { a = Math.max(a, 0.85 * (1 - age / 1.2)); c = s.c; r = Math.max(r, 2); }
+          const age = (head - sIdx[k]) / SPEED, [sx, sy] = cells[sIdx[k]], dist = Math.hypot(x - sx, y - sy) - age * 7;
+          if (age < 0.7 && Math.abs(dist) < 0.7) { a = Math.max(a, 0.7 * (1 - age / 0.7)); c = s.c; r = Math.max(r, 1.8); }
         });
         if (ptr) { const dd = Math.hypot(cx - ptr.x, cy - ptr.y); if (dd < 80) { const k = 1 - dd / 80; a = Math.min(1, a + 0.4 * k); r += 0.8 * k; } }
         ctx.globalAlpha = a; ctx.fillStyle = c;
@@ -443,7 +443,7 @@
         // the hit: the pitfall shakes and is crossed out, its callout says so, the legend ticks it off
         pits[i].animate([{ transform: 'none' }, { transform: 'translateX(-3px) rotate(-6deg)' }, { transform: 'translateX(3px) rotate(5deg)' }, { transform: 'translateX(-2px)' }, { transform: 'none' }], { duration: 420, easing: 'ease-out' });
         pits[i].classList.add('is-out');
-        if (calls[i]) calls[i].animate([{ opacity: 0, transform: 'translate(-50%, calc(-100% + 8px)) scale(.9)' }, { opacity: 1, transform: 'translate(-50%, -100%)', offset: 0.14 }, { opacity: 1, transform: 'translate(-50%, -100%)', offset: 0.86 }, { opacity: 0, transform: 'translate(-50%, calc(-100% - 4px))' }], { duration: 1500, easing: E });
+        if (calls[i]) { const tx = calls[i].dataset.tx; calls[i].animate([{ opacity: 0, transform: `translate(${tx}, calc(-100% + 8px)) scale(.9)` }, { opacity: 1, transform: `translate(${tx}, -100%)`, offset: 0.14 }, { opacity: 1, transform: `translate(${tx}, -100%)`, offset: 0.86 }, { opacity: 0, transform: `translate(${tx}, calc(-100% - 4px))` }], { duration: 1500, easing: E }); }
         if (legs[i]) { legs[i].classList.add('is-out', 'is-hit'); setTimeout(() => legs[i].classList.remove('is-hit'), 900); }
         if (count) count.textContent = ++n;
         await wait(380);
@@ -572,7 +572,7 @@
   const qwords = quote ? $$('[data-qw]', quote) : [];
   const aura = $('[data-aura]');
   const rooms = $$('[data-room]');
-  const lights = $$('[data-light]'); // light panels the glass capsule firms up over
+  const lights = $$('[data-light], .case__outcome, .brief'); // light panels the glass capsule firms up over
   const span = (el) => { const r = el.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - innerHeight)); };
 
   // Each frame reads every position it needs first, then writes: a read after a write makes the browser lay the page

@@ -141,7 +141,7 @@ function maze({ cols, rows, seed, tone = 'night', pits: want = 6, wait = false, 
       ${lost ? '' : `<g class="maze__exit" data-end><svg x="${ex - 3 * k}" y="${ey - 5 * k}" width="${10 * k}" height="${10 * k}" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg><text x="${cols * u + u * 0.22}" y="${ey + u * 0.95}">${esc(C.journey.finish)}</text></g>`}
       <circle class="maze__head" data-head cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.17}"/>
     </svg>
-    ${list.map((p, i) => `<span class="maze__call" data-call="${i}" style="${pc(p.x, p.y - u * 0.42)}" aria-hidden="true">${esc(p.pf[1])}<em>ruled out</em></span>`).join('')}
+    ${list.map((p, i) => `<span class="maze__call" data-call="${i}" data-tx="${p.x < cols * u * 0.3 ? '-16px' : p.x > cols * u * 0.7 ? 'calc(-100% + 16px)' : '-50%'}" style="${pc(p.x, p.y - u * 0.42)};--tx:${p.x < cols * u * 0.3 ? '-16px' : p.x > cols * u * 0.7 ? 'calc(-100% + 16px)' : '-50%'}" aria-hidden="true">${esc(p.pf[1])}<em>ruled out</em></span>`).join('')}
     ${lost ? `<div class="maze__pin" style="${pc(m.last[0], m.last[1])}" aria-hidden="true"><div class="maze__end maze__end--lost" data-end>You are here ?</div></div>` : ''}
   </div>
   ${list.length ? `<div class="maze__legend">
