@@ -1,13 +1,14 @@
 // The Demaze maze: the brand name as a picture. A seeded maze (recursive backtracker) and its one way through,
-// computed at build time so the page ships plain SVG. site.js plays it on a loop: the walls draw in, the pitfalls
-// (content.js `journey.pitfalls`, each with its drawing) pop into the dead ends, the route is solved from the entrance to the exit and each
-// pitfall drops away as the route passes it, the exit lights up, then the walls erase and it starts over. With
-// reduced motion or no JS it is the finished drawing.
+// computed at build time so the page ships plain SVG. site.js plays it on a loop, the way a team finds a route: the
+// walls draw in, the pitfalls (content.js `journey.pitfalls`, each with its drawing) sit in dead ends off the route,
+// and the route is worked out from the entrance. At each pitfall's turning it tries the dead end, runs into the
+// pitfall, rules it out (the pitfall is crossed out, its callout says so, the legend under the maze ticks it off)
+// and backs out, leaving a dotted trace; then it carries on, reaches the exit and the chevron lights up. With reduced
+// motion or no JS it is the finished drawing: the route, the traces, every pitfall ruled out.
 'use strict';
 
 const C = require('../content');
 const { esc } = require('./helpers');
-const { doodle } = require('./doodles');
 
 // A small, fast seeded generator (mulberry32), so the same seed always draws the same maze.
 const rng = (a) => () => {
@@ -17,11 +18,11 @@ const rng = (a) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-// Carve a cols x rows maze from the top-left cell and find the way through. `toDead`: the route ends in the
-// deepest dead end instead of leaving by the right edge (the 404's "you are here"). Up to seven dead ends off the
-// route become pitfalls, each with `at`, how far along the route (0..1) it is passed. Label positions are returned
-// as percentages of the drawing, so the HTML labels sit on the SVG at any size.
-function carve(cols, rows, seed, u, toDead) {
+// Carve a cols x rows maze from the top-left cell (entered from above) and find the way through to the bottom-right
+// cell (left by the right edge). `toDead`: the route ends in the deepest dead end instead (the 404's "you are
+// here"). Up to `want` short dead-end branches off the route become pitfalls: each has its turning on the route
+// (`s`, how far along the route in user units) and the probe from there into the dead end.
+function carve(cols, rows, seed, u, want, toDead) {
   const r = rng(seed), N = cols * rows, W = [];
   for (let i = 0; i < N; i++) W.push({ n: 1, e: 1, s: 1, w: 1 });
   const seen = new Uint8Array(N), st = [0];
@@ -53,19 +54,28 @@ function carve(cols, rows, seed, u, toDead) {
   const path = [];
   for (let c = target; c >= 0; c = prev[c]) path.unshift(c);
   const onPath = new Map(path.map((c, i) => [c, i]));
-  W[0].w = 0;
+  W[0].n = 0;
   if (!toDead) W[N - 1].e = 0;
-  const cand = dead.filter((c) => !onPath.has(c) && c !== target).map((c) => ({ c, k: r() })).sort((a, b) => a.k - b.k);
+  const ctr = (c) => [(c % cols) * u + u / 2, ((c / cols) | 0) * u + u / 2];
+
+  // pitfalls: dead ends one to four cells off the route, spread out along it and across the maze
   const pits = [];
-  for (const { c } of cand) {
-    if (pits.length >= 7) break;
-    const x = c % cols, y = (c / cols) | 0;
-    if (x > cols - 3 && y < 1) continue;
-    if (pits.some((p) => Math.abs(p.cx - x) + Math.abs(p.cy - y) < 4)) continue;
-    let j = c;
-    while (!onPath.has(j)) j = prev[j];
-    pits.push({ cx: x, cy: y, x: x * u + u / 2, y: y * u + u / 2, at: onPath.get(j) / (path.length - 1) });
+  if (!toDead) {
+    const cand = dead.filter((c) => !onPath.has(c)).map((c) => {
+      const branch = [c];
+      let j = c;
+      while (!onPath.has(prev[j])) { j = prev[j]; branch.unshift(j); }
+      return { c, at: onPath.get(prev[j]), branch, k: r() };
+    }).filter((p) => p.branch.length <= 4 && p.at > 0).sort((a, b) => a.k - b.k);
+    for (const p of cand) {
+      if (pits.length >= want) break;
+      const x = p.c % cols, y = (p.c / cols) | 0;
+      if (pits.some((o) => Math.abs(o.x - x) + Math.abs(o.y - y) < 3 || Math.abs(o.at - p.at) < 2)) continue;
+      pits.push({ ...p, x, y });
+    }
+    pits.sort((a, b) => a.at - b.at);
   }
+
   // walls as short segments, sorted from the top-left corner outward so they draw in as a sweep
   const seg = [];
   for (let c = 0; c < N; c++) {
@@ -77,43 +87,68 @@ function carve(cols, rows, seed, u, toDead) {
   }
   seg.sort((a, b) => Math.hypot(a[0] + a[2], a[1] + a[3]) - Math.hypot(b[0] + b[2], b[1] + b[3]));
   const walls = seg.map((s) => `M${s[0] * u} ${s[1] * u}L${s[2] * u} ${s[3] * u}`).join('');
-  const pts = path.map((c) => [(c % cols) * u + u / 2, ((c / cols) | 0) * u + u / 2]);
-  let route = `M${-u * 0.9} ${u / 2}` + pts.map((p) => `L${p[0]} ${p[1]}`).join('');
-  if (!toDead) route += `L${cols * u + u * 0.9} ${pts[pts.length - 1][1]}`;
+
+  const pts = path.map(ctr);
   const last = pts[pts.length - 1];
-  const vx = -u * 1.6, vy = -u * 0.9, vw = cols * u + u * 3.4, vh = rows * u + u * 1.8;
-  const pc = (x, y) => [((x - vx) / vw * 100).toFixed(2) + '%', ((y - vy) / vh * 100).toFixed(2) + '%'];
-  const [ex, ey] = pc(toDead ? last[0] : cols * u + u * 0.9, last[1]);
-  const [sx, sy] = pc(-u * 0.9, u / 2);
-  return { walls, route, pits: pits.map((p) => { const [lx, ly] = pc(p.x, p.y); return { at: p.at, lx, ly }; }), ex, ey, sx, sy, vb: `${vx} ${vy} ${vw} ${vh}` };
+  const exit = [cols * u + u * 0.5, last[1]];
+  let route = `M${u / 2} ${-u * 0.85}` + pts.map((p) => `L${p[0]} ${p[1]}`).join('');
+  if (!toDead) route += `L${exit[0]} ${exit[1]}`;
+  // the route's length up to a cell on it: the lead-in from above, then one cell per step
+  const along = (i) => u * 1.35 + i * u;
+  const probes = pits.map((p) => {
+    const cells = [path[p.at], ...p.branch].map(ctr);
+    // stop at the drawing's edge, so the probe runs into the pitfall
+    const [a, b] = cells.slice(-2);
+    const d = [Math.sign(b[0] - a[0]), Math.sign(b[1] - a[1])];
+    cells[cells.length - 1] = [b[0] - d[0] * u * 0.3, b[1] - d[1] * u * 0.3];
+    return { d: 'M' + cells.map((q) => `${q[0]} ${q[1]}`).join('L'), s: along(p.at), x: ctr(p.c)[0], y: ctr(p.c)[1] };
+  });
+  return { walls, route, probes, pathLen: path.length, exit, last, vb: [-u * 0.7, -u * 1.45, cols * u + u * 2.75, rows * u + u * 2.1] };
 }
 
 // The brand's chevron (the logo's arrow), used as the exit flag, the curtain's mark and the footer's.
 const chevron = (cls = '') => `<svg${cls ? ` class="${cls}"` : ''} viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0L10 5L0 10L3 5Z"/></svg>`;
 
-// A maze as the page draws it: the SVG, the start label, the pitfalls and the end marker laid over it in HTML.
-// `tone`: 'night' (light walls, the glowing blue route), 'day' (ink on a coloured panel) or 'lost' (the 404: the
-// route runs into the deepest dead end, where "You are here" waits).
-function maze({ cols, rows, seed, tone = 'night', start = C.journey.start, label = '' }) {
+// A doodle's layers inside the maze's own SVG, as a nested <svg> (placed by x/y, never by a transform attribute, so
+// the drawing can be animated about its own centre).
+const icon = (name, x, y, size, color) => {
+  const { doodle } = require('./doodles');
+  return doodle(name, { color, attrs: `x="${+(x - size / 2).toFixed(1)}" y="${+(y - size / 2).toFixed(1)}" width="${size}" height="${size}"` });
+};
+
+// A maze as the page draws it. `tone`: 'night' (light walls, the blue route), 'day' (ink walls on a coloured panel,
+// the same blue route) or 'lost' (the 404: the route runs into the deepest dead end, where "You are here" waits).
+// `pits`: how many pitfalls it holds (and lists in the legend under it).
+function maze({ cols, rows, seed, tone = 'night', pits: want = 6, start = C.journey.start, label = '' }) {
   const lost = tone === 'lost';
-  const m = carve(cols, rows, seed, 44, lost);
-  const end = lost
-    ? '<div class="maze__end maze__end--lost" data-end>You are here ?</div>'
-    : `<div class="maze__end" data-end>${chevron('maze__flag')}<span>${esc(C.journey.finish)}</span></div>`;
-  const pits = lost ? [] : m.pits;
+  const u = 44;
+  const m = carve(cols, rows, seed, u, lost ? 0 : want, lost);
+  const [vx, vy, vw, vh] = m.vb;
+  const pc = (x, y) => `left:${((x - vx) / vw * 100).toFixed(2)}%;top:${((y - vy) / vh * 100).toFixed(2)}%`;
+  const list = m.probes.map((p, i) => ({ ...p, pf: C.journey.pitfalls[i % C.journey.pitfalls.length] }));
+  const k = u * 0.08; // chevron: 10 units wide, set with its notch on the route's end
+  const [ex, ey] = m.exit;
   return `<div class="maze maze--${tone}" data-maze>
-  <svg viewBox="${m.vb}"${label ? ` role="img" aria-label="${esc(label)}"` : ' aria-hidden="true"'}>
-    <path class="maze__walls" data-walls pathLength="1" d="${m.walls}"/>
-    <path class="maze__route" data-route d="${m.route}"/>
-    <circle class="maze__head" data-head cx="-40" cy="22" r="9"/>
-  </svg>
-  ${lost ? '' : `<span class="maze__start" style="left:${m.sx};top:${m.sy}" aria-hidden="true">${esc(start)} ↓</span>`}
-  ${pits.map((p, i) => {
-    const [art, name, color] = C.journey.pitfalls[i % C.journey.pitfalls.length];
-    return `<div class="maze__pin" style="left:${p.lx};top:${p.ly}" aria-hidden="true"><div class="maze__pit" data-pit data-at="${p.at.toFixed(4)}">${doodle(art, { color })}<span>${esc(name)}</span></div></div>`;
-  }).join('')}
-  <div class="maze__pin" style="left:${m.ex};top:${m.ey}" aria-hidden="true">${end}</div>
+  <div class="maze__board">
+    <svg viewBox="${m.vb.join(' ')}"${label ? ` role="img" aria-label="${esc(label)}"` : ' aria-hidden="true"'}>
+      <path class="maze__walls" data-walls pathLength="1" d="${m.walls}"/>
+      ${list.map((p) => `<path class="maze__trace" data-trace d="${p.d}"/>`).join('')}
+      <path class="maze__route" data-route d="${m.route}"/>
+      ${list.map((p) => `<path class="maze__probe" data-probe data-s="${p.s}" d="${p.d}"/>`).join('')}
+      ${list.map((p, i) => `<g class="maze__pit is-out" data-pit="${i}">${icon(p.pf[0], p.x, p.y, u * 0.66, p.pf[2])}<path class="maze__x" d="M${p.x + u * 0.12} ${p.y - u * 0.36}l${u * 0.22} ${u * 0.22}m0 ${-u * 0.22}l${-u * 0.22} ${u * 0.22}"/></g>`).join('')}
+      <circle class="maze__origin" cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.1}"/>
+      ${lost ? '' : `<text class="maze__start" x="${u * 0.9}" y="${-u * 0.42}">${esc(start)}</text>`}
+      ${lost ? '' : `<g class="maze__exit" data-end><svg x="${ex - 3 * k}" y="${ey - 5 * k}" width="${10 * k}" height="${10 * k}" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10L3 5Z"/></svg><text x="${cols * u + u * 0.22}" y="${ey + u * 0.95}">${esc(C.journey.finish)}</text></g>`}
+      <circle class="maze__head" data-head cx="${u / 2}" cy="${-u * 0.85}" r="${u * 0.17}"/>
+    </svg>
+    ${list.map((p, i) => `<span class="maze__call" data-call="${i}" style="${pc(p.x, p.y - u * 0.42)}" aria-hidden="true">${esc(p.pf[1])}<em>ruled out</em></span>`).join('')}
+    ${lost ? `<div class="maze__pin" style="${pc(m.last[0], m.last[1])}" aria-hidden="true"><div class="maze__end maze__end--lost" data-end>You are here ?</div></div>` : ''}
+  </div>
+  ${list.length ? `<div class="maze__legend">
+    <span class="maze__status" data-maze-status aria-hidden="true"><b data-maze-n>${list.length}</b> of ${list.length} ruled out</span>
+    <ul aria-label="Pitfalls ruled out on the way">${list.map((p, i) => `<li class="is-out" data-leg="${i}">${require('./doodles').doodle(p.pf[0], { color: p.pf[2] })}${esc(p.pf[1])}</li>`).join('')}</ul>
+  </div>` : ''}
 </div>`;
 }
 
-module.exports = { maze, chevron };
+module.exports = { maze, chevron, carve };

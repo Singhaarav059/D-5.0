@@ -64,12 +64,9 @@ const btn = (label, href, { tone = 'paper', size = '', extra = '', magnet = true
 // A small uppercase label over a section's headline; `art` ([doodle, colour]) puts a drawing before it.
 const kicker = (text, cls = '', art = null) => `<span class="kicker${cls ? ` ${cls}` : ''}">${art ? require('./doodles').doodle(art[0], { color: art[1], cls: 'kicker__dd' }) : ''}${esc(text)}</span>`;
 
-// The mark under the headline word in <mark>: a short route in the maze's own language (straight runs and turns),
-// drawn in by site.js once the headline has risen.
-const LOOP = '<svg class="loop" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path data-drawin data-delay="0.9" data-dur="900" pathLength="1" d="M3 40H62V76H138V34H197"/></svg>';
-
 // A headline whose words rise into place one by one (site.js, [data-words]). `html` is trusted HTML from the
-// templates or content.js: the words inside <em> are set in the quieter grey, a word in <mark> gets the loop.
+// templates or content.js: the words inside <em> are set in the quieter grey, a word in <mark> ends
+// on the route's head: its full stop is the blue dot the maze's route travels with (site.css .w-dot).
 const words = (html) => {
   const out = [];
   let quiet = false, mark = false;
@@ -80,7 +77,10 @@ const words = (html) => {
     if (tok === '<mark>') { mark = true; continue; }
     if (tok === '</mark>') { mark = false; continue; }
     const w = `<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${tok}</span></span>`;
-    out.push(mark ? `<span class="w-mark">${w}${LOOP}</span>` : w);
+    if (mark) {
+      const [, word, stop] = tok.match(/^(.*?)([.!?]?)$/);
+      out.push(`<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${word}${stop ? `<span class="w-dot">${stop}</span>` : ''}</span></span>`);
+    } else out.push(w);
   }
   return out.join(' ');
 };

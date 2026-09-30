@@ -259,68 +259,102 @@
     $$('.footer__route').forEach((svg) => svg.pauseAnimations && svg.pauseAnimations());
   }
 
-  /* ---------- the mazes: walls draw in, pitfalls pop in, the route is solved (each pitfall dropping away as it is
-     passed), the exit lights up; then the walls erase and it starts over. A maze off screen waits. ---------- */
+  /* ---------- the mazes: the walls draw in and the route is worked out from the entrance. At each pitfall's turning
+     the head tries the dead end, runs into the pitfall, rules it out (callout, cross, legend) and backs out leaving a
+     dotted trace, then carries on to the exit. Then the walls erase and it starts over. A maze off screen waits;
+     a maze with [data-maze-wait] first waits for its cue (home's start card: the route arriving from the studio). ---------- */
+  const tween = (ms, f, ease = (k) => k) => new Promise((res) => {
+    const t0 = performance.now();
+    const step = (t) => { const k = clamp((t - t0) / ms); f(ease(k)); if (k < 1) requestAnimationFrame(step); else res(); };
+    requestAnimationFrame(step);
+  });
+  const inOut = (k) => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
   $$('[data-maze]').forEach((mz) => safe(() => {
     const walls = $('[data-walls]', mz), route = $('[data-route]', mz), head = $('[data-head]', mz), end = $('[data-end]', mz);
-    const pits = $$('[data-pit]', mz);
+    const probes = $$('[data-probe]', mz), traces = $$('[data-trace]', mz), pits = $$('[data-pit]', mz);
+    const calls = $$('[data-call]', mz), legs = $$('[data-leg]', mz), status = $('[data-maze-status]', mz), count = $('[data-maze-n]', mz);
     const len = route.getTotalLength();
-    route.style.strokeDasharray = len;
-    const place = (t) => { const p = route.getPointAtLength(len * t); head.setAttribute('cx', p.x); head.setAttribute('cy', p.y); };
-    if (!motion) { route.style.strokeDashoffset = 0; place(1); head.style.opacity = 1; pits.forEach((p) => { p.style.opacity = 0.3; }); return; }
+    const plen = probes.map((p) => p.getTotalLength());
+    const at = (path, l) => { const p = path.getPointAtLength(l); head.setAttribute('cx', p.x); head.setAttribute('cy', p.y); };
+    if (!motion) { at(route, len); return; }
     mz.classList.add('is-live');
+    route.style.strokeDasharray = len;
+    probes.forEach((p, i) => { p.style.strokeDasharray = plen[i]; });
     let seen = false, wake = null;
-    new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen && wake) { wake(); wake = null; } }).observe(mz);
+    new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen && wake) { wake(); wake = null; } }, { threshold: 0.35 }).observe(mz);
     const onScreen = () => (seen ? Promise.resolve() : new Promise((r) => { wake = r; }));
+    const cue = mz.hasAttribute('data-maze-wait') ? new Promise((r) => mz.addEventListener('maze:go', r, { once: true })) : Promise.resolve();
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const V = 0.42; // user units per millisecond
+    const reset = () => {
+      [walls, route, head, end, ...pits, ...traces, ...calls].forEach((el) => el && el.getAnimations().forEach((a) => a.cancel()));
+      route.style.strokeDashoffset = len; route.style.opacity = 1;
+      probes.forEach((p, i) => { p.style.strokeDashoffset = plen[i]; p.style.opacity = 0; });
+      traces.forEach((t) => { t.style.opacity = 0; });
+      pits.forEach((p) => p.classList.remove('is-out'));
+      legs.forEach((l) => l.classList.remove('is-out', 'is-hit'));
+      if (status) status.classList.remove('is-done');
+      if (count) count.textContent = 0;
+      if (end) end.style.opacity = 0;
+      head.style.opacity = 0; at(route, 0);
+    };
     const run = async () => {
       await onScreen();
-      route.style.strokeDashoffset = len; route.style.opacity = 1; head.style.opacity = 0; place(0);
-      [route, head, walls, end, ...pits].forEach((el) => el && el.getAnimations().forEach((a) => a.cancel()));
-      walls.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 2400, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
-      pits.forEach((p, i) => p.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 600, delay: 900 + i * 160, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'both' }));
-      await wait(2000);
-      head.animate([{ opacity: 0, transform: 'scale(0)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 300, fill: 'forwards' });
-      const passed = new Set(), D = 4200, t0 = performance.now();
-      await new Promise((res) => {
-        const step = (t) => {
-          const k = clamp((t - t0) / D), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-          route.style.strokeDashoffset = len * (1 - e);
-          place(e);
-          pits.forEach((p, i) => {
-            if (passed.has(i) || e < +p.dataset.at) return;
-            passed.add(i);
-            p.getAnimations().forEach((a) => a.cancel());
-            p.animate([{ opacity: 1, transform: 'scale(1.25)' }, { opacity: 0.22, transform: 'scale(.85) translateY(6px)' }], { duration: 700, easing: E, fill: 'forwards' });
-          });
-          if (k < 1) requestAnimationFrame(step); else res();
-        };
-        requestAnimationFrame(step);
-      });
-      if (end) end.animate([{ opacity: 0, transform: 'scale(.4) rotate(-20deg)' }, { opacity: 1, transform: 'scale(1) rotate(0deg)' }], { duration: 700, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
-      head.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.8)' }, { transform: 'scale(1)' }], { duration: 700, easing: E });
-      await wait(5200);
-      [route, head].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 700, fill: 'forwards' }));
-      if (end) end.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' });
-      pits.forEach((p) => p.animate([{ opacity: 0.22 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }));
-      walls.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -1 }], { duration: 1400, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      reset();
+      walls.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 1600, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      pits.forEach((p, i) => p.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 500, delay: 700 + i * 110, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'both' }));
       await wait(1500);
+      head.style.opacity = 1;
+      head.animate([{ transform: 'scale(0)' }, { transform: 'scale(1)' }], { duration: 300, easing: 'cubic-bezier(.34,1.56,.64,1)' });
+      await wait(250);
+      let pos = 0, n = 0;
+      const along = (to) => { const from = pos; pos = to; return tween(Math.max(120, (to - from) / V), (k) => { const l = from + (to - from) * k; route.style.strokeDashoffset = len - l; at(route, l); }, inOut); };
+      for (let i = 0; i < probes.length; i++) {
+        const pr = probes[i], pl = plen[i];
+        await along(+pr.dataset.s);
+        pr.style.opacity = 1;
+        await tween(pl / (V * 0.8), (k) => { pr.style.strokeDashoffset = pl * (1 - k); at(pr, pl * k); }, inOut);
+        // the hit: the pitfall shakes and is crossed out, its callout says so, the legend ticks it off
+        pits[i].animate([{ transform: 'none' }, { transform: 'translateX(-3px) rotate(-6deg)' }, { transform: 'translateX(3px) rotate(5deg)' }, { transform: 'translateX(-2px)' }, { transform: 'none' }], { duration: 420, easing: 'ease-out' });
+        pits[i].classList.add('is-out');
+        if (calls[i]) calls[i].animate([{ opacity: 0, transform: 'translate(-50%, calc(-100% + 8px)) scale(.9)' }, { opacity: 1, transform: 'translate(-50%, -100%)', offset: 0.14 }, { opacity: 1, transform: 'translate(-50%, -100%)', offset: 0.86 }, { opacity: 0, transform: 'translate(-50%, calc(-100% - 4px))' }], { duration: 1500, easing: E });
+        if (legs[i]) { legs[i].classList.add('is-out', 'is-hit'); setTimeout(() => legs[i].classList.remove('is-hit'), 900); }
+        if (count) count.textContent = ++n;
+        await wait(380);
+        traces[i].animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, fill: 'forwards' });
+        await tween(pl / V, (k) => { pr.style.strokeDashoffset = pl * k; at(pr, pl * (1 - k)); }, inOut);
+        pr.style.opacity = 0;
+      }
+      await along(len);
+      if (end) {
+        end.style.opacity = '';
+        end.animate([{ opacity: 0, transform: 'translateX(-10px) scale(.5)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
+      }
+      head.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.7)' }, { transform: 'scale(1)' }], { duration: 600, easing: E });
+      if (status) status.classList.add('is-done');
+      await wait(4800);
+      [route, head, ...traces].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600, fill: 'forwards' }));
+      if (end) end.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' });
+      pits.forEach((p) => p.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }));
+      walls.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -1 }], { duration: 1200, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      await wait(1300);
       run();
     };
-    run();
+    reset();
+    cue.then(run);
   }));
 
   /* ---------- services: the list picks the demo (scroll does it while pinned; a click scrolls there) ---------- */
   const svcPin = $('[data-svcpin]');
   const svcItems = $$('[data-svc]');
+  const sbars = $$('[data-sbar]');
   let svcOn = 0;
   const setSvc = (i) => {
     if (i === svcOn && svcItems[i] && svcItems[i].classList.contains('is-on')) return;
     svcOn = i;
     svcItems.forEach((b, j) => { b.classList.toggle('is-on', j === i); b.setAttribute('aria-pressed', j === i); });
     $$('[data-svc-panel]').forEach((p) => p.classList.toggle('is-on', +p.dataset.svcPanel === i));
-    const bar = $('[data-sbar]');
-    if (bar && svcItems[i]) bar.style.setProperty('--c', svcItems[i].style.getPropertyValue('--c'));
+    if (svcPin && svcItems[i]) svcPin.style.setProperty('--room', svcItems[i].dataset.room);
     $$(`.svc__demo[data-svc-panel] [data-cycle]`).forEach((h) => (+h.closest('[data-svc-panel]').dataset.svcPanel === i ? restart(h) : sync(h)));
   };
   svcItems.forEach((b, i) => b.addEventListener('click', () => {
@@ -334,9 +368,35 @@
   const progress = $('[data-progress]');
   const journey = $('[data-journey]');
   const stages = $$('.jstage');
-  const jroute = $('[data-jroute]'), jdot = $('[data-jdot]'), jbar = $('[data-jbar]'), jnum = $('[data-stage-num]');
-  const jlen = jroute ? jroute.getTotalLength() : 0;
-  if (jroute) jroute.style.strokeDasharray = jlen;
+  const jroute = $('[data-jroute]'), jdot = $('[data-jdot]'), jnum = $('[data-stage-num]');
+  const jsvg = $('[data-jsvg]'), jtrack = $('[data-jtrack]'), jstops = $$('[data-jstop]');
+  // The route is drawn in the SVG's own pixels, one stop above each stage's label (the labels sit in four equal
+  // columns), in straight runs with rounded steps between; jat holds each stop's distance along it.
+  let jlen = 0, jat = [];
+  const buildRoute = () => {
+    if (!jsvg || !jsvg.clientWidth) return;
+    const W = jsvg.clientWidth, H = jsvg.clientHeight, r = Math.min(12, H / 4);
+    const ys = [0.72, 0.28, 0.72, 0.28].map((f) => Math.round(H * f));
+    const xs = jstops.map((_, i) => Math.round((i * W) / 4 + 5));
+    let d = `M${xs[0]} ${ys[0]}`;
+    for (let i = 0; i < 4; i++) {
+      const x1 = xs[i], y1 = ys[i], x2 = i < 3 ? xs[i + 1] : W, y2 = i < 3 ? ys[i + 1] : ys[i];
+      if (y2 === y1) { d += `H${x2}`; continue; }
+      const m = Math.round((x1 + x2) / 2), sg = Math.sign(y2 - y1);
+      d += `H${m - r}Q${m} ${y1} ${m} ${y1 + sg * r}V${y2 - sg * r}Q${m} ${y2} ${m + r} ${y2}H${x2}`;
+    }
+    jsvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    jroute.setAttribute('d', d);
+    jtrack.setAttribute('d', d);
+    jlen = jroute.getTotalLength();
+    jroute.style.strokeDasharray = `${jlen} ${jlen + 1}`;
+    // each stop's distance along the route: walk it and take the nearest point to the stop
+    jat = xs.map((x, i) => { let best = 0, bd = Infinity; for (let l = 0; l <= jlen; l += 2) { const p = jroute.getPointAtLength(l), dd = Math.hypot(p.x - x, p.y - ys[i]); if (dd < bd) { bd = dd; best = l; } } return best; });
+    jat.push(jlen);
+    jstops.forEach((c, i) => { c.setAttribute('cx', xs[i]); c.setAttribute('cy', ys[i]); });
+  };
+  safe(buildRoute);
+  if (jsvg && 'ResizeObserver' in window) new ResizeObserver(() => { safe(buildRoute); queue(); }).observe(jsvg);
   let stageOn = -1;
   const setStage = (s) => {
     if (s === stageOn) return;
@@ -391,14 +451,16 @@
     if (journey && stages.length) {
       if (jp === null) setStage(0);
       else {
-        if (jroute) {
-          jroute.style.strokeDashoffset = jlen * (1 - jp);
-          if (jdot) { const pt = jroute.getPointAtLength(jlen * jp); jdot.style.left = pt.x / 10 + '%'; jdot.style.top = pt.y / 0.8 + '%'; }
-        }
         const st = Math.min(3, Math.floor(jp * 4 + 0.0001));
-        setStage(st);
         const local = clamp(jp * 4 - st);
-        if (jbar) jbar.style.transform = `scaleX(${local})`;
+        if (jroute && jlen) {
+          // the head reaches each stage's stop as that stage begins, and the route's end as the section ends
+          const l = jat[st] + (jat[st + 1] - jat[st]) * local;
+          jroute.style.strokeDashoffset = jlen - l;
+          jstops.forEach((c, i) => c.classList.toggle('is-lit', l >= jat[i] - 1));
+          if (jdot) { const pt = jroute.getPointAtLength(l); jdot.style.transform = `translate(${pt.x}px, ${pt.y}px)`; }
+        }
+        setStage(st);
         $$('li[data-step]', stages[st]).forEach((li) => li.classList.toggle('is-on', local > (+li.dataset.step + 0.6) / (+li.dataset.n + 0.6)));
       }
     }
@@ -425,8 +487,7 @@
     if (sp !== null) {
       const i = Math.min(3, Math.floor(sp * 4 + 0.0001));
       setSvc(i);
-      const bar = $('[data-sbar]');
-      if (bar) bar.style.transform = `scaleX(${clamp(sp * 4 - i)})`;
+      sbars.forEach((b, j) => { b.style.transform = `scaleX(${j < i ? 1 : j > i ? 0 : clamp(sp * 4 - i).toFixed(3)})`; });
     }
 
     if (qr) {
