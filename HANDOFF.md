@@ -1,6 +1,6 @@
 # Handoff: the D-5.0 redesign (from the Claude Design prototype)
 
-Branch `design/d5-redesign`, off `design/paper-and-ink`. `npm run test:all` passes (17/17). Nothing is on `main`:
+Branch `design/d5-redesign`, off `design/paper-and-ink`. `npm run test:all` passes (18/18). Nothing is on `main`:
 merging deploys the live site.
 
 ## What was asked
@@ -38,6 +38,27 @@ demo scenes but make them clearly illustrative (generic labels, an "Illustrative
 - **Tests**: `html.test.js` checks for `site.js` (not GSAP) and that every project plays its reel. The old `--shot`
   backdrop check was removed along with the backdrops. `contact-api.test.js` covers `stage` and `company`.
 
+## Second round (feedback on the first build)
+
+- **Scenes and demos filled in**: the wireframe is labelled (logo, photo, model, value, action) and becomes a finished
+  valuation screen with a car and a price range; every chart is SVG with axes, gridlines, values and a legend (weekly
+  users, the demand forecast with its range, sign-ups, latency before and after); checkout, dashboard and cloud show
+  real rows. All figures are sample data, marked "Illustrative · sample data".
+- **Clipped letters fixed**: the word masks of the rising headlines now leave room for glyphs that reach past them
+  (the "?" in "Got a maze?", descenders, tight tracking) on every page.
+- **One-screen heroes**: home, the subpages and the case studies size their headline and picture to the screen's
+  height; the case study puts its reel beside the title and brief.
+- **The old reels are back** (`reel.js`, `reel-kit.js`, `reel3d.js`, GSAP, `img/reel`, `reels` in content) on the
+  projects grid, home's selected work and every case study.
+- **Subpage heroes have graphics**: projects fans three real screens, services shows the four services as drawn
+  tiles, about has the "de·maze" definition over a maze that solves itself, each with doodles around it.
+- **Services page**: the four services are cards that stack as you scroll, each with its demo, capabilities and work;
+  the tools map is back (the stack of layers wired to its disciplines and their logos); the industries are drawn
+  tiles again, moving on by themselves while on screen.
+- **About**: "What drives us" has its values route again; "Why Demaze" is three drawn cards on a sky-blue room.
+- **Home**: the tape shows what we build with its drawings; the industries-and-stack rows (drawings and logos) are
+  back; the maze's pitfalls are drawn.
+
 ## Checked
 
 Every page at 1440, 768 and 390px in headless Chromium: no horizontal overflow and no page errors. The only console
@@ -54,8 +75,6 @@ Also checked:
 
 - **Real-device check**: the pinned sections and the three 3D scenes have only been seen in headless Chromium with a
   software renderer. Check the scroll on a mid-range phone and in Safari.
-- **Old reel content**: each project's hand-picked reel (in the old `reels` block) was replaced by the design's
-  story card, which is built from `features`. The old block is in git history if any of it should come back.
 
 ## Blocked on the owner
 

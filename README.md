@@ -36,10 +36,13 @@ src/
                          print and his quote
     home.js              home: the hero and its maze, the industries tape, "How we work" (pinned), the selected work
                          (sliding sideways), what we build (pinned, with the demos), who we are, start a project
-    projects.js          the story card every project plays (its reel) and the projects grid with its filter
+    projects.js          the frame each project's motion reel plays in, and the projects grid with its filter
     case.js              the case study pages (/projects/<case>), one per project
     services.js, about.js, contact.js   the sections of those pages
-    scenes.js            the looping scenes: one per "How we work" stage and one demo per service (animated by site.js)
+    scenes.js            the looping scenes: one per "How we work" stage and one demo per service, with SVG charts
+                         (sample data, marked illustrative; animated by site.js)
+    doodles.js           hand-drawn doodles (ink over a blob of marker colour): the maze's pitfalls, the services,
+                         industries and values, and the drawings around the page heads
     maze.js              the maze itself: a seeded maze, its route and its pitfalls, drawn as SVG at build time
     schema.js            structured data (schema.org JSON-LD) for search engines, from content.js
   build.js             Renders pages.js into public/*.html (case studies in public/projects/), fingerprints asset URLs,
@@ -56,7 +59,11 @@ public/                Everything a visitor can load (the only folder the server
     site.css           All styles
     site.js            All interactions and motion (Web Animations API, no libraries): the page curtain, reveals,
                        the looping scenes, demos and reels, the mazes, the pinned sections, magnetic buttons and
-                       tilting cards, the filter, tabs and industries, the brief, and loading the crew and the studio
+                       tilting cards, the filter, the tools map's wires, tabs, the industries' own pace, the stacking
+                       service cards, the brief, and loading the crew and the studio
+    reel.js            Project reels: the short film on each project card (projects, home, case studies; runs on GSAP)
+    reel-kit.js        The reels' scene types and illustrations
+    reel3d.js          The reels' 3D product heroes (Three.js, loaded when a reel nears the screen)
     visit3d.js         Contact page office map as a Three.js diorama (SVG fallback in the page)
     crew3d.js          The Demaze crew: 3D plush characters (Three.js, shell-texture fur) working an idea through
                        Idea, Design, Build and Launch in a row in the crew band (home's "start a project", contact), throwing it on from one to the next
@@ -68,8 +75,10 @@ public/                Everything a visitor can load (the only folder the server
     boot.js            Sets motion / reduced-motion classes before first paint; keeps the curtain over a page arrived at
                        through it until site.js lifts it
     fonts/, fonts.css  Self-hosted fonts (Bricolage Grotesque, Figtree)
-    vendor/            Third-party libraries (Three.js)
+    vendor/            Third-party libraries (GSAP for the reels, Three.js)
     img/work/          Project screens + founder photo (WebP + PNG/JPEG fallback) and manifest.json
+    img/tech/          Technology logos used in the tools map and on home
+    img/reel/          The reels' illustrations
     img/logo.png, og.png  Brand mark and the social share image (1200x630)
     img/maze-tile*.svg     The background: a seamless maze tile under every page (scripts/maze-tile.js); site.css sets
                            how strongly it shows
@@ -91,7 +100,8 @@ test/                  Automated checks (node --test)
 | The home hero and its maze | `src/templates/home.js` (`hero`), `maze.js` (the maze and its pitfalls), `C.hero` and `journey.pitfalls` in `content.js`, `site.js` ("the mazes") |
 | "How we work" | `src/templates/home.js` (`howWeWork`), the scenes in `scenes.js`, each stage's `steps` in `content.js` `process`, `site.css` ("how we work", "scenes") |
 | The service demos | `src/templates/scenes.js` (markup and timings), `site.css` ("the demos") |
-| Project reels (the story on each card) | `src/templates/projects.js` (`reel`: one chapter per feature), `site.css` ("reels") |
+| Project reels | `reels` in `src/content.js` (each project's film), `public/assets/reel.js` and `reel-kit.js`, `site.css` ("project reels", at the end) |
+| The tools map | `tools` and `stack` in `src/content.js`, logos in `public/assets/img/tech/`, `src/templates/services.js` (`tools`) |
 | The crew | `public/assets/crew3d.js` (the characters, their fur and faces, the journey and its timing, when they play), `site.css` ("the crew") |
 | The page tone, the background and each section's colour | the tokens at the top of `site.css`; each section's `data-room` colour, which the background aura takes while it is in view |
 | An industry's colour or linked projects | `industries` in `src/content.js` |
@@ -117,9 +127,17 @@ test/                  Automated checks (node --test)
 3. Add the project to `projects` in `src/content.js` with `image: '<slug>'`, a short `name`, a `sector` label and a
    one-line `brief` and `outcome` (they open and close the case study). Add the slug to the `work` list of each
    service it shows.
-4. Its reel is built from its `features` (one chapter each). Build, then check its card on the projects page.
+4. Give it a reel: an entry under `reels` in `src/content.js`, keyed by the slug. Pick an opening (`open`), a `look`
+   and a `chrome` that its neighbours on the projects page don't use, a 3D or car `hero`, and three or four scenes
+   from `public/assets/reel-kit.js` that fit the product (the comment above `reels` has the rules). Build, then play
+   it on the projects page and check every chapter lands cleanly.
 
 The build stops with `missing image <slug>` if the manifest entry is missing.
+
+### Adding a technology logo
+
+Save an SVG (preferred) or PNG as `public/assets/img/tech/<name>.svg` and reference `<name>` in the `tools`
+list in `src/content.js`. Items without a logo show a two-letter monogram.
 
 ### Social share image
 
