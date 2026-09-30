@@ -1,60 +1,46 @@
-// Projects page: open cards; each opens a dialog with the full case (content lives in a <template>). Every card and
-// the dialog play the project's motion reel (public/assets/reel.js; its script is `reels` in content.js). The case
-// reads as a short story: the brief, what we built (with the real product screens), the outcome.
+// Projects: the story card every project plays wherever it appears (home's selected work, the projects grid, its case
+// study), and the projects page grid with its filter.
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, vt, icon, pic, shot, btn } = require('./helpers');
+const { esc, pad, caseHref, pic, SVC_COLOR } = require('./helpers');
 
-const reelAttr = (p, i) => (C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : '');
+// Seconds each chapter (one per feature) stays on screen.
+const CHAPTER = 2.6;
 
-// The real screens sit under "What we built"; their alt is empty there because the media column's copy of the
-// image (under the reel) already carries it.
-const caseBody = (p, i) => `<div class="pdlg__body">
-          <p class="pdlg__meta"><span>${pad(i + 1)} / ${pad(C.projects.length)}</span>${esc(p.sector)}</p>
-          <h2 id="pdlg-title-${i}">${esc(p.title)}</h2>
-          <section class="pdlg__part"><h3>The brief</h3><p>${esc(p.brief)}</p></section>
-          <section class="pdlg__part"><h3>What we built</h3>
-            <figure class="pdlg__shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '(max-width: 1024px) 92vw, 500px' })}</figure>
-            ${p.description ? `<p>${esc(p.description)}</p>` : ''}<ul class="checks checks--list">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul></section>
-          <section class="pdlg__part"><h3>The outcome</h3><p>${esc(p.outcome)}</p></section>
-          <div class="pdlg__cta">${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}<a class="link-arrow" href="${caseHref(p)}">Full case study ${icon.arrow}</a></div>
-        </div>`;
+// The services a project drew on, as ids ("ai web").
+const servicesOf = (p) => C.services.filter((s) => s.work.includes(p.image)).map((s) => s.id);
 
-// Filters: the services each project shows (content.js `services[].work`). ?filter=<service id> preselects one.
-const servicesOf = (p) => C.services.filter((s) => s.work.includes(p.image)).map((s) => s.id).join(' ');
-const filters = () => `<div class="pfilter" role="group" aria-label="Show projects by service" data-seg data-reveal>
-      <button type="button" aria-pressed="true" data-filter="all">All <span>${C.projects.length}</span></button>${C.services.map((s) => `
-      <button type="button" aria-pressed="false" data-filter="${s.id}">${esc(s.title)} <span>${s.work.length}</span></button>`).join('')}
-    </div>`;
+// A project's reel: its screens on the project's pastel, slowly zooming, with story bars along the top and one
+// chapter per feature rising in at the bottom (site.js plays it; [data-cycle] is the whole story's length).
+// `size`: 'card' (grids), 'wide' (home's selected work) or 'hero' (the case study).
+const reel = (p, { size = 'card', sizes = '(max-width: 860px) 92vw, 620px', eager = false } = {}) => {
+  const n = p.features.length;
+  const ch = p.features.map((f, j) => ({ label: f, n: pad(j + 1), d: (j * CHAPTER + 0.05).toFixed(2), e: ((j + 1) * CHAPTER).toFixed(2) }));
+  return `<div class="reel reel--${size}" data-cycle="${(n * CHAPTER).toFixed(1)}" style="--tint:${p.tint}">
+  ${pic(p.image, `${p.title}, product screens`, { sizes, cls: 'reel__img', attrs: `${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" data-kf="zoom"` })}
+  <div class="reel__bars" aria-hidden="true">${ch.map((c) => `<span><i data-kf="bar" data-d="${c.d}" data-e="${c.e}"></i></span>`).join('')}</div>
+  <div class="reel__chaps" aria-hidden="true">${ch.map((c) => `<div class="reel__chap" data-kf="chap" data-d="${c.d}" data-e="${c.e}"><b>${c.n}</b><span>${esc(c.label)}</span></div>`).join('')}</div>
+</div>`;
+};
 
-// Each card is an anchor target (#<image key>): opening that link opens the case (site.js). The title links to the
-// case study page; a plain click opens the dialog instead (a new-tab click, or no JS, follows the link).
-const projectsGrid = () => `<section class="section projects">
-  <div class="wrap">
-    ${filters()}
-    <div class="pgrid" data-pgrid>${C.projects.map((p, i) => `<article class="pcard${i === 0 ? ' pcard--wide' : ''}" id="${p.image}" style="--tint:${p.tint};${shot(p.image)};view-transition-name:pcard-${i}" data-services="${servicesOf(p)}" data-reveal>
-      <figure class="pcard__media" style="${vt(p, 'media')}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, project preview`, { sizes: '(max-width: 560px) 92vw, (max-width: 1024px) 46vw, 400px' })}</figure>
-      <div class="pcard__body">
-        <p class="pcard__meta"><span class="pcard__num">${pad(i + 1)}</span>${esc(p.sector)}</p>
-        <h2 style="${vt(p, 'title')}"><a class="pcard__btn" href="${caseHref(p)}" data-proj="${i}" aria-haspopup="dialog">${esc(p.title)}</a></h2>
-        <p>${esc(p.description || p.brief)}</p>
-        <span class="pcard__more">View project ${icon.arrow}</span>
-      </div>
-      <template data-proj-tpl="${i}">
-        <figure class="pdlg__media" style="--tint:${p.tint};${shot(p.image)}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 820px' })}</figure>
-        ${caseBody(p, i)}
-      </template>
-    </article>`).join('')}</div>
+// A project in the grid: its reel, then its number, sector, title and brief. The whole card opens the case study.
+const projectCard = (p, i) => `<a class="pcard" href="${caseHref(p)}" data-svcs="${servicesOf(p).join(' ')}" data-reveal>
+  <div class="pcard__media" data-tilt="5">${reel(p)}</div>
+  <div class="pcard__foot">
+    <div><span class="meta">${pad(i + 1)} · ${esc(p.sector)}</span><h3>${esc(p.title)}</h3><p>${esc(p.brief)}</p></div>
+    <span class="round round--line" aria-hidden="true">→</span>
   </div>
-  <dialog class="pdlg" aria-label="Project details" data-pdlg data-lenis-prevent>
-    <div class="pdlg__bar">
-      <button type="button" class="pdlg__nav" aria-label="Previous project" data-pdlg-step="-1">${icon.arrow}</button>
-      <button type="button" class="pdlg__nav" aria-label="Next project" data-pdlg-step="1">${icon.arrow}</button>
-      <button type="button" class="pdlg__close" aria-label="Close" data-pdlg-close>${icon.plus}</button>
-    </div>
-    <div class="pdlg__inner" data-pdlg-body></div>
-  </dialog>
+</a>`;
+
+// The filter: all work, or the projects of one service (site.js shows and hides the cards).
+const projectsGrid = () => `<section class="wrap projects" data-room="#ff6242">
+  <div class="filter" role="toolbar" aria-label="Filter projects">
+    ${[{ id: 'all', title: 'All work', n: C.projects.length }, ...C.services.map((s) => ({ id: s.id, title: s.title, n: s.work.length }))]
+      .map((f, i) => `<button type="button" class="filter__btn" data-filter="${f.id}" aria-pressed="${i === 0}"${f.id === 'all' ? '' : ` style="--c:${SVC_COLOR[f.id]}"`}>${esc(f.title)}<small>${f.n}</small></button>`).join('')}
+  </div>
+  <p class="sr-only" role="status" data-filter-status></p>
+  <div class="projects__grid">${C.projects.map((p, i) => projectCard(p, i)).join('')}</div>
 </section>`;
 
-module.exports = { projectsGrid, reelAttr, servicesOf };
+module.exports = { reel, projectsGrid, servicesOf };

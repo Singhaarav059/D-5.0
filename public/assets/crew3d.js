@@ -1,6 +1,6 @@
 // The Demaze crew: plush characters drawn with Three.js on one canvas (with their route drawn as SVG under it), in
-// the crew band of the contact block ([data-crew]). ambient.js imports this module after the page has loaded (never
-// on Save-Data) and calls start().
+// the crew band ([data-crew]: home's "start a project" panel and the contact page). site.js imports this module after
+// the page has loaded (never on Save-Data) and calls start().
 //
 // Each character is a little plush: cream-to-marker-coloured fur (shell texturing: every furry part is drawn as a
 // stack of shells, one GPU instance each, and a fragment shader keeps only the strands, hashed from 3D cells on the

@@ -1,268 +1,525 @@
-// Demaze — interactions + motion. GSAP/ScrollTrigger/Lenis are optional: without them
-// (or with reduced motion) every element is already in its final, visible state.
+/* Demaze: every interaction and all the motion, with the Web Animations API (no libraries).
+
+   Contents
+     the curtain between pages · nav (pill, progress, phone menu) · reveals (fade-ups, rising words, counters,
+     drawn lines) · loops (the scenes, demos and reels: [data-cycle] hosts playing their [data-kf] parts while on
+     screen) · fitting scenes to their frames · the mazes · scroll (how we work, selected work, services, the quote,
+     the aura) · pointer (magnetic buttons, tilting cards) · services, projects filter, tools tabs, industries ·
+     the brief (contact form) · the 3D crew and studio
+
+   With reduced motion (html.rm, boot.js) nothing loops or moves with the scroll: the pinned sections lay out flat
+   by CSS only where the screen is small, so on large screens they still switch as you scroll, without transitions. */
 (() => {
+  'use strict';
   const root = document.documentElement;
-  const motion = root.classList.contains('motion') && window.gsap && window.ScrollTrigger;
+  const motion = root.classList.contains('motion');
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const E = 'cubic-bezier(.22,1,.36,1)';
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const pad = (n) => String(n).padStart(2, '0');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const flatJourney = matchMedia('(max-width: 819px), (max-height: 719px)');
+  const flatPins = matchMedia('(max-width: 819px), (max-height: 559px)');
+  const safe = (f) => { try { f(); } catch (e) { console.warn(e); } };
 
-  // ---------- UI that works regardless of motion ----------
-  // Card to case study: a project's image and title share transition names across pages (helpers.js `vt`). Leaving a
-  // page, only the destination's pair keeps its names, so the browser grows that one card into the page and every
-  // other named element simply goes with the page (and costs nothing). Back from the cache, the names return.
-  addEventListener('pageswap', (e) => {
-    if (!e.viewTransition || !e.activation) return;
-    const key = new URL(e.activation.entry.url).pathname.match(/^\/projects\/([\w-]+)/)?.[1];
-    $$('[style*="view-transition-name"]').forEach((el) => {
-      const name = el.style.viewTransitionName;
-      if (name === `media-${key}` || name === `title-${key}`) return;
-      if (!el.dataset.vtName) el.dataset.vtName = name;
-      el.style.viewTransitionName = 'none';
-    });
-  });
-  addEventListener('pageshow', (e) => {
-    if (!e.persisted) return;
-    $$('.pdlg [style*="view-transition-name"]').forEach((el) => { el.style.viewTransitionName = ''; }); // (the dialog lends them)
-    $$('[data-vt-name]').forEach((el) => { el.style.viewTransitionName = el.dataset.vtName; delete el.dataset.vtName; });
-  });
-
-  // Long lists fold on phones (services' "What's included"); they stay open on wider screens.
-  if (matchMedia('(max-width: 860px)').matches) $$('[data-fold]').forEach((d) => { d.open = false; });
-
-  // Loops only run in the part of the page you can see: sections off screen are marked idle (site.css pauses them).
-  if ('IntersectionObserver' in window) {
-    const idle = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-idle', !e.isIntersecting)), { rootMargin: '120px 0px' });
-    $$('main > *, body > footer').forEach((el) => idle.observe(el));
-  }
-
-  const nav = $('[data-nav]');
-  const toggle = $('.nav__toggle');
-  const menu = $('#menu');
-  const scrim = $('[data-nav-scrim]');
-  let lenis = null;
-  const setMenu = (open) => {
-    toggle.setAttribute('aria-expanded', open);
-    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    menu.hidden = scrim.hidden = !open;
-    root.classList.toggle('menu-open', open);
-    if (lenis) open ? lenis.stop() : lenis.start();
+  /* ---------- the curtain: a blue sheet sweeps up over the page with the next page's name, and off the next ---------- */
+  const curtain = $('[data-curtain]');
+  const EZ = 'cubic-bezier(.76,0,.24,1)';
+  const LABELS = { '': 'Home', projects: 'Projects', services: 'Services', 'about-us': 'About', contact: 'Contact' };
+  const labelOf = (url) => {
+    const p = url.pathname.replace(/\.html$/, '').replace(/^\/+|\/+$/g, '');
+    if (p in LABELS) return LABELS[p];
+    return p.startsWith('projects/') ? 'Case study' : 'Dead end';
   };
-  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
-  scrim.addEventListener('click', () => setMenu(false));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); toggle.focus(); } });
-  matchMedia('(min-width: 861px)').addEventListener('change', (e) => e.matches && setMenu(false));
+  const lift = () => {
+    if (!curtain || !root.classList.contains('curtain-in')) return;
+    const lbl = $('[data-curtain-label]', curtain);
+    lbl.textContent = JSON.parse(getComputedStyle(root).getPropertyValue('--curtain-label') || '""');
+    curtain.style.visibility = 'visible';
+    root.classList.remove('curtain-in');
+    curtain.animate([{ clipPath: 'inset(0 0 0 0 round 0px)' }, { clipPath: 'inset(0 0 100% 0 round 0 0 40px 40px)' }], { duration: 720, delay: 160, easing: EZ, fill: 'forwards' })
+      .onfinish = () => { curtain.style.visibility = ''; curtain.getAnimations().forEach((a) => a.cancel()); };
+  };
+  safe(lift);
+  let leaving = false;
+  if (curtain && motion) document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target && a.target !== '_self') return;
+    if (a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+    if (url.pathname === location.pathname && url.search === location.search) return; // (a link on this page)
+    e.preventDefault();
+    leaving = true;
+    const label = labelOf(url);
+    try { sessionStorage.setItem('dmz-curtain', label); } catch {}
+    $('[data-curtain-label]', curtain).textContent = label;
+    curtain.style.visibility = 'visible';
+    curtain.animate([{ clipPath: 'inset(100% 0 0 0 round 40px 40px 0 0)' }, { clipPath: 'inset(0 0 0 0 round 0px)' }], { duration: 640, easing: EZ, fill: 'forwards' });
+    $('.curtain__inner', curtain).animate([{ transform: 'translateY(60px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 700, delay: 180, easing: E, fill: 'both' });
+    setTimeout(() => { location.href = url.href; }, 660);
+  });
+  // back to a page kept in memory: the curtain it left with must not still cover it
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted || !curtain) return;
+    leaving = false;
+    curtain.getAnimations().forEach((a) => a.cancel());
+    curtain.style.visibility = '';
+    $('.curtain__inner', curtain).getAnimations().forEach((a) => a.cancel());
+  });
 
-  // Desktop links: a glass pill glides to the hovered/focused link (or open menu) and rests on the current page.
-  const links = $('[data-nav-links]');
-  let openDrop = null;
-  if (links) {
-    const pill = $('.nav__pill', links);
-    const current = $('a[aria-current]', links);
-    const rest = () => openDrop || current;
-    const moveTo = (a) => {
-      links.classList.toggle('has-pill', !!a);
-      $$('a, button', links).forEach((l) => l.classList.toggle('is-pill', l === a));
-      if (a) { pill.style.setProperty('--x', a.offsetLeft + 'px'); pill.style.setProperty('--w', a.offsetWidth + 'px'); }
-    };
-    links.addEventListener('pointerover', (e) => { const a = e.target.closest('a, button'); if (a) moveTo(a); });
-    links.addEventListener('focusin', (e) => moveTo(e.target.closest('a, button')));
-    links.addEventListener('pointerleave', () => moveTo(rest()));
-    links.addEventListener('focusout', () => moveTo(rest()));
+  /* ---------- nav: the pill under the current page's link, the reading progress, the phone menu ---------- */
+  const nav = $('[data-nav]');
+  const pill = $('[data-pill]');
+  const placePill = () => {
+    const on = $('.nav__links a[aria-current]');
+    if (!pill || !on || !on.offsetWidth) { if (pill) pill.style.opacity = 0; return; }
+    pill.style.opacity = 1;
+    pill.style.width = on.offsetWidth + 'px';
+    pill.style.transform = `translateX(${on.offsetLeft}px)`;
+  };
+  placePill();
+  if (document.fonts) document.fonts.ready.then(placePill);
+  const toggle = $('[data-menu-toggle]');
+  const menu = $('#menu');
+  const setMenu = (open) => {
+    if (!toggle || !menu) return;
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', open);
+    toggle.textContent = open ? 'Close' : 'Menu';
+    root.classList.toggle('menu-open', open);
+  };
+  if (toggle) toggle.addEventListener('click', () => setMenu(menu.hidden));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu && !menu.hidden) { setMenu(false); toggle.focus(); } });
+  if (menu) menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 
-    // The menus under the bar (Projects, Services): the labels are links to their pages. A mouse opens the menu on hover
-    // (with a short grace period so the pointer can travel into it) and a click follows the link; a touch opens it on
-    // the first tap and follows on the second; the keyboard opens it with ArrowDown (Enter follows). Escape, a click
-    // elsewhere, focus leaving or the bar hiding on scroll closes them.
-    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const triggers = $$('[data-drop]', links);
-    let closing = 0;
-    const setDrop = (btn) => {
-      clearTimeout(closing);
-      openDrop = btn;
-      triggers.forEach((t) => {
-        const on = t === btn;
-        t.setAttribute('aria-expanded', on);
-        document.getElementById(t.getAttribute('aria-controls')).classList.toggle('is-open', on);
-      });
-      nav.classList.toggle('has-drop', !!btn);
-      moveTo(btn || current);
-    };
-    const later = () => { clearTimeout(closing); closing = setTimeout(() => setDrop(null), 220); };
-    triggers.forEach((t) => {
-      const panel = document.getElementById(t.getAttribute('aria-controls'));
-      t.addEventListener('click', (e) => { if (!fine && openDrop !== t) { e.preventDefault(); setDrop(t); } });
-      t.addEventListener('keydown', (e) => {
-        if (e.key !== 'ArrowDown') return;
-        e.preventDefault();
-        setDrop(t);
-        const first = panel.querySelector('a, button');
-        if (first) first.focus();
-      });
-      t.addEventListener('focusout', (e) => { if (openDrop === t && !panel.contains(e.relatedTarget)) setDrop(null); });
-      if (fine) {
-        t.addEventListener('pointerenter', () => setDrop(t));
-        t.addEventListener('pointerleave', later);
-        panel.addEventListener('pointerenter', () => clearTimeout(closing));
-        panel.addEventListener('pointerleave', later);
-      }
-      panel.addEventListener('focusout', (e) => { if (!panel.contains(e.relatedTarget) && e.relatedTarget !== t) setDrop(null); });
+  /* ---------- reveals: fade-ups, headlines rising word by word, counters, lines drawing themselves ---------- */
+  const reveal = (el) => {
+    const d = +(el.dataset.delay || 0) * 1000;
+    if (el.hasAttribute('data-reveal')) {
+      const a = el.animate([{ opacity: 0, transform: 'translateY(36px)', filter: 'blur(10px)' }, { opacity: 1, transform: 'none', filter: 'blur(0px)' }], { duration: 1100, delay: d, easing: E, fill: 'both' });
+      a.onfinish = () => { el.style.opacity = ''; a.cancel(); };
+    }
+    if (el.hasAttribute('data-words')) $$('[data-w]', el).forEach((w, i) => {
+      const a = w.animate([{ transform: 'translateY(108%) rotate(4deg)' }, { transform: 'none' }], { duration: 1200, delay: d + i * 75, easing: E, fill: 'both' });
+      a.onfinish = () => { w.style.transform = ''; a.cancel(); };
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openDrop) { const t = openDrop; setDrop(null); t.focus(); } });
-    document.addEventListener('pointerdown', (e) => { if (openDrop && !e.target.closest('.nav__bar')) setDrop(null); });
-    new MutationObserver(() => { if (nav.classList.contains('is-hidden') && openDrop) setDrop(null); }).observe(nav, { attributes: true, attributeFilter: ['class'] });
-    // Place it without animating on load, once the web font has set link widths.
-    const place = () => { pill.style.transition = 'none'; moveTo(current); pill.offsetWidth; pill.style.transition = ''; };
-    place();
-    document.fonts && document.fonts.ready.then(place);
+    if (el.hasAttribute('data-drawin')) {
+      const a = el.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: +(el.dataset.dur || 1800), delay: d, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' });
+      a.onfinish = () => { el.style.strokeDashoffset = 0; a.cancel(); };
+    }
+    if (el.hasAttribute('data-count')) {
+      const to = +el.dataset.count, pre = el.dataset.pre || '', suf = el.dataset.suf || '', t0 = performance.now() + d;
+      const step = (t) => { const k = clamp((t - t0) / 1600); el.textContent = pre + Math.round(to * (1 - Math.pow(1 - k, 4))) + suf; if (k < 1) requestAnimationFrame(step); };
+      el.textContent = pre + '0' + suf;
+      requestAnimationFrame(step);
+    }
+  };
+  if (motion && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { io.unobserve(en.target); reveal(en.target); } }), { rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
+    $$('[data-reveal], [data-words], [data-count], [data-drawin]').forEach((el) => {
+      if (el.hasAttribute('data-reveal')) el.style.opacity = 0;
+      if (el.hasAttribute('data-words')) $$('[data-w]', el).forEach((w) => { w.style.transform = 'translateY(108%)'; });
+      if (el.hasAttribute('data-drawin')) el.style.strokeDashoffset = 1;
+      io.observe(el);
+    });
   }
 
-  // Segmented controls ([data-seg]): a raised glass thumb glides to the chosen option (aria-pressed, aria-selected or
-  // .is-active), however the row wraps or scrolls; it is measured, so it follows resizes and font loading too.
-  $$('[data-seg]').forEach((box) => {
-    const thumb = document.createElement('i');
-    thumb.className = 'seg__thumb';
-    thumb.setAttribute('aria-hidden', 'true');
-    box.prepend(thumb);
-    const place = () => {
-      const on = box.querySelector('[aria-pressed="true"], [aria-selected="true"], .is-active');
-      box.classList.toggle('has-thumb', !!on);
-      if (!on) return;
-      thumb.style.cssText = `width:${on.offsetWidth}px;height:${on.offsetHeight}px;transform:translate(${on.offsetLeft}px,${on.offsetTop}px)`;
-    };
-    new MutationObserver(place).observe(box, { subtree: true, attributes: true, attributeFilter: ['aria-pressed', 'aria-selected', 'class'] });
-    new ResizeObserver(place).observe(box);
-    place();
-    requestAnimationFrame(() => box.classList.add('seg--ready')); // glide from now on, not on the first placement
-  });
-
-  // Tabs (industries, tools): roving tabindex + arrow keys.
-  $$('[data-tabs]').forEach((box) => {
-    const tabs = $$('[role=tab]', box);
-    const select = (tab, focus) => {
-      tabs.forEach((t) => {
-        const on = t === tab;
-        t.setAttribute('aria-selected', on);
-        t.tabIndex = on ? 0 : -1;
-        const panel = document.getElementById(t.getAttribute('aria-controls'));
-        panel.hidden = !on;
-        if (on && motion) gsap.fromTo(panel.querySelectorAll('li, h3'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.02, ease: 'power3.out', overwrite: true });
-        if (on) box.dispatchEvent(new CustomEvent('tabchange', { bubbles: true, detail: panel }));
-      });
-      if (focus) tab.focus();
-      // a sideways strip of tabs (tablet, phone) keeps the picked one in view, without moving the page
-      const strip = tab.parentElement;
-      if (strip.scrollWidth > strip.clientWidth) {
-        const x = tab.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
-        strip.scrollTo({ left: x - 16, behavior: motion ? 'smooth' : 'auto' });
-      }
-    };
-    tabs.forEach((t, i) => {
-      t.addEventListener('click', () => select(t));
-      t.addEventListener('keydown', (e) => {
-        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-        if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
-        if (e.key === 'Home') { e.preventDefault(); select(tabs[0], true); }
-        if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1], true); }
-      });
+  /* ---------- loops: each [data-cycle] host (a scene, a demo, a reel) plays its parts on a loop of that many seconds,
+     while it is on screen and, for a stage scene or a service demo, while its stage or service is the current one ---------- */
+  const seq = (arr) => { let last = 0; return arr.map(([o, p]) => { last = Math.max(last, clamp(o)); return { offset: last, easing: E, ...p }; }); };
+  const KF = {
+    pop: (a, b) => seq([[0, { opacity: 0, transform: 'scale(.6)' }], [a, { opacity: 0, transform: 'scale(.6)' }], [a + 0.06, { opacity: 1, transform: 'scale(1.06)' }], [a + 0.1, { opacity: 1, transform: 'scale(1)' }], [b, { opacity: 1, transform: 'scale(1)' }], [b + 0.04, { opacity: 0, transform: 'scale(.9)' }], [1, { opacity: 0, transform: 'scale(.9)' }]]),
+    rise: (a, b) => seq([[0, { opacity: 0, transform: 'translateY(14px)' }], [a, { opacity: 0, transform: 'translateY(14px)' }], [a + 0.08, { opacity: 1, transform: 'none' }], [b, { opacity: 1, transform: 'none' }], [b + 0.04, { opacity: 0, transform: 'translateY(-8px)' }], [1, { opacity: 0, transform: 'translateY(-8px)' }]]),
+    chap: (a, b) => seq([[0, { opacity: 0, transform: 'translateY(22px)', filter: 'blur(6px)' }], [a, { opacity: 0, transform: 'translateY(22px)', filter: 'blur(6px)' }], [a + 0.05, { opacity: 1, transform: 'none', filter: 'blur(0px)' }], [b - 0.03, { opacity: 1, transform: 'none', filter: 'blur(0px)' }], [b, { opacity: 0, transform: 'translateY(-14px)', filter: 'blur(6px)' }], [1, { opacity: 0, transform: 'translateY(-14px)', filter: 'blur(6px)' }]]),
+    growY: (a, b) => seq([[0, { transform: 'scaleY(0)' }], [a, { transform: 'scaleY(0)' }], [a + 0.1, { transform: 'scaleY(1)' }], [b, { transform: 'scaleY(1)' }], [b + 0.05, { transform: 'scaleY(0)' }], [1, { transform: 'scaleY(0)' }]]),
+    growX: (a, b) => seq([[0, { transform: 'scaleX(0)' }], [a, { transform: 'scaleX(0)' }], [a + 0.18, { transform: 'scaleX(1)' }], [b, { transform: 'scaleX(1)' }], [b + 0.04, { transform: 'scaleX(0)' }], [1, { transform: 'scaleX(0)' }]]),
+    bar: (a, b) => seq([[0, { transform: 'scaleX(0)' }], [a, { transform: 'scaleX(0)' }], [b, { transform: 'scaleX(1)' }], [0.995, { transform: 'scaleX(1)' }], [1, { transform: 'scaleX(0)' }]]).map((k) => ({ ...k, easing: 'linear' })),
+    draw: (a, b) => seq([[0, { strokeDashoffset: 1, opacity: 1 }], [a, { strokeDashoffset: 1, opacity: 1 }], [a + 0.2, { strokeDashoffset: 0, opacity: 1 }], [b, { strokeDashoffset: 0, opacity: 1 }], [b + 0.04, { strokeDashoffset: 0, opacity: 0 }], [1, { strokeDashoffset: 1, opacity: 0 }]]),
+    type: (a, b) => seq([[0, { clipPath: 'inset(0 100% 0 0)' }], [a, { clipPath: 'inset(0 100% 0 0)' }], [a + 0.2, { clipPath: 'inset(0 0% 0 0)' }], [b, { clipPath: 'inset(0 0% 0 0)' }], [b + 0.03, { clipPath: 'inset(0 100% 0 0)' }], [1, { clipPath: 'inset(0 100% 0 0)' }]]),
+    press: (a) => seq([[0, { transform: 'scale(1)' }], [a, { transform: 'scale(1)' }], [a + 0.02, { transform: 'scale(.9)' }], [a + 0.06, { transform: 'scale(1)' }], [1, { transform: 'scale(1)' }]]),
+    blink: () => [{ opacity: 1 }, { opacity: 1, offset: 0.49 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }],
+    zoom: () => [{ transform: 'scale(1.02)' }, { transform: 'scale(1.1) translate(-1.5%,-1%)', offset: 0.5 }, { transform: 'scale(1.02)' }],
+    travel: (a, b, el) => { const tx = el.dataset.tx || 0, ty = el.dataset.ty || 0, u = +(el.dataset.u || 0.15); return seq([[0, { transform: 'translate(0,0)', opacity: 0 }], [a, { transform: 'translate(0,0)', opacity: 0 }], [a + 0.01, { transform: 'translate(0,0)', opacity: 1 }], [a + u, { transform: `translate(${tx}px,${ty}px)`, opacity: 1 }], [a + u + 0.01, { transform: `translate(${tx}px,${ty}px)`, opacity: 0 }], [1, { transform: `translate(${tx}px,${ty}px)`, opacity: 0 }]]); },
+    move: (a, b, el) => { const [x1, y1] = (el.dataset.from || '0,0').split(','), [x2, y2] = (el.dataset.to || '0,0').split(','), u = +(el.dataset.u || 0.15); return seq([[0, { left: x1 + '%', top: y1 + '%' }], [a, { left: x1 + '%', top: y1 + '%' }], [a + u, { left: x2 + '%', top: y2 + '%' }], [b, { left: x2 + '%', top: y2 + '%' }], [b + 0.06, { left: x1 + '%', top: y1 + '%' }], [1, { left: x1 + '%', top: y1 + '%' }]]); },
+  };
+  const hosts = new Map(); // host -> { anims, seen }
+  const active = (host) => {
+    const st = host.closest('.jstage');
+    if (st && !flatJourney.matches && !st.classList.contains('is-on')) return false;
+    const pn = host.closest('.svc__demo');
+    return !(pn && !pn.classList.contains('is-on'));
+  };
+  const sync = (host) => {
+    const h = hosts.get(host);
+    if (!h) return;
+    const run = h.seen && active(host);
+    h.anims.forEach((a) => (run ? a.play() : a.pause()));
+  };
+  const restart = (host) => {
+    const h = hosts.get(host);
+    if (!h) return;
+    h.anims.forEach((a) => { a.currentTime = 0; });
+    sync(host);
+  };
+  if (motion) {
+    const loopIO = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((en) => {
+      const h = hosts.get(en.target);
+      if (h) { h.seen = en.isIntersecting; sync(en.target); }
+    }), { rootMargin: '10% 10%' }) : null;
+    $$('[data-cycle]').forEach((host) => {
+      const C = +host.dataset.cycle || 6;
+      const anims = [];
+      $$('[data-kf]', host).forEach((el) => safe(() => {
+        const k = KF[el.dataset.kf];
+        if (!k) return;
+        const a = +(el.dataset.d || 0) / C, b = +(el.dataset.e || C - 0.5) / C;
+        const dur = el.dataset.kf === 'blink' ? 1000 : el.dataset.kf === 'zoom' ? 14000 : C * 1000;
+        const anim = el.animate(k(a, b, el), { duration: dur, iterations: Infinity });
+        anim.pause();
+        anims.push(anim);
+      }));
+      hosts.set(host, { anims, seen: !loopIO });
+      if (loopIO) loopIO.observe(host); else sync(host);
     });
-  });
+  }
 
-  // FAQ accordion.
-  $$('[data-acc]').forEach((b) => b.addEventListener('click', () => {
-    const open = b.getAttribute('aria-expanded') !== 'true';
-    b.setAttribute('aria-expanded', open);
-    document.getElementById(b.getAttribute('aria-controls')).classList.toggle('is-open', open);
-    if (window.ScrollTrigger) setTimeout(() => ScrollTrigger.refresh(), 450);
+  /* ---------- scenes and demos are drawn at one size and scaled to their frame ---------- */
+  if ('ResizeObserver' in window) {
+    const fit = new ResizeObserver((es) => es.forEach((en) => {
+      const box = en.target, art = box.firstElementChild;
+      if (!art || !art.offsetWidth) return;
+      box.style.setProperty('--s', Math.min(box.clientWidth / art.offsetWidth, box.clientHeight / art.offsetHeight).toFixed(4));
+    }));
+    $$('[data-fit]').forEach((el) => fit.observe(el));
+  }
+
+  /* ---------- drifting doodles and the running tape ---------- */
+  if (motion) {
+    $$('[data-drift]').forEach((el, i) => {
+      const r = (n) => { const x = Math.sin(i * 97 + n * 13.7) * 10000; return x - Math.floor(x); };
+      el.animate([{ transform: 'translate(0,0) rotate(0deg)' }, { transform: `translate(${(r(1) - 0.5) * 60}px,${(r(2) - 0.5) * 80}px) rotate(${(r(3) - 0.5) * 40}deg)` }], { duration: 9000 + r(4) * 7000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
+    });
+    $$('[data-marquee]').forEach((el) => el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: +(el.dataset.marquee || 40) * 1000, iterations: Infinity }));
+  } else {
+    $$('.footer__route').forEach((svg) => svg.pauseAnimations && svg.pauseAnimations());
+  }
+
+  /* ---------- the mazes: walls draw in, pitfalls pop in, the route is solved (each pitfall dropping away as it is
+     passed), the exit lights up; then the walls erase and it starts over. A maze off screen waits. ---------- */
+  $$('[data-maze]').forEach((mz) => safe(() => {
+    const walls = $('[data-walls]', mz), route = $('[data-route]', mz), head = $('[data-head]', mz), end = $('[data-end]', mz);
+    const pits = $$('[data-pit]', mz);
+    const len = route.getTotalLength();
+    route.style.strokeDasharray = len;
+    const place = (t) => { const p = route.getPointAtLength(len * t); head.setAttribute('cx', p.x); head.setAttribute('cy', p.y); };
+    if (!motion) { route.style.strokeDashoffset = 0; place(1); head.style.opacity = 1; pits.forEach((p) => { p.style.opacity = 0.3; }); return; }
+    mz.classList.add('is-live');
+    let seen = false, wake = null;
+    new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen && wake) { wake(); wake = null; } }).observe(mz);
+    const onScreen = () => (seen ? Promise.resolve() : new Promise((r) => { wake = r; }));
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const run = async () => {
+      await onScreen();
+      route.style.strokeDashoffset = len; route.style.opacity = 1; head.style.opacity = 0; place(0);
+      [route, head, walls, end, ...pits].forEach((el) => el && el.getAnimations().forEach((a) => a.cancel()));
+      walls.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 2400, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      pits.forEach((p, i) => p.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 600, delay: 900 + i * 160, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'both' }));
+      await wait(2000);
+      head.animate([{ opacity: 0, transform: 'scale(0)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 300, fill: 'forwards' });
+      const passed = new Set(), D = 4200, t0 = performance.now();
+      await new Promise((res) => {
+        const step = (t) => {
+          const k = clamp((t - t0) / D), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+          route.style.strokeDashoffset = len * (1 - e);
+          place(e);
+          pits.forEach((p, i) => {
+            if (passed.has(i) || e < +p.dataset.at) return;
+            passed.add(i);
+            p.getAnimations().forEach((a) => a.cancel());
+            p.animate([{ opacity: 1, transform: 'scale(1.25)' }, { opacity: 0.22, transform: 'scale(.85) translateY(6px)' }], { duration: 700, easing: E, fill: 'forwards' });
+          });
+          if (k < 1) requestAnimationFrame(step); else res();
+        };
+        requestAnimationFrame(step);
+      });
+      if (end) end.animate([{ opacity: 0, transform: 'scale(.4) rotate(-20deg)' }, { opacity: 1, transform: 'scale(1) rotate(0deg)' }], { duration: 700, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
+      head.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.8)' }, { transform: 'scale(1)' }], { duration: 700, easing: E });
+      await wait(5200);
+      [route, head].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 700, fill: 'forwards' }));
+      if (end) end.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' });
+      pits.forEach((p) => p.animate([{ opacity: 0.22 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }));
+      walls.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -1 }], { duration: 1400, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      await wait(1500);
+      run();
+    };
+    run();
   }));
 
-  // Contact form (the project brief): each field says what's wrong under itself (and is tied to it for screen readers),
-  // checked on submit and then as they type; an unsent draft is kept in this browser; a sent message swaps the form
-  // for a thank-you with the next steps. If delivery fails, the note offers email instead of opening a mail app.
+  /* ---------- services: the list picks the demo (scroll does it while pinned; a click scrolls there) ---------- */
+  const svcPin = $('[data-svcpin]');
+  const svcItems = $$('[data-svc]');
+  let svcOn = 0;
+  const setSvc = (i) => {
+    if (i === svcOn && svcItems[i] && svcItems[i].classList.contains('is-on')) return;
+    svcOn = i;
+    svcItems.forEach((b, j) => { b.classList.toggle('is-on', j === i); b.setAttribute('aria-pressed', j === i); });
+    $$('[data-svc-panel]').forEach((p) => p.classList.toggle('is-on', +p.dataset.svcPanel === i));
+    const bar = $('[data-sbar]');
+    if (bar && svcItems[i]) bar.style.setProperty('--c', svcItems[i].style.getPropertyValue('--c'));
+    $$(`.svc__demo[data-svc-panel] [data-cycle]`).forEach((h) => (+h.closest('[data-svc-panel]').dataset.svcPanel === i ? restart(h) : sync(h)));
+  };
+  svcItems.forEach((b, i) => b.addEventListener('click', () => {
+    if (svcPin && !flatPins.matches) {
+      const top = svcPin.getBoundingClientRect().top + scrollY;
+      scrollTo({ top: top + ((i + 0.5) / 4) * (svcPin.offsetHeight - innerHeight), behavior: motion ? 'smooth' : 'auto' });
+    } else setSvc(i);
+  }));
+
+  /* ---------- scroll: everything that follows the scroll position, in one frame ---------- */
+  const progress = $('[data-progress]');
+  const journey = $('[data-journey]');
+  const stages = $$('.jstage');
+  const jroute = $('[data-jroute]'), jdot = $('[data-jdot]'), jbar = $('[data-jbar]'), jnum = $('[data-stage-num]');
+  const jlen = jroute ? jroute.getTotalLength() : 0;
+  if (jroute) jroute.style.strokeDasharray = jlen;
+  let stageOn = -1;
+  const setStage = (s) => {
+    if (s === stageOn) return;
+    stageOn = s;
+    stages.forEach((st, i) => { st.classList.toggle('is-on', i === s); st.classList.toggle('is-before', i < s); });
+    $$('[data-jlabel]').forEach((l, i) => l.classList.toggle('is-lit', i <= s));
+    if (jnum) jnum.textContent = pad(s + 1);
+    stages.forEach((st, i) => $$('[data-cycle]', st).forEach((h) => (i === s ? restart(h) : sync(h))));
+  };
+  const hs = $('[data-hscroll]');
+  const track = $('[data-htrack]');
+  const hcards = $$('[data-hcard]');
+  const hbar = $('[data-hbar]'), hnum = $('[data-work-num]'), hname = $('[data-work-name]');
+  const showN = hcards.length - 1;
+  let workOn = -1;
+  const setWork = (i) => {
+    if (i === workOn || !hcards[i]) return;
+    workOn = i;
+    if (hnum) hnum.textContent = pad(Math.min(i + 1, showN));
+    if (hname) hname.textContent = hcards[i].dataset.name;
+  };
+  const quote = $('[data-quote]');
+  const qwords = quote ? $$('[data-qw]', quote) : [];
+  const aura = $('[data-aura]');
+  const rooms = $$('[data-room]');
+  const span = (el) => { const r = el.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - innerHeight)); };
+
+  const tick = () => {
+    const vh = innerHeight, sy = scrollY, H = root.scrollHeight - vh;
+    if (progress) progress.style.transform = `scaleX(${H > 0 ? sy / H : 0})`;
+    if (nav) nav.classList.toggle('is-scrolled', sy > 40);
+
+    if (journey && stages.length) {
+      if (flatJourney.matches) setStage(0);
+      else {
+        const p = span(journey);
+        if (jroute) {
+          jroute.style.strokeDashoffset = jlen * (1 - p);
+          if (jdot) { const pt = jroute.getPointAtLength(jlen * p); jdot.style.left = pt.x / 10 + '%'; jdot.style.top = pt.y / 0.8 + '%'; }
+        }
+        const s = Math.min(3, Math.floor(p * 4 + 0.0001));
+        setStage(s);
+        const local = clamp(p * 4 - s);
+        if (jbar) jbar.style.transform = `scaleX(${local})`;
+        $$('li[data-step]', stages[s]).forEach((li) => li.classList.toggle('is-on', local > (+li.dataset.step + 0.6) / (+li.dataset.n + 0.6)));
+      }
+    }
+
+    if (hs && track) {
+      if (flatPins.matches) {
+        track.style.transform = '';
+        hcards.forEach((c) => { c.style.transform = ''; c.style.opacity = ''; });
+      } else {
+        const p = span(hs), max = Math.max(0, track.scrollWidth - innerWidth), cx = innerWidth / 2;
+        track.style.transform = `translate3d(${(-p * max).toFixed(1)}px,0,0)`;
+        if (motion) hcards.forEach((c) => {
+          const b = c.getBoundingClientRect(), off = b.left + b.width / 2 - cx, d = Math.min(1, Math.abs(off) / innerWidth);
+          c.style.transform = `scale(${(1 - d * 0.12).toFixed(3)}) rotate(${(off / innerWidth * 3).toFixed(2)}deg)`;
+          c.style.opacity = (1 - d * 0.55).toFixed(3);
+        });
+        if (hbar) hbar.style.transform = `scaleX(${p})`;
+        setWork(Math.min(hcards.length - 1, Math.round(p * (hcards.length - 1))));
+      }
+    }
+
+    if (svcPin && !flatPins.matches) {
+      const p = span(svcPin), i = Math.min(3, Math.floor(p * 4 + 0.0001));
+      setSvc(i);
+      const bar = $('[data-sbar]');
+      if (bar) bar.style.transform = `scaleX(${clamp(p * 4 - i)})`;
+    }
+
+    if (quote && motion) {
+      const r = quote.getBoundingClientRect(), q = clamp((vh * 0.8 - r.top) / (r.height + vh * 0.25)), lit = Math.round(q * qwords.length * 1.15);
+      qwords.forEach((w, i) => w.classList.toggle('is-lit', i < lit));
+    }
+
+    if (aura) {
+      let col = null;
+      for (const s of rooms) { const r = s.getBoundingClientRect(); if (r.top < vh * 0.55 && r.bottom > vh * 0.45) col = s.dataset.room; }
+      if (col && aura.style.color !== col) aura.style.color = col;
+    }
+  };
+  let raf = 0;
+  const queue = () => { raf ||= requestAnimationFrame(() => { raf = 0; safe(tick); }); };
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', () => { queue(); placePill(); });
+  [flatJourney, flatPins].forEach((m) => m.addEventListener && m.addEventListener('change', () => { stageOn = -1; queue(); }));
+  safe(tick);
+  // on phones the selected work scrolls sideways by swipe: the counter follows the card nearest the middle
+  const hview = $('.hwork__viewport');
+  if (hview) hview.addEventListener('scroll', () => {
+    if (!flatPins.matches) return;
+    const cx = innerWidth / 2;
+    let best = 0, bd = Infinity;
+    hcards.forEach((c, i) => { const b = c.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - cx); if (d < bd) { bd = d; best = i; } });
+    setWork(best);
+  }, { passive: true });
+
+  /* ---------- pointer: buttons lean toward the cursor, cards tilt under it ---------- */
+  if (motion && fine) {
+    const magnets = $$('[data-magnet]');
+    const tilts = $$('[data-tilt]');
+    let pe = null, praf = 0;
+    const frame = () => {
+      praf = 0;
+      const e = pe;
+      magnets.forEach((el) => {
+        const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        const inside = Math.abs(dx) < r.width / 2 + 30 && Math.abs(dy) < r.height / 2 + 30;
+        el.style.translate = inside ? `${(dx * 0.28).toFixed(1)}px ${(dy * 0.35).toFixed(1)}px` : '';
+      });
+      tilts.forEach((el) => {
+        const r = el.getBoundingClientRect(), inside = e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom, amt = +(el.dataset.tilt || 6);
+        if (inside) {
+          const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+          el.style.transform = `perspective(1100px) rotateX(${(-y * amt).toFixed(2)}deg) rotateY(${(x * amt).toFixed(2)}deg)`;
+        } else if (el.__in) el.style.transform = '';
+        el.__in = inside;
+      });
+    };
+    addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; pe = e; praf ||= requestAnimationFrame(frame); }, { passive: true });
+  }
+
+  /* ---------- projects: the filter ---------- */
+  const filters = $$('[data-filter]');
+  const status = $('[data-filter-status]');
+  filters.forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.filter;
+    filters.forEach((x) => x.setAttribute('aria-pressed', x === b));
+    let n = 0;
+    $$('.pcard').forEach((c) => {
+      const on = id === 'all' || c.dataset.svcs.split(' ').includes(id);
+      c.classList.toggle('is-out', !on);
+      if (on) { n++; if (motion) c.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 600, delay: Math.min(n, 8) * 40, easing: E, fill: 'backwards' }); }
+    });
+    if (status) status.textContent = `Showing ${n} project${n === 1 ? '' : 's'}`;
+  }));
+
+  /* ---------- services page: the tools tabs and the industries ---------- */
+  const tabs = $$('[data-tab]');
+  const setTab = (i, focus) => {
+    tabs.forEach((t, j) => { t.setAttribute('aria-selected', j === i); t.tabIndex = j === i ? 0 : -1; });
+    $$('[data-tabpanel]').forEach((p) => {
+      const on = +p.dataset.tabpanel === i;
+      p.hidden = !on;
+      if (on && motion) $$('span', p).forEach((s, k) => s.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: k * 30, easing: E, fill: 'backwards' }));
+    });
+    if (focus) tabs[i].focus();
+  };
+  tabs.forEach((t, i) => {
+    t.tabIndex = i ? -1 : 0;
+    t.addEventListener('click', () => setTab(i));
+    t.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (d) { e.preventDefault(); setTab((i + d + tabs.length) % tabs.length, true); }
+    });
+  });
+  const inds = $$('[data-ind]');
+  const setInd = (i) => {
+    inds.forEach((b, j) => b.setAttribute('aria-pressed', j === i));
+    $$('[data-ind-card]').forEach((c) => {
+      const on = +c.dataset.indCard === i;
+      if (on && c.hidden && motion) c.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: E });
+      c.hidden = !on;
+    });
+  };
+  inds.forEach((b, i) => {
+    b.addEventListener('click', () => setInd(i));
+    if (fine) b.addEventListener('mouseenter', () => setInd(i));
+  });
+
+  /* ---------- the brief: checks the fields, sends it to /api/contact, keeps an unsent draft in the browser ---------- */
   $$('[data-form]').forEach((form) => {
-    const wrap = form.closest('.form-wrap');
-    const done = $('[data-form-done]', wrap);
-    const note = $('[data-form-note]', form);
-    const submit = $('button[type=submit]', form);
-    const noteText = note.textContent;
     const KEY = 'demaze-brief';
+    const note = $('[data-form-note]', form), noteText = note.innerHTML;
+    const done = $('[data-form-done]', form.parentElement);
+    const submit = $('button[type="submit"]', form);
     const RULES = {
-      subject: (f) => (f.value ? '' : 'Pick what you need, or “Something else”.'),
-      name: (f) => (f.value.trim().length >= 2 ? '' : 'Please tell us your name.'),
-      email: (f) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) ? '' : 'Please enter an email we can reply to, like name@company.com.'),
-      message: (f) => (f.value.trim().length >= 10 ? '' : 'A sentence or two about the project, please (at least 10 characters).'),
+      name: (v) => (v.trim().length >= 2 ? '' : 'Tell us who to reply to.'),
+      email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'That email doesn’t look right.'),
+      message: (v) => (v.trim().length >= 12 ? '' : 'A sentence or two about the problem helps us prepare.'),
     };
     let tried = false;
     const check = (n) => {
-      const f = form.elements[n];
-      const msg = RULES[n](f);
-      const err = $(`[id$="-${n}-err"]`, form);
-      err.textContent = msg;
-      err.hidden = !msg;
-      // a chip group marks every chip (and the group, for its style); a field marks itself
-      (f instanceof RadioNodeList ? [...f] : [f]).forEach((x) => x.setAttribute('aria-invalid', !!msg));
-      if (f instanceof RadioNodeList) $(`[data-chips="${n}"]`, form).classList.toggle('is-invalid', !!msg);
+      const f = form.elements[n], msg = RULES[n](f.value), err = $(`[data-err="${n}"]`, form);
+      if (err) err.textContent = msg;
+      f.setAttribute('aria-invalid', !!msg);
       return !msg;
     };
-    const save = () => {
-      try {
-        const d = Object.fromEntries(new FormData(form));
-        delete d.website;
-        localStorage.setItem(KEY, JSON.stringify(d));
-      } catch {}
+    const data = () => {
+      const fd = new FormData(form);
+      return { name: fd.get('name') || '', email: fd.get('email') || '', company: fd.get('company') || '', stage: fd.get('stage') || '', subject: fd.getAll('need').join(', '), message: fd.get('message') || '', website: fd.get('website') || '' };
     };
+    const save = () => { try { const d = data(); delete d.website; d.need = new FormData(form).getAll('need'); localStorage.setItem(KEY, JSON.stringify(d)); } catch {} };
     try {
       const d = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (d) Object.entries(d).forEach(([n, v]) => {
-        const f = form.elements[n];
-        if (f instanceof RadioNodeList) { const r = [...f].find((x) => x.value === v); if (r) r.checked = true; } else if (f && f.name !== 'website') f.value = v;
-      });
+      if (d) {
+        ['name', 'email', 'company', 'message'].forEach((n) => { if (d[n]) form.elements[n].value = d[n]; });
+        $$('input[name="need"]', form).forEach((x) => { x.checked = (d.need || []).includes(x.value); });
+        $$('input[name="stage"]', form).forEach((x) => { x.checked = x.value === d.stage; });
+      }
     } catch {}
-    form.addEventListener('input', (e) => {
-      save();
-      if (tried && RULES[e.target.name]) check(e.target.name);
-    });
-    form.addEventListener('focusout', (e) => { if (tried && RULES[e.target.name] && e.target.type !== 'radio') check(e.target.name); });
-
+    form.addEventListener('input', (e) => { save(); if (tried && RULES[e.target.name]) check(e.target.name); });
+    form.addEventListener('change', save);
     const say = (html) => { note.innerHTML = html; };
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       tried = true;
       const bad = Object.keys(RULES).filter((n) => !check(n));
-      if (bad.length) {
-        say(bad.length === 1 ? 'One thing to fix above.' : `${bad.length} things to fix above.`);
-        const f = form.elements[bad[0]];
-        (f instanceof RadioNodeList ? f[0] : f).focus();
-        return;
-      }
-      const d = Object.fromEntries(new FormData(form));
+      if (bad.length) { say(bad.length === 1 ? 'One thing to fix above.' : `${bad.length} things to fix above.`); form.elements[bad[0]].focus(); return; }
+      const d = data();
       submit.disabled = true;
-      say('Sending your message…');
+      say('Sending your brief…');
       try {
-        const response = await fetch(form.action || '/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(d),
-          credentials: 'same-origin',
-        });
-        if (response.ok) {
+        const res = await fetch(form.getAttribute('action') || '/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(d), credentials: 'same-origin' });
+        if (res.ok) {
           try { localStorage.removeItem(KEY); } catch {}
-          const first = d.name.trim().split(/\s+/)[0];
-          $('[data-form-done-title]', done).textContent = `Thanks, ${first}. Your message is on its way.`;
-          $('[data-form-done-lead]', done).textContent = `We’ll reply to ${d.email.trim()}. Here’s what happens next:`;
+          $('[data-form-done-title]', done).textContent = `Thanks, ${d.name.trim().split(/\s+/)[0]}. The brief is on its way.`;
+          $('[data-form-done-lead]', done).textContent = `We’ll reply to ${d.email.trim()}. If it’s urgent, book a call and we’ll talk it through.`;
           form.hidden = true;
           done.hidden = false;
-          done.focus();
-          if (window.ScrollTrigger) ScrollTrigger.refresh();
+          done.focus({ preventScroll: true });
+          done.parentElement.scrollIntoView({ behavior: motion ? 'smooth' : 'auto', block: 'start' });
+          $$('[data-done-draw]', done).forEach((p, i) => { p.style.strokeDashoffset = motion ? 1 : 0; if (motion) p.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: i ? 600 : 900, delay: i ? 600 : 0, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' }); });
           return;
         }
-        if (response.status === 429) { say('Too many messages from here just now. Please wait a few minutes and try again.'); return; }
-        if (response.status === 400) { say('Something in the form didn’t go through. Please check it and try again.'); return; }
-        throw new Error('contact delivery failed');
+        if (res.status === 429) { say('Too many messages from here just now. Please wait a few minutes and try again.'); return; }
+        if (res.status === 400) { say('Something in the brief didn’t go through. Please check it and try again.'); return; }
+        throw new Error('delivery failed');
       } catch {
-        // Delivery is down (or this is a preview without it): the message is kept, and email is one click away.
-        const body = `${d.message}\n\nBudget: ${d.budget || '-'}\nTimeline: ${d.timeline || '-'}\n\nFrom ${d.name} (${d.email})`;
-        const href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(`${d.subject} | ${d.name}`)}&body=${encodeURIComponent(body)}`;
-        say(`We couldn’t send that just now. Your message is saved here: try again, or <a class="link" href="${href}">email it to us instead</a>.`);
+        // Delivery is down (or this is a preview without it): the brief is kept, and email is one click away.
+        const body = `${d.message}\n\nNeeds: ${d.subject || '-'}\nStage: ${d.stage || '-'}\nCompany: ${d.company || '-'}\n\nFrom ${d.name} (${d.email})`;
+        const href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(`Project brief | ${d.name}`)}&body=${encodeURIComponent(body)}`;
+        say(`We couldn’t send that just now. Your brief is saved here: try again, or <a href="${href}">email it to us instead</a>.`);
       } finally {
         submit.disabled = false;
       }
@@ -270,567 +527,43 @@
     $('[data-form-again]', done).addEventListener('click', () => {
       form.reset();
       tried = false;
-      $$('.form__err', form).forEach((x) => { x.hidden = true; });
+      $$('[data-err]', form).forEach((x) => { x.textContent = ''; });
       $$('[aria-invalid]', form).forEach((x) => x.removeAttribute('aria-invalid'));
       say(noteText);
       done.hidden = true;
       form.hidden = false;
       form.elements.name.focus();
-      if (window.ScrollTrigger) ScrollTrigger.refresh();
     });
   });
 
-  // Services list buttons (also used when motion is off). `onSvc` lets the demos (below) follow the active panel.
-  const svcBtns = $$('[data-svc-btn]');
-  const svcPanels = $$('[data-svc-panel]');
-  let onSvc = () => {};
-  const setSvc = (i, p = 1) => {
-    svcBtns.forEach((b, j) => { b.classList.toggle('is-active', j === i); b.style.setProperty('--p', j === i ? p : 0); });
-    svcPanels.forEach((pn, j) => pn.classList.toggle('is-active', j === i));
-    onSvc();
-  };
-
-  // Service demos (templates/demos.js) are drawn on a 520 x 240 canvas and scaled to their panel. A narrow panel
-  // (phones) shows the demo's main window alone, larger, rather than the whole canvas too small to read.
-  const DEMO_MAIN = { ai: 244, web: 392, ecom: 318, cloud: 318 };
-  $$('[data-demo]').forEach((el) => new ResizeObserver(([e]) => {
-    const { width: w, height: h } = e.contentRect;
-    const narrow = w < 470;
-    el.parentElement.classList.toggle('is-narrow', narrow);
-    el.style.setProperty('--s', Math.min((w - 24) / (narrow ? DEMO_MAIN[el.dataset.demo] : 520), (h - 20) / 240).toFixed(4));
-  }).observe(el.parentElement));
-
-  // About: hovering a value's card lights its station on the drawing beside it, and hovering a station its card.
-  const valueParts = $$('.drive[data-v], .values__stop');
-  const lightValue = (v) => valueParts.forEach((el) => el.classList.toggle('is-lit', el.dataset.v === v));
-  valueParts.forEach((el) => { el.addEventListener('pointerenter', () => lightValue(el.dataset.v)); el.addEventListener('pointerleave', () => lightValue(null)); });
-
-  // Split text into words for staggered/scrubbed reveals. The parent keeps an accessible label.
-  const split = (el, cls) => {
-    const walk = (node) => [...node.childNodes].flatMap((n) => {
-      if (n.nodeType === 3) {
-        return n.textContent.split(/(\s+)/).filter(Boolean).map((t) => {
-          if (/^\s+$/.test(t)) return document.createTextNode(' ');
-          const w = document.createElement('span');
-          w.className = cls;
-          if (cls === 'w') { const s = document.createElement('span'); s.textContent = t; w.append(s); } else w.textContent = t;
-          return w;
-        });
-      }
-      const clone = n.cloneNode(false);
-      clone.append(...walk(n));
-      return [clone];
+  /* ---------- the 3D crew (crew3d.js, in the crew band) and the studio (office3d.js, home's "who we are") ---------- */
+  // Both are loaded once the page has settled, never on Save-Data. Building the studio is one long job, so it is done
+  // in a quiet moment after the crew, or as soon as the section comes near (on low-memory devices, only then).
+  const crewSrc = document.body.dataset.crewSrc;
+  const url = (src) => new URL(src, document.baseURI).href;
+  const settled = (f) => { if (document.readyState === 'complete') f(); else addEventListener('load', f, { once: true }); };
+  if (crewSrc && !navigator.connection?.saveData) {
+    if ($('[data-crew]')) settled(() => {
+      const load = () => import(url(crewSrc)).then((m) => m.start()).catch(() => {});
+      if (window.requestIdleCallback) requestIdleCallback(load, { timeout: 2500 }); else setTimeout(load, 400);
     });
-    el.setAttribute('aria-label', el.textContent.trim());
-    const parts = walk(el);
-    el.replaceChildren(...parts);
-    [...el.children].forEach((c) => c.setAttribute('aria-hidden', 'true'));
-    return cls === 'w' ? $$('.w > span', el) : $$('.' + cls, el);
-  };
-
-  // Services click works without motion; with motion it scrolls to the pinned step (below).
-  svcBtns.forEach((b, i) => b.addEventListener('click', () => setSvc(i)));
-
-  // Tools map: the Demaze stack wired to its six discipline cards, and the active card to each of its tools. Wires run
-  // like the maze's route, in straight runs with rounded corners. Picking a discipline (hovering a card, with a fine
-  // pointer, selects it like a click) pulls its layer out of the stack, colours the stage (--mk) and draws its lines
-  // to its tools in; the tab code above swaps the panel and fires 'tabchange'.
-  $$('[data-kmap-stage]').forEach((stage) => {
-    const svg = $('[data-kmap-wires]', stage);
-    const cats = $$('[data-kmap-cat]', stage);
-    const plates = []; // by layer (the pile is drawn bottom up, so page order is reversed)
-    $$('[data-kmap-plate]', stage).forEach((p) => { plates[+p.dataset.kmapPlate] = p; });
-    const ports = $$('[data-kmap-port]', stage);
-    const NS = 'http://www.w3.org/2000/svg';
-    const wide = matchMedia('(min-width: 1025px)');
-    // a route from (x1, y1) to (x2, y2): across to `bend`, up or down, across again, corners rounded
-    const route = (x1, y1, x2, y2, bend = (x1 + x2) / 2) => {
-      const dy = y2 - y1, r = Math.min(10, Math.abs(dy) / 2, Math.abs(bend - x1), Math.abs(x2 - bend)), s = Math.sign(dy);
-      if (!s || r < 1) return `M${x1} ${y1}H${bend}V${y2}H${x2}`;
-      return `M${x1} ${y1}H${bend - r}Q${bend} ${y1} ${bend} ${y1 + s * r}V${y2 - s * r}Q${bend} ${y2} ${bend + r} ${y2}H${x2}`;
-    };
-    // (`unit`: measure the path as 1, for lines that draw on or carry a pulse; dotted wires keep real lengths)
-    const path = (d, cls, unit = true) => {
-      const p = document.createElementNS(NS, 'path');
-      p.setAttribute('d', d);
-      p.setAttribute('class', cls);
-      if (unit) p.setAttribute('pathLength', '1');
-      return p;
-    };
-    const draw = (animate) => {
-      const on = Math.max(0, cats.findIndex((c) => c.getAttribute('aria-selected') === 'true'));
-      stage.style.setProperty('--mk', cats[on].style.getPropertyValue('--mk'));
-      plates.forEach((p, i) => p.classList.toggle('is-on', i === on));
-      ports.forEach((p, i) => p.classList.toggle('is-on', i === on));
-      if (!wide.matches) { svg.replaceChildren(); return; }
-      const box = stage.getBoundingClientRect();
-      svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
-      const at = (el, side) => { const r = el.getBoundingClientRect(); return [(side === 'l' ? r.left : side === 'r' ? r.right : r.left + r.width / 2) - box.left, r.top + r.height / 2 - box.top]; };
-      // each layer's wire bends at its own distance, so the six runs never lie on top of each other
-      const first = at(cats[0], 'l')[0];
-      const paths = [];
-      cats.forEach((c, i) => {
-        const [x1, y1] = at(ports[i], 'c'), [x2, y2] = at(c, 'l');
-        const d = route(x1 + 4, y1, x2, y2, x1 + (first - x1) * (0.25 + i * 0.1));
-        if (i === on) paths.push(path(d, 'kmap__wire is-on'), path(d, 'kmap__pulse'));
-        else paths.unshift(path(d, 'kmap__wire', false));
-      });
-      // the active card's line to each of its tools: one run out of the card, then a branch to each
-      const panel = document.getElementById(cats[on].getAttribute('aria-controls'));
-      const [ax, ay] = at(cats[on], 'r');
-      $$('[data-kmap-dot]', panel).forEach((dot, i) => {
-        const [x, y] = at(dot, 'l');
-        const p = path(route(ax, ay, x - 1, y, ax + (x - ax) * 0.45), 'kmap__fan' + (animate ? ' is-drawing' : ''));
-        p.style.animationDelay = i * 28 + 'ms';
-        paths.push(p);
-      });
-      svg.replaceChildren(...paths);
-    };
-    stage.addEventListener('tabchange', () => requestAnimationFrame(() => draw(true)));
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      let t = 0;
-      // hover intent: a category opens once the pointer rests on it, not while it passes over on the way to the map
-      const rest = (c) => { clearTimeout(t); t = setTimeout(() => c.getAttribute('aria-selected') !== 'true' && c.click(), 180); };
-      cats.forEach((c) => { c.addEventListener('pointerenter', () => rest(c)); c.addEventListener('pointermove', () => rest(c)); c.addEventListener('pointerleave', () => clearTimeout(t)); });
-      stage.addEventListener('pointerleave', () => clearTimeout(t));
-    }
-    new ResizeObserver(() => draw(false)).observe(stage);
-    wide.addEventListener('change', () => draw(false));
-    if (document.fonts) document.fonts.ready.then(() => draw(false));
-  });
-
-  // Projects page: filter the cards by service (?filter=<id> preselects). Cards that come and go glide into place
-  // with a same-page view transition where the browser has them.
-  const grid = $('[data-pgrid]');
-  if (grid) {
-    const btns = $$('[data-filter]');
-    const setFilter = (f, animate) => {
-      const apply = () => {
-        grid.dataset.filter = f;
-        btns.forEach((b) => b.setAttribute('aria-pressed', b.dataset.filter === f));
-        $$('.pcard', grid).forEach((c) => { c.hidden = f !== 'all' && !c.dataset.services.split(' ').includes(f); });
+    const office = $('[data-office]');
+    if (office && 'IntersectionObserver' in window) {
+      let began = false, lastScroll = -1e9;
+      addEventListener('scroll', () => { lastScroll = performance.now(); }, { passive: true });
+      const build = () => {
+        if (began) return;
+        began = true;
+        io.disconnect();
+        Promise.all([import(url(crewSrc)), import(url(office.dataset.src))]).then(([kit, room]) => room.start($('.office__stage', office), kit)).catch(() => {});
       };
-      const done = () => { root.classList.remove('is-filtering'); if (window.ScrollTrigger) ScrollTrigger.refresh(); };
-      if (animate && motion && document.startViewTransition) {
-        root.classList.add('is-filtering');
-        document.startViewTransition(apply).finished.then(done, done);
-      } else { apply(); done(); }
-    };
-    btns.forEach((b) => b.addEventListener('click', () => {
-      setFilter(b.dataset.filter, true);
-      const u = new URL(location.href);
-      if (b.dataset.filter === 'all') u.searchParams.delete('filter'); else u.searchParams.set('filter', b.dataset.filter);
-      history.replaceState(null, '', u);
-    }));
-    const q = new URLSearchParams(location.search).get('filter');
-    if (q && btns.some((b) => b.dataset.filter === q)) setFilter(q, false);
-  }
-
-  // Projects page: card opens a modal with the full case study (native <dialog>: Esc, focus trap, top layer).
-  // The arrows (and the left/right keys) step to the neighbouring case without closing. Every case has its own
-  // address (#<project>): opening one updates it, and arriving on it opens the case.
-  const dlg = $('[data-pdlg]');
-  if (dlg) {
-    const body = $('[data-pdlg-body]', dlg);
-    const total = $$('[data-proj-tpl]').length;
-    const cards = $$('[data-proj]').map((b) => b.closest('.pcard'));
-    let current = 0;
-    const show = (i, dir = 0) => {
-      $('[data-reel]', body)?.reel?.destroy();
-      current = (i + total) % total;
-      body.replaceChildren($(`[data-proj-tpl="${current}"]`).content.cloneNode(true));
-      dlg.setAttribute('aria-labelledby', `pdlg-title-${current}`);
-      body.scrollTop = 0;
-      $('.pdlg__body', body).scrollTop = 0;
-      if (dir && motion) { body.style.setProperty('--dir', dir); body.classList.remove('is-swapping'); void body.offsetWidth; body.classList.add('is-swapping'); }
-      // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
-      const media = $('[data-reel]', body);
-      if (media && window.Reel) window.Reel.mount(media);
-      history.replaceState(null, '', '#' + cards[current].id);
-    };
-    $$('[data-proj]').forEach((b) => b.addEventListener('click', (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // a new tab or window gets the case study page
-      e.preventDefault();
-      show(+b.dataset.proj);
-      dlg.showModal();
-    }));
-    $$('[data-pdlg-step]', dlg).forEach((b) => b.addEventListener('click', () => show(current + +b.dataset.pdlgStep, +b.dataset.pdlgStep)));
-    dlg.addEventListener('keydown', (e) => {
-      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-      if (d && !e.target.closest('input, textarea, select')) { e.preventDefault(); show(current + d, d); }
-    });
-    dlg.addEventListener('close', () => {
-      $('[data-reel]', body)?.reel?.destroy();
-      body.classList.remove('is-swapping');
-      history.replaceState(null, '', location.pathname + location.search);
-    });
-    // after every deferred script (the reels) has run
-    const fromHash = () => {
-      const i = cards.findIndex((c) => c.id === decodeURIComponent(location.hash.slice(1)));
-      if (i >= 0 && !dlg.open) { show(i); dlg.showModal(); }
-    };
-    addEventListener('DOMContentLoaded', fromHash);
-    addEventListener('hashchange', fromHash);
-    $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
-    // "Full case study": the open case's film and title take the card's transition names, so they grow into the page
-    body.addEventListener('click', (e) => {
-      if (!e.target.closest('.pdlg__cta a[href^="./projects/"]')) return;
-      const card = cards[current];
-      [[$('.pcard__media', card), $('.pdlg__media', body)], [$('h2', card), $('h2', body)]].forEach(([from, to]) => {
-        to.style.viewTransitionName = from.style.viewTransitionName;
-        to.style.viewTransitionClass = from.style.viewTransitionClass;
-        from.dataset.vtName = from.style.viewTransitionName;
-        from.style.viewTransitionName = 'none';
-      });
-    });
-    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
-  }
-
-  if (!motion) {
-    // without motion the nav still turns to frosted paper once the page moves, so it never sits bare over the text
-    const tint = () => nav.classList.toggle('is-scrolled', scrollY > 40);
-    addEventListener('scroll', tint, { passive: true });
-    tint();
-    return;
-  }
-
-  // ---------- motion ----------
-  gsap.registerPlugin(ScrollTrigger);
-  lenis = window.Lenis ? new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }) : null;
-  if (lenis) {
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((t) => lenis.raf(t * 1000));
-    gsap.ticker.lagSmoothing(0);
-    // Freeze the page behind the project modal; the modal itself scrolls natively (data-lenis-prevent).
-    if (dlg) {
-      new MutationObserver(() => (dlg.open ? lenis.stop() : lenis.start())).observe(dlg, { attributes: true, attributeFilter: ['open'] });
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) build(); }, { rootMargin: '1800px 0px' });
+      io.observe(office);
+      if (!(navigator.deviceMemory && navigator.deviceMemory <= 2)) settled(() => setTimeout(function quiet() {
+        if (began) return;
+        if (performance.now() - lastScroll < 400) { setTimeout(quiet, 400); return; }
+        if (window.requestIdleCallback) requestIdleCallback(build, { timeout: 3000 }); else build();
+      }, 3500));
     }
-    $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
-      const t = a.getAttribute('href') === '#main' && a.hasAttribute('data-top') ? 0 : $(a.getAttribute('href'));
-      if (t === null) return;
-      e.preventDefault();
-      lenis.scrollTo(t, { offset: t === 0 ? 0 : -90 });
-    }));
   }
-  // One curve and one travel distance for everything that enters: short, quiet, never bouncing.
-  const EASE = 'power3.out';
-  const RISE = 16;
-
-  // Nav: tint after hero, hide on fast downward scroll, show on up.
-  let lastY = 0;
-  ScrollTrigger.create({
-    start: 0, end: 'max',
-    onUpdate: (st) => {
-      const y = st.scroll();
-      nav.classList.toggle('is-scrolled', y > 40);
-      nav.classList.toggle('is-hidden', y > 400 && y > lastY && menu.hidden);
-      lastY = y;
-    },
-  });
-  nav.classList.toggle('is-scrolled', scrollY > 40); // reload mid-page
-
-  // Hero intro: the headline's words rise out of their clip, then the supporting copy settles in.
-  // (The maze under it is journey.js.)
-  const hero = $('[data-hero]');
-  if (hero) {
-    // (a case study's title arrives with its card instead, so it isn't split: it only gets its marker)
-    const title = $('[data-split=hero]', hero) || $('h1', hero);
-    const words = title.matches('[data-split]') ? split(title, 'w') : [];
-    const fades = $$('[data-hero-fade]', hero);
-    const tl = gsap.timeline({ defaults: { ease: EASE } }).call(() => title.classList.add('is-in'), null, 0.7);
-    if (words.length) tl.from(words, { yPercent: 105, duration: 1, stagger: 0.045 }, 0.1);
-    if (fades.length) tl.fromTo(fades, { opacity: 0, y: RISE }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.35);
-  }
-
-  // The hero's maze board leans a little toward the pointer, as if it could be picked up (mouse and trackpad only; a
-  // touch has no hover to follow). Springy, at most 5 degrees, and it settles back when the pointer leaves.
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    $$('[data-tilt]').forEach((el) => {
-      const tilt = { x: 0, y: 0 };
-      const set = () => { el.style.setProperty('--rx', `${tilt.x.toFixed(2)}deg`); el.style.setProperty('--ry', `${tilt.y.toFixed(2)}deg`); };
-      const to = (x, y) => gsap.to(tilt, { x, y, duration: 0.9, ease: 'elastic.out(1, 0.6)', overwrite: true, onUpdate: set });
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        to(((e.clientY - r.top) / r.height - 0.5) * -10, ((e.clientX - r.left) / r.width - 0.5) * 10);
-      });
-      el.addEventListener('pointerleave', () => to(0, 0));
-    });
-  }
-
-  // Section headlines open as the hero's does: the words rise out of their masks, one after another, then the marker
-  // swipes under the quieter half. The label's hairline draws across as it arrives (site.css), so sections read as
-  // one run rather than blocks sliding in.
-  const heads = $$('.shead .h2');
-  heads.forEach((h) => {
-    const words = split(h, 'w');
-    gsap.set(words, { yPercent: 108 });
-    gsap.set(h, { opacity: 1 }); // (site.css hides [data-reveal] until it plays; here the masks hide the words instead)
-    gsap.fromTo(words, { yPercent: 108 }, {
-      yPercent: 0, duration: 0.9, stagger: 0.04, ease: EASE, onStart: () => setTimeout(() => h.classList.add('is-in'), 350),
-      scrollTrigger: { trigger: h, start: 'top 88%', once: true },
-    });
-  });
-
-  // Everything else comes into focus rather than sliding: a short rise out of a soft blur, once. (.is-in lets CSS
-  // finish an entrance: a route drawing itself, a marker swipe, a doodle drawing on.)
-  const FOCUS = { opacity: 0, y: 10, filter: 'blur(8px)' };
-  const SHARP = { opacity: 1, y: 0, filter: 'blur(0px)', clearProps: 'filter' };
-  $$('[data-reveal]').filter((el) => !heads.includes(el)).forEach((el) => gsap.fromTo(el, FOCUS, {
-    ...SHARP, duration: 0.9, ease: EASE, onStart: () => el.classList.add('is-in'), scrollTrigger: { trigger: el, start: 'top 90%', once: true },
-  }));
-  $$('[data-stagger]').forEach((g) => gsap.fromTo(g.children, FOCUS, {
-    ...SHARP, duration: 0.9, stagger: 0.07, ease: EASE, scrollTrigger: { trigger: g, start: 'top 88%', once: true },
-  }));
-
-  // Sheets unfold as they arrive: each room opens out from a rounded, inset shape to its full width, tied to the scroll,
-  // so one room grows out of the page instead of sliding up over it.
-  $$('.section.sheet').forEach((el) => gsap.fromTo(el, { clipPath: 'inset(4% 4.5% 0% 4.5% round 64px)' }, {
-    clipPath: 'inset(0% 0% 0% 0% round 34px)', ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 35%', scrub: 0.5 },
-  }));
-
-  // The page's aura leans toward the colour of the room coming up (site.css --room), so each hands over to the next.
-  const ROOMS = [['.process', 'rgb(138 61 240 / 0.26)'], ['.sheet--mint', 'rgb(22 184 134 / 0.24)'], ['.sheet--sky', 'rgb(26 166 196 / 0.24)'], ['.sheet--lilac', 'rgb(138 61 240 / 0.26)'], ['.sheet--sun', 'rgb(255 191 31 / 0.2)'], ['.sheet--blue', 'rgb(61 90 254 / 0.3)']];
-  ROOMS.forEach(([sel, colour]) => $$(sel).forEach((el) => ScrollTrigger.create({
-    trigger: el, start: 'top 70%', end: 'bottom 30%',
-    onToggle: (st) => root.style.setProperty('--room', st.isActive ? colour : 'rgb(61 90 254 / 0.2)'),
-  })));
-
-  // The footer's route draws itself into the chevron when the footer arrives.
-  $$('[data-draw]').forEach((el) => ScrollTrigger.create({ trigger: el, start: 'top 94%', once: true, onEnter: () => el.classList.add('is-drawn') }));
-
-  // Scrubbed word reveal (the "who we are" statement): words brighten as you read down.
-  $$('[data-scrub-words]').forEach((p) => {
-    const words = split(p, 'sw');
-    gsap.fromTo(words, { opacity: 0.16 }, {
-      opacity: 1, stagger: 0.1, ease: 'none',
-      scrollTrigger: { trigger: p, start: 'top 80%', end: 'bottom 45%', scrub: 0.6 },
-    });
-  });
-
-  // The founder's print drifts against the quote as it passes (depth, not decoration on every image).
-  $$('.quote__print').forEach((el) => gsap.fromTo(el, { yPercent: 7 }, { yPercent: -7, ease: 'none', scrollTrigger: { trigger: el.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } }));
-
-  // Count-up metrics.
-  $$('[data-count]').forEach((el) => {
-    const end = +el.dataset.count;
-    const o = { v: 0 };
-    el.textContent = '0';
-    // Hero stats sit at the very bottom of the first screen, so they count up with the intro instead.
-    const inHero = el.closest('[data-hero]');
-    gsap.to(o, { v: end, duration: 1.6, delay: inHero ? 0.6 : 0, ease: 'power3.out', onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: inHero ? null : { trigger: el, start: 'top 90%', once: true } });
-  });
-
-  // Selected work (the home bento, desktop and tablet; phones swipe a carousel): as the lower two cards come
-  // up the page they slide in under the first, one after the other, and the first gives way as they arrive, as the
-  // stacked deck did, but with the scroll rather than a pin. Scrolling back plays it in reverse.
-  const stack = $('#work .stack');
-  if (stack) {
-    ScrollTrigger.matchMedia({
-      '(min-width: 561px)': () => {
-        const [first, ...rest] = $$('.stack-card', stack);
-        if (!rest.length) return undefined;
-        const tl = gsap.timeline({ scrollTrigger: { trigger: rest[0], start: 'top bottom', end: 'top 40%', scrub: 0.6 } });
-        rest.forEach((c, i) => tl.fromTo(c, { yPercent: 38, scale: 0.94, rotation: i % 2 ? 2.5 : -2.5 }, { yPercent: 0, scale: 1, rotation: 0, ease: 'none', duration: 1 }, i * 0.25));
-        // the first gives way while they slide in, and comes back once they have landed
-        const inner = $('.stack-card__inner', first);
-        tl.fromTo(inner, { scale: 1, filter: 'brightness(1)' }, { scale: 0.97, filter: 'brightness(0.82)', transformOrigin: '50% 100%', ease: 'none', duration: 0.6 }, 0) // (from an explicit brightness: GSAP reads none as 0)
-          .to(inner, { scale: 1, filter: 'brightness(1)', ease: 'none', duration: 0.65 }, 0.6);
-        return () => gsap.set([...rest, inner], { clearProps: 'all' });
-      },
-    });
-  }
-
-  // Service demos: the active panel's demo builds up and loops while the services are on screen; the others hold their
-  // finished picture (the markup). Figures count up, the cursor finds its button wherever layout put it.
-  const INK = '#151514', MINT_INK = '#0b7f5b';
-  const spot = (el, box, fx = 0.5, fy = 0.55) => { // an element's point in its window's coordinates
-    let x = el.offsetWidth * fx, y = el.offsetHeight * fy;
-    for (let n = el; n && n !== box; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; }
-    return { x, y };
-  };
-  const click = (tl, cursor, target, at) => tl.to(cursor, { scale: 0.84, transformOrigin: '0% 0%', duration: 0.08, yoyo: true, repeat: 1 }, at)
-    .to(target, { scale: 0.94, duration: 0.08, yoyo: true, repeat: 1 }, at + 0.02);
-  const DEMOS = {
-    ai(tl, $) {
-      tl.from($('.sd-chat'), { opacity: 0, y: 10, duration: 0.5 }, 0)
-        .from($('.sd-vision'), { opacity: 0, y: 10, duration: 0.5 }, 0.15)
-        .from($('.sd-msg--me'), { opacity: 0, y: 8, scale: 0.96, transformOrigin: '100% 100%', duration: 0.4 }, 0.5)
-        .set($('.sd-msg--ai'), { opacity: 0 }, 0)
-        .fromTo($('.sd-typing'), { opacity: 0 }, { opacity: 1, duration: 0.2 }, 1)
-        .to($('.sd-typing i'), { opacity: 1, y: -2, duration: 0.22, stagger: 0.11, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 1)
-        .to($('.sd-typing'), { opacity: 0, duration: 0.15 }, 2)
-        .to($('.sd-msg--ai'), { opacity: 1, duration: 0.2 }, 2.05)
-        .from($('.sd-stream span'), { opacity: 0, duration: 0.12, stagger: 0.09 }, 2.1)
-        .from($('.sd-forecast'), { opacity: 0, y: 6, duration: 0.35 }, 2.7)
-        .fromTo($('.sd-actual'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, 2.8)
-        .from($('.sd-now'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, ease: 'back.out(3)' }, 3.6)
-        .fromTo($('.sd-predict'), { clipPath: 'inset(-20% 100% -20% 0%)' }, { clipPath: 'inset(-20% 0% -20% 0%)', duration: 0.9, ease: 'power2.inOut' }, 3.7)
-        .from($('.sd-band'), { opacity: 0, duration: 0.6 }, 3.9)
-        .from($('.sd-conf'), { opacity: 0, scale: 0.7, transformOrigin: '0% 50%', duration: 0.3, ease: 'back.out(2)' }, 4.5)
-        // the vision model scans the car, then marks what it found
-        .from($('.sd-shot img'), { opacity: 0, duration: 0.5 }, 0.6)
-        .set($('.sd-scan'), { opacity: 1 }, 1.1)
-        .fromTo($('.sd-scan'), { top: '0%' }, { top: '100%', duration: 1.2, ease: 'power1.inOut', yoyo: true, repeat: 1 }, 1.1)
-        .set($('.sd-scan'), { opacity: 0 }, 3.5)
-        .from($('.sd-box'), { opacity: 0, scale: 1.18, transformOrigin: '50% 50%', duration: 0.35, stagger: 0.4 }, 1.7)
-        .from($('.sd-score em'), { scaleX: 0, duration: 0.9, ease: 'power2.out' }, 3.1)
-        .from($('.sd-findings > *'), { opacity: 0, y: 6, duration: 0.3, stagger: 0.22 }, 3.5)
-        .to($('.sd-chat, .sd-vision'), { opacity: 0, duration: 0.4 }, 8.4);
-      return 7;
-    },
-    web(tl, $) {
-      const cursor = $('.sd-cursor')[0], btn = $('.sd-publish')[0], box = $('.sd-browser')[0], to = spot(btn, box, 0.55, 0.6);
-      tl.from(box, { opacity: 0, y: 10, duration: 0.5 }, 0)
-        .from($('.sd-phone'), { opacity: 0, y: 14, duration: 0.5 }, 0.2)
-        .from($('.sd-nav > *'), { opacity: 0, x: -6, duration: 0.3, stagger: 0.06 }, 0.4)
-        .set($('.sd-publish__a'), { opacity: 1 }, 0).set($('.sd-publish__b'), { opacity: 0 }, 0).set(btn, { backgroundColor: INK }, 0)
-        .from($('.sd-kpis > div'), { opacity: 0, y: 8, duration: 0.35, stagger: 0.1 }, 0.6);
-      $('.sd-kpis [data-to]').forEach((el, i) => {
-        const end = +el.dataset.to, dec = +(el.dataset.dec || 0), n = { v: 0 };
-        tl.fromTo(n, { v: 0 }, { v: end, duration: 1.1, ease: 'power2.out', onUpdate: () => { el.textContent = dec ? n.v.toFixed(dec) : Math.round(n.v).toLocaleString('en-IN'); } }, 0.7 + i * 0.1);
-      });
-      tl.from($('.sd-chart'), { opacity: 0, duration: 0.3 }, 0.9)
-        .from($('.sd-browser .sd-bars i'), { scaleY: 0, duration: 0.5, stagger: 0.07 }, 1)
-        .from($('.sd-phone__kpi, .sd-phone__row'), { opacity: 0, y: 6, duration: 0.3, stagger: 0.1 }, 1.1)
-        .from($('.sd-phone .sd-bars i'), { scaleY: 0, duration: 0.5, stagger: 0.06 }, 1.3)
-        // the release is published from the web app and lands on the phone
-        .set(cursor, { opacity: 1 }, 2.3)
-        .fromTo(cursor, { x: to.x - 150, y: to.y + 130 }, { x: to.x, y: to.y, duration: 0.8, ease: 'power3.inOut' }, 2.3);
-      click(tl, cursor, btn, 3.15)
-        .to($('.sd-publish__a'), { opacity: 0, duration: 0.15 }, 3.3)
-        .to($('.sd-publish__b'), { opacity: 1, duration: 0.2 }, 3.35)
-        .to(btn, { backgroundColor: MINT_INK, duration: 0.3 }, 3.3)
-        .to(cursor, { opacity: 0, duration: 0.3 }, 4.2)
-        .from($('.sd-toast'), { opacity: 0, y: 16, duration: 0.45, ease: 'back.out(1.8)' }, 3.6)
-        .to($('.sd-browser, .sd-phone'), { opacity: 0, duration: 0.4 }, 7.8);
-      return 6.6;
-    },
-    ecom(tl, $) {
-      const box = $('.sd-store')[0], cursor = $('.sd-cursor')[0], add = $('.sd-add')[0], fly = $('.sd-fly')[0], badge = $('.sd-badge')[0];
-      const to = spot(add, box, 0.6, 0.6), from = spot(add, box, 0.5, 0.5), cart = spot($('.sd-cart')[0], box, 0.5, 0.45);
-      tl.from(box, { opacity: 0, y: 10, duration: 0.5 }, 0)
-        .from($('.sd-pdp__img img'), { opacity: 0, scale: 0.85, y: 10, duration: 0.6, ease: 'back.out(1.6)' }, 0.3)
-        .from($('.sd-pdp__info > *'), { opacity: 0, x: 8, duration: 0.3, stagger: 0.06 }, 0.45)
-        .set(badge, { scale: 0 }, 0)
-        .set(cursor, { opacity: 1 }, 1.3)
-        .fromTo(cursor, { x: to.x + 60, y: to.y + 120 }, { x: to.x, y: to.y, duration: 0.8, ease: 'power3.inOut' }, 1.3);
-      click(tl, cursor, add, 2.15)
-        .to($('.sd-add__a'), { opacity: 0, duration: 0.15 }, 2.3).to($('.sd-add__b'), { opacity: 1, duration: 0.15 }, 2.32)
-        // the item arcs into the cart
-        .set(fly, { opacity: 1, x: from.x, y: from.y, scale: 1 }, 2.3)
-        .to(fly, { keyframes: [{ x: (from.x + cart.x) / 2, y: Math.min(from.y, cart.y) - 30, duration: 0.35, ease: 'power1.out' }, { x: cart.x, y: cart.y, scale: 0.5, duration: 0.35, ease: 'power1.in' }] }, 2.3)
-        .set(fly, { opacity: 0 }, 3)
-        .to(badge, { scale: 1, duration: 0.35, ease: 'back.out(3)' }, 3)
-        .to(cursor, { opacity: 0, duration: 0.3 }, 3.1)
-        .to($('.sd-add__b'), { opacity: 0, duration: 0.2 }, 3.7).to($('.sd-add__a'), { opacity: 1, duration: 0.2 }, 3.75)
-        // and the store recommends what goes with it, then the order goes through
-        .from($('.sd-recs'), { opacity: 0, y: 10, duration: 0.4 }, 3.1)
-        .from($('.sd-rec'), { opacity: 0, y: 10, duration: 0.35, stagger: 0.12 }, 3.3)
-        .from($('.sd-ai'), { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.3, ease: 'back.out(2.5)' }, 3.6)
-        .from($('.sd-order'), { opacity: 0, y: 10, duration: 0.4 }, 4.4)
-        .from($('.sd-order__icon'), { scale: 0, transformOrigin: '50% 50%', duration: 0.35, ease: 'back.out(3)' }, 4.6)
-        .from($('.sd-fraud'), { opacity: 0, y: 6, duration: 0.3 }, 5)
-        .to($('.sd-store, .sd-recs, .sd-order, .sd-fraud'), { opacity: 0, duration: 0.4 }, 8.2);
-      return 7;
-    },
-    cloud(tl, $) {
-      tl.from($('.sd-topo'), { opacity: 0, y: 10, duration: 0.5 }, 0)
-        .from($('.sd-node:not(.sd-scale)'), { opacity: 0, scale: 0.8, transformOrigin: '50% 50%', duration: 0.35, stagger: 0.1 }, 0.3)
-        .from($('.sd-edges > path:not(.sd-scale-edge)'), { opacity: 0, duration: 0.4 }, 0.7)
-        .from($('.sd-group, .sd-group__t'), { opacity: 0, duration: 0.4 }, 0.9)
-        .from($('.sd-pipe'), { opacity: 0, y: 10, duration: 0.4 }, 0.2)
-        .set($('.sd-pipe__a'), { opacity: 1 }, 0).set($('.sd-pipe__b'), { opacity: 0 }, 0)
-        .fromTo($('.sd-progress em'), { scaleX: 0 }, { scaleX: 1, duration: 2.4, ease: 'power1.inOut' }, 0.6)
-        .from($('.sd-step'), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, stagger: 0.8, ease: 'back.out(3)' }, 1.2)
-        .to($('.sd-pipe__a'), { opacity: 0, duration: 0.2 }, 3).to($('.sd-pipe__b'), { opacity: 1, duration: 0.2 }, 3.05)
-        // load grows: a third server joins the group
-        .from($('.sd-scale'), { opacity: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.45, ease: 'back.out(2)' }, 2.7)
-        .from($('.sd-scale-edge'), { opacity: 0, duration: 0.3 }, 2.8)
-        .from($('.sd-metrics'), { opacity: 0, y: 10, duration: 0.4 }, 0.5)
-        .fromTo($('.sd-spark'), { strokeDashoffset: 1.005 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power1.inOut' }, 0.8)
-        .from($('.sd-backup'), { opacity: 0, y: 6, duration: 0.3 }, 3.5)
-        .to($('.sd-led'), { opacity: 0.3, duration: 0.3, yoyo: true, repeat: 9, stagger: 0.15 }, 1);
-      // requests run through the edges, again and again
-      $('.sd-flows path').forEach((p, i) => {
-        const at = 1.1 + i * 0.16 + (p.classList.contains('sd-scale-flow') ? 1.8 : 0);
-        tl.set(p, { opacity: 1 }, at).fromTo(p, { strokeDashoffset: 0.16 }, { strokeDashoffset: -1, duration: 0.7, ease: 'none', repeat: 5, repeatDelay: 0.3 }, at).set(p, { opacity: 0 }, at + 6);
-      });
-      tl.to($('.sd-topo, .sd-pipe, .sd-metrics, .sd-backup'), { opacity: 0, duration: 0.4 }, 8.3);
-      return 7;
-    },
-  };
-  const demos = $$('[data-demo]').map((el) => {
-    const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: 'power3.out' } });
-    const rest = DEMOS[el.dataset.demo] ? DEMOS[el.dataset.demo](tl, (q) => $$(q, el)) : 0;
-    tl.seek(rest, false);
-    return { el, panel: el.closest('[data-svc-panel]'), tl, rest, on: false };
-  });
-  let svcSeen = false;
-  onSvc = () => demos.forEach((d) => {
-    const on = svcSeen && d.panel.classList.contains('is-active');
-    if (on && !d.on) d.tl.restart();
-    else if (!on && d.on) { d.tl.pause(); d.tl.seek(d.rest, false); }
-    d.on = on;
-  });
-  if (demos.length) new IntersectionObserver(([e]) => { svcSeen = e.isIntersecting; onSvc(); }, { threshold: 0.25 }).observe(demos[0].el.closest('[data-services]'));
-
-  // Industries: while the section is on screen the index moves on by itself, the current tile's bar (site.css) saying
-  // when. Picking an industry (a click or the arrow keys) stops it for good.
-  $$('[data-ind]').forEach((box) => {
-    const strip = $('[role=tablist]', box);
-    const tabs = $$('[role=tab]', box);
-    let stopped = false, auto = false;
-    const stop = () => { stopped = true; box.classList.remove('is-auto'); };
-    new IntersectionObserver(([e]) => box.classList.toggle('is-auto', e.isIntersecting && !stopped), { threshold: 0.35 }).observe(box);
-    box.addEventListener('animationend', (e) => {
-      if (e.animationName !== 'ind-timer' || stopped) return;
-      const next = tabs[(tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') + 1) % tabs.length];
-      auto = true; next.click(); auto = false;
-    });
-    tabs.forEach((t) => t.addEventListener('click', () => { if (!auto) stop(); }));
-    strip.addEventListener('keydown', stop);
-    box.addEventListener('pointerdown', stop); // a tap or click anywhere in it means someone is reading: hold still
-  });
-
-  // Services: pin on desktop, scroll drives the active service.
-  const svc = $('[data-services]');
-  if (svc) {
-    ScrollTrigger.matchMedia({
-      '(min-width: 1025px)': () => {
-        const n = svcPanels.length;
-        const st = ScrollTrigger.create({
-          trigger: svc, pin: $('.services__pin', svc), start: 'top top', end: () => '+=' + innerHeight * n * 0.3,
-          onUpdate: (s) => {
-            const f = Math.min(s.progress * n, n - 0.001);
-            setSvc(Math.floor(f), f % 1);
-          },
-        });
-        svcBtns.forEach((b, i) => b.addEventListener('click', () => {
-          const y = st.start + ((st.end - st.start) * (i + 0.5)) / n;
-          lenis ? lenis.scrollTo(y) : scrollTo({ top: y, behavior: 'smooth' });
-        }));
-        return () => setSvc(0);
-      },
-    });
-  }
-
-  // The moving band runs faster while the page scrolls, and backwards when it scrolls up, then eases back.
-  $$('.band__track').forEach((track) => {
-    const run = track.getAnimations()[0];
-    if (!run) return;
-    ScrollTrigger.create({
-      trigger: track, start: 'top bottom', end: 'bottom top',
-      onUpdate: (st) => {
-        run.playbackRate = gsap.utils.clamp(-6, 6, 1 + st.getVelocity() / 300);
-        gsap.to(run, { playbackRate: 1, duration: 0.8, ease: 'power2.out', overwrite: true });
-      },
-    });
-  });
-
-  // Pins (projects deck, services) add scroll distance; triggers below them must be measured after them.
-  ScrollTrigger.sort();
-  ScrollTrigger.refresh();
-  // Recompute after fonts/images change layout.
-  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
-  addEventListener('load', () => ScrollTrigger.refresh());
 })();

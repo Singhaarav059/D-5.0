@@ -1,85 +1,180 @@
-// Home page sections: the selected work and "Who we are" (the hero and "How we work" are templates/journey.js).
+// Home: the promise and its maze, the industries tape, how we work (pinned: four stages on one route), the selected
+// work (sliding sideways as you scroll), what we build (pinned: each service works in a live demo), who we are
+// (the founder, the record, the studio in 3D) and the way to start.
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, vt, icon, pic, shot, btn, head } = require('./helpers');
-const { print, founderWords } = require('./about');
-const { SVC_ART } = require('./shared');
-const { doodle } = require('./doodles');
+const { esc, pad, caseHref, MARK, SVC_COLOR, btn, kicker, words } = require('./helpers');
+const { maze } = require('./maze');
+const { stageScenes, demos } = require('./scenes');
+const { reel } = require('./projects');
+const { metrics, print, quote } = require('./shared');
 
-// --hue: the project's reel accent, which washes the card (site.css); the pastel --tint stays for the picture's frame
-const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')};--i:${i}">
-  <div class="stack-card__inner">
-    <div class="stack-card__copy">
-      <span class="stack-card__num">${pad(i + 1)} / ${pad(total)}</span>
-      <h3 style="${vt(p, 'title')}">${esc(p.title)}</h3>
-      <p>${esc(p.description)}</p>
-      <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-      <a class="link-arrow" href="${caseHref(p)}">Read the case study ${icon.arrow}</a>
+// ---------- the hero ----------
+
+const hero = () => `<section class="wrap hero" data-room="#3d5afe">
+  <div class="hero__top" data-reveal>
+    <span class="tagpill"><img src="${C.logoMark}" alt="" width="14" height="14">${esc(C.hero.label)}</span>
+    <span class="hero__place">Ahmedabad, India</span>
+  </div>
+  <h1 class="display display--hero" data-words>${words(C.hero.headline)}</h1>
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="lead" data-reveal data-delay="0.3">${esc(C.hero.lead)}</p>
+      <div class="actions" data-reveal data-delay="0.4">${btn('Start a project', './contact', { tone: 'paper' })}${btn('See the work', './projects', { tone: 'ghost' })}</div>
+      <div class="hero__record" data-reveal data-delay="0.5">${C.metrics.slice(0, 3).map((m) => `<div><b data-count="${m.value}" data-pre="${esc(m.prefix)}" data-suf="${esc(m.suffix)}">${esc(m.prefix + m.value + m.suffix)}</b><small>${esc(m.label)}</small></div>`).join('')}</div>
     </div>
-    <figure class="stack-card__media" style="${shot(p.image)};${vt(p, 'media')}"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
-  </div>
-</article>`;
-
-// The three latest projects as a bento (site.css), each playing its reel.
-const work = () => `<section class="work" id="work">
-  <div class="section sheet">
-  <div class="wrap">
-    ${head({
-      label: 'Work',
-      title: 'Selected work, <em>from brief to launch</em>',
-      lead: esc(`Three of the ${C.projects.length} products we’ve designed and built, across luxury automotive, legal investigation and luxury retail.`),
-      side: btn('View all work', './projects', 'btn--ghost'),
-      mark: ['star', 'tomato'],
-    })}
-    <div class="stack">${C.projects.slice(0, 3).map((p, i) => projectCard(p, i, 3)).join('')}</div>
-  </div>
+    <div class="hero__maze" data-tilt="5">
+      <div class="board" data-reveal data-delay="0.1">${maze({ cols: 14, rows: 9, seed: 11, label: `A route drawn through a maze, from your idea to launch, past ${C.journey.pitfalls.slice(0, 4).map((p) => p[1].toLowerCase()).join(', ')}` })}</div>
+    </div>
   </div>
 </section>`;
 
-// Home: who we are, as a person: the founder's print beside his words, then the team in one line (the full story,
-// the values and the reasons live on the about page).
-const team = C.metrics.find((m) => /team/i.test(m.label));
-const studio = () => `<section class="section sheet quote studio" id="about">
-  <div class="wrap">
-    ${head({ label: 'Studio', title: 'Who <em>we are</em>', mark: ['heart', 'pink'] })}
-    <div class="studio__founder">
-      ${print()}
-      <div class="studio__words">
-        <figure class="quote__copy">
-          ${founderWords()}
-        </figure>
-        <p class="studio__team" data-reveal>${esc(C.founder.name.split(' ')[0])} leads a team of ${team.value}${team.suffix} technologists, designers and strategists in Ahmedabad who build your product with you, as one long-term team.</p>
-        <a class="link-arrow" href="./about-us" data-reveal>More about us ${icon.arrow}</a>
+// ---------- the tape: the industries we build for, running sideways ----------
+
+const tape = () => {
+  const run = C.industries.map(([name, , { color }]) => `<span>${esc(name)}<i style="background:${MARK[color]}"></i></span>`).join('');
+  return `<div class="tape" aria-hidden="true"><div class="tape__track" data-marquee="70">${run}${run}</div></div>`;
+};
+
+// ---------- how we work ----------
+
+const STAGE = [['Idea', 'var(--sun)'], ['Design', 'var(--lilac)'], ['Build', 'var(--sky)'], ['Launch', 'var(--tomato)']];
+const JROUTE = 'M0 58H170V18H420V64H660V30H1000';
+
+// On wide screens the section pins for a while: the route draws along as you scroll, each stage swaps in with its
+// scene, and its steps tick off. On phones (and short screens) the stages simply stack, each with its scene.
+const howWeWork = () => `<section class="journey" data-journey data-room="#a58bff">
+  <div class="journey__pin">
+    <div class="wrap journey__inner">
+      <div class="journey__head">
+        <div>${kicker('How we work')}<h2 class="display display--m">${C.journey.title.replace('<em>', '<em class="quiet">')}</h2></div>
+        <div class="journey__count"><span><b data-stage-num>01</b><em class="quiet"> / 04</em></span><i class="journey__bar"><i data-jbar></i></i></div>
+      </div>
+      <div class="journey__route">
+        <div class="journey__line"><svg viewBox="0 0 1000 80" preserveAspectRatio="none" aria-hidden="true"><path class="is-track" d="${JROUTE}"/><path class="is-drawn" data-jroute d="${JROUTE}"/></svg><i class="journey__dot" data-jdot aria-hidden="true"></i></div>
+        <div class="journey__labels">${STAGE.map(([t, c], i) => `<span data-jlabel="${i}"><i style="background:${c}"></i>${t}</span>`).join('')}</div>
+      </div>
+      <div class="journey__stages">${C.process.map((st, i) => `
+        <div class="jstage${i === 0 ? ' is-on' : ''}" data-stage="${i}" style="--c:${STAGE[i][1]}">
+          <div class="jstage__text">
+            <span class="jstage__n">${pad(i + 1)}</span>
+            <span class="jstage__short"><i></i>${pad(i + 1)} · ${STAGE[i][0]}</span>
+            <h3>${esc(st.title)}</h3>
+            <p>${esc(st.description)}</p>
+            <ul>${st.steps.map((t, j) => `<li data-step="${j}" data-n="${st.steps.length}"><span class="tick"><i>✓</i></span>${esc(t)}</li>`).join('')}</ul>
+          </div>
+          <div class="jstage__scene"><div data-fit>${stageScenes[i]()}</div></div>
+        </div>`).join('')}
       </div>
     </div>
-    ${office()}
   </div>
 </section>`;
 
-// Inside the studio: the Muse crew at work in a small office, in 3D (public/assets/office3d.js, loaded when it comes
-// near). Until then, and without WebGL, the frame shows the room's colour and says what is in it.
-const office = () => `<figure class="office" data-office data-src="./assets/office3d.js" data-reveal>
-      <div class="office__stage" role="img" aria-label="The Demaze crew at work in a small studio: two at their laptops, one getting coffee from the machine, two planning at the whiteboard"></div>
-      <figcaption>Inside the studio: coding, coffee, and the plan on the board.</figcaption>
-    </figure>`;
+// ---------- selected work ----------
 
-// Home: the four services as tiles (the full panels, demos and tools live on the services page), each with the work
-// that shows it; then a way to ask when it isn't obvious which one fits.
-const build = () => `<section class="section sheet sheet--day sheet--mint build" id="services">
-  <div class="wrap">
-    ${head({ label: 'Services', title: 'What we <em>build</em>', lead: 'Four kinds of product. Most of what we ship uses two or three together.', side: btn('All services', './services', 'btn--ghost'), mark: ['pencil', 'lilac'] })}
-    <ul class="build__grid" data-stagger>${C.services.map((s) => `
-      <li><a class="build__tile" href="./services#${s.id}" style="--dd:var(--${SVC_ART[s.id][1]})">
-        <span class="build__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span>
-        <h3>${esc(s.title)}</h3>
-        <p>${esc(s.summary)}</p>
-        <span class="build__work">${s.work.length} projects · ${s.work.slice(0, 2).map((k) => esc(C.projects.find((p) => p.image === k).name)).join(', ')}</span>
-        <span class="build__more">Explore ${icon.arrow}</span>
-      </a></li>`).join('')}
-    </ul>
-    <p class="build__help"><b>Not sure which you need?</b> Tell us the problem and we’ll map the route. <a class="link" href="./contact#form-brief">Start a project</a></p>
+// The first six projects slide sideways as you scroll (the one in the middle full size, the others leaning away),
+// ending on a card to the rest. On phones the row scrolls by swipe.
+const SHOW = 6;
+const work = () => `<section class="hwork" data-hscroll data-room="#ff6242">
+  <div class="hwork__pin">
+    <div class="wrap hwork__head">
+      <div>${kicker('Selected work')}<h2 class="display display--l" data-words>${words('From brief <em>to launch.</em>')}</h2></div>
+      <div class="hwork__side">
+        <div class="hwork__count" aria-hidden="true"><span><b data-work-num>01</b><em class="quiet"> / ${pad(SHOW)}</em></span><small data-work-name>${esc(C.projects[0].name)} · ${esc(C.projects[0].sector)}</small></div>
+        ${btn(`All ${C.projects.length} →`, './projects', { tone: 'ghost' })}
+      </div>
+    </div>
+    <div class="hwork__viewport">
+      <div class="hwork__track" data-htrack>${C.projects.slice(0, SHOW).map((p, i) => `
+        <a class="hcard" href="${caseHref(p)}" data-hcard data-name="${esc(p.name)} · ${esc(p.sector)}">
+          <div data-tilt="4">${reel(p, { size: 'wide', sizes: '(max-width: 860px) 84vw, 920px' })}</div>
+          <div class="hcard__foot">
+            <div><span class="meta">${pad(i + 1)} · ${esc(p.sector)}</span><h3>${esc(p.name)} <em class="quiet">— ${esc(p.brief)}</em></h3></div>
+            <span class="round" aria-hidden="true">→</span>
+          </div>
+        </a>`).join('')}
+        <a class="hcard hcard--more" href="./projects" data-hcard data-name="${C.projects.length - SHOW} more · All sectors">
+          <span class="kicker">${C.projects.length - SHOW} more</span>
+          <span class="hcard__big">Fintech, legal, commerce, senior care and more.</span>
+          <span class="pillink">See all ${C.projects.length} projects →</span>
+        </a>
+      </div>
+    </div>
+    <div class="wrap"><span class="hwork__progress"><i data-hbar></i></span></div>
   </div>
 </section>`;
 
-module.exports = { work, studio, build };
+// ---------- what we build ----------
+
+// Each service's capabilities as short tags (the first words of its first four items).
+const chipsOf = (s) => s.items.slice(0, 4).map((t) => t.split(/ & | \/ |, /)[0]);
+const names = (s) => s.work.slice(0, 2).map((k) => C.projects.find((p) => p.image === k).name).join(', ');
+
+// Pinned on wide screens: scrolling moves through the four services, each shown working in its demo; a click on a
+// service scrolls to it. On phones they switch on tap.
+const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
+  <div class="svc sheet" data-svcpin>
+    <div class="svc__pin">
+      <div class="svc__head">
+        <div>${kicker('Services', 'kicker--blue')}<h2 class="display display--l" data-reveal>What we build</h2></div>
+        <p>Four kinds of product. Most of what we ship uses two or three together. <b class="svc__hint">Keep scrolling</b><b class="svc__hint-tap">Tap one</b> to see each one work.</p>
+      </div>
+      <div class="svc__grid">
+        <div class="svc__list">${C.services.map((s, i) => `
+          <button type="button" class="svc__item${i === 0 ? ' is-on' : ''}" data-svc="${i}" aria-pressed="${i === 0}" style="--c:${SVC_COLOR[s.id]}">
+            <span class="svc__n">${pad(i + 1)}</span>
+            <span class="svc__text"><span class="svc__title">${esc(s.title)}</span><span class="svc__sum"><span><span>${esc(s.summary)}</span></span></span></span>
+            <span class="svc__count"><i></i>${s.work.length} projects</span>
+            <i class="svc__rule"></i>
+          </button>`).join('')}
+          <span class="svc__progress"><i data-sbar></i></span>
+        </div>
+        <div class="svc__show">
+          <div class="svc__screen">
+            ${C.services.map((s, i) => `<div class="svc__demo${i === 0 ? ' is-on' : ''}" data-svc-panel="${i}"><div data-fit>${demos[s.id]()}</div>
+              <div class="svc__tags"><b style="background:${SVC_COLOR[s.id]}">${esc(s.title)}</b>${chipsOf(s).map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>`).join('')}
+          </div>
+          ${C.services.map((s, i) => `<div class="svc__caption${i === 0 ? ' is-on' : ''}" data-svc-panel="${i}"><span>Seen in <b>${esc(names(s))}</b> <em>· demo is illustrative</em></span><a class="ulink" href="./services#${s.id}">Explore ${esc(s.title)} →</a></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+
+// ---------- who we are ----------
+
+const team = C.metrics.find((m) => /team/i.test(m.label));
+const studio = () => `<section class="wrap studio" data-room="#ff85b8">
+  <div class="studio__grid">
+    ${print()}
+    <div class="studio__words">
+      ${kicker('Who we are')}
+      ${quote('var(--pink)')}
+      <p class="studio__team" data-reveal>${esc(C.founder.name.split(' ')[0])} leads a team of ${team.value}${team.suffix} technologists, designers and strategists in Ahmedabad who build your product with you, as one long-term team.</p>
+      <a class="ulink" href="./about-us">More about us →</a>
+    </div>
+  </div>
+  ${metrics('metrics--big')}
+  <figure class="office" data-office data-src="./assets/office3d.js" data-reveal>
+    <div class="office__stage" role="img" aria-label="The Demaze crew at work in a small studio: two at their laptops, one getting coffee from the machine, two planning at the whiteboard"></div>
+    <figcaption>Inside the studio: coding, coffee, and the plan on the board.</figcaption>
+  </figure>
+</section>`;
+
+// ---------- start a project ----------
+
+const start = () => `<section class="start-wrap" data-room="#ffcb45">
+  <div class="start">
+    <div class="start__copy">
+      ${kicker('Start a project')}
+      <h2 class="display display--xl" data-words>${words('Got a maze? <em>We’ll map the route.</em>')}</h2>
+      <p class="lead" data-reveal>Tell us the problem. In 30 minutes we’ll sketch the route through it: what to build first, what to skip, and who you’d work with.</p>
+      <div class="actions" data-reveal>${btn('Book a 30-min call', C.calendly, { tone: 'ink', size: 'lg', extra: 'target="_blank" rel="noopener"' })}${btn('Send a brief', './contact', { tone: 'line', size: 'lg', magnet: false })}</div>
+      <div class="crew-band" data-crew aria-hidden="true"></div>
+    </div>
+    <div class="start__maze" data-tilt="4">${maze({ cols: 10, rows: 7, seed: 23, tone: 'day', start: 'Your problem', label: 'A route mapped through a maze, from your problem to launch' })}</div>
+  </div>
+</section>`;
+
+module.exports = { hero, tape, howWeWork, work, services, studio, start };

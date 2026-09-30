@@ -1,5 +1,5 @@
 // The Demaze studio: a small office in 3D (Three.js), with the Muse crew at work in it, in the home page's "who we
-// are" section ([data-office]). ambient.js imports this module and the crew kit (crew3d.js: the characters, their
+// are" section ([data-office]). site.js imports this module and the crew kit (crew3d.js: the characters, their
 // springs and props) when the section comes near, and calls start(el, kit).
 //
 // The room: oak floor, a window with the sun coming through it onto the desks, two desks with laptops and office

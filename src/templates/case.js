@@ -1,56 +1,41 @@
-// Case study pages (/projects/<image key>): the same story as the project dialog, told as a page of its own that can
-// be found, linked and shared. The project's motion reel plays large beside the story (public/assets/reel.js); the
-// neighbouring cases and the contact block follow.
+// Case study pages (/projects/<image key>), one per project: the title and the brief with the services it drew on,
+// its reel playing large, what we built (the description and the features), the outcome, and the next case.
 'use strict';
 
 const C = require('../content');
-const { esc, pad, caseHref, vt, icon, pic, shot, btn } = require('./helpers');
-const { pageHero } = require('./shared');
-const { reelAttr, servicesOf } = require('./projects');
+const { esc, pad, caseHref, pic, btn, SVC_COLOR } = require('./helpers');
+const { reel, servicesOf } = require('./projects');
 
-// The facts of the project under the brief: its sector, the services it drew on and, where we can name it, the client.
-const facts = (p) => {
-  const used = C.services.filter((s) => servicesOf(p).split(' ').includes(s.id));
-  const client = C.reels[p.image]?.client;
-  const row = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
-  return `<dl class="case__facts" data-hero-fade>${row('Sector', esc(p.sector))}${used.length ? row('Services', used.map((s) => `<a href="./services#${s.id}">${esc(s.title)}</a>`).join('')) : ''}${client ? row('Client', esc(client.replace(/^Built for (\w)/, (_, c) => c.toUpperCase()))) : ''}</dl>`;
+const caseStudy = (p, i) => {
+  const used = C.services.filter((s) => servicesOf(p).includes(s.id));
+  const next = C.projects[(i + 1) % C.projects.length];
+  return `<article class="wrap case">
+  <a class="case__back" href="./projects">← All projects</a>
+  <header class="case__head" data-room="#3d5afe">
+    <div class="case__title"><span class="kicker">${pad(i + 1)} · ${esc(p.sector)}</span><h1 class="display display--case" data-reveal>${esc(p.title)}</h1></div>
+    <div class="case__brief">
+      <span class="kicker kicker--dim">The brief</span>
+      <p data-reveal>${esc(p.brief)}</p>
+      ${used.length ? `<div class="case__svcs">${used.map((s) => `<a class="tagline-chip" href="./services#${s.id}"><i style="background:${SVC_COLOR[s.id]}"></i>${esc(s.title)}</a>`).join('')}</div>` : ''}
+    </div>
+  </header>
+  <div data-reveal>${reel(p, { size: 'hero', sizes: '(max-width: 1340px) 94vw, 1244px', eager: true })}</div>
+  <section class="case__built">
+    <div>
+      <h2 class="kicker">What we built</h2>
+      ${p.description ? `<p class="case__desc" data-reveal>${esc(p.description)}</p>` : ''}
+    </div>
+    <ol class="case__features">${p.features.map((f, j) => `<li data-reveal><span>${pad(j + 1)}</span>${esc(f)}</li>`).join('')}</ol>
+  </section>
+  <section class="case__outcome" data-reveal>
+    <div><h2 class="kicker kicker--blue">The outcome</h2><p>${esc(p.outcome)}</p></div>
+    ${btn('Build something similar', './contact', { tone: 'ink' })}
+  </section>
+  <a class="case__next" href="${caseHref(next)}" data-reveal>
+    <span class="case__next-main"><span class="case__next-shot" style="--tint:${next.tint}">${pic(next.image, '', { sizes: '140px' })}</span><span><small>Next case · ${esc(next.sector)}</small><b>${esc(next.title)}</b></span></span>
+    <span class="round round--paper" aria-hidden="true">→</span>
+  </a>
+</article>`;
 };
 
-const caseHero = (p, i) => pageHero(`Case study · ${pad(i + 1)} / ${pad(C.projects.length)} · ${p.sector}`, esc(p.title), p.brief,
-  `<div class="hero__ctas" data-hero-fade>${btn('Discuss a similar project', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn('All projects', './projects', 'btn--ghost')}</div>${facts(p)}`,
-  [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']], '', vt(p, 'title')); // (the title arrives with the card, so no word-by-word intro)
-
-// The hero carries the brief and the facts; the story goes on with what we built (the reel, or the screens without
-// motion, beside it) and closes on the outcome, set large in the project's own colour.
-const caseStory = (p, i) => `<section class="section case" style="--tint:${p.tint};--hue:${esc(C.reels[p.image]?.accent || '#3d5afe')}">
-  <div class="wrap">
-    <div class="case__grid">
-      <div class="case__aside">
-        <figure class="pcard__media case__media" style="--tint:${p.tint};${shot(p.image)};${vt(p, 'media')}"${reelAttr(p, i)}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 620px', attrs: 'fetchpriority="high" decoding="async"' })}</figure>
-      </div>
-      <div class="case__body">
-        <h2 class="case__label" data-reveal>What we built</h2>
-        ${p.description ? `<p class="case__lead" data-reveal>${esc(p.description)}</p>` : ''}
-        <ul class="case__features" data-stagger>${p.features.map((f) => `<li>${icon.check}<span>${esc(f)}</span></li>`).join('')}</ul>
-      </div>
-    </div>
-    <div class="case__outcome" data-reveal>
-      <h2 class="case__label">The outcome</h2>
-      <p>${esc(p.outcome)}</p>
-    </div>
-  </div>
-</section>`;
-
-// The previous and next case, so a reader can keep going without the grid.
-const caseMore = (i) => {
-  const n = C.projects.length;
-  const card = (j, label) => {
-    const p = C.projects[(j + n) % n];
-    return `<a class="case-more__card" href="${caseHref(p)}" style="--tint:${p.tint}"><span class="case-more__shot" style="${vt(p, 'media')}">${pic(p.image, '', { sizes: '(max-width: 560px) 92vw, 280px' })}</span><span class="case-more__text"><small>${label}</small><b>${esc(p.name)}</b><span>${esc(p.sector)}</span></span>${icon.arrow}</a>`;
-  };
-  return `<nav class="section case-more" aria-label="More case studies">
-  <div class="wrap case-more__row" data-stagger>${card(i - 1, 'Previous case')}${card(i + 1, 'Next case')}</div>
-</nav>`;
-};
-
-module.exports = { caseHero, caseStory, caseMore };
+module.exports = { caseStudy };

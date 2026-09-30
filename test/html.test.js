@@ -24,7 +24,7 @@ test('generated active pages have required metadata and local runtime scripts', 
     assert.doesNotMatch(html, /cdn\.jsdelivr\.net/);
     assert.doesNotMatch(html, /https:\/\/fonts\.googleapis\.com/);
     assert.doesNotMatch(html, /<script(?![^>]+\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/); // (structured data is not code)
-    assert.match(html, /assets\/vendor\/gsap\.min\.js/);
+    assert.match(html, /assets\/site\.js/);
   }
 });
 
@@ -93,14 +93,12 @@ test('every local link, anchor and asset on the pages resolves', () => {
   }
 });
 
-test('screenshot backdrops (--shot) point at files next to the stylesheet that uses them', () => {
-  // A url() inside a custom property resolves against the stylesheet that reads it (public/assets/site.css).
-  for (const page of ['index', 'projects']) {
-    const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
-    const urls = [...html.matchAll(/--shot:url\(([^)]+)\)/g)].map((m) => m[1]);
-    assert.ok(urls.length, `${page} has no screenshot backdrops`);
-    for (const url of urls) assert.ok(fs.existsSync(path.join(root, 'public', 'assets', url)), `${page}: --shot ${url} does not resolve from public/assets/`);
-  }
+test('project cards play their reels: one chapter per feature, on home, the projects page and every case study', () => {
+  const C = require('../src/content');
+  const reels = (page) => [...fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8').matchAll(/class="reel reel--\w+" data-cycle="([\d.]+)"/g)].map((m) => +m[1]);
+  assert.equal(reels('projects').length, C.projects.length, 'every project has a card on the projects page');
+  assert.ok(reels('index').length >= 6, 'home shows the selected work');
+  for (const p of C.projects) assert.equal(reels(`projects/${p.image}`)[0], +(p.features.length * 2.6).toFixed(1), `${p.image}: its reel runs one chapter per feature`);
 });
 
 test('structured data parses and every page names the organisation', () => {

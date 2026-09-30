@@ -37,7 +37,7 @@ module.exports = {
   },
 
   founder: {
-    quote: 'We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive - and we’re with you, executing every step of the way.',
+    quote: 'We harness your vision and data to build AI-driven solutions that help your brand stand out and grow revenue. When you thrive, we thrive, and we’re with you, executing every step of the way.',
     mark: 'When you thrive, we thrive', // the part of the quote that gets a marker line
     name: 'Krupal Chaudhary',
     title: 'Founder & CEO',
@@ -145,7 +145,7 @@ module.exports = {
       description: 'We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.',
       items: ['Predictive Analytics & Forecasting', 'NLP & Conversational AI', 'Computer Vision & Image Processing', 'Generative Models & Content Synthesis', 'Recommendation Systems & Personalization', 'AI Dashboards & Insights'],
       work: ['ai-based-software-for-luxury-car-dealers', 'investigative-case-management-software', 'ai-powered-luxury-ecommerce-platform', 'storyboard-creation-for-films-with-ai', 'educational-courses-and-lms-platform'] },
-    { id: 'web', title: 'Web / Mobile App / SaaS', summary: 'Web and mobile apps, custom SaaS, APIs and workflow automation',
+    { id: 'web', title: 'Web, Mobile & SaaS', summary: 'Web and mobile apps, custom SaaS, APIs and workflow automation',
       description: 'We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.',
       items: ['Web App Development', 'Mobile App Development', 'Custom SaaS Development', 'Workflow Automation', 'API Development & System Integration', 'Progressive Web App (PWA)'],
       work: ['senior-engagement-and-support-platform', 'car-service-and-customer-engagement-platform', 'recruitment-platform', 'insurance-management-platform', 'global-payment-transfer-platform', 'task-staff-and-document-management-platform', 'educational-courses-and-lms-platform', 'social-media-and-social-commerce-platform', 'multi-shoppers-food-and-grocery-delivery-app', 'cma-report-generation-software'] },
@@ -158,21 +158,6 @@ module.exports = {
       items: ['Cloud Migration & Modernization', 'Cloud Native App Development', 'Multi-Cloud & Hybrid Cloud Architecture', 'Cloud Security, Compliance & Governance', 'Observability, Monitoring & Performance Optimization', 'Disaster Recovery, Backup & Business Continuity'],
       work: ['cma-report-generation-software', 'investigative-case-management-software', 'task-staff-and-document-management-platform'] },
   ],
-
-  // Tools & technologies: the AI & ML category, with each tool's role. `icon` names a file in public/assets/img/tech.
-  stack: {
-    lead: 'How Demaze connects foundation AI models, orchestration frameworks, and real-time data infrastructure into resilient production software.',
-    items: [
-      { name: 'OpenAI', role: 'Large Language Models', icon: 'ai-openai' },
-      { name: 'Hugging Face', role: 'Open-Source AI Models', icon: 'ai-hugging-face' },
-      { name: 'LangChain', role: 'LLM Orchestration', icon: 'ai-langchain' },
-      { name: 'Python', role: 'Core AI & APIs', icon: 'ai-python' },
-      { name: 'TensorFlow', role: 'Machine Learning Models', icon: 'ai-tensorflow' },
-      { name: 'Pinecone Database', role: 'Vector Database', icon: 'ai-pinecone-database' },
-      { name: 'Apache Kafka', role: 'Real-Time Streaming', icon: 'ai-apache-kafka' },
-      { name: 'Elasticsearch', role: 'Search & Indexing', icon: 'ai-elasticsearch' },
-    ],
-  },
 
   // Every tab of "Tools & Technologies" on the live /services page. slug = Simple Icons slug (null = text only).
   tools: [
@@ -247,183 +232,6 @@ module.exports = {
     { q: 'How do you ensure the security and confidentiality of our project?', a: 'Security and confidentiality are paramount in everything we do. We implement industry-standard security protocols, sign comprehensive NDAs before any project discussion, follow secure development practices, and ensure data protection compliance (GDPR, CCPA, etc.). All our team members are bound by strict confidentiality agreements, and we use secure development environments and encrypted communication channels.' },
   ],
 
-  // Motion reels (public/assets/reel.js, reel-kit.js, reel3d.js), keyed by project image: one short film per project
-  // on the projects page, the home deck and the case dialog. Each opens its own way (`open`), sits in its own `look`
-  // (site.css, "project reels") with its own frame around the story (`chrome`: counter, subtitle, stories or tag) and
-  // its own `move` between chapters, then tells the product in three or four chapters picked for it (scene types in
-  // reel-kit.js; no type appears in more than two reels, so no two films are built from the same pictures). A reel
-  // may start with `brief` (the jobs it does, as one-word beats) or end on `outcome`; the hero is the product itself
-  // (a studio car render or a 3D model). Chat lines, chart shapes, prices and map routes are illustrative, not client
-  // data; everything said about the work comes from the project's own copy above. `art` names are files in
-  // public/assets/img/reel/ (Fluent 3D renders). Car heroes use the SUV studio renders (model: 'gls', a graphite
-  // Mercedes-Benz GLS, or 'rrs', a debadged pearl Range Rover Sport) and tell the showroom start-up (default) or
-  // `story: 'service'` (drive-in, scan, job card).
-  reels: {
-    'ai-based-software-for-luxury-car-dealers': {
-      name: 'Carzup', open: 'spotlight', look: 'noir', chrome: 'counter', move: 'push', tagline: 'AI software for luxury car dealers', client: 'Built for one of India\'s largest luxury car dealerships',
-      brief: { text: 'One system to value used cars, quote new-car EMIs, run refurbishment and back the sales team.', items: [{ label: 'Valuations', art: 'car' }, { label: 'EMIs', art: 'card' }, { label: 'Refurbishment', art: 'tools' }, { label: 'Sales', art: 'office2' }] },
-      hero: { kind: 'car', model: 'gls', chapter: 'Valuation', cap: 'A trade-in arrives and is valued accurately', tags: ['Model year 2018', '1,00,000 km', 'Diesel'], value: { to: 5000000, prefix: '₹ ', format: 'inr', label: 'AI valuation' }, marks: [['Condition', 'front'], ['Bodywork', 'body'], ['Tyres', 'rear']] },
-      scenes: [
-        { type: 'bars', chapter: 'New car EMI', cap: 'The customer sees instant EMIs for a new car', art: 'suv', artLabel: 'Monthly EMI', readout: ['₹4,44,000', '₹2,32,000', '₹1,61,500', '₹1,26,700', '₹1,05,500'], sub: ['12 months', '24 months', '36 months', '48 months', '60 months'], display: ['₹4.4L', '₹2.3L', '₹1.6L', '₹1.3L', '₹1.1L'], labels: ['12', '24', '36', '48', '60'], values: [1, 0.522, 0.364, 0.285, 0.237] },
-        { type: 'checklist', chapter: 'Refurbishment', cap: 'The trade-in is refurbished, step by step', art: 'car', items: [{ label: 'Inspection', art: 'search' }, { label: 'Bodywork', art: 'tools' }, { label: 'Paint', art: 'palette' }, { label: 'Ready to sell', art: 'sparkle' }] },
-        { type: 'pipeline', chapter: 'Tracking', cap: 'Every car is tracked from trade-in to sale', stages: ['Valued', 'Refurbishing', 'Listed', 'Sold'], counts: [6, 4, 9, 3], card: { label: 'Trade-in', art: 'car' }, ghosts: ['suv', 'car'] },
-      ],
-      outro: 'Four tools · one dealership',
-    },
-    'investigative-case-management-software': {
-      name: 'Case Files', open: 'type', look: 'paper', chrome: 'subtitle', move: 'cut', align: 'left', tagline: 'AI tools for private investigators', accent: '#2bb3a3',
-      hero: { kind: 'laptop', opts: { screen: { web: true, accent: '#2bb3a3', title: 'Cases', nav: ['Case board', 'Media', 'Documents', 'Workflows'], tiles: [['Cases', 'Organised'], ['Media', 'Stored'], ['Tasks', 'Automated']] } }, chapter: 'The platform', title: 'Case management', cap: 'Case management in the browser, from anywhere', tags: ['Case information', 'Media', 'Secure storage'] },
-      scenes: [
-        { type: 'board', chapter: 'Organise', cap: 'Every case, its media and leads pinned together', items: [{ label: 'Case file', art: 'folder' }, { label: 'Photos', art: 'photo' }, { label: 'Location', art: 'pin' }, { label: 'Video', art: 'video' }, { label: 'Notes', art: 'memo' }, { label: 'Witness', art: 'detective' }] },
-        { type: 'products', chapter: 'AI tools', cap: 'AI tools analyse photos, video and documents', query: 'Find matches in case media', ai: true, pick: 1, badge: 'AI match', items: [{ art: 'photo', label: 'Photo', sub: 'Tagged' }, { art: 'video', label: 'Video', sub: 'Matched' }, { art: 'doc', label: 'Document', sub: 'Summarised' }] },
-        { type: 'document', example: true, chapter: 'Documents', cap: 'Case reports are generated automatically', title: 'Case Report', stamp: 'Generated', exports: ['pdf'], fields: [['Case', '#CF-2291'], ['Client', 'A. Kapoor'], ['Subject', 'Asset trace'], ['Evidence', '14 photos · 3 videos'], ['Status', 'Findings ready']] },
-      ],
-      outro: 'Case work, organised',
-    },
-    'ai-powered-luxury-ecommerce-platform': {
-      name: 'Eco Chic', open: 'split', look: 'studio', chrome: 'tag', move: 'slide', tagline: 'Sustainable luxury fashion', accent: '#2f7a5d',
-      hero: { kind: 'bag', opts: { color: '#1f5c46', label: 'ECO CHIC' }, chapter: 'The store', title: 'Eco Chic', cap: 'A premium, sustainable luxury store', tags: ['Shop', 'Rent', 'Sell'] },
-      scenes: [
-        { type: 'tryon', chapter: 'Try-on', cap: 'Virtual try-ons before anything ships', label: 'AI stylist', looks: [{ art: 'dress', label: 'Midi dress', hue: -70, color: '#2f7a5d' }, { art: 'blazer', label: 'Linen coat', color: '#cfa982' }, { art: 'kimono', label: 'Silk kimono', color: '#3b6fd8' }] },
-        { type: 'pricing', chapter: 'Price models', cap: 'AI prices every piece to buy, rent or resell', art: 'handbag', label: 'Designer bag', options: [['Buy', 'Own it', '$2,450'], ['Rent', 'Wear it for a week', '$180'], ['Resell', 'Pre-loved resale', '$1,390']] },
-        { type: 'passport', chapter: 'Authentication', cap: 'Each piece carries a digital passport', art: 'handbag', label: 'Designer bag', result: 'Authenticated', sub: 'Digital passport' },
-        { type: 'live', chapter: 'Live selling', cap: 'Live selling turns a stream into orders', art: 'handbag', label: 'Leather bag', cta: 'Buy', host: 'person2', feed: ['Is it in green?', 'Just bought one!', 'Love the stitching'] },
-      ],
-      outro: 'Luxury, made circular',
-    },
-    'senior-engagement-and-support-platform': {
-      name: 'Sukoon', open: 'rise', look: 'sunset', chrome: 'subtitle', move: 'wipe', tagline: 'Community for seniors, by seniors', accent: '#e0a200', client: 'Sukoon Unlimited',
-      hero: { kind: 'phone', opts: { accent: '#f5b50a', screen: { accent: '#e9a800', title: 'Sukoon', items: [['Sarathis', 'Trusted companions'], ['Club Sukoon', 'Activities'], ['Coaching', 'Personalised'], ['Meetups', 'Social'], ['Sukoon Corner', 'Blog']] } }, chapter: 'The app', title: 'Sukoon', cap: 'Everything a member needs, in one app', tags: ['Sarathis', 'Club Sukoon', 'Coaching'] },
-      scenes: [
-        { type: 'call', chapter: 'Sarathis', cap: 'A member speaks with a Sarathi, a trusted companion', note: 'Available 9 AM – 9 PM', people: [{ art: 'senior', label: 'Member' }, { art: 'person2', label: 'Sarathi' }] },
-        { type: 'chat', chapter: 'Coaching', cap: 'Personalised coaching and counselling', title: 'Coaching session', status: 'Coach online', people: ['person2', 'senior'], messages: [['in', 'How are you feeling today?'], ['out', 'Much better, thank you'], ['in', 'Shall we plan your next session?'], ['out', 'Yes please, Thursday?']] },
-        { type: 'calendar', chapter: 'Meetups', cap: 'Meetups and social events to join', month: 'Meetups', day: 18, event: 'Community meetup', sub: 'Share experiences, make friends', art: 'hands' },
-      ],
-      outro: 'Reducing isolation, fostering connection',
-    },
-    'multi-vendor-ecommerce-marketplace': {
-      name: 'Better That', open: 'marquee', look: 'pop', chrome: 'stories', move: 'slide', align: 'left', tagline: 'You shop, we give back', accent: '#ef5b3f',
-      hero: { kind: 'phone', opts: { accent: '#f3c3bb', screen: { accent: '#ef5b3f', title: 'better that.', items: [['Women', 'Shop by category'], ['Shoes', 'Latest trends'], ['Dresses', 'New in'], ['Accessories', 'Brands'], ['Wishlist', 'Saved']] } }, chapter: 'The app', title: 'Better That', cap: 'The latest trends, shoes, dresses and accessories', tags: ['Trends', 'Shoes', 'Dresses', 'Accessories'] },
-      scenes: [
-        { type: 'products', chapter: 'Browse', cap: 'Shoppers browse by category or just search', query: 'Summer dresses', pick: 0, badge: 'Trending', items: [{ art: 'dress', label: 'Dresses', sub: 'Latest trends' }, { art: 'sneaker', label: 'Shoes', sub: 'New in' }, { art: 'sunglasses', label: 'Accessories', sub: 'Brands' }, { art: 'handbag', label: 'Bags', sub: 'Wishlist' }] },
-        { type: 'auction', chapter: 'Drop auction', cap: 'Live drop auctions: the price falls until someone buys', art: 'watch', label: 'Designer watch', title: 'Price dropping', currency: 'A$', from: 240, to: 129, stamp: 'Won' },
-        { type: 'currency', chapter: 'Currency', cap: 'Prices convert between Australian and New Zealand dollars', from: 'AUD', fromLabel: 'Australia', to: 'NZD', toLabel: 'New Zealand', amount: 129, rate: 1.09 },
-      ],
-      outro: 'Shopping made better',
-    },
-    'multi-shoppers-food-and-grocery-delivery-app': {
-      name: 'Local Shops', open: 'grid', look: 'dots', chrome: 'counter', move: 'push', align: 'left', tagline: 'Local stores, selling online', accent: '#2e9e4f',
-      brief: { text: 'Help local shops sell online and run their digital stores, from the first order to the doorstep.', items: [{ label: 'Grocery', art: 'apple' }, { label: 'Household', art: 'basket' }, { label: 'Restaurants', art: 'takeout' }, { label: 'Delivery', art: 'scooter' }] },
-      hero: { kind: 'phone', opts: { accent: '#f6c945', screen: { accent: '#2e9e4f', title: 'Deliver to Office', items: [['Grocery', 'Fresh & daily'], ['Household', 'Essentials'], ['Restaurants', 'Food'], ['Best Supermarket', 'Nearby'], ['Orders', 'Track']] } }, chapter: 'The app', title: 'Local Shops', cap: 'Grocery, household items and restaurant food', tags: ['Grocery', 'Household', 'Restaurant food'] },
-      scenes: [
-        { type: 'apps', chapter: 'Three apps', cap: 'One app each for customers, sellers and riders', items: [{ label: 'User', job: 'Order', art: 'bagshop', color: '#2e9e4f', rows: ['Apples · 1 kg', 'Milk · 2 L', 'Bread'], done: 'Order placed' }, { label: 'Seller', job: 'Pack', art: 'store', color: '#f5a524', rows: ['Order #2291', 'Items picked', 'Bag sealed'], done: 'Ready' }, { label: 'Rider', job: 'Deliver', art: 'scooter', color: '#3d5afe', rows: ['Picked up', '1.2 km away', 'At the door'], done: 'Delivered' }] },
-        { type: 'map', chapter: 'Delivery', cap: 'Riders deliver inside each store’s delivery area', from: { label: 'Shop', art: 'store' }, to: { label: 'Home', art: 'house' }, vehicle: 'scooter', zones: true, eta: 'Arriving in 12 min', arrived: 'Delivered' },
-        { type: 'inventory', chapter: 'Store control', cap: 'Shop owners keep full control of their digital store', order: 'Stock updated', items: [{ art: 'apple', label: 'Fruit' }, { art: 'milk', label: 'Dairy' }, { art: 'bread', label: 'Bakery' }, { art: 'cheese', label: 'Cheese' }] },
-      ],
-      outro: 'Local stores, online',
-    },
-    'car-service-and-customer-engagement-platform': {
-      name: 'Car Service', open: 'draft', look: 'blueprint', chrome: 'counter', move: 'wipe', align: 'left', tagline: 'For an authorised dealership\'s service department', accent: '#d64545',
-      hero: { kind: 'car', model: 'rrs', story: 'service', chapter: 'Customer data', cap: 'Each car arrives with its customer record attached', ticketTitle: 'Job card #4521', ticket: [['Owner', 'R. Mehta'], ['Reg. no.', 'MH 12 AB 4521'], ['Last service', 'PM · 12 Mar'], ['Due now', 'GR check']], tags: ['Last service: PM', 'Due: GR check', 'Owner notified'], marks: [['Lights', 'head', 'OK'], ['Body & paint', 'body', 'OK'], ['Brakes', 'rear', 'Check']] },
-      scenes: [
-        { type: 'tiles', chapter: 'Services', cap: 'Three service lines: PM, GR and BP', items: [{ art: 'oil', label: 'PM', sub: 'Preventive maintenance' }, { art: 'wrench', label: 'GR', sub: 'General repairs' }, { art: 'palette', label: 'BP', sub: 'Body & paint' }] },
-        { type: 'notify', chapter: 'Engagement', cap: 'Automated messages keep customers informed', items: [{ art: 'mail', title: 'Service reminder', sub: 'Sent automatically' }, { art: 'calendar', title: 'Appointment', sub: 'Confirmed' }, { art: 'chat', title: 'Follow-up', sub: 'After delivery' }] },
-        { type: 'dashboard', chapter: 'Analytics', cap: 'Real-time analytics for PM, GR and BP', title: 'Service analytics', nav: ['Dashboard', 'PM', 'GR', 'BP'], views: [{ kind: 'line', kpis: [['412', 'Cars serviced', 'This month'], ['₹38.6L', 'Revenue', 'This month'], ['4.8★', 'CSAT', 'Customers']], labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], values: [86, 102, 108, 116] }, { kind: 'bars', kpis: [['218', 'PM jobs', 'This month'], ['1.6 h', 'Avg. time', 'Per car'], ['94%', 'On time', 'Via reminders']], labels: ['Oil', 'Filters', 'Brakes', 'Tyres', 'AC'], values: [218, 164, 92, 77, 58] }, { kind: 'table', kpis: [['124', 'GR jobs', '18 open'], ['2.4 days', 'Turnaround', 'Average'], ['₹14,200', 'Avg. ticket', 'Per job']], rows: [['MH 12 AB 4521', 'Brake pads', 'In service', 'Ready'], ['MH 14 CD 8812', 'Clutch', 'Booked', 'In service'], ['MH 12 EF 1190', 'Suspension', 'Delivered']] }, { kind: 'donut', kpis: [['70', 'BP jobs', 'This month'], ['₹61,500', 'Avg. claim', 'Insurance'], ['5.2 days', 'Turnaround', 'Average']], center: '70 jobs', parts: [['Dents', 41], ['Paint', 33], ['Glass', 14], ['Polish', 12]] }] },
-      ],
-      outro: 'Real-time service analytics',
-    },
-    'b2b-gift-marketplace': {
-      name: 'Greeto', open: 'ribbon', look: 'tint', chrome: 'tag', move: 'push', tagline: 'B2B gifting marketplace', accent: '#e8586b',
-      hero: { kind: 'gift', opts: { color: '#ff5a6e', products: ['basket', 'watch', 'headphone'] }, chapter: 'The marketplace', title: 'Greeto', cap: 'Resellers and manufacturers in one ecosystem', tags: ['Resellers', 'Manufacturers', 'Admins'] },
-      scenes: [
-        { type: 'apps', chapter: 'Resellers', cap: 'Resellers browse, order and grow in their own app', items: [{ label: 'Browse', job: 'Catalogue', art: 'gift', color: '#e8586b', rows: ['Festive hampers', 'Desk kits', 'Tech gifts'], done: '3 saved' }, { label: 'Order', job: 'Bulk orders', art: 'box', color: '#f5a524', rows: ['250 hampers', 'Logo print', 'Ship to 12 cities'], done: 'Order placed' }, { label: 'Grow', job: 'Sales', art: 'growth', color: '#3d5afe', rows: ['₹4.2L this month', '+18% repeat', '9 new clients'], done: 'Top reseller' }] },
-        { type: 'flow', chapter: 'Manufacturers', cap: 'Manufacturers receive orders and scale production', steps: [{ label: 'Order', art: 'clipboard' }, { label: 'Produced', art: 'factory' }, { label: 'Shipped', art: 'truck' }] },
-        { type: 'inventory', chapter: 'Dispatch', cap: 'Stock and dispatch are automated end to end', order: 'Gifts dispatched', items: [{ art: 'gift', label: 'Gift boxes' }, { art: 'basket', label: 'Hampers' }, { art: 'books', label: 'Planners' }, { art: 'tag', label: 'Custom' }] },
-      ],
-      outcome: { text: 'Resellers grow their business, manufacturers scale production, and admins oversee it effortlessly.', items: ['Scalable', 'Automated', 'Efficient'] },
-      outro: 'Gifting, streamlined',
-    },
-    'global-payment-transfer-platform': {
-      name: 'Stablepay', open: 'ticker', look: 'midnight', chrome: 'stories', move: 'slide', tagline: 'The easiest way to transfer your money', accent: '#6b67b8',
-      hero: { kind: 'globe', opts: { color: '#6b67b8' }, chapter: 'The platform', title: 'Stablepay', cap: 'Fast, low-cost payments across borders', tags: ['USD → INR', 'Stablecoins', 'Cross-border'] },
-      scenes: [
-        { type: 'transfer', chapter: 'Send', cap: 'Money leaves one country and lands in another', from: { label: 'USD', sub: 'Your wallet', art: 'purse' }, to: { label: 'INR', sub: 'Receiver', art: 'purse' }, token: 'coin', note: 'Transferred quickly & safely' },
-        { type: 'currency', chapter: 'Rates', cap: 'The rate and the arrival are shown before you send', from: 'USD', fromLabel: 'United States', to: 'INR', toLabel: 'India', amount: 500, rate: 83.2 },
-        { type: 'chain', chapter: 'Blockchain', cap: 'Every step is recorded on the blockchain', blocks: ['Sent', 'Verified', 'Settled', 'Received'] },
-      ],
-      outro: 'Fast · low-cost · secure',
-    },
-    'cma-report-generation-software': {
-      name: 'CMA Reports', open: 'type', look: 'ledger', chrome: 'subtitle', move: 'cut', align: 'left', tagline: 'Credit Monitoring Arrangement reports, automated', accent: '#c0392b',
-      hero: { kind: 'chart', opts: { color: '#c0392b' }, chapter: 'The platform', title: 'CMA Reports', cap: 'Every data table and chart a CMA report needs', tags: ['Data tables', 'Charts', 'ReactJS · NodeJS'] },
-      scenes: [
-        { type: 'document', example: true, chapter: 'Data tables', cap: 'Data tables are built for you', title: 'CMA data', stamp: 'Complete', grid: [['₹ Cr', 'FY23', 'FY24', 'FY25'], ['Sales', '8.9', '10.5', '12.4'], ['EBITDA', '1.6', '1.9', '2.3'], ['PAT', '0.9', '1.2', '1.6'], ['Net worth', '4.2', '5.1', '6.4']] },
-        { type: 'dashboard', chapter: 'Charts', cap: 'Charts explain the numbers', title: 'Report charts', nav: ['Tables', 'Charts', 'Summary', 'Export'], views: [{ kind: 'table', kpis: [['₹12.4Cr', 'Turnover', 'FY 2025'], ['₹2.1Cr', 'Working capital', 'Assessed'], ['1.42', 'Current ratio', 'Healthy']], rows: [['Balance sheet', 'FY 2023–25', 'Complete'], ['Cash flow', 'Projected', 'Draft', 'Complete'], ['Ratio analysis', '14 ratios', 'Complete']] }, { kind: 'line', kpis: [['18.6%', 'Growth', 'Year on year'], ['₹3.4Cr', 'Net profit', 'FY 2025'], ['12.8%', 'Net margin', 'FY 2025']], labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25'], values: [6.1, 7.4, 8.9, 10.5, 12.4], fmt: ['₹', 'Cr', 1] }, { kind: 'donut', kpis: [['₹5.5Cr', 'Limit sought', 'From bank'], ['1.38', 'DSCR', 'Average'], ['0.9', 'Debt / equity', 'Ratio']], center: '₹5.5Cr', parts: [['Term loan', 44], ['Cash credit', 31], ['Own funds', 25]] }, { kind: 'bars', kpis: [['46', 'Reports', 'This month'], ['2 min', 'Prep time', 'Per report'], ['100%', 'Bank format', 'Compliant']], labels: ['PDF', 'Excel', 'Cloud'], values: [28, 14, 4] }] },
-        { type: 'checklist', chapter: 'Efficiency', cap: 'Report preparation, done efficiently', art: 'chart', items: [{ label: 'Data entered', art: 'ledger' }, { label: 'Tables built', art: 'dividers' }, { label: 'Charts generated', art: 'growth' }, { label: 'Report finalised', art: 'receipt' }] },
-      ],
-      outcome: { text: 'Detailed CMA reports, prepared and finalised efficiently in the cloud.', items: ['Data tables & charts', 'PDF & Excel', 'Cloud-based'] },
-      outro: 'ReactJS · NodeJS',
-    },
-    'recruitment-platform': {
-      name: 'Find Your Work', open: 'split', look: 'tint', chrome: 'tag', move: 'wipe', align: 'left', tagline: 'Hiring, from application to offer letter', accent: '#3b5bdb',
-      hero: { kind: 'laptop', opts: { screen: { web: true, accent: '#1a3ee8', title: 'Hiring', nav: ['Job postings', 'Candidates', 'Chat', 'Analytics'], tiles: [['Postings', 'Live'], ['Candidates', 'Tracked'], ['Chats', 'Real-time']] } }, chapter: 'The platform', title: 'Find Your Work', cap: 'Employers find, manage and track candidates', tags: ['Employers', 'Candidates', 'Real-time chat'] },
-      scenes: [
-        { type: 'cards', chapter: 'Job listings', cap: 'An employer posts new roles in minutes', items: [{ art: 'palette', title: 'Designer', sub: 'Full time', chip: 'Live' }, { art: 'laptop', title: 'Developer', sub: 'Remote', chip: 'Live' }, { art: 'chart', title: 'Analyst', sub: 'On site', chip: 'Draft' }] },
-        { type: 'pipeline', chapter: 'Progress', cap: 'Each candidate is tracked through every stage', stages: ['Applied', 'Interview', 'Selected', 'Offer'], counts: [18, 6, 3, 1], card: { label: 'Candidate', art: 'person2' }, ghosts: ['person', 'person3', 'office2'] },
-        { type: 'chat', chapter: 'Chat', cap: 'Employers and candidates chat in real time', title: 'Employer', status: 'Online', people: ['office', 'person2'], messages: [['in', 'Hi! Is the role still open?'], ['out', 'It is. Shall we set up a call?'], ['in', 'Great, tomorrow works'], ['out', 'Invite sent']] },
-      ],
-      outro: 'The right candidate, the right employer',
-    },
-    'task-staff-and-document-management-platform': {
-      name: 'Task & Docs', open: 'type', look: 'sky', chrome: 'tag', move: 'cut', tagline: 'For insurance and investment agencies', accent: '#4f86a8',
-      hero: { kind: 'folders', opts: { color: '#5b8aa6' }, chapter: 'The app', title: 'Task & Docs', cap: 'Tasks, staff and documents in one place', tags: ['Tasks', 'Staff', 'Documents'] },
-      scenes: [
-        { type: 'hub', chapter: 'The team', cap: 'Built for admins, heads, field and office staff', center: 'Agency', centerArt: 'brief', nodes: [{ label: 'Admin', art: 'office' }, { label: 'Heads', art: 'office2' }, { label: 'Field staff', art: 'person2' }, { label: 'Office staff', art: 'person' }] },
-        { type: 'notify', chapter: 'Follow-ups', cap: 'Heads follow up on every task as it moves', items: [{ art: 'clipboard', title: 'Task assigned', sub: 'Policy renewal' }, { art: 'bell', title: 'Follow-up', sub: 'Due today' }, { art: 'check', title: 'Task done', sub: 'Status updated' }] },
-        { type: 'devices', chapter: 'Cross-platform', cap: 'Every device in sync, with secure storage', label: 'Secure document storage', art: 'lock' },
-      ],
-      outro: 'Agencies, digitally transformed',
-    },
-    'educational-courses-and-lms-platform': {
-      name: 'Learning', open: 'rise', look: 'chalk', chrome: 'stories', move: 'push', align: 'left', tagline: 'Courses, learners and VR', accent: '#3d8bfd',
-      hero: { kind: 'vr', opts: { color: '#3d8bfd' }, chapter: 'Immersive', title: 'VR lessons', cap: 'VR content for immersive learning', tags: ['VR content', 'Courses', 'Learners'] },
-      scenes: [
-        { type: 'tiles', chapter: 'Courses', cap: 'Courses for every kind of learner', items: [{ art: 'palette', label: 'UI/UX', sub: 'With Figma' }, { art: 'laptop', label: 'Web', sub: 'Hands-on' }, { art: 'vr', label: 'VR', sub: 'Immersive lessons' }] },
-        { type: 'bars', chapter: 'Dashboard', cap: 'Learners follow their progress on a dashboard', art: 'student', artLabel: 'Your week', readout: ['1.5 h', '2.2 h', '1.7 h', '2.5 h', '2 h'], sub: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], display: ['1.5h', '2.2h', '1.7h', '2.5h', '2h'], labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], values: [0.55, 0.8, 0.62, 0.9, 0.72] },
-      ],
-      outro: 'Learn on screen or in VR',
-    },
-    'storyboard-creation-for-films-with-ai': {
-      name: 'Storyboard AI', open: 'count', look: 'film', chrome: 'subtitle', move: 'cut', tagline: 'Scripts into storyboards, in minutes', accent: '#e8672c',
-      hero: { kind: 'clapper', opts: { color: '#ff5b1f', label: 'STORYBOARD' }, chapter: 'The tool', title: 'Storyboard AI', cap: 'Generative AI turns a script into a storyboard', tags: ['Script', 'Scenes', 'Frames'] },
-      scenes: [
-        { type: 'frames', chapter: 'Script to frames', cap: 'AI breaks the script down, scene by scene', title: 'SCENE 1', script: ['EXT. HOUSE - DAY', 'Anni runs outside.', 'The sun is out.', 'She waves at a friend.'], frames: [{ art: 'house', art2: 'sun' }, { art: 'person2', art2: 'house' }, { art: 'sun', art2: 'tree', sky: '#ffd08a' }, { art: 'person2', art2: 'person' }, { art: 'tree', art2: 'person2' }, { art: 'house', art2: 'tree', sky: '#b7a6ff' }] },
-        { type: 'flow', chapter: 'Iteration', cap: 'Any frame can be regenerated until it is right', steps: [{ label: 'Frame', art: 'film' }, { label: 'Regenerate', art: 'ai' }, { label: 'Refined', art: 'sparkle' }] },
-      ],
-      outro: 'From script to screen',
-    },
-    'insurance-management-platform': {
-      name: 'InsureTech', open: 'seal', look: 'amber', chrome: 'counter', move: 'slide', tagline: 'Every policy in one hub', accent: '#e0662f',
-      hero: { kind: 'shield', opts: { color: '#e8612c' }, chapter: 'The app', title: 'InsureTech', cap: 'A single hub for every insurance policy', tags: ['Health', 'Auto', 'Life'] },
-      scenes: [
-        { type: 'cards', chapter: 'All policies', cap: 'Health, auto, life: all stored together', items: [{ art: 'health', title: 'Health', sub: 'Policy stored', color: '#e5484d' }, { art: 'car', title: 'Auto', sub: 'Policy stored', color: '#e8612c' }, { art: 'umbrella', title: 'Life', sub: 'Policy stored', color: '#f5b50a' }] },
-        { type: 'calendar', chapter: 'Reminders', cap: 'Payment reminders arrive automatically', month: 'Premiums', day: 12, event: 'Premium due', sub: 'Reminder set', art: 'bell' },
-        { type: 'devices', chapter: 'Cross-platform', cap: 'One Flutter app with a modern UI on every device', label: 'Health to auto and more', art: 'shield' },
-      ],
-      outro: 'Never miss a premium',
-    },
-    'social-media-and-social-commerce-platform': {
-      name: 'Social', open: 'marquee', look: 'neon', chrome: 'stories', move: 'wipe', tagline: 'Connect through shared interests', accent: '#6a4cf0',
-      hero: { kind: 'phone', opts: { accent: '#2a2340', screen: { dark: true, accent: '#5b3cf5', title: 'Discover', items: [['Adrenaline Junkies', 'Community'], ['Market', 'Peer-to-peer'], ['Leaderboard', 'Top creators'], ['Wallet', 'Crypto']] } }, chapter: 'The app', title: 'Social', cap: 'Social media meets social commerce', tags: ['Singing', 'Dancing', 'Sports'] },
-      scenes: [
-        { type: 'live', chapter: 'Share', cap: 'They share content and engage with each other', art: 'photo', label: 'New post', cta: 'Like', host: 'person', feed: ['Loved this!', 'Join our group?', 'See you Saturday'] },
-        { type: 'podium', chapter: 'Leaderboards', cap: 'Leaderboards reward the most engaging creators', people: ['person2', 'person', 'person3'], labels: ['Top creator', '2nd', '3rd'] },
-        { type: 'transfer', chapter: 'Wallet', cap: 'Payments settle through in-app crypto wallets', from: { label: 'Buyer', sub: 'Crypto wallet', art: 'purse' }, to: { label: 'Seller', sub: 'Wallet', art: 'purse' }, token: 'coin' },
-      ],
-      outro: 'Creators, consumers & brands',
-    },
-  },
-  closing: 'Have a product in mind? <em>Let’s talk it through.</em>',
   // The brief (contact page): what they need (any of `needs`, sent as the subject) and where they are now (one of
   // `stages`); lib/contact-api.js accepts exactly these stage values. `budgets` and `timelines` are older optional
   // questions the endpoint still accepts. Edit these and the endpoint together.
@@ -434,18 +242,15 @@ module.exports = {
     timelines: ['As soon as possible', 'In 1–3 months', 'In 3–6 months', 'Just exploring'],
   },
 
-  // The moving band under the home hero and the services hero: what we build, one word or two each, each followed by
-  // its drawing (a doodle name from templates/doodles.js).
-  band: [['AI & ML', 'chip'], ['Web apps', 'browser'], ['Mobile apps', 'phone'], ['SaaS', 'layers'], ['eCommerce', 'bag'], ['Cloud', 'cloud'], ['Automation', 'loop'], ['UI/UX', 'pen']],
-
   // Where each page sends you next (the big link at the top of the footer), so a visit reads as one route through
   // the site: home → projects → services → about → contact → projects. [label, headline, link]
   next: {
-    '': ['Projects', 'See what we’ve built', './projects'],
-    projects: ['Services', 'What we can build for you', './services'],
-    services: ['About', 'The story behind the work', './about-us'],
-    'about-us': ['Contact', 'Tell us what you’re building', './contact'],
-    contact: ['Projects', 'See what we’ve built', './projects'],
-    404: ['Home', 'Back to the start', './'],
+    '': ['Projects', 'Every product, brief to launch', './projects'],
+    projects: ['Services', 'Four kinds of product, one team', './services'],
+    services: ['About', 'The people behind the route', './about-us'],
+    'about-us': ['Contact', 'Tell us about your maze', './contact'],
+    contact: ['Projects', 'See what we’ve shipped', './projects'],
+    case: ['Projects', 'More products we’ve built', './projects'],
+    404: ['Home', 'Back to the start of the route', './'],
   },
 };

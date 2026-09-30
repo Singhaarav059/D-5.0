@@ -1,152 +1,53 @@
-// Services sections (the services list also appears on the home page): services, tools & technologies, industries.
+// Services page: the four services in full (what each covers and the work that shows it), the tools we use by
+// discipline, the industries we build for (one card at a time) and the FAQ.
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, caseHref, icon, head, btn } = require('./helpers');
-const { serviceDemo } = require('./demos');
-const { doodle } = require('./doodles');
-const { chevron } = require('./maze');
+const { esc, pad, caseHref, pic, kicker, MARK, SVC_COLOR } = require('./helpers');
 
-// Tools & technologies: six categories from content.js (the AI & ML one carries each tool's role).
-// Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
-// with no local file (.svg preferred, then .png) falls back to a two-letter monogram.
-const techIcon = (slug) => {
-  const file = slug && [`${slug}.svg`, `${slug}.png`].find((f) => fs.existsSync(path.join(PUBLIC, 'assets/img/tech', f)));
-  return file ? `./assets/img/tech/${file}` : null;
-};
+const byKey = (k) => C.projects.find((p) => p.image === k);
 
-const stackTabs = () => C.tools.map((t, i) => ({
-  tab: t.tab,
-  items: i === 0
-    ? C.stack.items.map((s) => ({ name: s.name, role: s.role, logo: techIcon(s.icon) }))
-    : t.items.map(([name, slug]) => ({ name, logo: techIcon(slug) })),
-}));
-
-// The tools map: the Demaze stack drawn as a pile of six layers, one per discipline, each wired into its card. Picking
-// a discipline pulls its layer out of the pile in its marker colour and lays a line from its card to each of its
-// tools (site.js). All six lists ship in the HTML as tab panels. Each discipline has the drawing it has on the moving
-// band (templates/doodles.js).
-const KMAP_ART = { 'AI & ML': ['chip', 'lilac'], Web: ['browser', 'sky'], 'Mobile App': ['phone', 'sun'], 'UI/UX': ['pen', 'pink'], eCommerce: ['bag', 'tomato'], Cloud: ['cloud', 'mint'] };
-const kmapArt = (tab) => KMAP_ART[tab] || ['layers', 'sky'];
-
-// The pile, in isometric: plate i's top face is a rhombus centred on (CX, y_i), with a thin edge below it. Drawn from
-// the bottom up so each plate covers the ones under it. A port past each plate's right corner is where its wire starts.
-const CX = 104, HW = 84, HH = 33, T = 9;
-const plateY = (i) => 58 + i * 28;
-const stackArt = (tabs) => `<svg class="kmap__stack" viewBox="0 0 250 250" aria-hidden="true" focusable="false">
-  ${tabs.map((t, i) => {
-    const y = plateY(i);
-    const top = `M${CX} ${y - HH}L${CX + HW} ${y}L${CX} ${y + HH}L${CX - HW} ${y}Z`;
-    const left = `M${CX - HW} ${y}L${CX} ${y + HH}V${y + HH + T}L${CX - HW} ${y + T}Z`;
-    const right = `M${CX} ${y + HH}L${CX + HW} ${y}V${y + T}L${CX} ${y + HH + T}Z`;
-    return { i, svg: `<g class="kmap__plate${i === 0 ? ' is-on' : ''}" style="--mk:var(--${kmapArt(t.tab)[1]})" data-kmap-plate="${i}"><path class="kmap__side is-left" d="${left}"/><path class="kmap__side" d="${right}"/><path class="kmap__face" d="${top}"/>${i === 0 ? `<path class="kmap__logo" d="${chevron(CX, y, 26)}"/>` : `<path class="kmap__lines" d="M${CX - 34} ${y - 2}l22 11M${CX - 22} ${y - 8}l34 17"/>`}</g>` };
-  }).reverse().map((p) => p.svg).join('')}
-  ${tabs.map((_, i) => `<path class="kmap__stub" d="M${CX + HW} ${plateY(i) + T / 2}H${CX + HW + 26}"/><circle class="kmap__port" cx="${CX + HW + 28}" cy="${plateY(i) + T / 2}" r="3.4" data-kmap-port="${i}"/>`).join('')}
-</svg>`;
-
-const kmapItem = (t) => `<li class="kmap__item"><i class="kmap__dot" data-kmap-dot></i>${t.logo ? `<img src="${t.logo}" alt="" width="22" height="22" loading="lazy">` : `<b class="kmap__mono">${esc(t.name.slice(0, 2))}</b>`}<span>${esc(t.name)}</span>${t.role ? `<small>${esc(t.role)}</small>` : ''}</li>`;
-
-const techStack = () => {
-  const tabs = stackTabs();
-  const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
-  return `<section class="section kmap" id="tools" data-kmap>
-  <div class="wrap">
-    ${head({ label: 'Stack', title: 'Tools &amp; technologies, <em>built for production</em>', lead: esc(C.stack.lead), mark: ['gear', 'mint'] })}
-    <div class="kmap__stage" style="--mk:var(--${kmapArt(tabs[0].tab)[1]})" data-tabs data-kmap-stage data-reveal>
-      <svg class="kmap__wires" aria-hidden="true" data-kmap-wires></svg>
-      <div class="kmap__core" aria-hidden="true">
-        ${stackArt(tabs)}
-        <p class="kmap__title">The Demaze stack</p>
-        <p class="kmap__sub"><b>${tabs.length}</b> layers · <b>${total}</b> tools</p>
-      </div>
-      <div class="kmap__cats" data-seg role="tablist" aria-label="Technology categories" aria-orientation="vertical">${tabs.map((t, i) => `
-        <button class="kmap__cat" role="tab" type="button" id="stk-tab-${i}" aria-controls="stk-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--mk:var(--${kmapArt(t.tab)[1]})" data-kmap-cat>
-          <span class="kmap__icon">${doodle(kmapArt(t.tab)[0], { color: kmapArt(t.tab)[1] })}</span><span class="kmap__name">${esc(t.tab)}</span><span class="kmap__count"><b>${t.items.length}</b> tools</span>
-        </button>`).join('')}
-      </div>
-      <div class="kmap__lists">${tabs.map((t, i) => `
-        <div class="kmap__panel" role="tabpanel" id="stk-panel-${i}" aria-labelledby="stk-tab-${i}"${i ? ' hidden' : ''}><ul class="kmap__list">${t.items.map(kmapItem).join('')}</ul></div>`).join('')}
-      </div>
+const serviceList = () => `<section class="wrap svcs">${C.services.map((s, i) => `
+  <article class="svcs__item" id="${s.id}" data-reveal>
+    <div class="svcs__main">
+      <span class="kicker kicker--dim"><i class="dot" style="background:${SVC_COLOR[s.id]}"></i>${pad(i + 1)} / ${pad(C.services.length)}</span>
+      <h2 class="display display--l">${esc(s.title)}</h2>
+      <p>${esc(s.description)}</p>
+      <div class="svcs__work">${s.work.map((k) => { const p = byKey(k); return `<a class="avatar-chip" href="${caseHref(p)}" title="${esc(p.title)}"><span style="background:${p.tint}">${pic(p.image, '', { sizes: '36px' })}</span>${esc(p.name)}</a>`; }).join('')}</div>
     </div>
-  </div>
+    <ol class="numlist">${s.items.map((t, j) => `<li><span>${pad(j + 1)}</span>${esc(t)}</li>`).join('')}</ol>
+  </article>`).join('')}
 </section>`;
-};
 
-// Each service has its own marker colour (the panel's art, its bar in the list, its ticks).
-const SVC_MARK = { ai: 'lilac', web: 'sky', ecom: 'tomato', cloud: 'mint' };
-
-// Each service names the projects that show it and links into their case studies (and to all of them, filtered).
-const seenIn = (s) => `<p class="svc-panel__work"><span>Seen in</span>${s.work.slice(0, 4).map((k) => C.projects.find((p) => p.image === k)).map((p) => `<a href="${caseHref(p)}">${esc(p.name)}</a>`).join('')}<a class="svc-panel__all" href="./projects?filter=${s.id}">All ${s.work.length} ${icon.arrow}</a></p>`;
-
-const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-panel>
-  <div class="svc-panel__art">${serviceDemo(s.id)}</div>
-  <div class="svc-panel__body">
-    <h3>${esc(s.title)}</h3>
-    <p>${esc(s.description)}</p>
-    <details class="svc-panel__more" open data-fold><summary>What’s included <span>${s.items.length}</span></summary><ul class="checks">${s.items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul></details>
-    ${seenIn(s)}
+// Tools: one tab per discipline (site.js switches them; without JS every list shows under its tab name).
+const tools = () => `<section class="wrap tools" data-room="#62c1ff">
+  <div class="sec-head">
+    <div>${kicker('Tools & technologies')}<h2 class="display display--l" data-reveal>The stack, <em class="quiet">chosen per product.</em></h2></div>
+    <div class="tabs" role="tablist" aria-label="Disciplines">${C.tools.map((t, i) => `<button type="button" role="tab" id="tools-tab-${i}" aria-controls="tools-${i}" aria-selected="${i === 0}" data-tab="${i}">${esc(t.tab)}</button>`).join('')}</div>
   </div>
-</article>`;
+  ${C.tools.map((t, i) => `<div class="tools__list" role="tabpanel" id="tools-${i}" aria-labelledby="tools-tab-${i}" data-tabpanel="${i}"${i ? ' hidden' : ''}>${t.items.map(([name]) => `<span>${esc(name)}</span>`).join('')}</div>`).join('')}
+</section>`;
 
-const services = (withHead = true) => `<section class="section services" data-services>
-  <div class="services__pin">
-    <div class="wrap services__grid">
-      <div class="services__side">
-        ${head(withHead ? { label: 'Services', title: 'Apps, websites, <em>AI and more</em>', stack: true, mark: ['pencil', 'lilac'] } : { label: 'Services', title: 'What we <em>build</em>', stack: true, mark: ['pencil', 'lilac'] })}
-        <ol class="svc-list" role="list" data-seg>${C.services.map((s, i) => `<li><button type="button" class="svc-list__btn${i === 0 ? ' is-active' : ''}" style="--mk:var(--${SVC_MARK[s.id] || 'sun'})" data-svc-btn="${i}"><span class="svc-list__num">${pad(i + 1)}</span>${esc(s.title)}<i class="svc-list__bar"><i></i></i></button></li>`).join('')}</ol>
-        <div class="svc-help"><p><b>Not sure which one you need?</b>Most products use two or three. Tell us the problem and we’ll map the route.</p>${btn('Book a 30-minute call', C.calendly, 'btn--ghost btn--sm', 'target="_blank" rel="noopener"')}</div>
-      </div>
-      <div class="services__stage">${C.services.map(servicePanel).join('')}</div>
+// Industries: pick one (click, or hover with a mouse) and the card shows what we build for it and the work in it.
+const industries = () => `<section class="wrap ind" data-room="#ff85b8">
+  <div class="sec-head">${kicker('Industries')}<h2 class="display display--l" data-reveal>Where we’ve found <em class="quiet">the way through.</em></h2></div>
+  <div class="ind__grid">
+    <div class="ind__list">${C.industries.map(([name, , { color }], i) => `<button type="button" data-ind="${i}" aria-pressed="${i === 4}" aria-controls="ind-card" style="--c:${MARK[color]}">${esc(name)}</button>`).join('')}</div>
+    <div class="ind__cards" id="ind-card" aria-live="polite">${C.industries.map(([name, systems, { color, work }], i) => `
+      <div class="ind__card" data-ind-card="${i}"${i === 4 ? '' : ' hidden'}>
+        <span class="kicker kicker--ink"><i class="dot" style="background:${MARK[color]}"></i>What we build for</span>
+        <h3 class="display display--m">${esc(name)}</h3>
+        <ul>${systems.map((t, j) => `<li><span>${pad(j + 1)}</span>${esc(t)}</li>`).join('')}</ul>
+        ${work.length ? `<div class="ind__work">${work.map((k) => `<a href="${caseHref(byKey(k))}">${esc(byKey(k).name)} →</a>`).join('')}</div>` : `<p class="ind__none">No public case study here yet. <a href="./contact">Ask us about it</a>.</p>`}
+      </div>`).join('')}
     </div>
   </div>
 </section>`;
 
-// Industries: an index of drawn tiles beside one card at a time. The card draws the industry, lists the kinds of
-// systems we build for it and links to our case studies in that sector. While it is on screen the index moves on by
-// itself, a bar filling on the current tile, until the visitor picks one (site.js).
-const workIn = (keys) => keys.map((k) => C.projects.find((p) => p.image === k)).filter(Boolean);
-const industries = () => `<section class="section sheet sheet--day sheet--lilac industries" id="industries">
-  <div class="wrap">
-    ${head({ label: 'Industries', title: 'Industries <em>we serve</em>', lead: `${C.industries.length} industries. Pick one to see the kinds of systems we build for it.`, mark: ['star', 'sky'] })}
-  </div>
-  <div class="wrap ind" data-tabs data-ind>
-    <div class="ind__tabs" role="tablist" aria-label="Industries">${C.industries.map(([n, , a], i) => `
-      <button class="ind__tile" role="tab" type="button" id="ind-tab-${i}" aria-controls="ind-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--mk:var(--${a.color})"><span class="ind__icon">${doodle(a.doodle, { color: a.color })}</span><span class="ind__name">${esc(n)}</span><i class="ind__timer" aria-hidden="true"></i></button>`).join('')}
-    </div>
-    <div class="ind__stage">${C.industries.map(([n, items, a], i) => {
-      const work = workIn(a.work);
-      return `
-      <div class="ind__panel" role="tabpanel" id="ind-panel-${i}" aria-labelledby="ind-tab-${i}" style="--mk:var(--${a.color})"${i ? ' hidden' : ''}>
-        <div class="ind__top">
-          <div class="ind__art" aria-hidden="true">${doodle(a.doodle, { color: a.color })}</div>
-          <div class="ind__head"><span>${pad(i + 1)} / ${C.industries.length}</span><h3>${esc(n)}</h3><p>${items.length} kinds of systems we build</p></div>
-        </div>
-        <ul class="ind__list">${items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
-        ${work.length ? `<p class="ind__work"><span>Our work here</span>${work.map((p) => `<a href="${caseHref(p)}">${esc(p.name)}</a>`).join('')}</p>` : `<p class="ind__work"><span>Building for ${esc(n.toLowerCase())}?</span><a href="./contact">Tell us about it</a></p>`}
-      </div>`;
-    }).join('')}
-    </div>
-  </div>
+// The FAQ: one question open at a time (site.js); a native <details> so it works without JS.
+const faq = () => `<section class="wrap faq" data-room="#ffcb45">
+  <div class="sec-head">${kicker('FAQ')}<h2 class="display display--l" data-reveal>Good questions.</h2></div>
+  ${C.faq.map((f, i) => `<details class="faq__item" name="faq"${i === 0 ? ' open' : ''}><summary><span class="faq__n">${pad(i + 1)}</span><span class="faq__q">${esc(f.q)}</span><span class="faq__plus" aria-hidden="true">+</span></summary><div class="faq__a"><p>${esc(f.a)}</p></div></details>`).join('')}
 </section>`;
 
-// Home: where we build and what we build with, compact: the industries and the stack's marks in two rows running
-// opposite ways (faster with the scroll, like the band; site.js), each with a way to the full version on services.
-// The first run of each row is the readable list; the copy that makes the loop seamless is hidden from readers.
-const reach = () => {
-  const seen = new Set();
-  const tools = C.tools.flatMap((t) => t.items).filter(([n, slug]) => techIcon(slug) && !seen.has(n) && seen.add(n));
-  const row = (cls, label, items) => `<div class="reach__row ${cls}"><div class="band__track reach__track">${[0, 1].map((k) => `<ul class="reach__run"${k ? ' aria-hidden="true"' : ` aria-label="${label}"`}>${items}</ul>`).join('')}</div></div>`;
-  const inds = C.industries.map(([n, , a]) => `<li class="reach__chip" style="--mk:var(--${a.color})">${doodle(a.doodle, { color: a.color })}${esc(n)}</li>`).join('');
-  const marks = tools.map(([n, slug]) => `<li class="reach__chip reach__chip--tool"><img src="${techIcon(slug)}" alt="" width="22" height="22" loading="lazy">${esc(n)}</li>`).join('');
-  return `<section class="section reach" id="reach">
-  <div class="wrap">
-    ${head({ label: 'Industries & stack', title: `${C.industries.length} industries, <em>one production stack</em>`, lead: 'Where the products we build run, and what we build them with.', mark: ['gear', 'mint'], side: `<p class="reach__links"><a class="link-arrow" href="./services#industries">All industries ${icon.arrow}</a><a class="link-arrow" href="./services#tools">The full stack ${icon.arrow}</a></p>` })}
-  </div>
-  ${row('reach__row--ind', 'Industries we serve', inds)}
-  ${row('reach__row--tools', 'What we build with', marks)}
-</section>`;
-};
-
-module.exports = { techStack, services, industries, reach };
+module.exports = { serviceList, tools, industries, faq };

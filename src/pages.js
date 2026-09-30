@@ -4,27 +4,27 @@
 'use strict';
 
 const C = require('./content');
-const { btn, caseHref } = require('./templates/helpers');
+const { caseHref, btn, kicker, words } = require('./templates/helpers');
 const S = require('./templates/schema');
-const { caseHero, caseStory, caseMore } = require('./templates/case');
 const { layout } = require('./templates/layout');
-const { pageHero, faq, contact, cta, band } = require('./templates/shared');
-const { work, studio, build } = require('./templates/home');
-const { hero, howWeWork } = require('./templates/journey');
-const { about, stats, whyUs, founder } = require('./templates/about');
-const { techStack, services, industries, reach } = require('./templates/services');
+const { maze } = require('./templates/maze');
+const { pageHead } = require('./templates/shared');
+const { hero, tape, howWeWork, work, services, studio, start } = require('./templates/home');
 const { projectsGrid } = require('./templates/projects');
-const { visit } = require('./templates/contact');
+const { caseStudy } = require('./templates/case');
+const { serviceList, tools, industries, faq } = require('./templates/services');
+const { intro, drives, founder, why } = require('./templates/about');
+const { contact, visit } = require('./templates/contact');
+
+const SECTORS = new Set(C.projects.map((p) => p.sector)).size;
 
 const pages = {
   index: layout({
     slug: '',
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: 'Demaze designs and builds AI software, web and mobile apps, SaaS and eCommerce platforms, from the first workshop to launch and beyond.',
-    schema: [S.organization(), S.website(), S.faqPage(3)],
-    // Home is the summary: the hero and its maze, how we work, proof (work), what we build (four tiles), who we
-    // are, the first questions, contact. The service panels, the tools map and industries live on the services page.
-    body: [hero(), howWeWork(), band(), work(), build(), reach(), studio(), faq(3), cta()].join('\n'),
+    schema: [S.organization(), S.website()],
+    body: [hero(), tape(), howWeWork(), work(), services(), studio(), start()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',
@@ -32,19 +32,19 @@ const pages = {
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     schema: [S.organization(), S.projects(caseHref), S.breadcrumbs([['Home', './'], ['Projects', './projects']])],
     body: [
-      pageHero('Projects', 'Products we’ve <em>designed and built</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`, '', [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']], 'projects'),
+      pageHead({ label: 'Projects', title: `${C.projects.length} products, <em>designed and built.</em>`, room: '#ff6242',
+        lead: `From luxury automotive and fintech to legal, commerce and senior care: ${SECTORS} sectors in all. Every card plays a short film of the product: open one for its story.` }),
       projectsGrid(),
-      cta(),
     ].join('\n'),
   }),
   services: layout({
     slug: 'services',
     title: 'Services | AI & ML, Web, Mobile, SaaS, eCommerce, Cloud | Demaze Technologies',
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
-    schema: [S.organization(), S.services(), S.breadcrumbs([['Home', './'], ['Services', './services']])],
+    schema: [S.organization(), S.services(), S.faqPage(), S.breadcrumbs([['Home', './'], ['Services', './services']])],
     body: [
-      pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline, '', [['pencil', 'lilac'], ['gear', 'sky'], ['bulb', 'sun']], 'services'),
-      band(), services(false), techStack(), industries(), cta(), // (how we work lives on home and about)
+      pageHead({ label: 'Services', title: 'Four crafts, <em>one team.</em>', room: '#2fd0a0', lead: 'AI, software, commerce and cloud, built together so the product works as one system from day one.' }),
+      serviceList(), tools(), industries(), faq(),
     ].join('\n'),
   }),
   'about-us': layout({
@@ -52,29 +52,29 @@ const pages = {
     title: 'About Us | Demaze Technologies',
     description: 'Demaze Technologies is a team of 35+ technologists in Ahmedabad building AI products, apps and platforms as a long-term partner to its clients.',
     schema: [S.organization(), S.breadcrumbs([['Home', './'], ['About us', './about-us']])],
-    body: [
-      pageHero('About us', 'More than developers. <em>Digital transformation architects.</em>', C.about.whoWeAre[1], stats(), [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']], 'about'),
-      about(), whyUs(), founder(), howWeWork(), cta(),
-    ].join('\n'),
+    body: [intro(), drives(), founder(), why()].join('\n'),
+  }),
+  contact: layout({
+    slug: 'contact',
+    title: 'Contact | Demaze Technologies',
+    description: `Email ${C.email}, book a call, or visit us in Ahmedabad.`,
+    schema: [S.organization(), S.breadcrumbs([['Home', './'], ['Contact', './contact']])],
+    body: [contact(), visit()].join('\n'),
   }),
   404: layout({
     slug: '404',
     noindex: true,
     title: 'Page not found | Demaze Technologies',
     description: 'This page does not exist. Head back to the Demaze home page or browse our projects.',
-    body: pageHero('Error 404', 'A dead end. <em>Let’s find your way back.</em>', 'The link may be old or mistyped. Everything we build is still one click away.',
-      `<div class="hero__ctas" data-hero-fade>${btn('Back to home', './')}${btn('See our work', './projects', 'btn--ghost')}</div>`, [['ghost', 'lilac'], ['question', 'sky'], ['star', 'sun']]),
-  }),
-  contact: layout({
-    slug: 'contact',
-    title: 'Contact | Demaze Technologies',
-    description: `Email ${C.email}, book a call, or visit us in Ahmedabad.`,
-    schema: [S.organization(), S.faqPage(), S.breadcrumbs([['Home', './'], ['Contact', './contact']])],
-    body: [
-      pageHero('Contact', 'Let’s talk about <em>what you’re building</em>', 'Email us with any question, or book a 30-minute call if that’s easier.',
-        `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--primary', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--ghost')}</div>`, [['cup', 'tomato'], ['heart', 'pink'], ['star', 'sky']], 'contact'),
-      contact('form'), visit(), faq(),
-    ].join('\n'),
+    body: `<section class="wrap lost" data-room="#ff6242">
+  <div class="lost__copy">
+    ${kicker('404 · Page not found', 'kicker--tomato')}
+    <h1 class="display display--hero" data-words>${words('Dead <em>end.</em>')}</h1>
+    <p class="lead" data-reveal>Even good routes hit one. This page isn’t on the map, but these are.</p>
+    <div class="actions" data-reveal>${btn('Back to the start', './', { tone: 'paper' })}${btn('See the work', './projects', { tone: 'ghost' })}</div>
+  </div>
+  ${maze({ cols: 12, rows: 8, seed: 5, tone: 'lost' })}
+</section>`,
   }),
 };
 
@@ -97,10 +97,9 @@ C.projects.forEach((p, i) => {
     title: `${p.title} | Case study | Demaze Technologies`,
     description: fit(`${p.brief} ${p.outcome}`),
     og: { ...og, alt: `${p.title}, product screens` },
-    reels: true,
-    next: ['All projects', 'See what else we’ve built', './projects'], // (the next case is in the cards above)
+    next: C.next.case,
     schema: [S.organization(), S.caseStudy(p, href), S.breadcrumbs([['Home', './'], ['Projects', './projects'], [p.name, href]])],
-    body: [caseHero(p, i), caseStory(p, i), caseMore(i), cta()].join('\n'),
+    body: caseStudy(p, i),
   });
 });
 

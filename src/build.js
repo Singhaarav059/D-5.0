@@ -12,8 +12,8 @@ const C = require('./content');
 const { PUBLIC, SITE_URL } = require('./templates/helpers');
 
 // Fingerprint local assets (./assets/...) with a hash of their contents so a deploy never serves new
-// pages with stale CSS/JS; the server caches fingerprinted URLs for a year. data-src names a module a script
-// loads later (the background crew, see assets/ambient.js).
+// pages with stale CSS/JS; the server caches fingerprinted URLs for a year. data-src (and data-crew-src) name a module
+// site.js loads later (the studio and the crew in 3D).
 const fingerprints = new Map();
 const fingerprint = (html) => html.replace(/(src|href|data-src)="\.\/(assets\/[^"?#]+)"/g, (m, attr, rel) => {
   if (!fingerprints.has(rel)) {

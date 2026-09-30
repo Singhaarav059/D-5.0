@@ -1,19 +1,19 @@
 'use strict';
 
 // Runs in <head>, before the page paints: decides motion or stillness for everything else, from the visitor's system
-// setting (reduce motion).
+// setting (reduce motion); and when the visitor arrives through the curtain (site.js drew it over the last page),
+// keeps it over this one from the first paint, with the page's name on it, until site.js lifts it.
 (() => {
   const root = document.documentElement;
   try { localStorage.removeItem('demaze-motion'); } catch {} // (the old on-page switch's saved choice, now retired)
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   root.classList.add(reduced ? 'rm' : 'motion', 'js');
-  window.setTimeout(() => {
-    if (!window.gsap) root.classList.remove('js');
-  }, 4000);
-
-  // Page-to-page transitions: none when still; and a transition the browser skips (a hidden tab, a fast second
-  // click) is not an error.
-  const settle = (vt) => { if (!vt) return; if (reduced) vt.skipTransition(); [vt.ready, vt.finished, vt.updateCallbackDone].forEach((p) => p && p.catch(() => {})); };
-  window.addEventListener('pageswap', (e) => settle(e.viewTransition));
-  window.addEventListener('pagereveal', (e) => settle(e.viewTransition));
+  let label = null;
+  try { label = sessionStorage.getItem('dmz-curtain'); sessionStorage.removeItem('dmz-curtain'); } catch {}
+  if (label && !reduced) {
+    root.classList.add('curtain-in');
+    root.style.setProperty('--curtain-label', JSON.stringify(label));
+    // never leave the page covered, whatever happens to site.js
+    window.setTimeout(() => root.classList.remove('curtain-in'), 3000);
+  }
 })();

@@ -1,10 +1,10 @@
-// Shared building blocks for the page templates: escaping, icons, images, buttons and site-wide constants.
+// Shared building blocks for the page templates: escaping, icons, images, buttons, split headlines and site-wide
+// constants.
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { doodle } = require('./doodles');
 
 // Everything visitors can load lives in public/; this script writes the HTML pages there.
 const PUBLIC = path.join(__dirname, '..', '..', 'public');
@@ -20,20 +20,14 @@ const cal = `href="${C.calendly}" target="_blank" rel="noopener"`;
 // Every project has its own case study page, at /projects/<image key> (templates/case.js).
 const caseHref = (p) => `./projects/${p.image}`;
 
-// A project's image and title carry the same transition names wherever they appear (home cards, the projects grid,
-// its case page), so going from one to the other, the browser grows the card into the page (site.css, site.js).
-const vt = (p, part) => `view-transition-name:${part}-${p.image};view-transition-class:case-${part}`;
+// The marker colours by name (content.js names them; site.css has the same values as tokens).
+const MARK = { sun: '#ffcb45', pink: '#ff85b8', mint: '#2fd0a0', sky: '#62c1ff', lilac: '#a58bff', tomato: '#ff6242', blue: '#3d5afe' };
+
+// Each service's colour, used for its dot, its demo's tag and its filter.
+const SVC_COLOR = { ai: MARK.lilac, web: MARK.sky, ecom: MARK.tomato, cloud: MARK.mint };
 
 const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-  check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
-  cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-  pin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
-  linkedin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v5.45h-4v-4.83c0-1.15-.02-2.63-1.6-2.63-1.61 0-1.85 1.25-1.85 2.55v4.91h-4z"/></svg>',
-  x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.78zm-1.08 16.2h1.7L7.4 4.73H5.58z"/></svg>',
-  instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></svg>',
 };
 
 // Photos and project screens live in public/assets/img/work (see manifest.json for each image's variants):
@@ -51,27 +45,35 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
   return `<picture><source type="image/webp" srcset="${webp.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
 };
 
-// Buttons: `btn--primary` (solid) or `btn--ghost` (outline). On a dark sheet both invert on their own (site.css).
-// The smallest large WebP of a screenshot, for the blurred backdrop behind it (site.css: --shot). A url() inside a
-// custom property resolves against the stylesheet that uses it (public/assets/site.css), hence no ./assets/ prefix.
-const shot = (key) => {
-  const f = MANIFEST[key].files.filter((x) => x.fmt === 'webp' && x.w > 200).sort((x, y) => x.w - y.w)[0];
-  return `--shot:url(img/work/${f.file})`;
+// Buttons: a pill with the label and a round arrow. `tone`: paper (light pill, blue arrow), ink (dark pill),
+// blue (brand pill, white arrow), or an outline without the arrow: ghost (light line, on the night) or line (ink
+// line, on a coloured panel). `magnet`: it leans toward the cursor (site.js).
+const btn = (label, href, { tone = 'paper', size = '', extra = '', magnet = true } = {}) => {
+  const outline = tone === 'ghost' || tone === 'line';
+  return `<a class="btn btn--${tone}${size ? ` btn--${size}` : ''}" href="${href}"${extra ? ` ${extra}` : ''}${magnet && !outline ? ' data-magnet' : ''}><span>${esc(label)}</span>${outline ? '' : '<i class="btn__dot" aria-hidden="true">→</i>'}</a>`;
 };
 
-const btn = (label, href, cls = 'btn--primary', extra = '') =>
-  `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
+// A small uppercase label over a section's headline.
+const kicker = (text, cls = '') => `<span class="kicker${cls ? ` ${cls}` : ''}">${esc(text)}</span>`;
 
-// Every section opens the same way: a hairline with the section's number (a CSS counter, so it follows the page
-// order) and its label, then the headline, whose second half (<em>) gets a marker swipe in the section's colour, and
-// a doodle after it; then an optional lead and actions. `title` and `lead` are HTML (escape any content first);
-// `stack` keeps the lead under the headline; `mark` is [doodle, marker colour] (templates/doodles.js, site.css).
-const head = ({ label, title, lead = '', side = '', stack = false, cls = '', mark = ['star', 'sun'] }) => `<header class="shead${stack ? ' shead--stack' : ''}${cls ? ' ' + cls : ''}" style="--mk:var(--${mark[1]})">
-  <p class="shead__label" data-reveal><span class="shead__n" aria-hidden="true"></span>${esc(label)}</p>
-  <div class="shead__row">
-    <h2 class="h2" data-reveal>${title}${doodle(mark[0], { color: mark[1], cls: 'shead__dd' })}</h2>
-    ${lead || side ? `<div class="shead__side" data-reveal>${lead ? `<p class="lead">${lead}</p>` : ''}${side}</div>` : ''}
-  </div>
-</header>`;
+// The hand-drawn loop around the headline word in <mark> (drawn in by site.js).
+const LOOP = '<svg class="loop" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path data-drawin data-delay="0.9" data-dur="1300" pathLength="1" d="M34 66C18 30 120 6 178 30C204 44 188 86 110 92C50 96 8 80 14 54C20 28 80 18 128 20"/></svg>';
 
-module.exports = { PUBLIC, SITE_URL, MANIFEST, esc, pad, cal, caseHref, vt, icon, pic, shot, btn, head };
+// A headline whose words rise into place one by one (site.js, [data-words]). `html` is trusted HTML from the
+// templates or content.js: the words inside <em> are set in the quieter grey, a word in <mark> gets the loop.
+const words = (html) => {
+  const out = [];
+  let quiet = false, mark = false;
+  for (const tok of html.split(/(<\/?(?:em|mark)>|\s+)/)) {
+    if (!tok || /^\s+$/.test(tok)) continue;
+    if (tok === '<em>') { quiet = true; continue; }
+    if (tok === '</em>') { quiet = false; continue; }
+    if (tok === '<mark>') { mark = true; continue; }
+    if (tok === '</mark>') { mark = false; continue; }
+    const w = `<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${tok}</span></span>`;
+    out.push(mark ? `<span class="w-mark">${w}${LOOP}</span>` : w);
+  }
+  return out.join(' ');
+};
+
+module.exports = { PUBLIC, SITE_URL, MANIFEST, MARK, SVC_COLOR, esc, pad, cal, caseHref, icon, pic, btn, kicker, words };
