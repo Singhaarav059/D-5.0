@@ -71,6 +71,18 @@ demo scenes but make them clearly illustrative (generic labels, an "Illustrative
 - **Home services**: the "four kinds of product" line is gone; a "Not sure which you need?" card sits under the list.
 - **Spacing**: one gap between sections everywhere (`--section` in site.css).
 
+## Fourth round (screen sizes)
+
+Audited at 360×740, 390×844, 430×932, 768×1024, 834×1194, 1024×768, 1024×1366, 1280×720 and 1920×1080 on every
+page, by script (no horizontal overflow, no text under 11px, no clipped text, every tap target at least 44px on touch)
+and by eye. Changes:
+- phones draw the scenes and demos squarer, so they show larger instead of shrinking a wide picture;
+- services' demo comes first on tablets and phones, and the service cards only stack on screens tall enough to read
+  each one (at least 960×820); on shorter ones they sit one after another;
+- the industries run in a sideways strip over their card on tablets and phones (the chosen one kept in view);
+- the tags under the home demos scroll sideways on phones; footer links, section links and the logo are thumb-sized
+  on touch; the footer's columns sit two to a row on phones; metrics and the selected work step down on phones.
+
 ## Checked
 
 Every page at 1440, 768 and 390px in headless Chromium: no horizontal overflow and no page errors. The only console

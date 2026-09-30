@@ -483,6 +483,9 @@
         if (on) box.dispatchEvent(new CustomEvent('tabchange', { detail: panel }));
       });
       if (focus) tab.focus();
+      // a sideways strip of tabs (industries on tablets and phones) keeps the chosen one in view, without moving the page
+      const strip = tab.parentElement;
+      if (strip.scrollWidth > strip.clientWidth + 2) strip.scrollTo({ left: tab.offsetLeft - strip.offsetLeft - 16, behavior: motion ? 'smooth' : 'auto' });
     };
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => select(t));
@@ -583,7 +586,7 @@
 
   // Services page: each card sticks as the next slides up over it; the one underneath settles back and dims.
   const stackCards = $$('[data-stack-card]');
-  const stackWide = matchMedia('(min-width: 960px)');
+  const stackWide = matchMedia('(min-width: 960px) and (min-height: 820px)');
   const stackTick = () => stackCards.forEach((c, i) => {
     const next = stackCards[i + 1];
     if (!next || !stackWide.matches || !motion) { c.style.transform = ''; c.style.filter = ''; return; }
