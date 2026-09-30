@@ -228,6 +228,7 @@
       const a = el.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 750, delay: d * 0.7, easing: E, fill: 'both' });
       a.onfinish = () => { el.style.opacity = ''; a.cancel(); };
     }
+    if (el.hasAttribute('data-words')) el.classList.add('is-in');
     if (el.hasAttribute('data-words')) $$('[data-w]', el).forEach((w, i) => {
       const a = w.animate([{ transform: 'translateY(108%) rotate(4deg)' }, { transform: 'none' }], { duration: 900, delay: d * 0.7 + i * 55, easing: E, fill: 'both' });
       a.onfinish = () => { w.style.transform = ''; a.cancel(); };

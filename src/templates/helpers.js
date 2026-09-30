@@ -77,7 +77,7 @@ const words = (html) => {
     if (tok === '<mark>') { mark = true; continue; }
     if (tok === '</mark>') { mark = false; continue; }
     const w = `<span class="w"><span data-w${quiet ? ' class="is-quiet"' : ''}>${tok}</span></span>`;
-    if (mark) out.push(`<span class="w-mark">${w}<svg class="w-route" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 11H30V4H62V11H100"/></svg><svg class="w-chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0L10 5L0 10L3 5Z"/></svg></span>`);
+    if (mark) out.push(`<span class="w-mark">${w}<svg class="w-route" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M1 11H30V4H62V11H100"/></svg><svg class="w-chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0L10 5L0 10L3 5Z"/></svg></span>`);
     else out.push(w);
   }
   return out.join(' ');
