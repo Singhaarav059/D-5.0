@@ -1,5 +1,16 @@
 // All site copy and data in one place. Edit here, then run `npm run build` to regenerate public/*.html.
 // Everything below is published as-is, so keep it accurate: no placeholder numbers or invented claims.
+//
+// One vocabulary, used the same way on every page:
+//   projects   engagements delivered, company-wide: only the record (`metrics`, "45+ projects delivered", as on
+//              demazetech.com) counts them
+//   products   what we designed and built that the site shows: `projects` below, always "N featured products"
+//              (never "projects" or "sectors" counted from this list)
+//   services   what we sell: `services` below; a product is tagged with every service it drew on, so the service
+//              counts overlap and are always worded "N products" beside a note that a product can have several
+//   industries the verticals we build for: `industries` below
+// Capitalisation: sentence case for labels and headings ("Case study", "Selected work"); service names exactly as
+// `services[].title` ("AI & ML", "Web, Mobile & SaaS", "E-commerce", "Cloud").
 
 module.exports = {
   calendly: 'https://calendly.com/krupal-demazetech/30min',
@@ -20,7 +31,7 @@ module.exports = {
   hero: {
     label: 'Your strategic partner for scalable AI products',
     headline: 'Build AI products <em>without the <mark>maze.</mark></em>',
-    lead: 'Vague specs, scope creep, deadlines, tech debt: every product has its maze. We design, build and scale AI software with you and find the way through, as one long-term team.',
+    lead: 'Vague specs, scope creep, tech debt: every product has a maze. We design and build AI software with you, and find the way through.',
   },
 
   // "How we work" (templates/journey.js): the heading over the maze scene; the four stages are `process` below.
@@ -61,7 +72,7 @@ module.exports = {
       features: ['Accurate Used Car Valuations', 'Instant New Car EMIs', 'Seamless Car Refurbishment', 'Efficient Sales Team Backend'],
       brief: "One system to value used cars, quote new-car EMIs, run refurbishment and back the sales team.",
       outcome: "Smoother operations for the dealership and a better experience for every customer." },
-    { title: 'Investigative Case Management Software', image: 'investigative-case-management-software', name: 'Case management', sector: 'Legal & investigation', tint: '#e9e2ff',
+    { title: 'Investigative Case Management Software', image: 'investigative-case-management-software', name: 'Case Files', sector: 'Legal & investigation', tint: '#e9e2ff',
       description: 'It is an advanced web-based software designed to enhance the capabilities of private investigators with AI-powered tools and comprehensive case management features. It supports seamless organization of case information and media, secure data storage, and automated workflow management, accessible from anywhere.',
       features: ['Case Management', 'AI-Powered Tools', 'Document Automation, Subscription-based Auto deposit pricing model', 'Web-Based Access & Data Security'],
       brief: "Give private investigators one secure place to organise cases, analyse media and automate the paperwork, from anywhere.",
@@ -81,12 +92,12 @@ module.exports = {
       features: ['Enhanced Shopping Experience', 'Increased Reach for Retailers', 'Multi-vendor features, Live Auction', 'Achieved 99% Lighthouse Score'],
       brief: "Australia and New Zealand's marketplace where shoppers, retailers and good causes all do better.",
       outcome: "A faster, better shopping experience and more reach for every retailer." },
-    { title: 'Multi-Shoppers Food & Grocery Delivery App', image: 'multi-shoppers-food-and-grocery-delivery-app', name: 'Grocery delivery', sector: 'Food & grocery', tint: '#e2f6d5',
+    { title: 'Multi-Shoppers Food & Grocery Delivery App', image: 'multi-shoppers-food-and-grocery-delivery-app', name: 'Local Shops', sector: 'Food & grocery', tint: '#e2f6d5',
       description: 'It is a cross-platform application developed using Flutter for user-facing apps and ReactJS for the admin panel. The platform is designed to empower local shop vendors by enabling them to sell their products online and manage their digital stores efficiently. It provides a seamless experience for both customers and shop owners, offering features that facilitate easy product listing, inventory management, and customer interaction.',
       features: ['Buy Grocery, Household Items, & Restaurant’s food', 'User App, Seller App, Rider (Delivery Person) App', 'Customer & Delivery Management, Account Management', 'Complete Control of Digital Store, Delivery Areas Setting'],
       brief: "Help local shops sell online and run their digital stores, from the first order to the doorstep.",
       outcome: "A seamless experience for customers, with local shop owners in charge of their own stores." },
-    { title: 'Car Service & Customer Engagement Platform', image: 'car-service-and-customer-engagement-platform', name: 'Car service', sector: 'Automotive', tint: '#dfe6ff',
+    { title: 'Car Service & Customer Engagement Platform', image: 'car-service-and-customer-engagement-platform', name: 'Car Service', sector: 'Automotive', tint: '#dfe6ff',
       description: 'The platform is a web and mobile-based application designed to enhance the efficiency of the service department of an authorized car dealership in India. The platform streamlines customer data management, service tracking, automated communication, and role-based access to improve operational efficiency and enhance customer experience. The application automates service reminders, tracks customer interactions, and provides real-time analytics to optimize the dealership’s Preventive Maintenance (PM), General Repairs (GR), and Body & Paint (BP) services.',
       features: ['Data Management & Integration', 'Admin Dashboard & Reporting', 'Automated Communication & Customer Engagement', 'Role-Based User Access, Customer Data Management'],
       brief: "Run an authorised dealership's service department on data: maintenance, repairs and body & paint.",
@@ -101,7 +112,7 @@ module.exports = {
       features: ['Global Payments', 'Blockchain Technology', 'Stablecoin Integration', 'User Empowerment'],
       brief: "Make cross-border transfers fast, low-cost and safe, without traditional banking intermediaries.",
       outcome: "Funds move quickly, safely and affordably, for anyone, anywhere." },
-    { title: 'CMA Report Generation Software', image: 'cma-report-generation-software', name: 'CMA reports', sector: 'Banking & finance', tint: '#dcf3e6',
+    { title: 'CMA Report Generation Software', image: 'cma-report-generation-software', name: 'CMA Reports', sector: 'Banking & finance', tint: '#dcf3e6',
       description: 'The Credit Monitoring Arrangement (CMA) Report Generation Software is a cloud-based platform designed to streamline and automate the preparation of CMA reports. Developed using ReactJS and NodeJS, this platform includes comprehensive features that enable users to create detailed reports with all necessary data tables and charts. The software allows users to prepare, edit, and finalize CMA reports efficiently and provides options to download the reports in PDF and Excel formats.',
       features: ['Comprehensive Data Tables and Charts', 'Cloud-Based Platform', 'PDF and Excel Downloads', 'Efficient Report Preparation'],
       brief: "Automate the preparation of Credit Monitoring Arrangement reports, from data tables to the final PDF.",
@@ -111,17 +122,17 @@ module.exports = {
       features: ['Job Listing Creation', 'Real-Time Chat Functionality', 'Candidate Progress Tracking', 'Analytics & Reporting Tools'],
       brief: "Make hiring simple for businesses of all types, from the job post to the offer letter.",
       outcome: "Businesses save time finding the best candidates, and candidates find the right employer." },
-    { title: 'Task, Staff & Document Management Platform', image: 'task-staff-and-document-management-platform', name: 'Task & documents', sector: 'Insurance & investment', tint: '#ffe0e6',
+    { title: 'Task, Staff & Document Management Platform', image: 'task-staff-and-document-management-platform', name: 'Task & Docs', sector: 'Insurance & investment', tint: '#ffe0e6',
       description: 'It is a cross-platform application designed to digitally transform insurance and investment agencies by streamlining tasks, staff, and document management. Built for admins, heads, and field & office staff, the platform enables seamless task assignment, real-time communication, and document handling. With real-time messaging (powered by WebSockets), team members can collaborate efficiently, while heads can track progress and follow up on tasks. The system ensures secure document storage, categorizing files under respective policy or investment holders, making retrieval quick and organized.',
       features: ['Cross-Platform Task Management', 'Task Status Updates & Follow-Ups', 'Family Wise Document Upload & Search', 'Enhanced Workflow Efficiency'],
       brief: "Digitally transform insurance and investment agencies: tasks, staff and documents in one app.",
       outcome: "Teams collaborate in real time, heads track every task, and any file is quick to find." },
     // TODO(content): this project still needs its own description; an empty string hides the paragraph.
-    { title: 'Educational Courses & LMS Platform', image: 'educational-courses-and-lms-platform', name: 'Learning platform', sector: 'Education', tint: '#e2f6d5', description: '',
+    { title: 'Educational Courses & LMS Platform', image: 'educational-courses-and-lms-platform', name: 'Learning Platform', sector: 'Education', tint: '#e2f6d5', description: '',
       features: ['Website & Learning Management System', 'User Dashboard for Learners', 'Search & AI-Powered Recommendations', 'VR Content Access for Immersive Learning'],
       brief: "One platform for courses, a learning management system and immersive VR lessons.",
       outcome: "Learning that works on screen or in VR, with every learner’s progress in view." },
-    { title: 'Storyboard Creation for Films with AI', image: 'storyboard-creation-for-films-with-ai', name: 'AI storyboards', sector: 'Film & media', tint: '#e9e2ff',
+    { title: 'Storyboard Creation for Films with AI', image: 'storyboard-creation-for-films-with-ai', name: 'Storyboard AI', sector: 'Film & media', tint: '#e9e2ff',
       description: 'It is a cutting-edge platform designed to transform the storyboard creation process using generative AI and advanced algorithms. This innovative tool allows filmmakers, advertisers, and content creators to convert scripts into stunning visual storyboards within minutes. It analyzes scripts, breaks them down scene by scene, and provides powerful editing tools to ensure narrative coherence and creative control.',
       features: ['Script to Storyboard Conversion', 'Effortless Iteration', 'Context Consistency & Creative Control', 'Intuitive Editing Tools'],
       brief: "Turn scripts into visual storyboards in minutes, for filmmakers, advertisers and creators.",
@@ -131,7 +142,7 @@ module.exports = {
       features: ['Centralized Insurance Hub, User-Friendly, Modern UI', 'Timely Notifications, Easy Coverage Updates', 'Automatic Payment Reminders'],
       brief: "Keep every insurance policy in one app, so no premium or coverage update is ever missed.",
       outcome: "Users manage every type of insurance in one place and never miss a payment." },
-    { title: 'Social Media & Social Commerce Platform', image: 'social-media-and-social-commerce-platform', name: 'Social commerce', sector: 'Social commerce', tint: '#ffe8d6',
+    { title: 'Social Media & Social Commerce Platform', image: 'social-media-and-social-commerce-platform', name: 'Social Commerce', sector: 'Social commerce', tint: '#ffe8d6',
       description: 'It is a social media and social commerce platform where users can connect through shared interests like singing, dancing, sports, and more. Join community groups, share content, engage with others, and shop directly from peer-to-peer listings using in-app crypto wallets. With features like leaderboards, brand promotions, and a personalized user profile, it creates a dynamic space for creators, consumers, and brands to interact.',
       features: ['Community-Based Interaction, Content Sharing', 'In-App Messaging', 'Peer-to-Peer Marketplace, Crypto Wallet Integration', 'Leaderboards, Engaging & Rewarding Experience'],
       brief: "A social network where shared interests become communities, and communities become a marketplace.",
@@ -141,27 +152,27 @@ module.exports = {
   // `work`: the projects that show each service (project image keys); they link into those case studies and drive
   // the filters on the projects page.
   services: [
-    { id: 'ai', title: 'AI & ML', summary: 'Forecasting, conversational AI, computer vision and generative AI',
-      description: 'We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.',
+    { id: 'ai', title: 'AI & ML', summary: 'Software that predicts, reads, sees and writes, so your team decides faster',
+      description: 'Turn the data you already have into decisions: valuations, forecasts, search, recommendations and generated content, designed into the product your team uses every day rather than bolted on.',
       items: ['Predictive Analytics & Forecasting', 'NLP & Conversational AI', 'Computer Vision & Image Processing', 'Generative Models & Content Synthesis', 'Recommendation Systems & Personalization', 'AI Dashboards & Insights'],
       work: ['ai-based-software-for-luxury-car-dealers', 'investigative-case-management-software', 'ai-powered-luxury-ecommerce-platform', 'storyboard-creation-for-films-with-ai', 'educational-courses-and-lms-platform'] },
-    { id: 'web', title: 'Web, Mobile & SaaS', summary: 'Web and mobile apps, custom SaaS, APIs and workflow automation',
-      description: 'We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.',
+    { id: 'web', title: 'Web, Mobile & SaaS', summary: 'The product your users open every day, on the web and on their phone',
+      description: 'The app itself: web, mobile and SaaS that stays fast as users grow, connects to the systems you already run, and automates the busywork around it.',
       items: ['Web App Development', 'Mobile App Development', 'Custom SaaS Development', 'Workflow Automation', 'API Development & System Integration', 'Progressive Web App (PWA)'],
       work: ['senior-engagement-and-support-platform', 'car-service-and-customer-engagement-platform', 'recruitment-platform', 'insurance-management-platform', 'global-payment-transfer-platform', 'task-staff-and-document-management-platform', 'educational-courses-and-lms-platform', 'social-media-and-social-commerce-platform', 'multi-shoppers-food-and-grocery-delivery-app', 'cma-report-generation-software'] },
-    { id: 'ecom', title: 'E-commerce', summary: 'Marketplaces, personalization, checkout, payments and fulfilment',
-      description: 'We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.',
+    { id: 'ecom', title: 'E-commerce', summary: 'Stores and marketplaces that turn browsing into orders',
+      description: 'Stores and marketplaces that sell more: personalised discovery, a checkout that converts, and the payments, inventory and fulfilment behind it, for one brand or a thousand vendors.',
       items: ['D2C / Multi-Vendor Marketplace', 'AI-Powered Personalization & Recommendation', 'Subscription / Rental & Recurring Billing Models', 'Checkout, Payment & Fraud Protection', 'Inventory, Fulfillment & Logistics Integration', 'UI/UX for Storefront & Customer Experience'],
       work: ['ai-powered-luxury-ecommerce-platform', 'multi-vendor-ecommerce-marketplace', 'b2b-gift-marketplace', 'multi-shoppers-food-and-grocery-delivery-app', 'social-media-and-social-commerce-platform'] },
-    { id: 'cloud', title: 'Cloud', summary: 'Migration, cloud-native apps, security and disaster recovery',
-      description: 'We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.',
+    { id: 'cloud', title: 'Cloud', summary: 'Infrastructure that stays up, scales with you and costs less to run',
+      description: 'Keep it running as it grows: move to the cloud, automate every release, watch performance and recover from failure, with the monthly bill kept in check.',
       items: ['Cloud Migration & Modernization', 'Cloud Native App Development', 'Multi-Cloud & Hybrid Cloud Architecture', 'Cloud Security, Compliance & Governance', 'Observability, Monitoring & Performance Optimization', 'Disaster Recovery, Backup & Business Continuity'],
       work: ['cma-report-generation-software', 'investigative-case-management-software', 'task-staff-and-document-management-platform'] },
   ],
 
   // Tools & technologies: the AI & ML category, with each tool's role. `icon` names a file in public/assets/img/tech.
   stack: {
-    lead: 'How Demaze connects foundation AI models, orchestration frameworks, and real-time data infrastructure into resilient production software.',
+    lead: 'Every product we ship is built in the same six layers: the design, the AI models, the web app, the mobile app, the store and the cloud it runs on. Pick a layer to see what we build it with.',
     items: [
       { name: 'OpenAI', role: 'Large Language Models', icon: 'ai-openai' },
       { name: 'Hugging Face', role: 'Open-Source AI Models', icon: 'ai-hugging-face' },
@@ -178,9 +189,9 @@ module.exports = {
   tools: [
     { tab: 'AI & ML', items: [['Langchain', 'langchain'], ['Python', 'python'], ['Tensorflow', 'tensorflow'], ['OpenAI', null], ['Hugging Face', 'huggingface'], ['Pinecone Database', null], ['Apache Kafka', 'apachekafka'], ['Elastic Search', 'elasticsearch']] },
     { tab: 'Web', items: [['React.js', 'react'], ['Next.js', 'nextdotjs'], ['HTML5', 'html5'], ['CSS', 'css'], ['JavaScript', 'javascript'], ['TypeScript', 'typescript'], ['Redux', 'redux'], ['Tailwind CSS', 'tailwindcss'], ['Node.js', 'nodedotjs'], ['Nest.js', 'nestjs'], ['Express.js', 'express'], ['Elastic Search', 'elasticsearch'], ['MongoDB', 'mongodb'], ['Redis', 'redis']] },
-    { tab: 'Mobile App', items: [['Flutter', 'flutter'], ['React Native', 'react'], ['Node.js', 'nodedotjs'], ['Nest.js', 'nestjs'], ['Express.js', 'express'], ['MongoDB', 'mongodb'], ['PostgreSQL', 'postgresql'], ['Redis', 'redis'], ['Firebase', 'firebase'], ['Docker', 'docker']] },
+    { tab: 'Mobile', items: [['Flutter', 'flutter'], ['React Native', 'react'], ['Node.js', 'nodedotjs'], ['Nest.js', 'nestjs'], ['Express.js', 'express'], ['MongoDB', 'mongodb'], ['PostgreSQL', 'postgresql'], ['Redis', 'redis'], ['Firebase', 'firebase'], ['Docker', 'docker']] },
     { tab: 'UI/UX', items: [['Figma', 'figma'], ['Adobe XD', 'adobexd'], ['Photoshop', 'adobephotoshop'], ['Illustrator', 'adobeillustrator'], ['Sketch', 'sketch'], ['InVision', 'invision'], ['Marvel', 'marvelapp'], ['Zeplin', 'zeplin'], ['Balsamiq', 'balsamiq'], ['Axure RP', 'axure']] },
-    { tab: 'eCommerce', items: [['React.js', 'react'], ['Next.js', 'nextdotjs'], ['Node.js', 'nodedotjs'], ['Nest.js', 'nestjs'], ['Express.js', 'express'], ['MongoDB', 'mongodb'], ['PostgreSQL', 'postgresql'], ['MySQL', 'mysql'], ['Redis', 'redis'], ['Elastic Search', 'elasticsearch'], ['AWS', 'amazonwebservices'], ['GCP', 'googlecloud'], ['Heroku', 'heroku'], ['Azure', 'microsoftazure'], ['Hostinger', 'hostinger']] },
+    { tab: 'E-commerce', items: [['React.js', 'react'], ['Next.js', 'nextdotjs'], ['Node.js', 'nodedotjs'], ['Nest.js', 'nestjs'], ['Express.js', 'express'], ['MongoDB', 'mongodb'], ['PostgreSQL', 'postgresql'], ['MySQL', 'mysql'], ['Redis', 'redis'], ['Elastic Search', 'elasticsearch'], ['AWS', 'amazonwebservices'], ['GCP', 'googlecloud'], ['Heroku', 'heroku'], ['Azure', 'microsoftazure'], ['Hostinger', 'hostinger']] },
     { tab: 'Cloud', items: [['AWS', 'amazonwebservices'], ['GCP', 'googlecloud'], ['Azure', 'microsoftazure'], ['Docker', 'docker'], ['Kubernetes', 'kubernetes'], ['Terraform', 'terraform'], ['Jenkins', 'jenkins'], ['Github', 'github'], ['Postman', 'postman'], ['JMeter', 'apachejmeter'], ['Selenium', 'selenium'], ['Vultr', 'vultr'], ['Digital Ocean', 'digitalocean'], ['Heroku', 'heroku'], ['Apache Kafka', 'apachekafka'], ['Redis', 'redis'], ['Elastic Search', 'elasticsearch']] },
   ],
 
@@ -208,21 +219,22 @@ module.exports = {
     ['Manufacturing & B2B', ['Supply Chain Management', 'Vendor Management Platforms', 'Procurement Automation Systems', 'Manufacturing Execution Systems', 'Quality Management Software', 'Business Intelligence Dashboards', 'B2B Marketplace Development', 'Production Planning Tools', 'Equipment Maintenance Systems'], { doodle: 'factory', color: 'sun', work: ['b2b-gift-marketplace'] }],
   ],
 
+  // Why teams choose us (about page): each reason names its proof, which templates/about.js renders from the data
+  // itself (`ai`: the featured products tagged AI & ML; `route`: the four stages; `record`: the metrics).
   whyUs: [
-    { title: 'AI-First Innovation',
-      description: "We don't just build software; we create intelligent solutions that learn, adapt, and evolve. Our deep expertise in AI, machine learning, and emerging technologies ensures your business stays ahead of the curve with future-ready solutions that drive automation and growth." },
-    { title: 'End-to-End Partnership',
-      description: "From concept to deployment and beyond, we're your dedicated tech partner. We work as an extension of your team, providing comprehensive support across the entire development lifecycle while focusing on long-term success rather than just project delivery." },
-    { title: 'Proven Track Record',
-      description: 'With 45+ successful projects across diverse industries and $10M+ generated for our clients, we bring measurable results. Our experienced team of 35+ professionals combines technical excellence with business acumen to deliver solutions that create real impact.' },
+    { title: 'AI-native from day one', proof: 'ai',
+      description: 'We design the model into the product from the first workshop: car valuations, case analysis, virtual try-ons, storyboards from a script.' },
+    { title: 'One team, prototype to production', proof: 'route',
+      description: 'The people who run your discovery workshop design it, build it and scale it. No hand-offs, nothing lost between agencies.' },
+    { title: 'Built for measurable outcomes', proof: 'record',
+      description: 'We agree the success metrics before anything is designed, build toward them, and keep improving after launch.' },
   ],
 
   about: {
    
-    whoWeAre: [
-      "At Demaze Technologies, we're more than just developers; we're digital transformation architects. We're a passionate team of 35+ technologists, innovators, and strategic thinkers who believe in the power of AI and cutting-edge technology to reshape businesses.",
-      'Founded with a vision to democratize advanced technology, we bridge the gap between complex technical possibilities and real business outcomes.',
-    ],
+    // The about page's headline and lead (templates/about.js adds the team size from `metrics`).
+    title: 'We take the maze <em>out of building.</em>',
+    whoWeAre: 'engineers, designers and strategists in Ahmedabad. We turn a tangled product idea into one clear route, then build it with you: AI, software, commerce and cloud, as one long-term team.',
     drives: [
       { title: 'Innovation at Our Core', description: "We're driven by the challenge of turning ambitious ideas into reality. Every project is an opportunity to push boundaries and create something extraordinary that makes a meaningful impact." },
       { title: 'Client Success Obsession', description: "Your success is our success. We're motivated by seeing our clients achieve breakthrough results, streamline operations, and unlock new growth opportunities through the solutions we build together." },
@@ -385,7 +397,7 @@ module.exports = {
       outro: 'Agencies, digitally transformed',
     },
     'educational-courses-and-lms-platform': {
-      name: 'Learning', open: 'rise', look: 'chalk', chrome: 'stories', move: 'push', align: 'left', tagline: 'Courses, learners and VR', accent: '#3d8bfd',
+      name: 'Learning Platform', open: 'rise', look: 'chalk', chrome: 'stories', move: 'push', align: 'left', tagline: 'Courses, learners and VR', accent: '#3d8bfd',
       hero: { kind: 'vr', opts: { color: '#3d8bfd' }, chapter: 'Immersive', title: 'VR lessons', cap: 'VR content for immersive learning', tags: ['VR content', 'Courses', 'Learners'] },
       scenes: [
         { type: 'tiles', chapter: 'Courses', cap: 'Courses for every kind of learner', items: [{ art: 'palette', label: 'UI/UX', sub: 'With Figma' }, { art: 'laptop', label: 'Web', sub: 'Hands-on' }, { art: 'vr', label: 'VR', sub: 'Immersive lessons' }] },
@@ -413,7 +425,7 @@ module.exports = {
       outro: 'Never miss a premium',
     },
     'social-media-and-social-commerce-platform': {
-      name: 'Social', open: 'marquee', look: 'neon', chrome: 'stories', move: 'wipe', tagline: 'Connect through shared interests', accent: '#6a4cf0',
+      name: 'Social Commerce', open: 'marquee', look: 'neon', chrome: 'stories', move: 'wipe', tagline: 'Connect through shared interests', accent: '#6a4cf0',
       hero: { kind: 'phone', opts: { accent: '#2a2340', screen: { dark: true, accent: '#5b3cf5', title: 'Discover', items: [['Adrenaline Junkies', 'Community'], ['Market', 'Peer-to-peer'], ['Leaderboard', 'Top creators'], ['Wallet', 'Crypto']] } }, chapter: 'The app', title: 'Social', cap: 'Social media meets social commerce', tags: ['Singing', 'Dancing', 'Sports'] },
       scenes: [
         { type: 'live', chapter: 'Share', cap: 'They share content and engage with each other', art: 'photo', label: 'New post', cta: 'Like', host: 'person', feed: ['Loved this!', 'Join our group?', 'See you Saturday'] },

@@ -18,14 +18,14 @@ const chevronDown = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="tr
 const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
     <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="${caseHref(p)}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
     <div class="nav__drop-side">
-      <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
+      <p><b>${C.projects.length} featured products</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
       <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
     </div>
   </div>`;
 const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-panel>
     <div class="nav__drop-grid">${C.services.map(svcTile).join('')}</div>
     <div class="nav__drop-side">
-      <p><b>Not sure where to start?</b>Tell us the problem. In 30 minutes we’ll sketch the route through it.</p>
+      <p><b>Not sure where to start?</b>Tell us the problem and we’ll map the route: what to build first, and what to skip.</p>
       <a class="btn btn--blue btn--sm" ${cal}><span>Book a call</span><i class="btn__dot" aria-hidden="true">→</i></a>
       <a class="nav__drop-link" href="./services">All services ${icon.arrow}</a>
     </div>
@@ -139,7 +139,7 @@ function footer([label, line, href]) {
       <div class="footer__intro"><span class="footer__brand"><img src="${C.logoMark}" alt="" width="26" height="26">Demaze</span><p>AI, software engineering and automation with deep industry expertise, as a long-term partner.</p></div>
       <div><h3>Company</h3>${NAV.map(([t, h]) => `<a href="${h}">${t}</a>`).join('')}</div>
       <div><h3>Services</h3>${C.services.map((s) => `<a href="./services#${s.id}">${esc(s.title)}</a>`).join('')}</div>
-      <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book with Calendly</a><a class="footer__addr" href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
+      <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book a 30-minute call</a><a href="./contact#brief">Send a brief</a><a class="footer__addr" href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
     </div>
     <div class="footer__mark" aria-hidden="true">
       <div class="footer__route-head"><span>The route, every time</span><span>Idea → Launch</span></div>
@@ -152,8 +152,8 @@ function footer([label, line, href]) {
       <div class="footer__word">${chevron()}<span data-words><span data-w>Demaze</span></span></div>
     </div>
     <div class="footer__bottom">
-      <span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span>
-      <span class="footer__links"><a href="./404">Lost?</a>${C.socials.map((s) => `<a href="${s.href}" target="_blank" rel="noopener">${s.name}</a>`).join('')}</span>
+      <span>Demaze Technologies © ${new Date().getFullYear()} · Ahmedabad, India</span>
+      <span class="footer__links"><a href="#main">Back to top ↑</a>${C.socials.map((s) => `<a href="${s.href}" target="_blank" rel="noopener">${s.name}</a>`).join('')}</span>
     </div>
   </div>
 </footer>`;

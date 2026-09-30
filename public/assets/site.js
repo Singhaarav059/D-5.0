@@ -151,11 +151,11 @@
   const reveal = (el) => {
     const d = +(el.dataset.delay || 0) * 1000;
     if (el.hasAttribute('data-reveal')) {
-      const a = el.animate([{ opacity: 0, transform: 'translateY(36px)', filter: 'blur(10px)' }, { opacity: 1, transform: 'none', filter: 'blur(0px)' }], { duration: 1100, delay: d, easing: E, fill: 'both' });
+      const a = el.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 750, delay: d * 0.7, easing: E, fill: 'both' });
       a.onfinish = () => { el.style.opacity = ''; a.cancel(); };
     }
     if (el.hasAttribute('data-words')) $$('[data-w]', el).forEach((w, i) => {
-      const a = w.animate([{ transform: 'translateY(108%) rotate(4deg)' }, { transform: 'none' }], { duration: 1200, delay: d + i * 75, easing: E, fill: 'both' });
+      const a = w.animate([{ transform: 'translateY(108%) rotate(4deg)' }, { transform: 'none' }], { duration: 900, delay: d * 0.7 + i * 55, easing: E, fill: 'both' });
       a.onfinish = () => { w.style.transform = ''; a.cancel(); };
     });
     if (el.hasAttribute('data-drawin')) {
@@ -473,7 +473,8 @@
       c.classList.toggle('is-out', !on);
       if (on) { n++; if (motion) c.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 600, delay: Math.min(n, 8) * 40, easing: E, fill: 'backwards' }); }
     });
-    if (status) status.textContent = `Showing ${n} project${n === 1 ? '' : 's'}`;
+    b.closest('.projects')?.toggleAttribute('data-filtered', id !== 'all');
+    if (status) status.textContent = `Showing ${n} product${n === 1 ? '' : 's'}`;
   }));
 
   /* ---------- services page: tabs (the tools map, the industries), the wires of the tools map, the industries'

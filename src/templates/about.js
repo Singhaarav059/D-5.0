@@ -8,8 +8,8 @@ const { doodle, doodleAt } = require('./doodles');
 const { metrics, print, quote, pageHead } = require('./shared');
 
 const team = C.metrics.find((m) => /team/i.test(m.label));
-const intro = () => `${pageHead({ label: 'About Demaze', title: 'Digital transformation <em>architects.</em>', room: '#ff85b8', aside: 'about', doodles: [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']],
-  lead: `We’re more than developers: a team of ${team.value}${team.suffix} technologists, innovators and strategic thinkers who believe in the power of AI to reshape businesses. ${C.about.whoWeAre[1]}` })}
+const intro = () => `${pageHead({ label: 'About Demaze', title: C.about.title, room: '#ff85b8', aside: 'about', doodles: [['heart', 'pink'], ['bulb', 'sun'], ['star', 'mint']],
+  lead: `Demaze is ${team.value}${team.suffix} ${C.about.whoWeAre}` })}
 <section class="wrap about-record">${metrics('metrics--big')}</section>`;
 
 // What drives us, drawn: the four values as stations on a Demaze route across the sheet, each over its own card, in
@@ -48,20 +48,25 @@ const founder = () => `<section class="wrap studio studio--about" data-room="#3d
   </div>
 </section>`;
 
-// Why teams choose us: the three reasons as cards on a sky-blue room, each with its drawing and its number.
-const WHY = [['rocket', 'sun'], ['heart', 'pink'], ['star', 'mint']];
-const why = () => `<section class="sheet-wrap" data-room="#62c1ff">
-  <div class="sheet sheet--sky why">
-    <div class="why__head">${kicker('Why Demaze', 'kicker--ink', ['star', 'sun'])}<h2 class="display display--l" data-words>${words('Why teams <em>choose us.</em>')}</h2></div>
-    <ol class="reasons">${C.whyUs.map((w, i) => `
-      <li class="reason" data-reveal data-delay="${(i * 0.1).toFixed(1)}" data-tilt="5" style="--mk:var(--${WHY[i][1]})">
-        <span class="reason__art">${doodle(WHY[i][0], { color: WHY[i][1] })}</span>
-        <span class="reason__num">${pad(i + 1)}</span>
-        <h3>${esc(w.title)}</h3>
-        <p>${esc(w.description)}</p>
-      </li>`).join('')}
-    </ol>
-  </div>
+// Why teams choose us: three claims, each over its evidence taken from the data itself (content.js `whyUs[].proof`),
+// on the night ground so the section reads as evidence rather than a colour block.
+const WHY = [['chip', 'lilac'], ['spiral', 'sky'], ['star', 'sun']];
+const ai = C.services.find((s) => s.id === 'ai');
+const PROOF = {
+  ai: () => [[`${ai.work.length} of ${C.projects.length}`, 'featured products run on AI'], ['Seen in', ai.work.map((k) => C.projects.find((p) => p.image === k).name).join(', ')]],
+  route: () => [[`${C.process.length} stages`, C.process.map((s) => s.title.split(' ')[0]).join(' → ')], ['1 team', 'from the first workshop to scale']],
+  record: () => C.metrics.map((m) => [`${m.prefix}${m.value}${m.suffix}`, m.label.toLowerCase()]),
+};
+const why = () => `<section class="wrap why" data-room="#62c1ff">
+  <div class="sec-head"><div>${kicker('Why Demaze', '', ['star', 'sun'])}<h2 class="display display--l" data-words>${words('Why teams <em>choose us.</em>')}</h2></div></div>
+  <ol class="reasons">${C.whyUs.map((w, i) => `
+    <li class="reason" data-reveal data-delay="${(i * 0.1).toFixed(1)}" style="--mk:var(--${WHY[i][1]})">
+      <span class="reason__art">${doodle(WHY[i][0], { color: WHY[i][1] })}</span>
+      <h3>${esc(w.title)}</h3>
+      <p>${esc(w.description)}</p>
+      <dl class="reason__proof">${PROOF[w.proof]().map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+    </li>`).join('')}
+  </ol>
 </section>`;
 
 module.exports = { intro, drives, founder, why };

@@ -64,8 +64,9 @@ const btn = (label, href, { tone = 'paper', size = '', extra = '', magnet = true
 // A small uppercase label over a section's headline; `art` ([doodle, colour]) puts a drawing before it.
 const kicker = (text, cls = '', art = null) => `<span class="kicker${cls ? ` ${cls}` : ''}">${art ? require('./doodles').doodle(art[0], { color: art[1], cls: 'kicker__dd' }) : ''}${esc(text)}</span>`;
 
-// The hand-drawn loop around the headline word in <mark> (drawn in by site.js).
-const LOOP = '<svg class="loop" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path data-drawin data-delay="0.9" data-dur="1300" pathLength="1" d="M34 66C18 30 120 6 178 30C204 44 188 86 110 92C50 96 8 80 14 54C20 28 80 18 128 20"/></svg>';
+// The mark under the headline word in <mark>: a short route in the maze's own language (straight runs and turns),
+// drawn in by site.js once the headline has risen.
+const LOOP = '<svg class="loop" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path data-drawin data-delay="0.9" data-dur="900" pathLength="1" d="M3 40H62V76H138V34H197"/></svg>';
 
 // A headline whose words rise into place one by one (site.js, [data-words]). `html` is trusted HTML from the
 // templates or content.js: the words inside <em> are set in the quieter grey, a word in <mark> gets the loop.

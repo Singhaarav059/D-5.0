@@ -17,7 +17,6 @@ const { techIcon } = require('./services');
 const hero = () => `<section class="wrap hero" data-room="#3d5afe">
   <div class="hero__top" data-reveal>
     <span class="tagpill"><img src="${C.logoMark}" alt="" width="14" height="14">${esc(C.hero.label)}</span>
-    <span class="hero__place">Ahmedabad, India</span>
   </div>
   <h1 class="display display--hero" data-words>${words(C.hero.headline)}</h1>
   <div class="hero__grid">
@@ -34,7 +33,7 @@ const hero = () => `<section class="wrap hero" data-room="#3d5afe">
 
 // ---------- the tape: what we build, each with its drawing, running sideways ----------
 
-const BAND = [['AI & ML', 'chip', 'lilac'], ['Web apps', 'browser', 'sky'], ['Mobile apps', 'phone', 'sun'], ['SaaS', 'layers', 'mint'], ['eCommerce', 'bag', 'tomato'], ['Cloud', 'cloud', 'sky'], ['Automation', 'loop', 'pink'], ['UI/UX', 'pen', 'lilac']];
+const BAND = [['AI & ML', 'chip', 'lilac'], ['Web apps', 'browser', 'sky'], ['Mobile apps', 'phone', 'sun'], ['SaaS', 'layers', 'mint'], ['E-commerce', 'bag', 'tomato'], ['Cloud', 'cloud', 'sky'], ['Automation', 'loop', 'pink'], ['UI/UX', 'pen', 'lilac']];
 const tape = () => {
   const run = BAND.map(([t, d, c]) => `<span>${esc(t)}${doodle(d, { color: c })}</span>`).join('');
   return `<div class="tape" aria-hidden="true"><div class="tape__track" data-marquee="60">${run}${run}</div></div>`;
@@ -93,14 +92,14 @@ const work = () => `<section class="hwork" data-hscroll data-room="#ff6242">
         <a class="hcard" href="${caseHref(p)}" data-hcard data-name="${esc(p.name)} · ${esc(p.sector)}">
           <div data-tilt="4">${media(p, i, { size: 'wide', sizes: '(max-width: 860px) 84vw, 920px' })}</div>
           <div class="hcard__foot">
-            <div><span class="meta">${pad(i + 1)} · ${esc(p.sector)}</span><h3>${esc(p.name)} <em class="quiet">— ${esc(p.brief)}</em></h3></div>
+            <h3>${esc(p.name)} <span class="meta">${esc(p.sector)}</span></h3>
             <span class="round" aria-hidden="true">→</span>
           </div>
         </a>`).join('')}
-        <a class="hcard hcard--more" href="./projects" data-hcard data-name="${C.projects.length - SHOW} more · All sectors">
+        <a class="hcard hcard--more" href="./projects" data-hcard data-name="${C.projects.length - SHOW} more · Every industry">
           <span class="kicker">${C.projects.length - SHOW} more</span>
           <span class="hcard__big">Fintech, legal, commerce, senior care and more.</span>
-          <span class="pillink">See all ${C.projects.length} projects →</span>
+          <span class="pillink">See all ${C.projects.length} products →</span>
         </a>
       </div>
     </div>
@@ -128,7 +127,7 @@ const services = () => `<section class="svc-wrap" data-room="#2fd0a0">
           <button type="button" class="svc__item${i === 0 ? ' is-on' : ''}" data-svc="${i}" aria-pressed="${i === 0}" style="--c:${SVC_COLOR[s.id]}">
             <span class="svc__n">${pad(i + 1)}</span>
             <span class="svc__text"><span class="svc__title">${esc(s.title)}</span><span class="svc__sum"><span><span>${esc(s.summary)}</span></span></span></span>
-            <span class="svc__count"><i></i>${s.work.length} projects</span>
+            <span class="svc__count"><i></i>${s.work.length} products</span>
             <i class="svc__rule"></i>
           </button>`).join('')}
           <span class="svc__progress"><i data-sbar></i></span>
@@ -193,8 +192,9 @@ const start = () => `<section class="start-wrap" data-room="#ffcb45">
     <div class="start__copy">
       ${kicker('Start a project', '', ['rocket', 'tomato'])}
       <h2 class="display display--xl" data-words>${words('Got a maze? <em>We’ll map the route.</em>')}</h2>
-      <p class="lead" data-reveal>Tell us the problem. In 30 minutes we’ll sketch the route through it: what to build first, what to skip, and who you’d work with.</p>
+      <p class="lead" data-reveal>Tell us the problem. We’ll map the route: what to build first, what to skip, and what comes next.</p>
       <div class="actions" data-reveal>${btn('Book a 30-min call', C.calendly, { tone: 'ink', size: 'lg', extra: 'target="_blank" rel="noopener"' })}${btn('Send a brief', './contact', { tone: 'line', size: 'lg', magnet: false })}</div>
+      <p class="start__note" data-reveal>No sales deck. Just the problem, the context, and what you’re trying to build.</p>
       <div class="crew-band" data-crew aria-hidden="true"></div>
     </div>
     <div class="start__maze" data-tilt="4">${maze({ cols: 10, rows: 7, seed: 23, tone: 'day', start: 'Your problem', label: 'A route mapped through a maze, from your problem to launch' })}</div>

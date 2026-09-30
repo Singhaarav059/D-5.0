@@ -25,14 +25,21 @@ const projectCard = (p, i) => `<a class="pcard" href="${caseHref(p)}" data-svcs=
   </div>
 </a>`;
 
-// The filter: all work, or the projects of one service (site.js shows and hides the cards).
+// The filter: all work, or the products tagged with one service (site.js shows and hides the cards). A product can
+// carry several services, so the counts overlap; the note says so. Unfiltered, the first four read as the story
+// (larger) and the rest as the deeper portfolio; filtered, the two grids read as one list (site.css, [data-filtered]).
+const LEAD = 4;
 const projectsGrid = () => `<section class="wrap projects" data-room="#ff6242">
-  <div class="filter" role="toolbar" aria-label="Filter projects">
-    ${[{ id: 'all', title: 'All work', n: C.projects.length }, ...C.services.map((s) => ({ id: s.id, title: s.title, n: s.work.length }))]
+  <div class="filter" role="toolbar" aria-label="Filter products by service">
+    ${[{ id: 'all', title: 'All', n: C.projects.length }, ...C.services.map((s) => ({ id: s.id, title: s.title, n: s.work.length }))]
       .map((f, i) => `<button type="button" class="filter__btn" data-filter="${f.id}" aria-pressed="${i === 0}"${f.id === 'all' ? '' : ` style="--c:${SVC_COLOR[f.id]}"`}>${f.id === 'all' ? '' : '<i></i>'}${esc(f.title)}<small>${f.n}</small></button>`).join('')}
   </div>
+  <p class="projects__note">Most products use two or three services, so they appear under each one.</p>
   <p class="sr-only" role="status" data-filter-status></p>
-  <div class="projects__grid">${C.projects.map((p, i) => projectCard(p, i)).join('')}</div>
+  <h2 class="projects__sub">Start with these four</h2>
+  <div class="projects__grid projects__grid--lead">${C.projects.slice(0, LEAD).map((p, i) => projectCard(p, i)).join('')}</div>
+  <h2 class="projects__sub projects__sub--more">The deeper portfolio</h2>
+  <div class="projects__grid">${C.projects.slice(LEAD).map((p, i) => projectCard(p, i + LEAD)).join('')}</div>
 </section>`;
 
 module.exports = { media, projectsGrid, servicesOf };

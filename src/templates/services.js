@@ -19,7 +19,7 @@ const byKey = (k) => C.projects.find((p) => p.image === k);
 const serviceList = () => `<section class="wrap svcs" data-stack>${C.services.map((s, i) => `
   <article class="svcs__item" id="${s.id}" style="--i:${i};--c:${SVC_COLOR[s.id]};--dd:var(--${SVC_ART[s.id][1]})" data-stack-card>
     <div class="svcs__main">
-      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)} · ${s.work.length} projects</span></div>
+      <div class="svcs__top"><span class="svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><span class="kicker kicker--dim">${pad(i + 1)} / ${pad(C.services.length)} · seen in ${s.work.length} products</span></div>
       <h2 class="display display--l">${esc(s.title)}</h2>
       <p>${esc(s.description)}</p>
       <ul class="svcs__items">${s.items.map((t) => `<li><i>✓</i>${esc(t)}</li>`).join('')}</ul>
@@ -41,7 +41,7 @@ const stackTabs = () => C.tools.map((t, i) => ({
   tab: t.tab,
   items: i === 0 ? C.stack.items.map((s) => ({ name: s.name, role: s.role, logo: techIcon(s.icon) })) : t.items.map(([name, slug]) => ({ name, logo: techIcon(slug) })),
 }));
-const KMAP_ART = { 'AI & ML': ['chip', 'lilac'], Web: ['browser', 'sky'], 'Mobile App': ['phone', 'sun'], 'UI/UX': ['pen', 'pink'], eCommerce: ['bag', 'tomato'], Cloud: ['cloud', 'mint'] };
+const KMAP_ART = { 'AI & ML': ['chip', 'lilac'], Web: ['browser', 'sky'], Mobile: ['phone', 'sun'], 'UI/UX': ['pen', 'pink'], 'E-commerce': ['bag', 'tomato'], Cloud: ['cloud', 'mint'] };
 const kmapArt = (tab) => KMAP_ART[tab] || ['layers', 'sky'];
 
 // The Demaze stack in isometric: a pile of six plates, one per discipline, each with a port where its wire starts.
@@ -66,7 +66,7 @@ const tools = () => {
   const total = new Set(tabs.flatMap((t) => t.items.map((x) => x.name))).size;
   return `<section class="wrap tools kmap" id="tools" data-room="#62c1ff">
   <div class="sec-head">
-    <div>${kicker('Tools & technologies', '', ['gear', 'sky'])}<h2 class="display display--l" data-reveal>The stack, <em class="quiet">built for production.</em></h2></div>
+    <div>${kicker('Tools & technologies', '', ['gear', 'sky'])}<h2 class="display display--l" data-reveal>How we build it, <em class="quiet">layer by layer.</em></h2></div>
     <p class="sec-head__lead">${esc(C.stack.lead)}</p>
   </div>
   <div class="kmap__stage" style="--mk:var(--${kmapArt(tabs[0].tab)[1]})" data-tabs data-kmap-stage data-reveal>

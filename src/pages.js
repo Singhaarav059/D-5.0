@@ -16,7 +16,7 @@ const { serviceList, tools, industries, faq } = require('./templates/services');
 const { intro, drives, founder, why } = require('./templates/about');
 const { contact, visit } = require('./templates/contact');
 
-const SECTORS = new Set(C.projects.map((p) => p.sector)).size;
+const delivered = C.metrics.find((m) => /project/i.test(m.label));
 
 const pages = {
   index: layout({
@@ -33,7 +33,7 @@ const pages = {
     schema: [S.organization(), S.projects(caseHref), S.breadcrumbs([['Home', './'], ['Projects', './projects']])],
     body: [
       pageHead({ label: 'Projects', title: `${C.projects.length} products, <em>designed and built.</em>`, room: '#ff6242', aside: 'projects', doodles: [['rocket', 'tomato'], ['star', 'sun'], ['heart', 'pink']],
-        lead: `From luxury automotive and fintech to legal, commerce and senior care: ${SECTORS} sectors in all. Every card plays a short film of the product: open one for its story.` }),
+        lead: `${C.projects.length} featured products from the ${delivered.value}${delivered.suffix} projects we’ve delivered, across luxury automotive, fintech, legal, commerce and senior care. Start with the first four; open any card for its story.` }),
       projectsGrid(),
     ].join('\n'),
   }),

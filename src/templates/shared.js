@@ -8,13 +8,13 @@ const { doodle, doodleAt } = require('./doodles');
 
 // What sits beside each subpage's headline: something real from the page. `art` is up to three [doodle, colour]
 // drawn around it (they draw themselves on, then keep a hand-drawn jitter; site.css).
-const SECTORS = new Set(C.projects.map((p) => p.sector)).size;
+const delivered = C.metrics.find((m) => /project/i.test(m.label));
 const ASIDE = {
   // projects: three real screens, fanned like prints on a desk; each opens its case study
   projects: () => `<div class="aside-fan">${C.projects.slice(0, 3).map((p, i) => `<a class="aside-fan__card" href="${caseHref(p)}" style="--i:${i};--tint:${p.tint}">${pic(p.image, p.name, { sizes: '300px', cls: 'aside-fan__img' })}<span>${esc(p.name)}<small>${esc(p.sector)}</small></span></a>`).join('')}
-    <p class="aside-chip"><b>${C.projects.length}</b> products · <b>${SECTORS}</b> sectors</p></div>`,
+    <p class="aside-chip"><b>${C.projects.length}</b> featured · <b>${delivered.value}${delivered.suffix}</b> delivered</p></div>`,
   // services: the four services as drawn tiles, each jumping to its card below
-  services: () => `<div class="aside-svcs">${C.services.map((s, i) => `<a class="aside-svcs__tile" href="./services#${s.id}" style="--dd:var(--${SVC_ART[s.id][1]});--i:${i}"><span class="aside-svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><b>${esc(s.title)}</b><small>${s.work.length} projects</small></a>`).join('')}</div>`,
+  services: () => `<div class="aside-svcs">${C.services.map((s, i) => `<a class="aside-svcs__tile" href="./services#${s.id}" style="--dd:var(--${SVC_ART[s.id][1]});--i:${i}"><span class="aside-svcs__icon">${doodle(SVC_ART[s.id][0], { color: SVC_ART[s.id][1] })}</span><b>${esc(s.title)}</b><small>${s.work.length} products</small></a>`).join('')}</div>`,
   // about: where the name comes from: a tangle (the maze of a product) straightened into one route to launch
   about: () => `<figure class="aside-name">
     <p class="aside-name__word">de·maze <small>verb</small></p>
