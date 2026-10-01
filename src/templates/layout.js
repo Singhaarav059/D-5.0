@@ -128,29 +128,37 @@ ${curtain()}
 <main id="main">
 ${body}
 </main>
-${footer()}
+${footer(C.next[section !== slug ? 'case' : slug] || C.next[''])}
 </body>
 </html>
 `;
 }
 
-function footer() {
+// The footer: the next page on the path through the site, the links, the chevron and the name (its letters rise as
+// it arrives, site.js), then the small print with the socials.
+function footer([label, line, href]) {
   return `<footer class="footer">
   <div class="footer__panel">
+    <a class="footer__next" href="${href}"><span><small>Next up · ${esc(label)}</small><b>${esc(line)}</b></span><i aria-hidden="true">${icon.arrow}</i></a>
     <div class="footer__top">
       <div class="footer__intro">
         ${logo}
         <p>${esc(C.tagline)}</p>
-        <div class="footer__social">${C.socials.map((s) => `<a href="${s.href}" target="_blank" rel="noopener" aria-label="${s.name}">${icon[s.icon]}</a>`).join('')}</div>
       </div>
       <div class="footer__cols">
         <div><h3>Company</h3>${NAV.map(([t, h]) => `<a href="${h}">${t}</a>`).join('')}</div>
         <div><h3>Services</h3>${C.services.map((s) => `<a href="./services#${s.id}">${esc(s.title)}</a>`).join('')}</div>
-        <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book with Calendly</a><a href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
+        <div><h3>Reach us</h3><a href="mailto:${C.email}">${C.email}</a><a ${cal}>Book a 30-minute call</a><a href="./contact#form">Send a brief</a><a href="${C.mapUrl}" target="_blank" rel="noopener">${esc(C.address)}</a></div>
       </div>
     </div>
-    <p class="footer__word" aria-hidden="true" data-word>${[...'Demaze'].map((c) => `<span>${c}</span>`).join('')}</p>
-    <div class="footer__bottom"><span>Demaze Technologies © ${new Date().getFullYear()}. All rights reserved.</span><a href="#main" data-top>Back to top ↑</a></div>
+    <div class="footer__mark" aria-hidden="true">
+      <svg class="footer__chevron" viewBox="-4 -4 136 136"><path d="${CHEVRON}"/></svg>
+      <p class="footer__word" data-word>${[...'Demaze'].map((c) => `<span>${c}</span>`).join('')}</p>
+    </div>
+    <div class="footer__bottom">
+      <span>Demaze Technologies © ${new Date().getFullYear()} · Ahmedabad, India</span>
+      <span class="footer__links"><a href="#main" data-top>Back to top ↑</a>${C.socials.map((s) => `<a href="${s.href}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join('')}</span>
+    </div>
   </div>
 </footer>`;
 }

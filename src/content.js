@@ -7,9 +7,9 @@ module.exports = {
   address: 'A 804, Ganesh Glory 11, Jagatpur road, Near S.G. Highway, Gota, Ahmedabad',
   mapUrl: 'https://www.google.com/maps/dir//D-814,+Ganesh+Glory+11,+Jagatpur+Road,+Sarkhej+-+Gandhinagar+Hwy,+Gota,+Ahmedabad,+Gujarat+382470/@23.1141548,72.4578552,12z',
   socials: [
-    { name: 'LinkedIn', href: 'https://www.linkedin.com/in/krupalchaudhary', icon: 'linkedin' },
-    { name: 'X', href: 'https://x.com/growwithkrupal', icon: 'x' },
-    { name: 'Instagram', href: 'https://www.instagram.com/demaze_technologies', icon: 'instagram' },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/in/krupalchaudhary' },
+    { name: 'X', href: 'https://x.com/growwithkrupal' },
+    { name: 'Instagram', href: 'https://www.instagram.com/demaze_technologies' },
   ],
   logoMark: './assets/img/logo.png',
   tagline: 'We combine AI, software engineering, and automation with deep industry expertise to build scalable, sustainable solutions, working alongside you as a trusted, long-term partner.',
@@ -591,6 +591,18 @@ module.exports = {
   },
 
   closing: "Let's connect and build smarter, faster, and stronger - together.",
+
+  // Where each page sends you next (the link at the top of the footer), so a visit reads as one path through the
+  // site: home → projects → services → about → contact → projects. [label, headline, link]
+  next: {
+    '': ['Projects', 'Products we’ve designed and built', './projects'],
+    projects: ['Services', 'Four kinds of product, one team', './services'],
+    services: ['About us', 'The people behind the work', './about-us'],
+    'about-us': ['Contact', 'Tell us about your project', './contact'],
+    contact: ['Projects', 'See what we’ve shipped', './projects'],
+    case: ['Projects', 'More products we’ve built', './projects'],
+    404: ['Home', 'Back to the start', './'],
+  },
 
   // The contact form's pick-one questions. lib/contact-api.js accepts only these stages, so change them here alone.
   brief: {
