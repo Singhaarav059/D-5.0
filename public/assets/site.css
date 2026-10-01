@@ -1160,10 +1160,24 @@ html.motion.js [data-hero-proof] { opacity: 0; }
 
 /* Touch screens: every tap target is at least 44px tall. */
 @media (pointer: coarse) {
-  .svc-list__btn, .ind__tabs button, .brand, .link-arrow, .footer__bottom a, select { min-height: 44px; }
-  .svc-list__btn, .footer__bottom a { display: inline-flex; align-items: center; }
+  .svc-list__btn, .ind__tabs button, .brand, .link-arrow, .footer__bottom a, select, .pfilter button, .case__svcs a, .chip span { min-height: 44px; }
+  .svc-list__btn, .footer__bottom a, .case__crumbs a, .svc-panel__work a { display: inline-flex; align-items: center; }
+  .case__crumbs a, .svc-panel__work a { min-height: 44px; }
+  .svc-panel .svc-panel__work { row-gap: 0; }
   .footer__cols a { padding-block: 10px; }
 }
+
+/* Without JavaScript nothing can open or switch, so everything shows: every FAQ answer, every service panel and every
+   tab's panel, one after another (the menu button can't open either; the footer lists every page). */
+html:not(.js) .acc__a { grid-template-rows: 1fr; }
+html:not(.js) .acc__a p { opacity: 1; transform: none; }
+html:not(.js) .acc__icon, html:not(.js) .svc-list, html:not(.js) .nav__toggle { display: none; }
+html:not(.js) .services__stage { gap: 20px; }
+html:not(.js) .svc-panel { grid-area: auto; opacity: 1; visibility: visible; transform: none; filter: none; }
+html:not(.js) :is(.ind__panel, .kmap__panel) { grid-area: auto; }
+html:not(.js) :is(.ind__panel, .kmap__panel)[hidden] { display: flex !important; visibility: visible; }
+html:not(.js) .kmap__panel[hidden] { display: block !important; }
+html:not(.js) :is(.ind__panel, .kmap__panel) + :is(.ind__panel, .kmap__panel) { margin-top: 16px; }
 
 /* ---------- project reels (reel.js): a short motion story over the card image ----------
    Directed after launch films on whatships.com (Muse for Marketing, X Ticker, Hypit): a pale studio canvas with thin
