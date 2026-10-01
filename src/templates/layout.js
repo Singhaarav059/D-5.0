@@ -2,7 +2,8 @@
 'use strict';
 
 const C = require('../content');
-const { SITE_URL, esc, pad, cal, icon } = require('./helpers');
+const { SITE_URL, esc, pad, cal, caseHref, icon, pic } = require('./helpers');
+const { serviceIcon } = require('./services');
 
 const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="28" height="28"><span>Demaze</span></a>`;
 
@@ -37,11 +38,34 @@ const curtain = () => `<div class="curtain" data-curtain aria-hidden="true"><div
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us', './about-us'], ['Contact Us', './contact']];
 
+// The two menus that open from the bar, each a preview of its page: the three latest case studies, and the four
+// services. Each ends with a way forward.
+const svcTile = (s) => `<a class="nav__svc" href="./services#${s.id}"><span class="nav__svc-icon">${serviceIcon(s.id)}</span><span><b>${esc(s.title)}</b><small>${esc(s.summary)}</small></span></a>`;
+const caret = '<svg class="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
+const dropWork = () => `<div class="nav__drop nav__drop--work" id="drop-work" data-drop-panel>
+  <div class="nav__drop-grid nav__drop-grid--work">${C.projects.slice(0, 3).map((p) => `<a class="nav__case" href="${caseHref(p)}"><span class="nav__case-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '220px', cls: 'nav__case-img' })}</span><b>${esc(p.name)}</b><small>${esc(p.sector)}</small></a>`).join('')}</div>
+  <div class="nav__drop-side">
+    <p><b>${C.projects.length} products, designed and built</b>From luxury automotive and fintech to legal, commerce and senior care.</p>
+    <a class="nav__drop-link" href="./projects">All projects ${icon.arrow}</a>
+  </div>
+</div>`;
+const dropServices = () => `<div class="nav__drop" id="drop-services" data-drop-panel>
+  <div class="nav__drop-grid">${C.services.map(svcTile).join('')}</div>
+  <div class="nav__drop-side">
+    <p><b>Not sure where to start?</b>Tell us the problem and we’ll come back with what to build first, and what to skip.</p>
+    <a class="btn btn--blue btn--sm" ${cal}><span>Book A Call</span></a>
+    <a class="nav__drop-link" href="./services">All services ${icon.arrow}</a>
+  </div>
+</div>`;
+const DROPS = { Projects: ['work', dropWork], Services: ['services', dropServices] };
+
 // `section` is the nav entry a page sits under (a case study sits under Projects); `schema` is its structured data
 // (templates/schema.js); `og` is a sharing image other than the site card ({ url, w, h, alt }).
 function layout({ title, description, slug, body, noindex = false, section = slug, schema = [], og = null }) {
   const current = (h) => (h === './' + slug ? ' aria-current="page"' : h === './' + section ? ' aria-current="true"' : '');
-  const links = NAV.map(([t, h]) => `<a href="${h}"${current(h)}>${t}</a>`).join('');
+  const links = NAV.map(([t, h]) => (DROPS[t]
+    ? `<a class="nav__trigger" href="${h}"${current(h)} aria-expanded="false" aria-controls="drop-${DROPS[t][0]}" data-drop="${DROPS[t][0]}">${t}${caret}</a>`
+    : `<a href="${h}"${current(h)}>${t}</a>`)).join('');
   const reels = slug === 'projects' || !slug || section === 'projects';
   const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
@@ -89,10 +113,13 @@ ${curtain()}
     <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span></button>
     <i class="nav__progress" aria-hidden="true"></i>
   </div>
+  ${dropWork()}
+  ${dropServices()}
   <div class="nav__scrim" data-nav-scrim hidden></div>
   <div class="nav__menu" id="menu" hidden>
     <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${current(h)}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
-    <div class="nav__menu-foot" style="--i:${NAV.length}">
+    <div class="nav__menu-svcs" style="--i:${NAV.length}">${C.services.map(svcTile).join('')}</div>
+    <div class="nav__menu-foot" style="--i:${NAV.length + 1}">
       <a class="btn btn--blue" ${cal}><span>Book A Call</span><i class="btn__icon">${icon.arrow}</i></a>
       <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>
     </div>

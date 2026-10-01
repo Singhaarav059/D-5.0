@@ -117,11 +117,18 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); toggle.focus(); } });
   matchMedia('(min-width: 861px)').addEventListener('change', (e) => e.matches && setMenu(false));
 
-  // Desktop links: a single pill glides to the hovered/focused link and rests on the current page.
+  // Desktop links: a lit glass pill glides to the hovered/focused link and rests on the current page (or on the open
+  // menu). Projects and Services open a menu with a preview of their page: a mouse opens it on hover (with a grace
+  // period to travel into it) and a click follows the link; a touch opens it on the first tap; ArrowDown opens it from
+  // the keyboard. Escape, a click elsewhere or scrolling the bar away closes it.
   const links = $('[data-nav-links]');
+  let setDrop = () => {};
   if (links) {
     const pill = $('.nav__pill', links);
     const current = $('a[aria-current]', links);
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let openDrop = null, closing = 0;
+    const rest = () => openDrop || current;
     const moveTo = (a) => {
       links.classList.toggle('has-pill', !!a);
       $$('a', links).forEach((l) => l.classList.toggle('is-pill', l === a));
@@ -129,12 +136,76 @@
     };
     links.addEventListener('pointerover', (e) => { const a = e.target.closest('a'); if (a) moveTo(a); });
     links.addEventListener('focusin', (e) => moveTo(e.target.closest('a')));
-    links.addEventListener('pointerleave', () => moveTo(current));
-    links.addEventListener('focusout', () => moveTo(current));
+    links.addEventListener('pointerleave', () => moveTo(rest()));
+    links.addEventListener('focusout', () => moveTo(rest()));
+    const triggers = $$('[data-drop]', links);
+    setDrop = (t) => {
+      clearTimeout(closing);
+      if (openDrop === t) return;
+      openDrop = t;
+      triggers.forEach((x) => {
+        x.setAttribute('aria-expanded', x === t);
+        document.getElementById(x.getAttribute('aria-controls')).classList.toggle('is-open', x === t);
+      });
+      nav.classList.toggle('has-drop', !!t);
+      moveTo(t || current);
+    };
+    const later = () => { clearTimeout(closing); closing = setTimeout(() => setDrop(null), 220); };
+    triggers.forEach((t) => {
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      t.addEventListener('click', (e) => { if (!fine && openDrop !== t) { e.preventDefault(); setDrop(t); } });
+      t.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); setDrop(t); const f = $('a', panel); if (f) f.focus(); } });
+      if (fine) {
+        t.addEventListener('pointerenter', () => setDrop(t));
+        t.addEventListener('pointerleave', later);
+        panel.addEventListener('pointerenter', () => clearTimeout(closing));
+        panel.addEventListener('pointerleave', later);
+      }
+      panel.addEventListener('focusout', (e) => { if (!panel.contains(e.relatedTarget) && e.relatedTarget !== t) setDrop(null); });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openDrop) { const t = openDrop; setDrop(null); t.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (openDrop && !e.target.closest('.nav__bar, .nav__drop')) setDrop(null); });
     // Place it without animating on load, once the web font has set link widths.
-    const place = () => { pill.style.transition = 'none'; moveTo(current); pill.offsetWidth; pill.style.transition = ''; };
+    const place = () => { pill.style.transition = 'none'; moveTo(rest()); pill.offsetWidth; pill.style.transition = ''; };
     place();
     document.fonts && document.fonts.ready.then(place);
+  }
+
+  // Liquid glass (Chromium, which can run an SVG filter on what is behind an element): a displacement map for the bar
+  // that bends what shows through its rounded rim, so the edge reads as a lens. Other browsers keep the frosted glass.
+  const bar = $('.nav__bar');
+  if (bar && root.classList.contains('motion') && navigator.userAgentData && navigator.userAgentData.brands.some((b) => /Chromium/.test(b.brand))) {
+    try {
+      const NS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.style.cssText = 'position:absolute;width:0;height:0';
+      svg.innerHTML = '<filter id="lg-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feImage result="map" preserveAspectRatio="none"/><feDisplacementMap in="SourceGraphic" in2="map" scale="32" xChannelSelector="R" yChannelSelector="G"/></filter>';
+      document.body.append(svg);
+      const img = $('feImage', svg);
+      const build = () => {
+        const W = Math.round(bar.offsetWidth), H = Math.round(bar.offsetHeight);
+        if (!W || !H) return;
+        const cv = document.createElement('canvas');
+        cv.width = W; cv.height = H;
+        const g = cv.getContext('2d'), px = g.createImageData(W, H), r = H / 2, B = 16;
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+          const cx = Math.min(W - r, Math.max(r, x)), dx = x - cx, dy = y - r, len = Math.hypot(dx, dy) || 1;
+          const d = r - len, t = d < B ? Math.pow(1 - Math.max(0, d) / B, 2) : 0; // 0 in the middle, 1 at the rim
+          const o = (y * W + x) * 4;
+          px.data[o] = 128 - (dx / len) * t * 127;
+          px.data[o + 1] = 128 - (dy / len) * t * 127;
+          px.data[o + 2] = 128; px.data[o + 3] = 255;
+        }
+        g.putImageData(px, 0, 0);
+        img.setAttribute('href', cv.toDataURL());
+        img.setAttribute('width', W); img.setAttribute('height', H);
+      };
+      build();
+      root.classList.add('lg-refract');
+      let w = bar.offsetWidth;
+      new ResizeObserver(() => { if (Math.abs(bar.offsetWidth - w) > 1) { w = bar.offsetWidth; build(); } }).observe(bar);
+    } catch (e) { /* the frosted glass stays */ }
   }
 
   // Tabs (industries, tools): roving tabindex + arrow keys.
@@ -443,6 +514,7 @@
       const y = st.scroll();
       nav.classList.toggle('is-scrolled', y > 40);
       nav.classList.toggle('is-hidden', y > 400 && y > lastY && menu.hidden);
+      if (nav.classList.contains('is-hidden')) setDrop(null);
       lastY = y;
     },
   });

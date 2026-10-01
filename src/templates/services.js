@@ -154,4 +154,8 @@ const processSection = () => `<section class="section process ink" data-process 
   </div>
 </section>`;
 
-module.exports = { techStack, services, industries, processSection };
+// Each service's line icon (the nav's Services menu and the phone menu).
+const SVC_ICON = { ai: 'AI & ML', web: 'Web', ecom: 'eCommerce', cloud: 'Cloud' };
+const serviceIcon = (id) => kmapIcon(SVC_ICON[id]);
+
+module.exports = { techStack, services, industries, processSection, serviceIcon };

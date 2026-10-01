@@ -121,19 +121,19 @@ module.exports = {
   // `work` lists the projects (by image key) that drew on each service: case studies link to their services and the
   // services page to its projects.
   services: [
-    { id: 'ai', title: 'AI & ML',
+    { id: 'ai', title: 'AI & ML', summary: 'Software that predicts, reads, sees and writes, so your team decides faster',
       description: 'We build AI-powered solutions that transform data into insights, automate complex tasks, and drive smarter decisions. From predictive analytics to computer vision and generative AI, our systems help businesses innovate and scale with confidence.',
       items: ['Predictive Analytics & Forecasting', 'NLP & Conversational AI', 'Computer Vision & Image Processing', 'Generative Models & Content Synthesis', 'Recommendation Systems & Personalization', 'AI Dashboards & Insights'],
       work: ['ai-based-software-for-luxury-car-dealers', 'investigative-case-management-software', 'ai-powered-luxury-ecommerce-platform', 'storyboard-creation-for-films-with-ai', 'educational-courses-and-lms-platform'] },
-    { id: 'web', title: 'Web / Mobile App / SaaS',
+    { id: 'web', title: 'Web / Mobile App / SaaS', summary: 'The product your users open every day, on the web and on their phone',
       description: 'We create scalable software and applications that deliver seamless user experiences and business value. From enterprise SaaS platforms to web and mobile apps, our solutions are built to perform, adapt, and grow with your needs.',
       items: ['Web App Development', 'Mobile App Development', 'Custom SaaS Development', 'Workflow Automation', 'API Development & System Integration', 'Progressive Web App (PWA)'],
       work: ['senior-engagement-and-support-platform', 'car-service-and-customer-engagement-platform', 'recruitment-platform', 'insurance-management-platform', 'global-payment-transfer-platform', 'task-staff-and-document-management-platform', 'educational-courses-and-lms-platform', 'social-media-and-social-commerce-platform', 'multi-shoppers-food-and-grocery-delivery-app', 'cma-report-generation-software'] },
-    { id: 'ecom', title: 'E commerce',
+    { id: 'ecom', title: 'E commerce', summary: 'Stores and marketplaces that turn browsing into orders',
       description: 'We build intelligent eCommerce platforms that elevate shopping experiences, improve conversions, and drive growth. From multi-vendor marketplaces to subscription commerce and AI-powered personalization, our solutions help retailers thrive in the digital-first era.',
       items: ['D2C / Multi-Vendor Marketplace', 'AI-Powered Personalization & Recommendation', 'Subscription / Rental & Recurring Billing Models', 'Checkout, Payment & Fraud Protection', 'Inventory, Fulfillment & Logistics Integration', 'UI/UX for Storefront & Customer Experience'],
       work: ['ai-powered-luxury-ecommerce-platform', 'multi-vendor-ecommerce-marketplace', 'b2b-gift-marketplace', 'multi-shoppers-food-and-grocery-delivery-app', 'social-media-and-social-commerce-platform'] },
-    { id: 'cloud', title: 'Cloud',
+    { id: 'cloud', title: 'Cloud', summary: 'Infrastructure that stays up, scales with you and costs less to run',
       description: 'We design cloud architectures that ensure scalability, security, and resilience for modern businesses. From cloud migration to DevOps automation and disaster recovery, our services help you optimize performance and reduce costs.',
       items: ['Cloud Migration & Modernization', 'Cloud Native App Development', 'Multi-Cloud & Hybrid Cloud Architecture', 'Cloud Security, Compliance & Governance', 'Observability, Monitoring & Performance Optimization', 'Disaster Recovery, Backup & Business Continuity'],
       work: ['cma-report-generation-software', 'investigative-case-management-software', 'task-staff-and-document-management-platform'] },
