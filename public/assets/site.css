@@ -441,7 +441,7 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .svc-list__btn {
   position: relative; width: 100%; display: flex; align-items: baseline; gap: 14px; padding: clamp(9px, 1.5vh, 13px) 0; border: 0; background: none; cursor: pointer; text-align: left;
   font: 500 clamp(1.1rem, 1.6vw, 1.4rem)/1.1 var(--display); letter-spacing: -0.02em; color: rgba(255, 255, 255, 0.38);
-  transition: color 300ms ease;
+  transition: color 300ms ease, transform 160ms var(--ease-out);
 }
 .svc-list__btn:hover, .svc-list__btn.is-active { color: #fff; }
 .svc-list__num { font: 500 0.8rem/1 var(--body); color: var(--lime); opacity: 0.5; transition: opacity 300ms ease; }
@@ -733,6 +733,18 @@ html:not(.js) .pfilter { display: none; }
   .case__pager { grid-template-columns: minmax(0, 1fr); }
   .case__pager-link.is-next { flex-direction: row; text-align: left; }
   .case__outcome-ctas { width: 100%; }
+}
+
+/* press feedback: rows and cards give a little under the finger or the click (buttons, chips and cards already do) */
+.acc__item { transition: box-shadow 400ms var(--ease-out), transform 160ms var(--ease-out); }
+.acc__item:has(button:active) { transform: scale(0.99); }
+.svc-list__btn:active { transform: scale(0.98); transform-origin: left center; }
+.contact__ways a:active { transform: scale(0.98); }
+.case__svcs a:active, .link-arrow:active { transform: scale(0.97); }
+.link-arrow { transition: transform 160ms var(--ease-out); }
+.case__svcs a { transition: background-color 200ms ease, box-shadow 200ms ease, transform 160ms var(--ease-out); }
+@media (prefers-reduced-motion: reduce) {
+  .acc__item:has(button:active), .svc-list__btn:active, .contact__ways a:active, .case__svcs a:active, .link-arrow:active { transform: none; }
 }
 
 /* text for screen readers only */
