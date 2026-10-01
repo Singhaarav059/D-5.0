@@ -324,6 +324,19 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .phero__title .w { padding: 0.1em 0.06em 0.16em; margin: -0.1em -0.06em -0.16em; }
 .phero .hero__lead { max-width: 56ch; }
 .phero .hero__ctas { justify-content: center; }
+/* under a subpage headline: published figures, or the founder's note */
+.phero__facts { margin-top: clamp(20px, 3.4vh, 30px); display: flex; flex-wrap: wrap; justify-content: center; }
+.phero__facts li { display: grid; gap: 4px; padding: 2px clamp(16px, 2.2vw, 28px); text-align: center; }
+.phero__facts li + li { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+.phero__facts b { font: 600 clamp(1.3rem, 2vw, 1.7rem)/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--accent); }
+.phero__facts small { font-size: 0.8rem; color: rgba(240, 243, 255, 0.8); }
+.phero .phero__note { display: flex; margin-top: clamp(20px, 3.4vh, 30px); } /* (home hides its note on small screens; this one stays) */
+@media (max-width: 560px) {
+  .phero__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 0; width: 100%; }
+  .phero__facts li + li { border-left: 0; }
+  .phero__facts li:nth-child(even) { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+  .phero__facts li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 
   
 

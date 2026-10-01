@@ -6,7 +6,7 @@ const C = require('./content');
 const { btn, caseHref } = require('./templates/helpers');
 const S = require('./templates/schema');
 const { layout } = require('./templates/layout');
-const { pageHero, faq, contact } = require('./templates/shared');
+const { pageHero, facts, founderNote, faq, contact } = require('./templates/shared');
 const { hero, work, studio } = require('./templates/home');
 const { about, whyUs, founder } = require('./templates/about');
 const { techStack, services, industries, processSection } = require('./templates/services');
@@ -30,7 +30,8 @@ const pages = {
     description: 'AI software, eCommerce platforms, SaaS and mobile apps Demaze Technologies has designed and built.',
     schema: [S.organization(), S.projects(caseHref), S.breadcrumbs([['Home', './'], ['Projects', './projects']])],
     body: [
-      pageHero('Our work', 'The projects <em>we did</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`),
+      pageHero('Our work', 'The projects <em>we did</em>', `${C.projects.length} products across automotive, legal, commerce, fintech, education, media and more. Open any project for the full story.`,
+        facts(C.metrics.map((m) => [`${m.prefix}${m.value}${m.suffix}`, m.label]))),
       projectsGrid(),
       contact(),
     ].join('\n'),
@@ -41,7 +42,8 @@ const pages = {
     description: 'AI & ML, web, mobile and SaaS development, intelligent eCommerce and cloud architecture from Demaze Technologies.',
     schema: [S.organization(), S.services(), S.breadcrumbs([['Home', './'], ['Services', './services']])],
     body: [
-      pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline),
+      pageHero('Services', 'Apps, websites, <em>AI and more</em>', C.tagline,
+        facts([[String(C.services.length), 'Services'], [String(C.projects.length), 'Case studies'], ...C.metrics.filter((m) => m.label === 'Projects Delivered').map((m) => [`${m.value}${m.suffix}`, m.label])])),
       services(false), techStack(), industries(), processSection(), contact(),
     ].join('\n'),
   }),
@@ -51,7 +53,7 @@ const pages = {
     description: 'Demaze Technologies is a team of 35+ technologists in Ahmedabad building AI products, apps and platforms as a long-term partner to its clients.',
     schema: [S.organization(), S.breadcrumbs([['Home', './'], ['About us', './about-us']])],
     body: [
-      pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1]),
+      pageHero('What we are', 'More than developers: <em>digital transformation architects</em>', C.about.whoWeAre[1], founderNote()),
       about({ link: false }), whyUs(), founder(), processSection(), contact(),
     ].join('\n'),
   }),

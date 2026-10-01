@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, cal, icon, btn, eyebrow } = require('./helpers');
+const { esc, pad, cal, icon, pic, btn, eyebrow } = require('./helpers');
 
 // Subpage heroes share the home stage: near-black with one blue light (no photo).
 const sky = `<div class="hero__bg" aria-hidden="true"><i class="hero__glow" data-glow></i></div>`;
@@ -18,6 +18,15 @@ const pageHero = (kicker, title, lead, extra = '') => `<section class="phero" da
     </div>
   </div>
 </section>`;
+
+// Something real under a subpage headline: a row of figures ([value, label], as published in content.js) ...
+const facts = (items) => `<ul class="phero__facts" data-hero-fade>${items.map(([v, l]) => `<li><b>${esc(v)}</b><small>${esc(l)}</small></li>`).join('')}</ul>`;
+
+// ... or the founder's note, linking to his words further down the page.
+const founderNote = (href = '#founder') => `<a class="hero__note phero__note" href="${href}" data-hero-fade>
+  ${pic(C.founder.photo, '', { small: true, sizes: '44px', attrs: 'decoding="async"' })}
+  <span><q>When you thrive, we thrive</q><small>${esc(C.founder.name)}, ${esc(C.founder.title)}</small></span>
+</a>`;
 
 const faq = () => `<section class="section faq">
   <div class="wrap faq__grid">
@@ -84,4 +93,4 @@ const contact = ({ form = false } = {}) => `<section class="section contact" id=
   </div>
 </section>`;
 
-module.exports = { sky, pageHero, faq, contact };
+module.exports = { sky, pageHero, facts, founderNote, faq, contact };
