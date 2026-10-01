@@ -17,3 +17,12 @@ const server = createStaticServer({
   onRequest: (req, res) => handleContact(req, res)
 });
 listen(server, port, process.env.HOST);
+
+// Hosts stop a container with SIGTERM on every deploy: finish requests in flight, then exit.
+for (const signal of ['SIGTERM', 'SIGINT']) {
+  process.once(signal, () => {
+    server.close(() => process.exit(0));
+    server.closeIdleConnections();
+    setTimeout(() => process.exit(0), 10_000).unref();
+  });
+}
