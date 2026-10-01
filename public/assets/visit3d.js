@@ -15,7 +15,8 @@ const PARKS = [{ x: 18, z: -15, w: 11, d: 9 }, { x: -25, z: 13, w: 9, d: 7 }];
 let seed = 11;
 const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
-if (card) {
+// With data saving on, the SVG map stays: the diorama needs Three.js and a WebGL renderer.
+if (card && !navigator.connection?.saveData) {
   new IntersectionObserver((entries, io) => {
     if (!entries[0].isIntersecting) return;
     io.disconnect();
@@ -30,6 +31,8 @@ async function init() {
   const THREE = await import('./vendor/three/three.module.js');
   const host = card.querySelector('.visit3d');
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
+  // (reading back each shader's log makes the page wait for the GPU to compile it; only worth it locally)
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   host.append(renderer.domElement);
 

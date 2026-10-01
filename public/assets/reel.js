@@ -460,8 +460,9 @@
     let io3d;
     host.classList.add('has-reel');
 
-    // Build the 3D hero once the card is close; the Fluent illustration stays if WebGL is unavailable.
-    if (gl) {
+    // Build the 3D hero once the card is close; the Fluent illustration stays if WebGL is unavailable, and when the
+    // visitor has asked to save data (the 3D module and its renderer are the reel's heaviest part).
+    if (gl && !navigator.connection?.saveData) {
       io3d = new IntersectionObserver(([e]) => {
         if (!e.isIntersecting) return;
         io3d.disconnect();
@@ -493,5 +494,12 @@
 
   // Reels on the page (projects grid, home deck); other scripts mount more with window.Reel.mount(figure).
   window.Reel = { mount: (host) => host.reel || build(host) };
-  document.querySelectorAll('[data-reel]').forEach((h) => { if (!h.closest('template')) build(h); });
+  // Each is built as it comes within a screen or so of view: building one (its scenes and timeline) takes a good part
+  // of a frame, and the projects page holds sixteen, which all at once stalled the page as it loaded.
+  const near = 'IntersectionObserver' in window && new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    near.unobserve(e.target);
+    if (!e.target.reel) build(e.target);
+  }), { rootMargin: '600px 0px' });
+  document.querySelectorAll('[data-reel]').forEach((h) => { if (!h.closest('template')) near ? near.observe(h) : build(h); });
 })();

@@ -16,6 +16,8 @@ let renderer, envMap, bufW = 0, bufH = 0;
 function core() {
   if (renderer) return;
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  // (reading back each shader's log makes the page wait for the GPU to compile it; only worth it locally)
+  renderer.debug.checkShaderErrors = /^(localhost|127\.)/.test(location.hostname);
   renderer.setPixelRatio(1); // callers size canvases in device pixels
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
