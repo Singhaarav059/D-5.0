@@ -19,6 +19,22 @@ const intro = () => `<div class="intro" data-intro aria-hidden="true">
   <p class="intro__tag" data-itag>${C.hero.eyebrow.map(esc).join(' · ')}</p>
 </div>`;
 
+// The curtain between pages (site.js): frosted blue glass unfolds out of the nav bar with the next page's name over a
+// small loader (five chevrons of dots, lit in a wave), and folds back into the bar on the next page.
+const march = () => {
+  const dots = [];
+  for (let k = 0; k < 5; k++) for (let r = 0; r < 9; r++) {
+    const x = 4 - Math.abs(r - 4);
+    for (const dx of [0, 1]) dots.push(`<i style="--x:${k * 9 + x + dx};--y:${r}"></i>`);
+  }
+  return dots.join('');
+};
+const curtain = () => `<div class="curtain" data-curtain aria-hidden="true"><div class="curtain__inner">
+  <span class="curtain__kicker"><img src="${C.logoMark}" alt="" width="16" height="16">Demaze · Next</span>
+  <span class="curtain__label" data-curtain-label></span>
+  <span class="curtain__march">${march()}</span>
+</div></div>`;
+
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us', './about-us'], ['Contact Us', './contact']];
 
 // `section` is the nav entry a page sits under (a case study sits under Projects); `schema` is its structured data
@@ -63,6 +79,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 </head>
 <body class="page-${(section || 'home').replace('/', '-')}${section !== slug ? ' page-case' : ''}">
 ${intro()}
+${curtain()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
   <div class="nav__bar">

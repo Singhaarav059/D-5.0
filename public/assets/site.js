@@ -45,6 +45,60 @@
     } catch (e) { end(); }
   });
 
+  // ---------- the curtain between pages ----------
+  // Following a link to another page, frosted blue glass unfolds out of the nav bar with that page's name; the next
+  // page opens under it (boot.js keeps it up from the first paint) and it folds back into the bar there.
+  const curtain = $('[data-curtain]');
+  const LABELS = { '': 'Home', projects: 'Projects', services: 'Services', 'about-us': 'About us', contact: 'Contact' };
+  const labelOf = (url) => {
+    const p = url.pathname.replace(/\.html$/, '').replace(/^\/+|\/+$/g, '');
+    if (p in LABELS) return LABELS[p];
+    return p.startsWith('projects/') ? 'Case study' : 'Demaze';
+  };
+  // the nav bar as a clip-path (the sheet's smallest shape); a small pill at the top if the bar is out of view
+  const barClip = () => {
+    const b = $('.nav__bar');
+    const r = b && b.getBoundingClientRect();
+    if (!r || r.bottom <= 0) return 'inset(14px calc(50% - 70px) calc(100% - 58px) calc(50% - 70px) round 999px)';
+    return `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 999px)`;
+  };
+  const FULL = 'inset(0px 0px 0px 0px round 0px)';
+  const CZ = 'cubic-bezier(.76,0,.24,1)';
+  if (curtain && root.classList.contains('curtain-in') && curtain.animate) {
+    const inner = $('.curtain__inner', curtain);
+    $('[data-curtain-label]', curtain).textContent = JSON.parse(getComputedStyle(root).getPropertyValue('--curtain-label') || '""');
+    curtain.classList.add('is-open');
+    root.classList.remove('curtain-in');
+    inner.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.94) translateY(-24px)' }], { duration: 380, delay: 160, easing: CZ, fill: 'both' });
+    curtain.animate([{ clipPath: FULL, opacity: 1 }, { clipPath: barClip(), opacity: 1, offset: 0.85 }, { clipPath: barClip(), opacity: 0 }], { duration: 820, delay: 200, easing: CZ, fill: 'both' })
+      .onfinish = () => { curtain.classList.remove('is-open'); curtain.getAnimations().concat(inner.getAnimations()).forEach((a) => a.cancel()); };
+  } else root.classList.remove('curtain-in');
+  let leaving = false;
+  if (curtain && curtain.animate && root.classList.contains('motion')) document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if ((a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+    if (url.pathname === location.pathname && url.search === location.search) return; // (a link within this page)
+    e.preventDefault();
+    leaving = true;
+    const label = labelOf(url);
+    try { sessionStorage.setItem('dmz-curtain', label); } catch (err) { /* no storage: the next page simply opens */ }
+    $('[data-curtain-label]', curtain).textContent = label;
+    curtain.classList.add('is-open');
+    curtain.animate([{ clipPath: barClip(), opacity: 0 }, { clipPath: barClip(), opacity: 1, offset: 0.12 }, { clipPath: FULL, opacity: 1 }], { duration: 700, easing: CZ, fill: 'forwards' });
+    $('.curtain__inner', curtain).animate([{ transform: 'scale(0.92) translateY(-30px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 620, delay: 180, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+    setTimeout(() => { location.href = url.href; }, 860);
+  });
+  // back to a page kept in memory: the curtain it left under must not still cover it
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted || !curtain) return;
+    leaving = false;
+    curtain.getAnimations().concat($('.curtain__inner', curtain).getAnimations()).forEach((a) => a.cancel());
+    curtain.classList.remove('is-open');
+  });
+
   // ---------- UI that works regardless of motion ----------
   const nav = $('[data-nav]');
   const toggle = $('.nav__toggle');
