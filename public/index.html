@@ -26,12 +26,12 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://demazetech.com/#website","name":"Demaze Technologies","url":"https://demazetech.com/","publisher":{"@id":"https://demazetech.com/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes Demaze different from other development companies?","acceptedAnswer":{"@type":"Answer","text":"We're an AI-first technology partner, not just a development service provider. Unlike traditional companies that focus on coding, we specialize in intelligent solutions that leverage cutting-edge AI, machine learning, and automation. We work as an extension of your team, focusing on long-term partnerships and measurable business outcomes rather than just project delivery."}},{"@type":"Question","name":"How long does it typically take to develop a custom solution?","acceptedAnswer":{"@type":"Answer","text":"Project timelines vary based on complexity and requirements, but most custom solutions take 3-6 months from concept to deployment. Simple applications may take 6-12 weeks, while complex AI-powered platforms or enterprise solutions can take 6-12 months. We provide detailed project timelines during our initial consultation and maintain transparent communication throughout the development process."}},{"@type":"Question","name":"Do you work with startups or only established enterprises?","acceptedAnswer":{"@type":"Answer","text":"We work with both startups and established enterprises across various industries. Our scalable approach allows us to support early-stage companies with MVP development and growth-stage businesses with comprehensive digital transformation. We tailor our solutions and engagement models to match your business size, budget, and growth objectives."}},{"@type":"Question","name":"What ongoing support do you provide after project completion?","acceptedAnswer":{"@type":"Answer","text":"We offer comprehensive post-launch support including maintenance, updates, performance monitoring, and technical assistance. Our support packages range from basic maintenance to full managed services with dedicated support teams. We also provide training for your team and can scale our support based on your evolving needs as your business grows."}},{"@type":"Question","name":"How do you ensure the security and confidentiality of our project?","acceptedAnswer":{"@type":"Answer","text":"Security and confidentiality are paramount in everything we do. We implement industry-standard security protocols, sign comprehensive NDAs before any project discussion, follow secure development practices, and ensure data protection compliance (GDPR, CCPA, etc.). All our team members are bound by strict confidentiality agreements, and we use secure development environments and encrypted communication channels."}}]}</script>
 <link rel="stylesheet" href="./assets/fonts.css?v=d60b04fbc9">
-<link rel="stylesheet" href="./assets/site.css?v=15c29b1fe9">
+<link rel="stylesheet" href="./assets/site.css?v=3100609b27">
 <script defer src="./assets/boot.js?v=5d9461eb3e"></script>
 <script defer src="./assets/vendor/gsap.min.js?v=2d26f4c060"></script>
 <script defer src="./assets/vendor/ScrollTrigger.min.js?v=489bcf6d9c"></script>
 <script defer src="./assets/vendor/lenis.min.js?v=44dcd10f2a"></script>
-<script defer src="./assets/site.js?v=77c2f2e985"></script>
+<script defer src="./assets/site.js?v=c303f37574"></script>
 <script defer src="./assets/ink.js?v=f91c194e48"></script>
 <script type="module" src="./assets/cine.js?v=012daa2494"></script>
 <script defer src="./assets/reel-kit.js?v=16a347b53d"></script>
@@ -303,7 +303,7 @@
 <section class="section contact" id="contact">
   <div class="contact__panel">
     <i class="grain" aria-hidden="true"></i><i class="contact__orb" aria-hidden="true"></i>
-    <div class="contact__grid">
+    <div class="contact__grid contact__grid--cta">
       <div class="contact__copy">
         <p class="eyebrow eyebrow--dark"><span class="eyebrow__dot"></span>Contact</p>
         <h2 class="h2 contact__title" data-split>Let's connect and build smarter, faster, and stronger - together.</h2>
@@ -313,16 +313,11 @@
           <li><a href="https://www.google.com/maps/dir//D-814,+Ganesh+Glory+11,+Jagatpur+Road,+Sarkhej+-+Gandhinagar+Hwy,+Gota,+Ahmedabad,+Gujarat+382470/@23.1141548,72.4578552,12z" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></i><span><small>Office Location</small>A 804, Ganesh Glory 11, Jagatpur road, Near S.G. Highway, Gota, Ahmedabad</span></a></li>
         </ul>
       </div>
-      <form class="form" data-form data-reveal action="/api/contact" method="post" novalidate>
-        <h3>Reach us at anytime</h3>
-        <div class="form__row"><label>Name<input name="name" autocomplete="name" maxlength="120" required></label>
-        <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>
-        <label>Subject of interest<select name="subject"><option>General enquiry</option><option>AI &amp; ML</option><option>Web / Mobile App / SaaS</option><option>E commerce</option><option>Cloud</option></select></label>
-        <label>How may we assist you?<textarea name="message" rows="3" maxlength="5000" minlength="10" required></textarea></label>
-        <label class="form__trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
-        <button class="btn btn--blue" type="submit"><span>Submit</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
-        <p class="form__note" data-form-note aria-live="polite">Your details are sent securely when contact delivery is configured; otherwise your email app will be offered as a fallback.</p>
-      </form>
+      <div class="contact__cta" data-reveal>
+        <h3>Have a project in mind?</h3>
+        <p>Tell us what you need and where you are. A few lines are enough, and we’ll come back with questions and a first plan.</p>
+        <div class="contact__cta-btns"><a class="btn btn--blue" href="./contact#form" ><span>Start a project</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a><a class="btn btn--white" href="https://calendly.com/krupal-demazetech/30min" target="_blank" rel="noopener"><span>Book a call</span><i class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a></div>
+      </div>
     </div>
   </div>
 </section>

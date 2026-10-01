@@ -70,7 +70,7 @@ const pages = {
     body: [
       pageHero('Contact', 'Reach us <em>at anytime</em>', 'Feel free to email us if you have any questions or need more details, or book a call if that’s more convenient and easier for you.',
         `<div class="hero__ctas" data-hero-fade>${btn('Book with Calendly', C.calendly, 'btn--blue', 'target="_blank" rel="noopener"')}${btn(C.email, 'mailto:' + C.email, 'btn--white')}</div>`),
-      contact('form'), visit(), faq(),
+      contact({ form: true }), visit(), faq(),
     ].join('\n'),
   }),
 };

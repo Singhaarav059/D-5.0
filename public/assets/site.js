@@ -78,52 +78,81 @@
     if (window.ScrollTrigger) setTimeout(() => ScrollTrigger.refresh(), 450);
   }));
 
-  // Contact form: use the protected API when configured, with mail fallback for local preview.
-  $$('[data-form]').forEach((form) => form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // The brief (contact page): check it, send it to /api/contact, then swap in the thank-you. If delivery is down the
+  // brief stays as typed, with a link that opens it as an email instead.
+  const form = $('[data-form]');
+  const done = $('[data-form-done]');
+  if (form && done) {
     const note = $('[data-form-note]', form);
-    let bad = null;
-    ['name', 'email', 'message'].forEach((n) => {
-      const f = form.elements[n];
-      const ok = f.value.trim() && (n !== 'email' || /^\S+@\S+\.\S+$/.test(f.value));
-      f.setAttribute('aria-invalid', !ok);
-      if (!ok && !bad) bad = f;
-    });
-    if (bad) { note.textContent = 'Please fill in your name, a valid email and a message.'; bad.focus(); return; }
-    const d = Object.fromEntries(new FormData(form));
-    const body = `${d.message}\n\nFrom ${d.name} (${d.email})`;
     const submit = $('button[type=submit]', form);
-    submit.disabled = true;
-    note.textContent = 'Sending your message…';
-    try {
-      const response = await fetch(form.action || '/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(d),
-        credentials: 'same-origin',
+    const say = (html) => { note.innerHTML = html; };
+    const checks = {
+      name: (v) => (v.length >= 2 ? '' : 'Please add your name.'),
+      email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Please add an email we can reply to.'),
+      message: (v) => (v.length >= 10 ? '' : 'A line or two about the project, please (10 characters or more).'),
+    };
+    let tried = false;
+    const validate = () => {
+      let first = null;
+      Object.entries(checks).forEach(([n, check]) => {
+        const f = form.elements[n];
+        const msg = check(f.value.trim());
+        f.setAttribute('aria-invalid', msg ? 'true' : 'false');
+        $(`[data-err="${n}"]`, form).textContent = msg;
+        if (msg && !first) first = f;
       });
-      if (response.ok) {
-        form.reset();
-        note.textContent = 'Thanks — your message was sent successfully.';
-        return;
+      return first;
+    };
+    form.addEventListener('input', () => { if (tried) validate(); });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      tried = true;
+      const bad = validate();
+      if (bad) { say('Please check the highlighted fields.'); bad.focus(); return; }
+      const f = new FormData(form);
+      const d = {
+        name: f.get('name').trim(), email: f.get('email').trim(), company: (f.get('company') || '').trim(),
+        subject: f.getAll('need').join(', ').slice(0, 160) || 'General enquiry', stage: f.get('stage') || '',
+        message: f.get('message').trim(), website: f.get('website') || '',
+      };
+      submit.disabled = true;
+      say('Sending your brief…');
+      try {
+        const res = await fetch(form.action || '/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(d),
+          credentials: 'same-origin',
+        });
+        if (res.ok) {
+          form.hidden = true;
+          done.hidden = false;
+          done.focus({ preventScroll: true });
+          done.scrollIntoView({ behavior: motion ? 'smooth' : 'auto', block: 'center' });
+          return;
+        }
+        if (res.status === 429) { say('Too many messages from here just now. Please wait a few minutes and try again.'); return; }
+        if (res.status === 400) { say('Something in the brief didn’t go through. Please check it and try again.'); return; }
+        throw new Error('delivery failed');
+      } catch {
+        const body = `${d.message}\n\nNeeds: ${d.subject}\nStage: ${d.stage || '-'}\nCompany: ${d.company || '-'}\n\nFrom ${d.name} (${d.email})`;
+        const href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(`Project brief | ${d.name}`)}&body=${encodeURIComponent(body)}`;
+        say(`We couldn’t send that just now. Your brief is still here: try again, or <a class="link" href="${href}">email it to us instead</a>.`);
+      } finally {
+        submit.disabled = false;
       }
-      if (response.status === 400) {
-        note.textContent = 'Please check the form fields and try again.';
-        return;
-      }
-      if (response.status === 429) {
-        note.textContent = 'Too many attempts. Please wait a few minutes and try again.';
-        return;
-      }
-      throw new Error('contact delivery failed');
-    } catch (error) {
-      // A local preview or an unconfigured deployment can still open the visitor's mail app.
-      location.href = `mailto:contact@demazetech.com?subject=${encodeURIComponent(d.subject + ' | ' + d.name)}&body=${encodeURIComponent(body)}`;
-      note.textContent = 'Your email app should open with the message ready to send.';
-    } finally {
-      submit.disabled = false;
-    }
-  }));
+    });
+    $('[data-form-again]', done).addEventListener('click', () => {
+      form.reset();
+      tried = false;
+      $$('[data-err]', form).forEach((el) => { el.textContent = ''; });
+      $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
+      say('We only use your details to reply to you.');
+      done.hidden = true;
+      form.hidden = false;
+      form.elements.name.focus();
+    });
+  }
 
   // Services list buttons (also used when motion is off).
   const svcBtns = $$('[data-svc-btn]');
