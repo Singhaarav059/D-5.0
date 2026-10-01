@@ -16,6 +16,9 @@ const pad = (n) => String(n).padStart(2, '0');
 
 const cal = `href="${C.calendly}" target="_blank" rel="noopener"`;
 
+// Each project's case study page (public/projects/<image key>.html).
+const caseHref = (p) => `./projects/${p.image}`;
+
 const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
@@ -48,4 +51,4 @@ const btn = (label, href, cls = 'btn--blue', extra = '') =>
 
 const eyebrow = (t, dark) => `<p class="eyebrow${dark ? ' eyebrow--dark' : ''}"><span class="eyebrow__dot"></span>${esc(t)}</p>`;
 
-module.exports = { PUBLIC, SITE_URL, esc, pad, cal, icon, pic, btn, eyebrow };
+module.exports = { PUBLIC, SITE_URL, MANIFEST, esc, pad, cal, caseHref, icon, pic, btn, eyebrow };

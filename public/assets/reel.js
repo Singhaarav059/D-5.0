@@ -18,6 +18,7 @@
 
   // The page links the 3D module with its own content hash (see layout.js), so a deploy never serves a stale one.
   const MODULE = document.querySelector('link[data-reel3d]')?.href || new URL('reel3d.js', document.currentScript.src).href;
+  const REEL_IMG = new URL('img/reel/', document.currentScript.src).href; // next to this script, wherever the page is
   let three; // the reel3d module, loaded once when the first reel nears the viewport
   const load3d = () => (three ||= import(MODULE));
 
@@ -82,7 +83,7 @@
 
   function heroMarkup(h) {
     if (h.kind === 'car') {
-      const m = h.model in CARS ? h.model : 'gls', car = CARS[m], p = `./assets/img/reel/suv-${m}`;
+      const m = h.model in CARS ? h.model : 'gls', car = CARS[m], p = `${REEL_IMG}suv-${m}`;
       const pin = ([x, y], cls, extra = '') => `<i class="${cls}" style="left:${x * 100}%;top:${y * 100}%">${extra}</i>`;
       const marks = (h.marks || []).map(([label, at, status]) => { const [x, y] = car.side[at] || car.side.body; return `<div class="reel__mark"${x < 0.25 ? ' data-edge="l"' : x > 0.75 ? ' data-edge="r"' : ''} style="left:${x * 100}%;top:${y * 100}%"><i></i><span>${esc(label)}${status ? `<em class="${/due|check/i.test(status) ? 'is-due' : ''}">${esc(status)}</em>` : ''}</span></div>`; }).join('');
       const side = `<div class="reel__shot reel__shot--side"><div class="reel__car"><img src="${p}-side.webp" alt="">${pin(car.tail, 'reel__brake')}${pin(car.side.head, 'reel__lamp reel__lamp--side')}</div>${marks}<i class="reel__scan"></i></div>`;

@@ -8,8 +8,12 @@ const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><
 
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us', './about-us'], ['Contact Us', './contact']];
 
-function layout({ title, description, slug, body, noindex = false }) {
-  const links = NAV.map(([t, h]) => `<a href="${h}"${h === './' + slug ? ' aria-current="page"' : ''}>${t}</a>`).join('');
+// `section` is the nav entry a page sits under (a case study sits under Projects); `schema` is its structured data
+// (templates/schema.js); `og` is a sharing image other than the site card ({ url, w, h, alt }).
+function layout({ title, description, slug, body, noindex = false, section = slug, schema = [], og = null }) {
+  const current = (h) => (h === './' + slug ? ' aria-current="page"' : h === './' + section ? ' aria-current="true"' : '');
+  const links = NAV.map(([t, h]) => `<a href="${h}"${current(h)}>${t}</a>`).join('');
+  const reels = slug === 'projects' || !slug || section === 'projects';
   const canonical = `${SITE_URL}/${slug ? slug : ''}`;
   return `<!doctype html>
 <html lang="en">
@@ -21,18 +25,20 @@ function layout({ title, description, slug, body, noindex = false }) {
 <meta name="theme-color" content="#07080f">
 ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
 <link rel="icon" href="${C.logoMark}">
+<link rel="apple-touch-icon" href="./assets/img/icon-180.png">
+<link rel="manifest" href="./manifest.webmanifest">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:image" content="${SITE_URL}/assets/img/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Demaze: your strategic partner in building scalable AI products">
+<meta property="og:image" content="${og ? og.url : `${SITE_URL}/assets/img/og.png`}">
+<meta property="og:image:width" content="${og ? og.w : 1200}">
+<meta property="og:image:height" content="${og ? og.h : 630}">
+<meta property="og:image:alt" content="${og ? esc(og.alt) : 'Demaze: your strategic partner in building scalable AI products'}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${section === 'projects' && slug !== 'projects' ? 'article' : 'website'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="${SITE_URL}/assets/img/og.png">
+<meta name="twitter:image" content="${og ? og.url : `${SITE_URL}/assets/img/og.png`}">${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 <link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
 <script defer src="./assets/boot.js"></script>
@@ -40,9 +46,9 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
 <script defer src="./assets/site.js"></script>
-<script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${slug === 'projects' || !slug ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
+<script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${reels ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
 </head>
-<body class="page-${slug || 'home'}">
+<body class="page-${(section || 'home').replace('/', '-')}${section !== slug ? ' page-case' : ''}">
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
   <div class="nav__bar">
@@ -54,7 +60,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
   </div>
   <div class="nav__scrim" data-nav-scrim hidden></div>
   <div class="nav__menu" id="menu" hidden>
-    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${h === './' + slug ? ' aria-current="page"' : ''}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
+    <nav class="nav__menu-links" aria-label="Menu">${NAV.map(([t, h], i) => `<a href="${h}" style="--i:${i}"${current(h)}><small>${pad(i + 1)}</small>${t}${icon.arrow}</a>`).join('')}</nav>
     <div class="nav__menu-foot" style="--i:${NAV.length}">
       <a class="btn btn--blue" ${cal}><span>Book A Call</span><i class="btn__icon">${icon.arrow}</i></a>
       <a class="nav__menu-mail" href="mailto:${C.email}">${icon.mail}${C.email}</a>

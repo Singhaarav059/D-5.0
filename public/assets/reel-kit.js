@@ -10,6 +10,7 @@
 (() => {
   'use strict';
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  const REEL_IMG = new URL('img/reel/', document.currentScript.src).href; // next to this script, wherever the page is
 
   /* ---------- illustrations ---------- */
   // Fluent 3D renders shipped as 256px WebP; the name is the file name.
@@ -29,7 +30,7 @@
     rupee: '<circle cx="32" cy="32" r="26" fill="#ffc94a"/><circle cx="32" cy="32" r="20" fill="none" stroke="#c9961f" stroke-width="2.5"/><text x="32" y="41" text-anchor="middle" font-size="24" font-weight="800" fill="#9a6d0c" font-family="system-ui,sans-serif">₹</text>',
   };
   const art = (name, cls = '') => (IMG.has(name)
-    ? `<img class="art ${cls}" src="./assets/img/reel/${name}.webp" alt="" decoding="async">`
+    ? `<img class="art ${cls}" src="${REEL_IMG}${name}.webp" alt="" decoding="async">`
     : `<svg class="art ${cls}" viewBox="0 0 64 64" aria-hidden="true">${G[name] || G.block}</svg>`);
 
   /* ---------- helpers ---------- */

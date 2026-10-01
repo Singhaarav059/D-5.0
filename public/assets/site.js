@@ -245,24 +245,6 @@
     }, { passive: true });
   }
 
-  // Projects page: card opens a modal with the full case study (native <dialog>: Esc, focus trap, top layer).
-  const dlg = $('[data-pdlg]');
-  if (dlg) {
-    const body = $('[data-pdlg-body]', dlg);
-    $$('[data-proj]').forEach((b) => b.addEventListener('click', () => {
-      body.replaceChildren($(`[data-proj-tpl="${b.dataset.proj}"]`).content.cloneNode(true));
-      dlg.setAttribute('aria-labelledby', `pdlg-title-${b.dataset.proj}`);
-      dlg.showModal();
-      body.scrollTop = 0;
-      // the case's motion reel plays large in the dialog (reel.js; absent with reduced motion or no JS)
-      const media = $('[data-reel]', body);
-      if (media && window.Reel) window.Reel.mount(media);
-    }));
-    dlg.addEventListener('close', () => { $('[data-reel]', body)?.reel?.destroy(); });
-    $('[data-pdlg-close]', dlg).addEventListener('click', () => dlg.close());
-    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // backdrop click
-  }
-
   // Home hero opening (cine.js reads the decision): it plays once per session and only with motion on.
   const cine = $('[data-cine]');
   let introDelay = 0;
@@ -282,10 +264,6 @@
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
-    // Freeze the page behind the project modal; the modal itself scrolls natively (data-lenis-prevent).
-    if (dlg) {
-      new MutationObserver(() => (dlg.open ? lenis.stop() : lenis.start())).observe(dlg, { attributes: true, attributeFilter: ['open'] });
-    }
     $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
       const t = a.getAttribute('href') === '#main' && a.hasAttribute('data-top') ? 0 : $(a.getAttribute('href'));
       if (t === null) return;

@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('../content');
-const { PUBLIC, esc, pad, icon, btn, eyebrow } = require('./helpers');
+const { PUBLIC, esc, pad, caseHref, icon, btn, eyebrow } = require('./helpers');
 
 // Tools & technologies: six categories from content.js (the AI & ML one carries roles and groups).
 // Brand marks are self-hosted in public/assets/img/tech (the CSP only allows same-origin images); a slug
@@ -92,12 +92,20 @@ const SVC_ART = {
 
 const serviceArt = (id) => `<svg class="svc-art" viewBox="0 0 240 140" aria-hidden="true">${SVC_ART[id] || SVC_ART.web}</svg>`;
 
+// The case studies a service drew on: the first three by name, then how many more on the projects page.
+const work = (s) => {
+  const cases = s.work.map((key) => C.projects.find((p) => p.image === key));
+  const more = cases.length - 3;
+  return `<p class="svc-panel__work"><span>Seen in</span>${cases.slice(0, 3).map((p) => `<a href="${caseHref(p)}">${esc(p.name)}</a>`).join('')}${more > 0 ? `<a href="./projects">+${more} more</a>` : ''}</p>`;
+};
+
 const servicePanel = (s, i) => `<article class="svc-panel${i === 0 ? ' is-active' : ''}" id="${s.id}" data-svc-panel>
   <div class="svc-panel__art">${serviceArt(s.id)}</div>
   <div class="svc-panel__body">
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.description)}</p>
     <ul class="checks">${s.items.map((t) => `<li>${icon.check}${esc(t)}</li>`).join('')}</ul>
+    ${work(s)}
   </div>
 </article>`;
 

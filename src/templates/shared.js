@@ -55,4 +55,4 @@ const contact = (id = 'contact') => `<section class="section contact" id="${id}"
   </div>
 </section>`;
 
-module.exports = { pageHero, faq, contact };
+module.exports = { sky, pageHero, faq, contact };

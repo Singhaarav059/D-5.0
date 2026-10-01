@@ -2,7 +2,7 @@
 'use strict';
 
 const C = require('../content');
-const { esc, pad, icon, pic, btn, eyebrow } = require('./helpers');
+const { esc, pad, caseHref, icon, pic, btn, eyebrow } = require('./helpers');
 const { reasons } = require('./about');
 
 // Home hero: a short code-drawn opening (cine.js) — a spark grows into a network of connections that folds
@@ -42,6 +42,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <h3>${esc(p.title)}</h3>
       <p>${esc(p.description)}</p>
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+      <a class="link-arrow" href="${caseHref(p)}">Read the case study<span class="sr-only">: ${esc(p.title)}</span> ${icon.arrow}</a>
     </div>
     <figure class="stack-card__media"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
   </div>
