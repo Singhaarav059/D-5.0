@@ -154,6 +154,43 @@
     });
   }
 
+  // Segmented controls ([data-seg]): a glass pill glides to the chosen option (aria-pressed), however the row wraps or
+  // scrolls; it is measured, so it follows resizes and font loading too.
+  $$('[data-seg]').forEach((box) => {
+    const thumb = document.createElement('i');
+    thumb.className = 'seg__thumb';
+    thumb.setAttribute('aria-hidden', 'true');
+    box.prepend(thumb);
+    const place = () => {
+      const on = $('[aria-pressed="true"]', box);
+      box.classList.toggle('has-thumb', !!on);
+      if (on) thumb.style.cssText = `width:${on.offsetWidth}px;height:${on.offsetHeight}px;transform:translate(${on.offsetLeft}px,${on.offsetTop}px)`;
+    };
+    new MutationObserver(place).observe(box, { subtree: true, attributes: true, attributeFilter: ['aria-pressed'] });
+    new ResizeObserver(place).observe(box);
+    place();
+    requestAnimationFrame(() => box.classList.add('seg--ready')); // glide from now on, not on the first placement
+  });
+
+  // Projects: show all work, or the projects under one service. Cards that stay fade back in, in order.
+  const filters = $$('[data-filter]');
+  const filterStatus = $('[data-filter-status]');
+  filters.forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.filter;
+    filters.forEach((x) => x.setAttribute('aria-pressed', x === b));
+    b.scrollIntoView({ behavior: motion ? 'smooth' : 'auto', block: 'nearest', inline: 'nearest' }); // (the row scrolls on phones)
+    let n = 0;
+    $$('.pcard[data-svcs]').forEach((c) => {
+      const on = id === 'all' || c.dataset.svcs.split(' ').includes(id);
+      c.hidden = !on;
+      if (on && motion) c.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 500, delay: Math.min(n, 8) * 40, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' });
+      if (on) n++;
+    });
+    b.closest('.projects').toggleAttribute('data-filtered', id !== 'all');
+    filterStatus.textContent = `Showing ${n} project${n === 1 ? '' : 's'}`;
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  }));
+
   // Each service's "what's included" list starts folded on phones (open without JS, and on wider screens).
   if (matchMedia('(max-width: 860px)').matches) $$('[data-fold]').forEach((d) => { d.open = false; });
 

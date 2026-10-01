@@ -658,6 +658,31 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .checks--ink { grid-template-columns: 1fr; margin-top: 0; }
 .checks--ink svg { background: rgba(142, 164, 255, 0.18); color: var(--accent); }
 
+/* the projects filter: a glass track whose pill glides to the chosen service (site.js, [data-seg]) */
+.pfilter { position: relative; isolation: isolate; display: inline-flex; flex-wrap: wrap; gap: 2px; margin-bottom: clamp(20px, 3.6vh, 32px); padding: 5px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow-1); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); }
+.pfilter button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 0.9rem/1 var(--body); cursor: pointer; transition: color 250ms ease, transform 160ms var(--ease-out); }
+.pfilter button span { min-width: 22px; padding: 3px 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); font-size: 0.74rem; text-align: center; font-variant-numeric: tabular-nums; transition: background-color 250ms ease, color 250ms ease; }
+.pfilter button:hover, .pfilter button[aria-pressed='true'] { color: var(--text); }
+.pfilter button[aria-pressed='true'] span { background: var(--blue); color: #fff; }
+.pfilter button:active { transform: scale(0.97); }
+.pfilter button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg__thumb { position: absolute; left: 0; top: 0; z-index: -1; border-radius: 999px; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); opacity: 0; pointer-events: none; }
+[data-seg].has-thumb .seg__thumb { opacity: 1; }
+[data-seg].seg--ready .seg__thumb { transition: transform 380ms var(--ease-out), width 380ms var(--ease-out), height 380ms var(--ease-out), opacity 200ms ease; }
+html:not(.js) .pfilter { display: none; }
+/* filtered, the wide first card sits in the grid like the others */
+.projects[data-filtered] .pcard--wide { grid-column: auto; flex-direction: column; }
+.projects[data-filtered] .pcard--wide .pcard__media { aspect-ratio: 16 / 11; flex: none; }
+.projects[data-filtered] .pcard--wide .pcard__body { padding: 18px 20px 20px; justify-content: flex-start; }
+.projects[data-filtered] .pcard--wide h2 { font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
+.projects[data-filtered] .pcard--wide p { -webkit-line-clamp: 2; }
+.pcard[hidden] { display: none; }
+@media (max-width: 760px) {
+  .pfilter { display: flex; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .pfilter::-webkit-scrollbar { display: none; }
+  .pfilter button { flex: none; }
+}
+
 /* ---------- case study pages (/projects/<case>) ---------- */
 .case__crumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 22px; font-size: 0.86rem; color: var(--muted); }
 .case__crumbs a { color: var(--accent); }
