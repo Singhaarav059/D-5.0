@@ -20,8 +20,9 @@ const pages = {
     title: 'Demaze Technologies | Your Strategic Partner in Building Scalable AI Products',
     description: 'Demaze designs and builds AI software, web and mobile apps, SaaS and eCommerce platforms, from the first workshop to launch and beyond.',
     schema: [S.organization(), S.website(), S.faqPage()],
-    // Home page order: hero, work, services, tools, industries, who we are, process, FAQ, contact.
-    body: [hero(), work(), services(), techStack(), industries(), studio(), processSection(), faq(), contact()].join('\n'),
+    // Home is the summary: hero, three projects, services, who we are, process, FAQ, contact. The tools map and the
+    // industries live on the services page.
+    body: [hero(), work(), services(), studio(), processSection(), faq(), contact()].join('\n'),
   }),
   projects: layout({
     slug: 'projects',

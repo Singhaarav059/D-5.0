@@ -154,6 +154,9 @@
     });
   }
 
+  // Each service's "what's included" list starts folded on phones (open without JS, and on wider screens).
+  if (matchMedia('(max-width: 860px)').matches) $$('[data-fold]').forEach((d) => { d.open = false; });
+
   // Services list buttons (also used when motion is off).
   const svcBtns = $$('[data-svc-btn]');
   const svcPanels = $$('[data-svc-panel]');

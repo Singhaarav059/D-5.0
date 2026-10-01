@@ -51,10 +51,10 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
 const work = () => `<section class="section work" id="work">
   <div class="wrap">
     <div class="section-head section-head--split">
-      <div>${eyebrow('Our work')}<h2 class="h2" data-split>The projects we did</h2><p class="lead" data-reveal>Four of the ${C.projects.length} products we’ve designed and built, from luxury automotive to senior care.</p></div>
+      <div>${eyebrow('Our work')}<h2 class="h2" data-split>The projects we did</h2><p class="lead" data-reveal>Three of the ${C.projects.length} products we’ve designed and built. Each has its full story on the projects page.</p></div>
       <div>${btn('View all work', './projects', 'btn--white')}</div>
     </div>
-    <div class="stack" data-deck>${C.projects.slice(0, 4).map((p, i) => projectCard(p, i, 4)).join('')}</div>
+    <div class="stack" data-deck>${C.projects.slice(0, 3).map((p, i) => projectCard(p, i, 3)).join('')}</div>
   </div>
 </section>`;
 

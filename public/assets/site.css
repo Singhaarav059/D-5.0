@@ -450,6 +450,16 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .svc-panel__body { padding: 0 clamp(20px, 2.4vw, 30px) clamp(20px, 2.4vw, 30px); }
 .svc-panel h3 { font-size: clamp(1.3rem, 1.9vw, 1.65rem); letter-spacing: -0.025em; }
 .svc-panel p { margin-top: 8px; color: var(--muted); font-size: 0.97rem; }
+/* "What's included": open on wide screens (no summary), folded on phones (site.js closes it there) */
+.svc-panel__more > summary { display: none; }
+.svc-panel__more > summary::-webkit-details-marker { display: none; }
+@media (max-width: 860px) {
+  .svc-panel__more > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); list-style: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+  .svc-panel__more > summary span { display: grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-size: 0.76rem; }
+  .svc-panel__more > summary::after { content: ''; width: 8px; height: 8px; margin-left: auto; border: solid currentColor; border-width: 0 1.6px 1.6px 0; transform: translateY(-2px) rotate(45deg); transition: transform 250ms var(--ease-out); }
+  .svc-panel__more[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+  .svc-panel__more .checks { margin-top: 4px; }
+}
 .svc-panel .svc-panel__work { margin-top: 18px; padding-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.86rem; }
 .svc-panel__work span { font: 600 0.68rem/1 var(--body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .svc-panel__work a { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
