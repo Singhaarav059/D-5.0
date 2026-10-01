@@ -272,6 +272,8 @@ async function run() {
   if (!play) { const G = await g; if (G) G.reveal(); return; }
   // Opened in a background tab: hold the opening until it can actually be seen.
   if (document.hidden) await new Promise((r) => document.addEventListener('visibilitychange', r, { once: true }));
+  // On the first page of a visit the brand opening (site.js) covers the page first; start once it has folded away.
+  if (window.dmzOpening) await window.dmzOpening;
   const seq = opening();
   // start drawing the globe as the network folds (2.9s in), whether or not three.js has arrived yet
   await wait(3300);

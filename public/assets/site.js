@@ -6,6 +6,45 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
+  // ---------- the opening (first page of a visit; boot.js decides) ----------
+  // The chevron draws itself and fills, the name rises beside it and the line under it fades in; then the sheet folds
+  // into the nav bar while the logo flies to its place there. A click, key, wheel or touch skips straight to the fold.
+  // window.dmzOpening resolves as the page is uncovered: home's globe opening (cine.js) waits for it.
+  window.dmzOpening = new Promise((uncovered) => {
+    const el = $('[data-intro]');
+    if (!el || !root.classList.contains('intro-on') || !el.animate) { if (el) el.remove(); root.classList.remove('intro-on'); uncovered(); return; }
+    const EZ = 'cubic-bezier(.76,0,.24,1)', OUT = 'cubic-bezier(.22,1,.36,1)';
+    let folded = false, gone = false;
+    const timers = [], skipOn = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+    const end = () => { if (gone) return; gone = true; timers.forEach(clearTimeout); root.classList.remove('intro-on'); el.remove(); uncovered(); };
+    const fold = (fast) => {
+      if (folded) return;
+      folded = true;
+      skipOn.forEach((ev) => removeEventListener(ev, skip));
+      try {
+        if (fast) el.getAnimations({ subtree: true }).forEach((a) => a.finish());
+        const bar = $('.nav__bar'), mark = $('.brand img'), lock = $('[data-ilock]', el), chev = $('[data-ic]', el);
+        const D = fast ? 480 : 820;
+        $('[data-itag]', el).animate([{ opacity: 1 }, { opacity: 0 }], { duration: D * 0.4, easing: 'ease', fill: 'forwards' });
+        const L = lock.getBoundingClientRect(), c = chev.getBoundingClientRect(), mk = mark.getBoundingClientRect(), r = bar.getBoundingClientRect();
+        lock.style.transformOrigin = `${c.left + c.width / 2 - L.left}px ${c.top + c.height / 2 - L.top}px`;
+        lock.animate([{ transform: 'none' }, { transform: `translate(${mk.left + mk.width / 2 - (c.left + c.width / 2)}px, ${mk.top + mk.height / 2 - (c.top + c.height / 2)}px) scale(${mk.width / c.width})` }], { duration: D, easing: EZ, fill: 'forwards' });
+        el.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 999px)` }], { duration: D, easing: EZ, fill: 'forwards' });
+        el.animate([{ opacity: 1 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], { duration: D + 200, fill: 'forwards' }).onfinish = end;
+        timers.push(setTimeout(uncovered, D * 0.4), setTimeout(end, D + 800));
+      } catch (e) { end(); }
+    };
+    const skip = () => fold(true);
+    skipOn.forEach((ev) => addEventListener(ev, skip, { passive: true }));
+    try {
+      $('[data-icl]', el).animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 700, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      $('[data-icf]', el).animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380, delay: 560, easing: 'ease', fill: 'forwards' });
+      $$('[data-it] > span > span', el).forEach((ch, i) => ch.animate([{ transform: 'translateY(110%)' }, { transform: 'none' }], { duration: 640, delay: 520 + i * 45, easing: OUT, fill: 'forwards' }));
+      $('[data-itag]', el).animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 860, easing: OUT, fill: 'forwards' });
+      timers.push(setTimeout(() => fold(false), 1650));
+    } catch (e) { end(); }
+  });
+
   // ---------- UI that works regardless of motion ----------
   const nav = $('[data-nav]');
   const toggle = $('.nav__toggle');
@@ -369,6 +408,8 @@
     const em = $('.hero__title em', hero);
     if (em) tl.to(em, { backgroundSize: '100% 0.07em', duration: 1.1, ease: 'power3.inOut' }, 0.9);
     // During the opening the copy waits in its hidden start state, then plays as the globe settles.
+    // Under the brand opening the headline waits until the sheet has folded away.
+    if (!introDelay && root.classList.contains('intro-on')) { tl.pause(); window.dmzOpening.then(() => tl.play()); }
     if (introDelay) {
       tl.progress(0);
       let started = false;

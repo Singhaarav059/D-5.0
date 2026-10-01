@@ -6,6 +6,19 @@ const { SITE_URL, esc, pad, cal, icon } = require('./helpers');
 
 const logo = `<a class="brand" href="./" aria-label="Demaze Technologies home"><img src="${C.logoMark}" alt="" width="28" height="28"><span>Demaze</span></a>`;
 
+// The logo's chevron on its 128px grid (scripts/app-icons.js draws the icons from the same points).
+const CHEVRON = 'M0 0L128 64L0 128L40 79.3L76 64L40 48.7Z';
+
+// The opening, on the first page of a visit (boot.js decides; site.js plays it): the chevron draws itself and fills,
+// the name rises beside it, then the sheet folds into the nav bar as the logo flies to its place there.
+const intro = () => `<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__lock" data-ilock>
+    <svg class="intro__mark" data-ic viewBox="-4 -4 136 136"><path class="intro__mark-line" data-icl pathLength="1" d="${CHEVRON}"/><path class="intro__mark-fill" data-icf d="${CHEVRON}"/></svg>
+    <span class="intro__word" data-it>${[...'Demaze'].map((ch) => `<span><span>${ch}</span></span>`).join('')}</span>
+  </div>
+  <p class="intro__tag" data-itag>${C.hero.eyebrow.map(esc).join(' · ')}</p>
+</div>`;
+
 const NAV = [['Projects', './projects'], ['Services', './services'], ['About Us', './about-us'], ['Contact Us', './contact']];
 
 // `section` is the nav entry a page sits under (a case study sits under Projects); `schema` is its structured data
@@ -41,7 +54,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <meta name="twitter:image" content="${og ? og.url : `${SITE_URL}/assets/img/og.png`}">${schema.map((d) => `\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`).join('')}
 <link rel="stylesheet" href="./assets/fonts.css">
 <link rel="stylesheet" href="./assets/site.css">
-<script defer src="./assets/boot.js"></script>
+<script src="./assets/boot.js"></script>
 <script defer src="./assets/vendor/gsap.min.js"></script>
 <script defer src="./assets/vendor/ScrollTrigger.min.js"></script>
 <script defer src="./assets/vendor/lenis.min.js"></script>
@@ -49,6 +62,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" hr
 <script defer src="./assets/ink.js"></script>${slug ? '' : '\n<script type="module" src="./assets/cine.js"></script>'}${slug === 'contact' ? '\n<script type="module" src="./assets/visit3d.js"></script>' : ''}${reels ? '\n<script defer src="./assets/reel-kit.js"></script>\n<script defer src="./assets/reel.js"></script>\n<link rel="modulepreload" href="./assets/reel3d.js" data-reel3d>' : ''}
 </head>
 <body class="page-${(section || 'home').replace('/', '-')}${section !== slug ? ' page-case' : ''}">
+${intro()}
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" data-nav>
   <div class="nav__bar">
