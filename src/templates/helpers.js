@@ -46,9 +46,16 @@ const pic = (key, alt, { sizes = '100vw', small = false, attrs = 'loading="lazy"
   return `<picture><source type="image/webp" srcset="${webp.map((f) => `${u(f)} ${f.w}w`).join(', ')}" sizes="${sizes}"><img${cls ? ` class="${cls}"` : ''} src="${u(fb)}" alt="${esc(alt)}" width="${fb.w}" height="${h}" ${attrs}></picture>`;
 };
 
+// A project screen's smallest WebP as a CSS custom property, for the blurred copy of it behind its frame (site.css .shot;
+// the URL is relative to site.css).
+const shot = (key) => {
+  const f = MANIFEST[key].files.filter((x) => x.fmt === 'webp' && x.w > 200).sort((x, y) => x.w - y.w)[0];
+  return `--shot:url(img/work/${f.file})`;
+};
+
 const btn = (label, href, cls = 'btn--blue', extra = '') =>
   `<a class="btn ${cls}" href="${href}" ${extra}><span>${esc(label)}</span><i class="btn__icon">${icon.arrow}</i></a>`;
 
 const eyebrow = (t, dark) => `<p class="eyebrow${dark ? ' eyebrow--dark' : ''}"><span class="eyebrow__dot"></span>${esc(t)}</p>`;
 
-module.exports = { PUBLIC, SITE_URL, MANIFEST, esc, pad, cal, caseHref, icon, pic, btn, eyebrow };
+module.exports = { PUBLIC, SITE_URL, MANIFEST, esc, pad, cal, caseHref, icon, pic, shot, btn, eyebrow };

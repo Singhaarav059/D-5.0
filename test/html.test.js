@@ -98,7 +98,7 @@ test('every case study has a page with its reel, and the sitemap lists every pag
   assert.equal(cases.length, C.projects.length);
   for (const p of C.projects) {
     const html = fs.readFileSync(path.join(root, 'public', 'projects', `${p.image}.html`), 'utf8');
-    if (C.reels[p.image]) assert.equal([...html.matchAll(/<figure class="case__media"[^>]*data-reel="/g)].length, 1, `${p.image}: its case study plays its reel`);
+    if (C.reels[p.image]) assert.equal([...html.matchAll(/<figure class="case__media[^"]*"[^>]*data-reel="/g)].length, 1, `${p.image}: its case study plays its reel`);
   }
   const sitemap = fs.readFileSync(path.join(root, 'public', 'sitemap.xml'), 'utf8');
   for (const page of pages) assert.ok(sitemap.includes(`https://demazetech.com/${page === 'index' ? '' : page}</loc>`), `sitemap misses ${page}`);
@@ -120,4 +120,13 @@ test('the web app manifest names its icons, and they exist', () => {
   assert.ok(manifest.name && manifest.short_name && manifest.start_url);
   assert.ok(manifest.icons.some((i) => i.sizes === '512x512' && i.purpose === 'maskable'));
   for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(root, 'public', i.src)), `${i.src} is missing`);
+});
+
+test('screenshot backdrops (--shot) point at files next to the stylesheet that uses them', () => {
+  for (const page of ['index', 'projects']) {
+    const html = fs.readFileSync(path.join(root, 'public', `${page}.html`), 'utf8');
+    const urls = [...html.matchAll(/--shot:url\(([^)]+)\)/g)].map((m) => m[1]);
+    assert.ok(urls.length, `${page} has no screenshot backdrops`);
+    for (const url of urls) assert.ok(fs.existsSync(path.join(root, 'public', 'assets', url)), `${page}: --shot ${url} does not resolve from public/assets/`);
+  }
 });

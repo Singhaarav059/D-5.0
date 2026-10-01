@@ -4,6 +4,7 @@
 const C = require('../content');
 const { esc, pad, caseHref, icon, pic, btn, eyebrow } = require('./helpers');
 const { reasons } = require('./about');
+const { media } = require('./projects');
 
 // Home hero: a short code-drawn opening (cine.js) — a spark grows into a network of connections that folds
 // into a dotted globe — then the globe settles as a horizon under the headline. Without JS it is just the copy.
@@ -44,7 +45,7 @@ const projectCard = (p, i, total) => `<article class="stack-card" style="--tint:
       <ul class="tags">${p.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
       <a class="link-arrow" href="${caseHref(p)}">Read the case study<span class="sr-only">: ${esc(p.title)}</span> ${icon.arrow}</a>
     </div>
-    <figure class="stack-card__media"${C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : ''}>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 860px) 92vw, 560px' })}</figure>
+    ${media(p, i, { cls: 'stack-card__media', sizes: '(max-width: 860px) 92vw, 560px' })}
   </div>
 </article>`;
 

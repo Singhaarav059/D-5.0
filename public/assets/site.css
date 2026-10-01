@@ -737,18 +737,13 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 .pcard__media img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; transition: transform 700ms var(--ease-out); }
 .pcard__body { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 20px; }
 .pcard__num { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-.pcard h2 { font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.2; letter-spacing: -0.02em; }
+.pcard h3 { font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.2; letter-spacing: -0.02em; }
 .pcard__btn { all: unset; cursor: pointer; }
 .pcard__btn::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .pcard__btn:focus-visible::after { outline: 2px solid var(--blue); outline-offset: -2px; }
 .pcard p { color: var(--muted); font-size: 0.92rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pcard__more { margin-top: auto; padding-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--accent); }
 .pcard__more svg { width: 14px; height: 14px; transition: transform 250ms var(--ease-out); }
-.pcard--wide { grid-column: span 2; flex-direction: row; }
-.pcard--wide .pcard__media { aspect-ratio: auto; flex: 1.25; }
-.pcard--wide .pcard__body { flex: 1; justify-content: center; padding: 28px; }
-.pcard--wide h2 { font-size: clamp(1.3rem, 1.9vw, 1.7rem); }
-.pcard--wide p { -webkit-line-clamp: 4; }
 @media (hover: hover) and (pointer: fine) {
   .pcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
   .pcard:hover .pcard__media img { transform: scale(1.03); }
@@ -758,6 +753,36 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 
 .checks--ink { grid-template-columns: 1fr; margin-top: 0; }
 .checks--ink svg { background: rgba(142, 164, 255, 0.18); color: var(--accent); }
+
+/* a project's real screens on its tint, over a soft blurred copy of themselves (helpers.js shot()); the label shows
+   while they are on view, not under a playing reel */
+.shot { position: relative; isolation: isolate; overflow: hidden; }
+.shot::before { content: ''; position: absolute; inset: -30px; z-index: -1; pointer-events: none; background: var(--shot, none) center / cover no-repeat, var(--tint); filter: blur(26px) saturate(1.05); opacity: 0.7; }
+.shot__label { position: absolute; left: 12px; bottom: 12px; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(10, 12, 30, 0.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font: 600 0.68rem/1 var(--body); letter-spacing: 0.08em; text-transform: uppercase; opacity: 0; transition: opacity 400ms ease; pointer-events: none; }
+.shot__label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #8fa4ff; }
+.shot.is-resting .shot__label { opacity: 1; }
+/* the projects page: four featured cards, then the rest; filtered, they read as one grid */
+.projects__sub { margin: clamp(24px, 4vh, 36px) 2px 16px; font: 600 0.72rem/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.projects__sub--more { margin-top: clamp(40px, 7vh, 64px); }
+.pgrid--featured { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.pcard--featured .pcard__media { aspect-ratio: 16 / 10; padding: clamp(14px, 2vw, 24px); }
+.pcard--featured .pcard__body { padding: 22px 24px 24px; }
+.pcard--featured h3 { font-size: clamp(1.3rem, 1.8vw, 1.6rem); }
+.pcard--featured p { -webkit-line-clamp: 3; font-size: 0.96rem; }
+.projects[data-filtered] .projects__sub { display: none; }
+.projects[data-filtered] .pgrid--featured { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
+.projects[data-filtered] .pcard--featured .pcard__media { aspect-ratio: 16 / 11; padding: 14px; }
+.projects[data-filtered] .pcard--featured .pcard__body { padding: 18px 20px 20px; }
+.projects[data-filtered] .pcard--featured h3 { font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
+@media (max-width: 1024px) { .projects[data-filtered] .pgrid--featured { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .pgrid--featured, .projects[data-filtered] .pgrid--featured { grid-template-columns: minmax(0, 1fr); } }
+/* the case study's real screens, under what we built */
+.case__screens { margin: clamp(28px, 5vh, 48px) 0 0; display: grid; gap: 12px; }
+.case__shot { aspect-ratio: 16 / 9; display: grid; place-items: center; padding: clamp(14px, 3vw, 40px); border-radius: var(--r-xl); background: var(--tint); box-shadow: var(--shadow-1); }
+.case__shot img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+.case__shot .shot__label { display: none; }
+.case__screens figcaption { font-size: 0.86rem; color: var(--muted); }
+@media (max-width: 860px) { .case__shot { aspect-ratio: 4 / 3; } }
 
 /* the projects filter: a glass track whose pill glides to the chosen service (site.js, [data-seg]) */
 .pfilter { position: relative; isolation: isolate; display: inline-flex; flex-wrap: wrap; gap: 2px; margin-bottom: clamp(20px, 3.6vh, 32px); padding: 5px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow-1); backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass); }
@@ -771,12 +796,6 @@ html.motion.js .hero__title em { background-size: 0% 0.07em; }
 [data-seg].has-thumb .seg__thumb { opacity: 1; }
 [data-seg].seg--ready .seg__thumb { transition: transform 380ms var(--ease-out), width 380ms var(--ease-out), height 380ms var(--ease-out), opacity 200ms ease; }
 html:not(.js) .pfilter { display: none; }
-/* filtered, the wide first card sits in the grid like the others */
-.projects[data-filtered] .pcard--wide { grid-column: auto; flex-direction: column; }
-.projects[data-filtered] .pcard--wide .pcard__media { aspect-ratio: 16 / 11; flex: none; }
-.projects[data-filtered] .pcard--wide .pcard__body { padding: 18px 20px 20px; justify-content: flex-start; }
-.projects[data-filtered] .pcard--wide h2 { font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
-.projects[data-filtered] .pcard--wide p { -webkit-line-clamp: 2; }
 .pcard[hidden] { display: none; }
 @media (max-width: 760px) {
   .pfilter { display: flex; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
@@ -957,8 +976,6 @@ html.motion.js [data-hero-proof] { opacity: 0; }
   .nav__toggle { display: grid; }
   .section-head--split { grid-template-columns: 1fr; }
    .pgrid { grid-template-columns: 1fr; }
-  .pcard--wide { grid-column: auto; flex-direction: column; }
-  .pcard--wide .pcard__media { aspect-ratio: 16 / 11; }
   
   
   .stack-card__inner { grid-template-columns: 1fr; min-height: 0; }
@@ -1090,8 +1107,6 @@ html.motion.js [data-hero-proof] { opacity: 0; }
   .stack-card h3 { font-size: 1.3rem; }
 
   .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pcard--wide { grid-column: span 2; flex-direction: row; }
-  .pcard--wide .pcard__media { aspect-ratio: auto; }
   .ind__stage { min-height: 0; }
   .metrics { grid-template-columns: repeat(4, 1fr); }
   .metric { min-height: 130px; padding: 18px; }
@@ -1273,7 +1288,11 @@ html:not(.js) :is(.ind__panel, .kmap__panel) + :is(.ind__panel, .kmap__panel) { 
    camera doing the transitions (reel.js). Everything inside .reel__stage is laid out on a 640×440 canvas and scaled to
    the card (--s), so sizes here are logical pixels; labels are at least 15px so they stay readable at small card sizes. */
 /* any figure can host a reel (projects grid, home deck, project dialog); the image stays underneath as the fallback */
-.has-reel { position: relative; padding: 0; }
+.has-reel { position: relative; }
+/* one reel plays at a time (reel.js); the others rest, faded out over the real screens */
+.has-reel .reel { transition: opacity 600ms ease; }
+.has-reel.is-resting .reel { opacity: 0; }
+.has-reel.is-resting .reel__toggle { visibility: hidden; }
 .reel { --ink: #0e0f12; --paper: #ffffff; --soft: #f1f1ee;
   /* things drawn straight on the backdrop take these, so each look (below) can recolour them */
   --fg: #0e0f12; --inv: #ffffff; --mute: #6c6f78; --line: rgba(14, 15, 18, 0.1); --idle: rgba(14, 15, 18, 0.05); --idle-strong: rgba(14, 15, 18, 0.12);

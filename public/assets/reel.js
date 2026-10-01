@@ -151,6 +151,7 @@
     toggle.type = 'button';
     toggle.className = 'reel__toggle';
     toggle.setAttribute('aria-label', 'Pause animation');
+    host.classList.add('is-resting'); // until it is the one in focus
     host.append(el, toggle);
 
     const q = (s) => el.querySelector(s);
@@ -441,9 +442,15 @@
       if (t >= heroFrom && t <= heroTo) drawHero();
     });
 
-    let userPaused = false, visible = false;
+    let userPaused = false, visible = false, chosen = false;
+    // Only the reel in focus plays (see choose() below); the rest rest over their real screens, and a reel coming back
+    // into focus tells its story from the top.
     const sync = () => {
-      const run = visible && !userPaused && !document.hidden;
+      const now = focus === host;
+      if (now && !chosen) tl.seek(0);
+      chosen = now;
+      host.classList.toggle('is-resting', !now);
+      const run = now && visible && !userPaused && !document.hidden;
       run ? tl.play() : tl.pause();
       el.classList.toggle('is-paused', !run);
     };
@@ -454,9 +461,14 @@
       toggle.classList.toggle('is-paused', userPaused);
       sync();
     });
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }, { threshold: 0.35 });
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; host.reelVisible = visible; choose(); }, { threshold: 0.35 });
     io.observe(host);
     document.addEventListener('visibilitychange', sync);
+    hosts.add(host);
+    host.reelSync = sync;
+    const card = host.closest('.pcard, .stack-card') || host;
+    card.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovered = host; choose(); } });
+    card.addEventListener('pointerleave', () => { if (hovered === host) { hovered = null; choose(); } });
     let io3d;
     host.classList.add('has-reel');
 
@@ -486,13 +498,37 @@
       destroy() {
         tl.kill(); ro.disconnect(); io.disconnect(); io3d?.disconnect();
         document.removeEventListener('visibilitychange', sync);
-        el.remove(); toggle.remove(); host.classList.remove('has-reel'); delete host.reel;
+        el.remove(); toggle.remove(); host.classList.remove('has-reel', 'is-resting'); delete host.reel;
+        hosts.delete(host); if (focus === host) focus = null;
       },
     };
     return host.reel;
   }
 
   // Reels on the page (projects grid, home deck); other scripts mount more with window.Reel.mount(figure).
+  // Focus: of the reels on screen, the one under the mouse, else the one nearest the middle of the screen.
+  const hosts = new Set();
+  let focus = null, hovered = null, raf = 0;
+  const pick = () => {
+    raf = 0;
+    const seen = [...hosts].filter((h) => h.reelVisible);
+    let next = hovered && hovered.reelVisible ? hovered : null;
+    if (!next) {
+      let best = Infinity;
+      seen.forEach((h) => {
+        const b = h.getBoundingClientRect();
+        const d = Math.abs((b.top + b.bottom) / 2 - innerHeight / 2) + Math.abs((b.left + b.right) / 2 - innerWidth / 2) * 0.5;
+        if (d < best) { best = d; next = h; }
+      });
+    }
+    if (next === focus) return;
+    focus = next;
+    hosts.forEach((h) => h.reelSync());
+  };
+  const choose = () => { raf ||= requestAnimationFrame(pick); };
+  addEventListener('scroll', choose, { passive: true });
+  addEventListener('resize', choose);
+
   window.Reel = { mount: (host) => host.reel || build(host) };
   // Each is built as it comes within a screen or so of view: building one (its scenes and timeline) takes a good part
   // of a frame, and the projects page holds sixteen, which all at once stalled the page as it loaded.

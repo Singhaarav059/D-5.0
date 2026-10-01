@@ -1,12 +1,12 @@
 // Case study pages (/projects/<image key>), one per project: the page hero with the brief and the services it drew on,
-// its reel playing large over the product screens, what we built, the outcome, and the cases either side of it.
+// its reel playing large, what we built, its real screens, the outcome, and the cases either side of it.
 'use strict';
 
 const C = require('../content');
 const { esc, pad, caseHref, icon, pic, btn, eyebrow } = require('./helpers');
+const { media } = require('./projects');
 const { sky } = require('./shared');
 
-const reel = (p, i) => (C.reels[p.image] ? ` data-reel="${esc(JSON.stringify({ ...C.reels[p.image], num: pad(i + 1) }))}"` : '');
 
 const neighbour = (p, label, cls) => `<a class="case__pager-link ${cls}" href="${caseHref(p)}">
   <span class="case__pager-shot" style="--tint:${p.tint}">${pic(p.image, '', { sizes: '120px' })}</span>
@@ -31,7 +31,7 @@ const caseStudy = (p, i) => {
 </section>
 <section class="section case">
   <div class="wrap">
-    <figure class="case__media" style="--tint:${p.tint}"${reel(p, i)} data-reveal>${pic(p.image, `${p.title}, product screens`, { sizes: '(max-width: 1240px) calc(100vw - 40px), 1200px', attrs: 'decoding="async" fetchpriority="high"' })}</figure>
+    ${media(p, i, { cls: 'case__media', sizes: '(max-width: 1240px) calc(100vw - 40px), 1200px', attrs: 'decoding="async" fetchpriority="high"' })}
     <div class="case__grid">
       <div class="case__built">
         ${eyebrow('What we built')}
@@ -43,6 +43,10 @@ const caseStudy = (p, i) => {
         <ul class="checks checks--ink">${p.features.map((f) => `<li>${icon.check}${esc(f)}</li>`).join('')}</ul>
       </div>
     </div>
+    <figure class="case__screens" data-reveal>
+      ${media(p, i, { cls: 'case__shot', sizes: '(max-width: 1240px) calc(100vw - 40px), 1200px', reel: false })}
+      <figcaption>The product as shipped: ${esc(p.name)}’s real screens.</figcaption>
+    </figure>
     <div class="case__outcome" data-reveal>
       <div>${eyebrow('The outcome')}<p class="case__outcome-text">${esc(p.outcome)}</p></div>
       <div class="case__outcome-ctas">${btn('Discuss a similar project', './contact#form', 'btn--blue')}${btn('All projects', './projects', 'btn--white')}</div>
