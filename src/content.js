@@ -553,4 +553,9 @@ module.exports = {
   },
 
   closing: "Let's connect and build smarter, faster, and stronger - together.",
+
+  // The contact form's pick-one questions. lib/contact-api.js accepts only these stages, so change them here alone.
+  brief: {
+    stages: ['Just an idea', 'Have designs', 'Have a product', 'Scaling up'],
+  },
 };
