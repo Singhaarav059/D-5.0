@@ -15,7 +15,6 @@ const hero = () => `<section class="hero hero--cine" data-hero>
       <div class="cine__globe" data-globe></div>
       <svg class="cine__net" data-net></svg>
       <div class="cine__tokens" data-tokens></div>
-      <p class="cine__label"><i></i>Demaze Technologies</p>
       <p class="cine__caption" data-caption></p>
     </div>
     <div class="hero__content">
